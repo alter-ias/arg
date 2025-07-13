@@ -100,32 +100,37 @@ document.addEventListener('DOMContentLoaded', () => {
     let allPoems = [];
     let currentPoem = null;
 
-    // --- FUNCIÓN DE PARSEO CORRECTA ---
-    // Esta función maneja correctamente las comas dentro de campos entrecomillados.
+    // --- FUNCIÓN DE PARSEO DEFINITIVA Y ROBUSTA ---
     const parseCsvRow = (row) => {
         const result = [];
-        let currentField = '';
+        let field = '';
         let inQuotes = false;
+        
         for (let i = 0; i < row.length; i++) {
             const char = row[i];
-            if (char === '"' && (!inQuotes || row[i + 1] === '"')) {
-                if (inQuotes && row[i + 1] === '"') {
-                    currentField += '"';
-                    i++;
+            
+            if (char === '"') {
+                if (inQuotes && row[i+1] === '"') {
+                    // Es una comilla doble escapada ("")
+                    field += '"';
+                    i++; // Saltamos la siguiente comilla
                 } else {
+                    // Es una comilla de apertura o cierre
                     inQuotes = !inQuotes;
                 }
             } else if (char === ',' && !inQuotes) {
-                result.push(currentField); // No usamos trim() aquí, por si hay espacios intencionados
-                currentField = '';
+                // Es un separador de campo
+                result.push(field);
+                field = '';
             } else {
-                currentField += char;
+                // Es un carácter normal
+                field += char;
             }
         }
-        result.push(currentField);
-        // Limpiamos las comillas del principio y final de cada campo
-        return result.map(field => field.startsWith('"') && field.endsWith('"') ? field.slice(1, -1).replace(/""/g, '"') : field);
+        result.push(field); // Añadir el último campo
+        return result;
     };
+
 
     async function loadPoemsData() {
         try {
@@ -140,18 +145,18 @@ document.addEventListener('DOMContentLoaded', () => {
             allPoems = rows.map(row => {
                 if (!row.trim()) return null;
                 
-                // --- USANDO EL PARSER CORRECTO ---
                 const [title, poemText, soundId, videoId, imagenPostalId, generative] = parseCsvRow(row);
                 
+                // La validación ahora sí será correcta
                 if (!title || !soundId || !videoId || !imagenPostalId) {
-                    console.warn("Fila con datos inválidos (descartada):", row);
+                    console.warn("Fila descartada por datos insuficientes:", {title, soundId, videoId, imagenPostalId});
                     return null;
                 }
                 
                 return { title, poemText, soundId, videoId, imagenPostalId, generative };
             }).filter(p => p !== null);
 
-            if (allPoems.length === 0) throw new Error("No se pudo procesar ninguna fila válida. Revisa la consola para ver qué filas se descartaron.");
+            if (allPoems.length === 0) throw new Error("No se pudo procesar ninguna fila válida. Asegúrate de que todas las filas tengan datos en las columnas de TÍTULO y los tres IDs.");
             
             renderPostals();
 
