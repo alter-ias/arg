@@ -20,234 +20,36 @@
             --accent-color: rgba(255, 255, 255, 0.4);
             --text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.8);
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            color: var(--text-color);
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--background-color);
-            overflow: hidden; /* Evita el scroll mientras se navega */
-        }
-
-        #background-video {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 100vw;
-            height: 100vh;
-            min-width: 100%;
-            min-height: 100%;
-            z-index: -1;
-            transform: translateX(-50%) translateY(-50%);
-            object-fit: cover;
-            filter: brightness(0.4);
-            transition: opacity 1s ease-in-out;
-            opacity: 0; /* Empieza invisible */
-        }
-        
-        #background-video.is-active {
-            opacity: 1;
-        }
-
-        .page-wrapper {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            position: relative;
-            z-index: 2;
-        }
-        
-        /* --- Contenedor de las Vistas --- */
-        .view-container {
-            width: 100%;
-            height: 100vh;
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.7s ease-in-out, visibility 0.7s ease-in-out;
-        }
-
-        .view-container.is-hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none; /* Impide interacción cuando está oculto */
-        }
-        
-        /* --- Vista Principal (Postales) --- */
-        #postal-selection-view .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        #postal-selection-view .logo {
-            height: 60px;
-            width: auto;
-            margin-bottom: 15px;
-        }
-
-        #postal-selection-view .title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-shadow: var(--text-shadow);
-        }
-
-        #postal-selection-view .subtitle {
-            font-size: 1rem;
-            color: var(--secondary-text-color);
-            font-weight: 400;
-            margin-top: 10px;
-            max-width: 500px;
-            line-height: 1.5;
-        }
-
-        #postal-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            perspective: 1000px; /* Perspectiva para animación 3D */
-        }
-
-        .postal-card {
-            width: 200px;
-            height: 300px;
-            cursor: pointer;
-            transition: transform 0.5s ease, box-shadow 0.5s ease;
-            transform-style: preserve-3d;
-        }
-        
-        .postal-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
-        }
-
-        .postal-card .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.8s;
-            transform-style: preserve-3d;
-        }
-        
-        .postal-card.is-flipping .card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .card-front img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .card-back {
-            background-color: #1a1a1a;
-            transform: rotateY(180deg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-
-        /* --- Vista del Poema --- */
-        #poem-display-view {
-            justify-content: space-between; /* Para posicionar el botón de cerrar */
-        }
-        
-        #poem-content {
-            text-align: center;
-            width: 90%;
-            max-width: 800px;
-        }
-
-        #poem-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 40px;
-            text-shadow: var(--text-shadow);
-        }
-
-        #poem-text-display {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
-            line-height: 2;
-            color: var(--secondary-text-color);
-            min-height: 200px; /* Espacio para que el texto aparezca */
-        }
-
-        /* Animación para el texto del poema */
-        #poem-text-display span {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-            display: inline-block; /* Necesario para la transformación */
-        }
-
-        #close-poem-btn {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 2.5rem;
-            cursor: pointer;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            opacity: 0.7;
-        }
-        #close-poem-btn:hover {
-            transform: scale(1.2);
-            opacity: 1;
-        }
-
-        /* --- Audio Player (Oculto) --- */
-        #audio-player {
-            display: none;
-        }
-        
-        /* --- Loading Spinner --- */
-        .spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--accent-color);
-            border-right-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { color: var(--text-color); font-family: 'Montserrat', sans-serif; background-color: var(--background-color); overflow: hidden; }
+        #background-video { position: fixed; top: 50%; left: 50%; width: 100vw; height: 100vh; min-width: 100%; min-height: 100%; z-index: -1; transform: translateX(-50%) translateY(-50%); object-fit: cover; filter: brightness(0.4); transition: opacity 1s ease-in-out; opacity: 0; }
+        #background-video.is-active { opacity: 1; }
+        .page-wrapper { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 2; }
+        .view-container { width: 100%; height: 100vh; position: absolute; top: 0; left: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; opacity: 1; visibility: visible; transition: opacity 0.7s ease-in-out, visibility 0.7s ease-in-out; }
+        .view-container.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        #postal-selection-view .header { text-align: center; margin-bottom: 40px; }
+        #postal-selection-view .logo { height: 60px; width: auto; margin-bottom: 15px; }
+        #postal-selection-view .title { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 700; letter-spacing: 3px; text-shadow: var(--text-shadow); }
+        #postal-selection-view .subtitle { font-size: 1rem; color: var(--secondary-text-color); font-weight: 400; margin-top: 10px; max-width: 500px; line-height: 1.5; }
+        #postal-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; perspective: 1000px; }
+        .postal-card { width: 200px; height: 300px; cursor: pointer; transition: transform 0.5s ease, box-shadow 0.5s ease; transform-style: preserve-3d; }
+        .postal-card:hover { transform: translateY(-10px) scale(1.05); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
+        .postal-card .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
+        .postal-card.is-flipping .card-inner { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
+        .card-front img { width: 100%; height: 100%; object-fit: cover; }
+        .card-back { background-color: #1a1a1a; transform: rotateY(180deg); display: flex; align-items: center; justify-content: center; text-align: center; padding: 15px; font-size: 1.2rem; }
+        #poem-display-view { justify-content: space-between; }
+        #poem-content { text-align: center; width: 90%; max-width: 800px; }
+        #poem-title { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 700; margin-bottom: 40px; text-shadow: var(--text-shadow); }
+        #poem-text-display { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; line-height: 2; color: var(--secondary-text-color); min-height: 200px; }
+        #poem-text-display span { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; display: inline-block; }
+        #close-poem-btn { position: absolute; top: 30px; right: 30px; background: none; border: none; color: var(--text-color); font-size: 2.5rem; cursor: pointer; transition: transform 0.3s ease, opacity 0.3s ease; opacity: 0.7; z-index: 10; }
+        #close-poem-btn:hover { transform: scale(1.2); opacity: 1; }
+        #audio-player { display: none; }
+        .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid var(--accent-color); border-right-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #loading-message {
-            font-style: italic;
-            color: var(--secondary-text-color);
-            margin-top: 20px;
-        }
-
+        #loading-message { font-style: italic; color: var(--secondary-text-color); margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -255,35 +57,27 @@
     <video autoplay muted loop playsinline id="background-video"></video>
 
     <div class="page-wrapper">
-
-        <!-- VISTA 1: SELECCIÓN DE POSTALES -->
         <div id="postal-selection-view" class="view-container">
             <header class="header">
                 <img src="assets/img/logo01.png" alt="Heptáglota Logo" class="logo">
                 <h1 class="title">Heptáglota</h1>
                 <p class="subtitle">Siete universos de poesía convergen. Elige una puerta para comenzar la travesía.</p>
             </header>
-            
             <main id="postal-container">
-                <!-- Las postales se generarán aquí con JS -->
                 <div class="spinner"></div>
                 <p id="loading-message">Construyendo los universos...</p>
             </main>
         </div>
 
-        <!-- VISTA 2: DESPLIEGUE DEL POEMA -->
         <div id="poem-display-view" class="view-container is-hidden">
             <button id="close-poem-btn" title="Volver"><i class="bi bi-x-lg"></i></button>
-            
             <div id="poem-content">
                 <h2 id="poem-title"></h2>
                 <div id="poem-text-display"></div>
             </div>
         </div>
-
     </div>
 
-      
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -298,12 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const closePoemBtn = document.getElementById('close-poem-btn');
 
     // URLs y Rutas de CLOUDINARY
-    // Reemplaza 'c-e4d5a5a8b9aa6fd02b7490c5cde8d5' con tu "Cloud Name" de Cloudinary
-    const cloudName = 'c-e4d5a5a8b9aa6fd02b7490c5cde8d5'; 
+    const cloudName = 'dy9cywux2'; 
     const cloudinaryVideoBaseUrl = `https://res.cloudinary.com/${cloudName}/video/upload/`;
     const cloudinaryImageBaseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
     
-    // URL de la base de datos
+    // URL de la base de datos CSV
     const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?output=csv';
 
     let allPoems = [];
@@ -312,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. FUNCIONES PRINCIPALES
 
     /**
-     * Parsea una fila de un CSV, manejando comillas.
+     * Parsea una fila de un CSV. Es robusto para manejar comas y comillas dentro de los campos.
      */
     const parseCsvRow = (row) => {
         const result = [];
@@ -322,17 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const char = row[i];
             if (char === '"' && (!inQuotes || row[i + 1] === '"')) {
                 if (inQuotes && row[i + 1] === '"') {
-                    currentField += '"';
-                    i++;
-                } else {
-                    inQuotes = !inQuotes;
-                }
+                    currentField += '"'; i++;
+                } else { inQuotes = !inQuotes; }
             } else if (char === ',' && !inQuotes) {
-                result.push(currentField.trim());
-                currentField = '';
-            } else {
-                currentField += char;
-            }
+                result.push(currentField.trim()); currentField = '';
+            } else { currentField += char; }
         }
         result.push(currentField.trim());
         return result.map(field => field.startsWith('"') && field.endsWith('"') ? field.slice(1, -1).replace(/""/g, '"') : field);
@@ -349,14 +136,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const csvText = await response.text();
             if (!csvText) throw new Error("La base de datos está vacía.");
 
-            const rows = csvText.trim().replace(/\r/g, '').split('\n').slice(1);
+            // El \r\n es importante para la compatibilidad entre sistemas operativos
+            const rows = csvText.trim().split(/\r?\n/).slice(1);
+            
             allPoems = rows.map(row => {
-                // Leemos las columnas en el nuevo orden
                 const [title, poemText, soundId, videoId, imagenPostalId, generative] = parseCsvRow(row);
-                // Nos aseguramos que los datos esenciales existan
-                if (!title || !soundId || !videoId || !imagenPostalId) return null;
+                // Validamos que los IDs esenciales no estén vacíos
+                if (!title || !soundId || !videoId || !imagenPostalId) {
+                    console.warn("Fila descartada por datos incompletos:", row);
+                    return null;
+                }
                 return { title, poemText, soundId, videoId, imagenPostalId, generative };
-            }).filter(p => p !== null); // Filtramos filas incompletas
+            }).filter(p => p !== null); // Filtramos las filas nulas (incompletas)
 
             if (allPoems.length === 0) throw new Error("No se encontraron poemas válidos en la base de datos.");
             
@@ -364,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Error al cargar los poemas:', error);
-            postalContainer.innerHTML = `<p>Error: No se pudieron cargar los poemas. ${error.message}</p>`;
+            postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80;">${error.message}</p>`;
         }
     }
 
@@ -372,27 +163,27 @@ document.addEventListener('DOMContentLoaded', () => {
      * Crea y muestra las postales en la vista principal.
      */
     function renderPostals() {
-        postalContainer.innerHTML = ''; // Limpiar el spinner de carga
+        postalContainer.innerHTML = '';
         
         allPoems.forEach((poem, index) => {
             const card = document.createElement('div');
             card.className = 'postal-card';
             card.dataset.poemIndex = index;
 
-            // ¡AQUÍ ESTÁ LA MAGIA! Construimos la URL de la imagen dinámicamente
-            const postalImageUrl = `${cloudinaryImageBaseUrl}w_400,h_600,c_fill,q_auto,f_auto/${poem.imagenPostalId}`;
+            // Transforma la imagen al vuelo para optimizarla:
+            // w_400: ancho 400px, c_fill: recorta para llenar, q_auto: calidad automática, f_auto: formato automático
+            const postalImageUrl = `${cloudinaryImageBaseUrl}w_400,c_fill,q_auto,f_auto/${poem.imagenPostalId}`;
 
             card.innerHTML = `
                 <div class="card-inner">
                     <div class="card-face card-front">
-                        <img src="${postalImageUrl}" alt="Postal para '${poem.title}'">
+                        <img src="${postalImageUrl}" alt="Postal para '${poem.title}'" loading="lazy">
                     </div>
                     <div class="card-face card-back">
                         <p>${poem.title}</p>
                     </div>
                 </div>
             `;
-            
             postalContainer.appendChild(card);
         });
     }
@@ -407,12 +198,12 @@ document.addEventListener('DOMContentLoaded', () => {
         poemTitleEl.textContent = currentPoem.title;
         poemTextDisplayEl.innerHTML = '';
 
-        // Construcción dinámica de URLs para audio y video
-        audioPlayer.src = `${cloudinaryVideoBaseUrl}v_auto/${currentPoem.soundId}`; // Cloudinary sirve audio desde la URL de video
+        // El audio también se sirve desde la URL de video en Cloudinary
+        audioPlayer.src = `${cloudinaryVideoBaseUrl}${currentPoem.soundId}`;
+        // Optimizaciones de video: calidad y formato automáticos
         backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${currentPoem.videoId}`;
         
         backgroundVideo.load();
-
         postalSelectionView.classList.add('is-hidden');
         poemDisplayView.classList.remove('is-hidden');
 
@@ -426,23 +217,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     /**
-     * Anima el texto del poema.
+     * Anima el texto del poema, interpretando los <br> como saltos de línea.
      */
     function animateText(text) {
-        // Reemplazar <br> (si lo usas en el sheet) con saltos de línea reales para el split
-        const lines = text.replace(/<br>/g, '\n').split('\n');
-        let delay = 300; // Un pequeño retardo inicial
+        const lines = text.split('<br>');
+        let delay = 300;
         
         lines.forEach(line => {
             const lineDiv = document.createElement('div');
-            const words = line.split(' ');
+            const words = line.trim().split(' ');
             
             words.forEach(word => {
+                if (word === "") return;
                 const wordSpan = document.createElement('span');
-                wordSpan.textContent = word + ' ';
+                wordSpan.textContent = word + ' '; // Añade espacio después de cada palabra
                 lineDiv.appendChild(wordSpan);
 
-                const increment = Math.random() * 80 + 70; // Retardo aleatorio entre 70ms y 150ms
+                const increment = Math.random() * 80 + 70;
                 
                 setTimeout(() => {
                     wordSpan.style.opacity = '1';
@@ -455,14 +246,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
     /**
      * Cierra la vista del poema y vuelve a la selección de postales.
      */
     function closePoemView() {
         audioPlayer.pause();
-        audioPlayer.currentTime = 0;
+        audioPlayer.src = ""; // Detiene la descarga
         backgroundVideo.pause();
+        backgroundVideo.src = "";
         backgroundVideo.classList.remove('is-active');
 
         poemDisplayView.classList.add('is-hidden');
@@ -470,7 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         currentPoem = null;
     }
-
     
     // 3. EVENT LISTENERS
     postalContainer.addEventListener('click', (e) => {
@@ -493,6 +283,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
- 
 </body>
 </html>
