@@ -95,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const cloudinaryImageBaseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
     
     const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
-    const cloudinaryFolder = 'HEPTAGLOTA/';
 
     let allPoems = [];
     let currentPoem = null;
@@ -129,11 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             allPoems = rows.map(row => {
                 if (!row.trim()) return null;
-                
                 const parsedRow = parseCsvRow(row);
-                
-                // --- CAMBIO CLAVE: LIMPIEZA DE DATOS ---
-                // Se aplica .trim() a cada campo para eliminar espacios en blanco invisibles.
                 const [title, poemText, soundId, videoId, imagenPostalId, generative] = parsedRow.map(field => field.trim());
 
                 if (!title || !soundId || !videoId || !imagenPostalId) {
@@ -159,7 +154,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'postal-card';
             card.dataset.poemIndex = index;
-            const postalImageUrl = `${cloudinaryImageBaseUrl}w_400,c_fill,q_auto,f_auto/${cloudinaryFolder}${poem.imagenPostalId}`;
+            // --- CÓDIGO FINAL Y SIMPLIFICADO ---
+            // Se construye la URL sin añadir ninguna carpeta, usando solo el ID de la hoja.
+            const postalImageUrl = `${cloudinaryImageBaseUrl}w_400,c_fill,q_auto,f_auto/${poem.imagenPostalId}`;
             card.innerHTML = `
                 <div class="card-inner">
                     <div class="card-face card-front">
@@ -177,8 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         poemTitleEl.textContent = currentPoem.title;
         poemTextDisplayEl.innerHTML = '';
-        audioPlayer.src = `${cloudinaryVideoBaseUrl}${cloudinaryFolder}${currentPoem.soundId}`;
-        backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${cloudinaryFolder}${currentPoem.videoId}`;
+        // --- CÓDIGO FINAL Y SIMPLIFICADO ---
+        audioPlayer.src = `${cloudinaryVideoBaseUrl}${poem.soundId}`;
+        backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${poem.videoId}`;
         
         backgroundVideo.load();
         postalSelectionView.classList.add('is-hidden');
