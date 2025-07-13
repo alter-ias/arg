@@ -283,6 +283,7 @@
 
     </div>
 
+      
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -296,15 +297,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const backgroundVideo = document.getElementById('background-video');
     const closePoemBtn = document.getElementById('close-poem-btn');
 
-    // URLs y Rutas
+    // URLs y Rutas de CLOUDINARY
+    // Reemplaza 'c-e4d5a5a8b9aa6fd02b7490c5cde8d5' con tu "Cloud Name" de Cloudinary
+    const cloudName = 'c-e4d5a5a8b9aa6fd02b7490c5cde8d5'; 
+    const cloudinaryVideoBaseUrl = `https://res.cloudinary.com/${cloudName}/video/upload/`;
+    const cloudinaryImageBaseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
+    
+    // URL de la base de datos
     const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?output=csv';
-    const cloudinaryBaseUrl = 'https://res.cloudinary.com/c-e4d5a5a8b9aa6fd02b7490c5cde8d5/video/upload/'; // Ajusta tu cloud_name si es diferente
-    const videoSkinsPath = 'assets/vid/';
-    const postalImagesPath = 'assets/img/';
 
     let allPoems = [];
     let currentPoem = null;
-
 
     // 2. FUNCIONES PRINCIPALES
 
@@ -332,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         result.push(currentField.trim());
-        return result.map(field => field.startsWith('"') && field.endsWith('"') ? field.slice(1, -1) : field);
+        return result.map(field => field.startsWith('"') && field.endsWith('"') ? field.slice(1, -1).replace(/""/g, '"') : field);
     };
 
     /**
@@ -340,20 +343,22 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function loadPoemsData() {
         try {
-            // Se añade un timestamp para evitar caché agresiva de la hoja de cálculo
             const response = await fetch(`${googleSheetCsvUrl}&_=${new Date().getTime()}`);
             if (!response.ok) throw new Error("No se pudo conectar a la base de datos.");
             
             const csvText = await response.text();
             if (!csvText) throw new Error("La base de datos está vacía.");
 
-            const rows = csvText.trim().replace(/\r/g, '').split('\n').slice(1); // Omitir cabecera
+            const rows = csvText.trim().replace(/\r/g, '').split('\n').slice(1);
             allPoems = rows.map(row => {
-                const [title, poemText, soundId, videoId, generative] = parseCsvRow(row);
-                return { title, poemText, soundId, videoId, generative };
-            });
+                // Leemos las columnas en el nuevo orden
+                const [title, poemText, soundId, videoId, imagenPostalId, generative] = parseCsvRow(row);
+                // Nos aseguramos que los datos esenciales existan
+                if (!title || !soundId || !videoId || !imagenPostalId) return null;
+                return { title, poemText, soundId, videoId, imagenPostalId, generative };
+            }).filter(p => p !== null); // Filtramos filas incompletas
 
-            if (allPoems.length === 0) throw new Error("No se encontraron poemas en la base de datos.");
+            if (allPoems.length === 0) throw new Error("No se encontraron poemas válidos en la base de datos.");
             
             renderPostals();
 
@@ -369,22 +374,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderPostals() {
         postalContainer.innerHTML = ''; // Limpiar el spinner de carga
         
-        // Usaremos img01, img02, etc. como se pidió
-        const postalImages = ['img01.png', 'img02.png', 'img03.png']; 
-
         allPoems.forEach((poem, index) => {
             const card = document.createElement('div');
             card.className = 'postal-card';
-            card.dataset.poemIndex = index; // Guardar el índice del poema
+            card.dataset.poemIndex = index;
 
-            // Asigna una de las imágenes de manera cíclica
-            const postalImage = postalImages[index % postalImages.length];
+            // ¡AQUÍ ESTÁ LA MAGIA! Construimos la URL de la imagen dinámicamente
+            const postalImageUrl = `${cloudinaryImageBaseUrl}w_400,h_600,c_fill,q_auto,f_auto/${poem.imagenPostalId}`;
 
-            // Animación de la carta que gira
             card.innerHTML = `
                 <div class="card-inner">
                     <div class="card-face card-front">
-                        <img src="${postalImagesPath}${postalImage}" alt="Postal para '${poem.title}'">
+                        <img src="${postalImageUrl}" alt="Postal para '${poem.title}'">
                     </div>
                     <div class="card-face card-back">
                         <p>${poem.title}</p>
@@ -398,61 +399,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Muestra un poema específico, reproduciendo su sonido y video.
-     * @param {number} poemIndex - El índice del poema en el array `allPoems`.
      */
     function displayPoem(poemIndex) {
         currentPoem = allPoems[poemIndex];
         if (!currentPoem) return;
 
-        // 1. Actualizar el contenido de texto
         poemTitleEl.textContent = currentPoem.title;
-        poemTextDisplayEl.innerHTML = ''; // Limpiar texto anterior
+        poemTextDisplayEl.innerHTML = '';
 
-        // 2. Preparar y reproducir el audio de Cloudinary
-        audioPlayer.src = `${cloudinaryBaseUrl}${currentPoem.soundId}.wav`; // Asumiendo que todos son .wav
+        // Construcción dinámica de URLs para audio y video
+        audioPlayer.src = `${cloudinaryVideoBaseUrl}v_auto/${currentPoem.soundId}`; // Cloudinary sirve audio desde la URL de video
+        backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${currentPoem.videoId}`;
         
-        // 3. Preparar y mostrar el video de fondo
-        backgroundVideo.src = `${videoSkinsPath}${currentPoem.videoId}`;
         backgroundVideo.load();
 
-        // 4. Cambiar de vista
         postalSelectionView.classList.add('is-hidden');
         poemDisplayView.classList.remove('is-hidden');
 
-        // 5. Reproducir todo cuando el video esté listo para asegurar sincronización
         backgroundVideo.oncanplaythrough = () => {
             backgroundVideo.classList.add('is-active');
             backgroundVideo.play();
             audioPlayer.play().catch(e => console.error("Error de reproducción de audio:", e));
             animateText(currentPoem.poemText);
-            backgroundVideo.oncanplaythrough = null; // Limpiar el listener
+            backgroundVideo.oncanplaythrough = null;
         };
     }
     
     /**
-     * Anima el texto del poema, haciendo que las palabras aparezcan con un retardo.
-     * @param {string} text - El texto completo del poema.
+     * Anima el texto del poema.
      */
     function animateText(text) {
-        const words = text.split(' ');
-        let delay = 0;
+        // Reemplazar <br> (si lo usas en el sheet) con saltos de línea reales para el split
+        const lines = text.replace(/<br>/g, '\n').split('\n');
+        let delay = 300; // Un pequeño retardo inicial
         
-        words.forEach(word => {
-            const wordSpan = document.createElement('span');
-            // Añadimos un espacio después de cada palabra para mantener el formato
-            wordSpan.textContent = word + ' ';
-            poemTextDisplayEl.appendChild(wordSpan);
-
-            // *Idea para el azar*: Se puede variar el `increment`
-            // const increment = Math.random() * 100 + 50; // Retardo aleatorio entre 50ms y 150ms
-            const increment = 150; // Retardo fijo
+        lines.forEach(line => {
+            const lineDiv = document.createElement('div');
+            const words = line.split(' ');
             
-            setTimeout(() => {
-                wordSpan.style.opacity = '1';
-                wordSpan.style.transform = 'translateY(0)';
-            }, delay);
+            words.forEach(word => {
+                const wordSpan = document.createElement('span');
+                wordSpan.textContent = word + ' ';
+                lineDiv.appendChild(wordSpan);
 
-            delay += increment;
+                const increment = Math.random() * 80 + 70; // Retardo aleatorio entre 70ms y 150ms
+                
+                setTimeout(() => {
+                    wordSpan.style.opacity = '1';
+                    wordSpan.style.transform = 'translateY(0)';
+                }, delay);
+
+                delay += increment;
+            });
+            poemTextDisplayEl.appendChild(lineDiv);
         });
     }
 
@@ -461,54 +460,39 @@ document.addEventListener('DOMContentLoaded', () => {
      * Cierra la vista del poema y vuelve a la selección de postales.
      */
     function closePoemView() {
-        // Pausar y limpiar recursos
         audioPlayer.pause();
         audioPlayer.currentTime = 0;
         backgroundVideo.pause();
         backgroundVideo.classList.remove('is-active');
 
-        // Cambiar de vista
         poemDisplayView.classList.add('is-hidden');
         postalSelectionView.classList.remove('is-hidden');
         
-        // Limpiar el poema actual para evitar estados inconsistentes
         currentPoem = null;
     }
 
     
     // 3. EVENT LISTENERS
-
-    /**
-     * Listener para los clics en el contenedor de postales (usa delegación de eventos).
-     */
     postalContainer.addEventListener('click', (e) => {
         const card = e.target.closest('.postal-card');
         if (card && !card.classList.contains('is-flipping')) {
             const poemIndex = card.dataset.poemIndex;
-
-            // Añadir clase para la animación de giro
             card.classList.add('is-flipping');
             
-            // Esperar a que la animación termine antes de mostrar el poema
             setTimeout(() => {
                 displayPoem(poemIndex);
-                // Resetear la carta para la próxima vez
                 card.classList.remove('is-flipping');
-            }, 800); // Coincide con la duración de la transición en CSS
+            }, 800);
         }
     });
 
-    /**
-     * Listener para el botón de cerrar la vista del poema.
-     */
     closePoemBtn.addEventListener('click', closePoemView);
 
-
     // 4. EJECUCIÓN INICIAL
-    
     loadPoemsData();
 
 });
 </script>
+ 
 </body>
 </html>
