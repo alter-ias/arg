@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cloudinaryImageBaseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
     
     const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
+    const cloudinaryFolder = 'HEPTAGLOTA/'; // <--- ¡AÑADIDO!
 
     let allPoems = [];
     let currentPoem = null;
@@ -126,17 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const rows = csvText.trim().split(/\r?\n/).slice(1);
             
-            allPoems = rows
-                .map(row => {
-                    // Si la fila está totalmente vacía, la ignoramos.
-                    if (!row.trim()) {
-                        return null;
-                    }
-                    const [title, poemText, soundId, videoId, imagenPostalId, generative] = parseCsvRow(row);
-                    // Dejamos de validar aquí. Confiamos en los datos.
-                    return { title, poemText, soundId, videoId, imagenPostalId, generative };
-                })
-                .filter(p => p && p.title); // Solo filtramos las filas que queden nulas o no tengan título.
+            allPoems = rows.map(row => {
+                if (!row.trim()) return null;
+                const [title, poemText, soundId, videoId, imagenPostalId, generative] = parseCsvRow(row);
+                return { title, poemText, soundId, videoId, imagenPostalId, generative };
+            }).filter(p => p && p.title);
 
             if (allPoems.length === 0) throw new Error("No se pudo procesar ninguna fila de la base de datos. Revisa que el formato CSV sea correcto.");
             
@@ -154,7 +149,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'postal-card';
             card.dataset.poemIndex = index;
-            const postalImageUrl = `${cloudinaryImageBaseUrl}w_400,c_fill,q_auto,f_auto/${poem.imagenPostalId}`;
+            // ¡AÑADIDO EL PREFIJO DE LA CARPETA!
+            const postalImageUrl = `${cloudinaryImageBaseUrl}w_400,c_fill,q_auto,f_auto/${cloudinaryFolder}${poem.imagenPostalId}`;
             card.innerHTML = `
                 <div class="card-inner">
                     <div class="card-face card-front">
@@ -172,8 +168,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         poemTitleEl.textContent = currentPoem.title;
         poemTextDisplayEl.innerHTML = '';
-        audioPlayer.src = `${cloudinaryVideoBaseUrl}${currentPoem.soundId}`;
-        backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${currentPoem.videoId}`;
+        // ¡AÑADIDO EL PREFIJO DE LA CARPETA!
+        audioPlayer.src = `${cloudinaryVideoBaseUrl}${cloudinaryFolder}${currentPoem.soundId}`;
+        backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${cloudinaryFolder}${currentPoem.videoId}`;
         
         backgroundVideo.load();
         postalSelectionView.classList.add('is-hidden');
