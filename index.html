@@ -154,8 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'postal-card';
             card.dataset.poemIndex = index;
-            // --- CÓDIGO FINAL Y SIMPLIFICADO ---
-            // Se construye la URL sin añadir ninguna carpeta, usando solo el ID de la hoja.
             const postalImageUrl = `${cloudinaryImageBaseUrl}w_400,c_fill,q_auto,f_auto/${poem.imagenPostalId}`;
             card.innerHTML = `
                 <div class="card-inner">
@@ -174,9 +172,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         poemTitleEl.textContent = currentPoem.title;
         poemTextDisplayEl.innerHTML = '';
-        // --- CÓDIGO FINAL Y SIMPLIFICADO ---
-        audioPlayer.src = `${cloudinaryVideoBaseUrl}${poem.soundId}`;
-        backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${poem.videoId}`;
+
+        // --- CORRECCIÓN FINAL ---
+        // Se usa la variable correcta "currentPoem" en lugar de "poem"
+        audioPlayer.src = `${cloudinaryVideoBaseUrl}${currentPoem.soundId}`;
+        backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${currentPoem.videoId}`;
         
         backgroundVideo.load();
         postalSelectionView.classList.add('is-hidden');
