@@ -81,7 +81,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. CONSTANTES Y VARIABLES
     const postalSelectionView = document.getElementById('postal-selection-view');
     const poemDisplayView = document.getElementById('poem-display-view');
     const postalContainer = document.getElementById('postal-container');
@@ -91,22 +90,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const backgroundVideo = document.getElementById('background-video');
     const closePoemBtn = document.getElementById('close-poem-btn');
 
-    // URLs y Rutas de CLOUDINARY
     const cloudName = 'dy9cywux2'; 
     const cloudinaryVideoBaseUrl = `https://res.cloudinary.com/${cloudName}/video/upload/`;
     const cloudinaryImageBaseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
     
-    // URL de la base de datos CSV
-    const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?output=csv';
+    // --- URL DEFINITIVA ---
+    // Esta es la que me proporcionaste. Es la correcta.
+    const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
 
     let allPoems = [];
     let currentPoem = null;
 
-    // 2. FUNCIONES PRINCIPALES
-
-    /**
-     * Parsea una fila de un CSV. Es robusto para manejar comas y comillas dentro de los campos.
-     */
     const parseCsvRow = (row) => {
         const result = [];
         let currentField = '';
@@ -114,9 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < row.length; i++) {
             const char = row[i];
             if (char === '"' && (!inQuotes || row[i + 1] === '"')) {
-                if (inQuotes && row[i + 1] === '"') {
-                    currentField += '"'; i++;
-                } else { inQuotes = !inQuotes; }
+                if (inQuotes && row[i + 1] === '"') { currentField += '"'; i++; } 
+                else { inQuotes = !inQuotes; }
             } else if (char === ',' && !inQuotes) {
                 result.push(currentField.trim()); currentField = '';
             } else { currentField += char; }
@@ -125,82 +118,67 @@ document.addEventListener('DOMContentLoaded', () => {
         return result.map(field => field.startsWith('"') && field.endsWith('"') ? field.slice(1, -1).replace(/""/g, '"') : field);
     };
 
-    /**
-     * Carga los datos de los poemas desde la hoja de Google.
-     */
     async function loadPoemsData() {
         try {
             const response = await fetch(`${googleSheetCsvUrl}&_=${new Date().getTime()}`);
-            if (!response.ok) throw new Error("No se pudo conectar a la base de datos.");
+            if (!response.ok) throw new Error("No se pudo conectar a la base de datos. Asegúrate que esté 'Publicada en la web' como CSV.");
             
             const csvText = await response.text();
-            if (!csvText) throw new Error("La base de datos está vacía.");
+            if (!csvText) throw new Error("La base de datos parece estar vacía.");
 
-            // El \r\n es importante para la compatibilidad entre sistemas operativos
             const rows = csvText.trim().split(/\r?\n/).slice(1);
             
-            allPoems = rows.map(row => {
-                const [title, poemText, soundId, videoId, imagenPostalId, generative] = parseCsvRow(row);
-                // Validamos que los IDs esenciales no estén vacíos
-                if (!title || !soundId || !videoId || !imagenPostalId) {
-                    console.warn("Fila descartada por datos incompletos:", row);
-                    return null;
-                }
-                return { title, poemText, soundId, videoId, imagenPostalId, generative };
-            }).filter(p => p !== null); // Filtramos las filas nulas (incompletas)
+            allPoems = rows
+                .map(row => {
+                    // Si la fila está vacía o solo tiene comas, la ignoramos.
+                    if (!row || row.replace(/,/g, '').trim() === '') {
+                        return null;
+                    }
+                    const [title, poemText, soundId, videoId, imagenPostalId, generative] = parseCsvRow(row);
+                    // Validamos que los IDs esenciales no estén vacíos.
+                    if (!title || !soundId || !videoId || !imagenPostalId) {
+                        console.warn("Fila con datos incompletos (será descartada):", row);
+                        return null;
+                    }
+                    return { title, poemText, soundId, videoId, imagenPostalId, generative };
+                })
+                .filter(p => p !== null); // Limpiamos las filas nulas.
 
-            if (allPoems.length === 0) throw new Error("No se encontraron poemas válidos en la base de datos.");
+            if (allPoems.length === 0) throw new Error("No se encontraron poemas válidos. Revisa que todas las filas tengan datos en las columnas TITULO y los tres IDs.");
             
             renderPostals();
 
         } catch (error) {
             console.error('Error al cargar los poemas:', error);
-            postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80;">${error.message}</p>`;
+            postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80; max-width: 500px;"><b>Error:</b> ${error.message}</p>`;
         }
     }
 
-    /**
-     * Crea y muestra las postales en la vista principal.
-     */
     function renderPostals() {
         postalContainer.innerHTML = '';
-        
         allPoems.forEach((poem, index) => {
             const card = document.createElement('div');
             card.className = 'postal-card';
             card.dataset.poemIndex = index;
-
-            // Transforma la imagen al vuelo para optimizarla:
-            // w_400: ancho 400px, c_fill: recorta para llenar, q_auto: calidad automática, f_auto: formato automático
             const postalImageUrl = `${cloudinaryImageBaseUrl}w_400,c_fill,q_auto,f_auto/${poem.imagenPostalId}`;
-
             card.innerHTML = `
                 <div class="card-inner">
                     <div class="card-face card-front">
                         <img src="${postalImageUrl}" alt="Postal para '${poem.title}'" loading="lazy">
                     </div>
-                    <div class="card-face card-back">
-                        <p>${poem.title}</p>
-                    </div>
-                </div>
-            `;
+                    <div class="card-face card-back"><p>${poem.title}</p></div>
+                </div>`;
             postalContainer.appendChild(card);
         });
     }
 
-    /**
-     * Muestra un poema específico, reproduciendo su sonido y video.
-     */
     function displayPoem(poemIndex) {
         currentPoem = allPoems[poemIndex];
         if (!currentPoem) return;
 
         poemTitleEl.textContent = currentPoem.title;
         poemTextDisplayEl.innerHTML = '';
-
-        // El audio también se sirve desde la URL de video en Cloudinary
         audioPlayer.src = `${cloudinaryVideoBaseUrl}${currentPoem.soundId}`;
-        // Optimizaciones de video: calidad y formato automáticos
         backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${currentPoem.videoId}`;
         
         backgroundVideo.load();
@@ -216,71 +194,51 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
     
-    /**
-     * Anima el texto del poema, interpretando los <br> como saltos de línea.
-     */
     function animateText(text) {
-        const lines = text.split('<br>');
+        const lines = (text || "").split('<br>');
         let delay = 300;
-        
         lines.forEach(line => {
             const lineDiv = document.createElement('div');
             const words = line.trim().split(' ');
-            
             words.forEach(word => {
                 if (word === "") return;
                 const wordSpan = document.createElement('span');
-                wordSpan.textContent = word + ' '; // Añade espacio después de cada palabra
+                wordSpan.textContent = word + ' ';
                 lineDiv.appendChild(wordSpan);
-
                 const increment = Math.random() * 80 + 70;
-                
                 setTimeout(() => {
                     wordSpan.style.opacity = '1';
                     wordSpan.style.transform = 'translateY(0)';
                 }, delay);
-
                 delay += increment;
             });
             poemTextDisplayEl.appendChild(lineDiv);
         });
     }
 
-    /**
-     * Cierra la vista del poema y vuelve a la selección de postales.
-     */
     function closePoemView() {
         audioPlayer.pause();
-        audioPlayer.src = ""; // Detiene la descarga
+        audioPlayer.src = "";
         backgroundVideo.pause();
         backgroundVideo.src = "";
         backgroundVideo.classList.remove('is-active');
-
         poemDisplayView.classList.add('is-hidden');
         postalSelectionView.classList.remove('is-hidden');
-        
         currentPoem = null;
     }
     
-    // 3. EVENT LISTENERS
     postalContainer.addEventListener('click', (e) => {
         const card = e.target.closest('.postal-card');
         if (card && !card.classList.contains('is-flipping')) {
             const poemIndex = card.dataset.poemIndex;
             card.classList.add('is-flipping');
-            
-            setTimeout(() => {
-                displayPoem(poemIndex);
-                card.classList.remove('is-flipping');
-            }, 800);
+            setTimeout(() => { displayPoem(poemIndex); card.classList.remove('is-flipping'); }, 800);
         }
     });
 
     closePoemBtn.addEventListener('click', closePoemView);
 
-    // 4. EJECUCIÓN INICIAL
     loadPoemsData();
-
 });
 </script>
 </body>
