@@ -94,8 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const cloudinaryVideoBaseUrl = `https://res.cloudinary.com/${cloudName}/video/upload/`;
     const cloudinaryImageBaseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
     
-    // --- URL DEFINITIVA ---
-    // Esta es la que me proporcionaste. Es la correcta.
     const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
 
     let allPoems = [];
@@ -130,21 +128,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             allPoems = rows
                 .map(row => {
-                    // Si la fila está vacía o solo tiene comas, la ignoramos.
-                    if (!row || row.replace(/,/g, '').trim() === '') {
+                    // Si la fila está totalmente vacía, la ignoramos.
+                    if (!row.trim()) {
                         return null;
                     }
                     const [title, poemText, soundId, videoId, imagenPostalId, generative] = parseCsvRow(row);
-                    // Validamos que los IDs esenciales no estén vacíos.
-                    if (!title || !soundId || !videoId || !imagenPostalId) {
-                        console.warn("Fila con datos incompletos (será descartada):", row);
-                        return null;
-                    }
+                    // Dejamos de validar aquí. Confiamos en los datos.
                     return { title, poemText, soundId, videoId, imagenPostalId, generative };
                 })
-                .filter(p => p !== null); // Limpiamos las filas nulas.
+                .filter(p => p && p.title); // Solo filtramos las filas que queden nulas o no tengan título.
 
-            if (allPoems.length === 0) throw new Error("No se encontraron poemas válidos. Revisa que todas las filas tengan datos en las columnas TITULO y los tres IDs.");
+            if (allPoems.length === 0) throw new Error("No se pudo procesar ninguna fila de la base de datos. Revisa que el formato CSV sea correcto.");
             
             renderPostals();
 
