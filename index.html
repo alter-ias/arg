@@ -18,7 +18,7 @@
             --text-color: #EAEAEA;
             --secondary-text-color: #b3b3b3;
             --accent-color: rgba(255, 255, 255, 0.4);
-            --text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.8);
+            --text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.9); /* Sombra más fuerte */
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { color: var(--text-color); font-family: 'Montserrat', sans-serif; background-color: var(--background-color); overflow: hidden; }
@@ -42,8 +42,27 @@
         #poem-display-view { justify-content: space-between; }
         #poem-content { text-align: center; width: 90%; max-width: 800px; }
         #poem-title { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 700; margin-bottom: 40px; text-shadow: var(--text-shadow); }
-        #poem-text-display { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; line-height: 2; color: var(--secondary-text-color); min-height: 200px; }
-        #poem-text-display span { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; display: inline-block; }
+        #poem-text-display {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            line-height: 2;
+            color: var(--text-color); /* <-- MÁS VISIBLE */
+            text-shadow: var(--text-shadow); /* <-- MÁS VISIBLE */
+            min-height: 200px;
+        }
+
+        /* --- Estilos base para las animaciones de letras --- */
+        #poem-text-display span {
+            display: inline-block;
+            opacity: 0;
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* --- ESTILOS PARA CADA ANIMACIÓN --- */
+        .anim-fade-up span { transform: translateY(30px); }
+        .anim-cascade span { transform: translateY(-30px); }
+        .anim-typewriter span { transform: scale(0.8); }
+
         #close-poem-btn { position: absolute; top: 30px; right: 30px; background: none; border: none; color: var(--text-color); font-size: 2.5rem; cursor: pointer; transition: transform 0.3s ease, opacity 0.3s ease; opacity: 0.7; z-index: 10; }
         #close-poem-btn:hover { transform: scale(1.2); opacity: 1; }
         #audio-player { display: none; }
@@ -172,12 +191,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         poemTitleEl.textContent = currentPoem.title;
         poemTextDisplayEl.innerHTML = '';
-
-        // --- CORRECCIÓN FINAL ---
-        // Se usa la variable correcta "currentPoem" en lugar de "poem"
         audioPlayer.src = `${cloudinaryVideoBaseUrl}${currentPoem.soundId}`;
         backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${currentPoem.videoId}`;
         
+        // --- LÓGICA DE ANIMACIÓN ALEATORIA ---
+        const animations = ['anim-typewriter', 'anim-cascade', 'anim-fade-up'];
+        const chosenAnimation = animations[Math.floor(Math.random() * animations.length)];
+        poemTextDisplayEl.className = chosenAnimation; // Aplicamos la clase de animación al contenedor
+
         backgroundVideo.load();
         postalSelectionView.classList.add('is-hidden');
         poemDisplayView.classList.remove('is-hidden');
@@ -186,32 +207,51 @@ document.addEventListener('DOMContentLoaded', () => {
             backgroundVideo.classList.add('is-active');
             backgroundVideo.play();
             audioPlayer.play().catch(e => console.error("Error de reproducción de audio:", e));
+            // Pasamos el texto del poema a la función de animación
             animateText(currentPoem.poemText);
             backgroundVideo.oncanplaythrough = null;
         };
     }
     
+    // --- FUNCIÓN DE ANIMACIÓN MEJORADA ---
     function animateText(text) {
-        const lines = (text || "").split('<br>');
-        let delay = 300;
-        lines.forEach(line => {
-            const lineDiv = document.createElement('div');
-            const words = line.trim().split(' ');
-            words.forEach(word => {
-                if (word === "") return;
-                const wordSpan = document.createElement('span');
-                wordSpan.textContent = word + ' ';
-                lineDiv.appendChild(wordSpan);
-                const increment = Math.random() * 80 + 70;
-                setTimeout(() => {
-                    wordSpan.style.opacity = '1';
-                    wordSpan.style.transform = 'translateY(0)';
-                }, delay);
-                delay += increment;
-            });
-            poemTextDisplayEl.appendChild(lineDiv);
+        const textToAnimate = text || "";
+        poemTextDisplayEl.innerHTML = ''; // Limpiamos por si acaso
+        let delay = 0;
+
+        // Dividimos el poema en caracteres para la animación
+        textToAnimate.split('').forEach(char => {
+            if (char === '<') { // Manejo especial para la etiqueta <br>
+                 poemTextDisplayEl.innerHTML += '<br>';
+                 return;
+            }
+            if (char === 'b' && poemTextDisplayEl.innerHTML.slice(-4) === '<br>') return;
+            if (char === 'r' && poemTextDisplayEl.innerHTML.slice(-5) === '<br>b') return;
+            if (char === '>') {
+                 // Si es el final de <br>, ya lo hemos procesado, así que lo ignoramos
+                 if (poemTextDisplayEl.innerHTML.slice(-6) === '<br>b<') return;
+                 if (poemTextDisplayEl.innerHTML.slice(-2) === '<r') return; //Corrección de error de <br>
+            }
+
+            const span = document.createElement('span');
+            span.textContent = char;
+
+            // Para que los espacios no se colapsen
+            if (char === ' ') {
+                span.style.paddingRight = '0.5em';
+            }
+
+            poemTextDisplayEl.appendChild(span);
+
+            setTimeout(() => {
+                span.style.opacity = '1';
+                span.style.transform = 'none';
+            }, delay);
+
+            delay += 25; // Aumentamos el retardo para cada letra
         });
     }
+
 
     function closePoemView() {
         audioPlayer.pause();
