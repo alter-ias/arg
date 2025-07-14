@@ -52,12 +52,22 @@
         .card-front img { width: 100%; height: 100%; object-fit: cover; }
         .card-back { background-color: #1a1a1a; transform: rotateY(180deg); display: flex; align-items: center; justify-content: center; text-align: center; padding: 15px; font-size: 1.2rem; }
         #poem-display-view { justify-content: space-between; touch-action: none; position: fixed; }
-        #poem-content { text-align: center; width: 90%; max-width: 800px; }
-        #poem-title { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 700; margin-bottom: 40px; text-shadow: var(--text-shadow); }
-        #poem-text-display { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; line-height: 2; color: var(--text-color); text-shadow: var(--text-shadow); min-height: 200px; text-align: center; }
+        #poem-content { text-align: center; width: 90%; max-width: 800px; display: flex; flex-direction: column; align-items: center; }
+        #poem-title { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 700; margin-bottom: 20px; text-shadow: var(--text-shadow); flex-shrink: 0; }
+        #poem-text-display {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            line-height: 2;
+            color: var(--text-color);
+            text-shadow: var(--text-shadow);
+            text-align: center;
+            max-height: 60vh; /* <-- ALTURA MÁXIMA PARA EL POEMA */
+            overflow-y: auto; /* <-- SCROLL SI EL CONTENIDO ES MÁS GRANDE */
+            padding-right: 15px; /* Espacio para la barra de scroll */
+        }
         
-        .word-wrapper { display: inline-block; }
-        .char-span { display: inline-block; opacity: 0; transition: opacity 0.5s; transition-delay: var(--delay); }
+        .word-wrapper, .char-span { display: inline-block; opacity: 0; }
+        .is-animating .word-wrapper, .is-animating .char-span { opacity: 1; transition: opacity 0.6s ease; transition-delay: var(--delay); }
         
         .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid var(--accent-color); border-right-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -68,7 +78,7 @@
             .postal-card { width: calc(50% - 15px); height: auto; aspect-ratio: 2 / 3; }
             #postal-container { gap: 20px; }
             #poem-title { font-size: 2rem; margin-bottom: 20px; }
-            #poem-text-display { font-size: 1.2rem; }
+            #poem-text-display { font-size: 1.2rem; max-height: 70vh; }
         }
     </style>
 </head>
@@ -105,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isPoemViewOpen = false;
     let lastAnimation = '';
     let touchStartX = 0;
-    let animationFrameId;
+    let animationSessionId = 0;
 
     const parseCsvRow = (row) => {
         const result = []; let field = ''; let inQuotes = false;
@@ -163,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPoemIndex = poemIndex;
         const currentPoem = allPoems[currentPoemIndex];
         
-        cancelAnimationFrame(animationFrameId);
+        animationSessionId = Date.now();
         poemTextDisplayEl.innerHTML = '';
         poemTitleEl.textContent = currentPoem.title;
         
@@ -188,18 +198,18 @@ document.addEventListener('DOMContentLoaded', () => {
             backgroundVideo.classList.add('is-active');
             backgroundVideo.play();
             audioPlayer.play().catch(e => {});
-            animateText(currentPoem.poemText, chosenAnimation);
+            animateText(currentPoem.poemText, chosenAnimation, animationSessionId);
             backgroundVideo.oncanplaythrough = null;
         };
     }
     
-    function animateText(text, animationType) {
+    function animateText(text, animationType, sessionId) {
         const textToAnimate = text || "";
         poemTextDisplayEl.innerHTML = '';
         const words = textToAnimate.replace(/<br>/g, ' <br> ').split(' ');
         
         let elementsToAnimate = [];
-
+        
         words.forEach(word => {
             if (word === '<br>') {
                 poemTextDisplayEl.appendChild(document.createElement('br'));
@@ -216,10 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 
                 poemTextDisplayEl.appendChild(wordWrapper);
-                // --- ¡LA SOLUCIÓN! ---
-                // Añadimos un nodo de texto con un espacio después de cada palabra.
-                poemTextDisplayEl.appendChild(document.createTextNode(' ')); 
-
+                poemTextDisplayEl.appendChild(document.createTextNode('\u00A0')); // Espacio de no ruptura
                 if (animationType === 'anim-burst-in') elementsToAnimate.push(wordWrapper);
             }
         });
@@ -229,18 +236,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (animationType === 'anim-reverse-in') indices.reverse();
         
         indices.forEach((index, i) => {
+             // Verificamos la sesión antes de asignar el timeout
+            if (sessionId !== animationSessionId) return;
+            
             const delay = (animationType === 'anim-burst-in') ? (Math.random() * 800) : (i * 35);
-            elementsToAnimate[index].style.setProperty('--delay', `${delay}ms`);
-        });
-        
-        animationFrameId = requestAnimationFrame(() => {
-            poemTextDisplayEl.classList.add('is-animating');
+            setTimeout(() => {
+                // Verificamos la sesión OTRA VEZ antes de animar
+                if (sessionId === animationSessionId) {
+                    elementsToAnimate[index].classList.add('is-animating');
+                }
+            }, delay);
         });
     }
 
     function closePoemView() {
         if (!isPoemViewOpen) return;
-        poemTextDisplayEl.classList.remove('is-animating');
+        animationSessionId = null; // Anula cualquier animación en curso
+        poemTextDisplayEl.innerHTML = ''; // Limpieza inmediata
         audioPlayer.pause(); audioPlayer.src = "";
         backgroundVideo.pause(); backgroundVideo.src = "";
         backgroundVideo.classList.remove('is-active');
