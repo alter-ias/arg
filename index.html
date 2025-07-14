@@ -31,7 +31,18 @@
         #postal-selection-view .logo { height: 60px; width: auto; margin-bottom: 15px; }
         #postal-selection-view .title { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 700; letter-spacing: 3px; text-shadow: var(--text-shadow); }
         #postal-selection-view .subtitle { font-size: 1rem; color: var(--secondary-text-color); font-weight: 400; margin-top: 10px; max-width: 500px; line-height: 1.5; }
-        #postal-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; perspective: 1000px; }
+        
+        /* --- NUEVO LAYOUT CON CSS GRID --- */
+        #postal-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Crea columnas flexibles */
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+            justify-items: center; /* Centra las cartas en sus celdas */
+            perspective: 1000px;
+        }
+
         .postal-card { width: 200px; height: 300px; cursor: pointer; transition: transform 0.5s ease, box-shadow 0.5s ease; transform-style: preserve-3d; }
         .postal-card:hover { transform: translateY(-10px) scale(1.05); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
         .postal-card .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
@@ -49,20 +60,10 @@
             color: var(--text-color);
             text-shadow: var(--text-shadow);
             min-height: 200px;
-            text-align: center; /* <-- CENTRA EL TEXTO */
+            text-align: center;
         }
-
-        .word-wrapper {
-            display: inline-block; /* <-- MANTIENE LAS PALABRAS JUNTAS */
-            white-space: nowrap; /* Evita que la palabra se rompa internamente */
-        }
-        
-        .char-span {
-            display: inline-block;
-            opacity: 0;
-            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
+        .word-wrapper { display: inline-block; white-space: nowrap; }
+        .char-span { display: inline-block; opacity: 0; transform-origin: center center; transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .anim-fade-up .char-span { transform: translateY(30px); }
         .anim-cascade .char-span { transform: translateY(-30px); }
         .anim-typewriter .char-span { transform: scale(0.8); }
@@ -73,6 +74,22 @@
         .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid var(--accent-color); border-right-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-message { font-style: italic; color: var(--secondary-text-color); margin-top: 20px; }
+
+        /* --- MEDIA QUERIES PARA RESPONSIVIDAD --- */
+        @media (max-width: 768px) {
+            #postal-selection-view .header { margin-bottom: 20px; }
+            #postal-selection-view .title { font-size: 2rem; }
+            #postal-selection-view .subtitle { font-size: 0.9rem; }
+            #postal-container {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); /* Dos columnas en móvil */
+                gap: 20px;
+            }
+            .postal-card { width: 130px; height: 195px; }
+            #poem-title { font-size: 2rem; margin-bottom: 20px; }
+            #poem-text-display { font-size: 1.2rem; }
+            #close-poem-btn { font-size: 2rem; top: 20px; right: 20px; }
+        }
+
     </style>
 </head>
 <body>
@@ -116,11 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const cloudName = 'dy9cywux2'; 
     const cloudinaryVideoBaseUrl = `https://res.cloudinary.com/${cloudName}/video/upload/`;
     const cloudinaryImageBaseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
-    
     const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
 
     let allPoems = [];
     let currentPoem = null;
+    let lastAnimation = ''; // <-- GUARDA LA ÚLTIMA ANIMACIÓN USADA
 
     const parseCsvRow = (row) => {
         const result = [];
@@ -167,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (allPoems.length === 0) throw new Error("No se pudo procesar ninguna fila válida.");
             
-            shuffleArray(allPoems); // <-- BARAJA LAS CARTAS
+            shuffleArray(allPoems);
             renderPostals();
 
         } catch (error) {
@@ -199,9 +216,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentPoem) return;
 
         poemTitleEl.textContent = currentPoem.title;
+        
         const animations = ['anim-typewriter', 'anim-cascade', 'anim-fade-up'];
-        const chosenAnimation = animations[Math.floor(Math.random() * animations.length)];
-        poemTextDisplayEl.className = ''; // Limpiar clases anteriores
+        let chosenAnimation;
+        // --- LÓGICA PARA EVITAR REPETIR ANIMACIÓN ---
+        do {
+            chosenAnimation = animations[Math.floor(Math.random() * animations.length)];
+        } while (chosenAnimation === lastAnimation);
+        lastAnimation = chosenAnimation; // Actualizamos la última usada
+        
+        poemTextDisplayEl.className = '';
         poemTextDisplayEl.classList.add(chosenAnimation);
 
         audioPlayer.src = `${cloudinaryVideoBaseUrl}${currentPoem.soundId}`;
@@ -225,7 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
         poemTextDisplayEl.innerHTML = '';
         let delay = 0;
 
-        // Dividimos por saltos de línea y luego por palabras
         textToAnimate.split('<br>').forEach((line, lineIndex) => {
             if (lineIndex > 0) {
                 poemTextDisplayEl.appendChild(document.createElement('br'));
@@ -242,13 +265,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     setTimeout(() => {
                         charSpan.style.opacity = '1';
-                        // FIX: La transformación es controlada por CSS, no por JS
+                        charSpan.style.transform = 'none'; // <-- CORRECCIÓN IMPORTANTE
                     }, delay);
-                    delay += 25;
+                    delay += 30; // Un poco más lento para que se lea mejor
                 });
-
                 poemTextDisplayEl.appendChild(wordWrapper);
-                // Añadir un espacio después de cada palabra para que no se peguen
                 poemTextDisplayEl.appendChild(document.createTextNode(' '));
             });
         });
