@@ -47,6 +47,12 @@
         .postal-card { width: 200px; height: 300px; cursor: pointer; transition: transform 0.5s ease, box-shadow 0.5s ease; transform-style: preserve-3d; }
         .postal-card:hover { transform: translateY(-10px) scale(1.05); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
         .postal-card .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
+        
+        /* CAMBIO: Se voltea la tarjeta al pasar el cursor por encima */
+        .postal-card:hover .card-inner {
+            transform: rotateY(180deg);
+        }
+        
         .postal-card.is-flipping .card-inner { transform: rotateY(180deg); }
         .card-face { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
         .card-front img { width: 100%; height: 100%; object-fit: cover; }
@@ -216,7 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPoemIndex = poemIndex;
         const currentPoem = allPoems[currentPoemIndex];
         
-        // CAMBIO: Resetea la posición del scroll del contenedor del poema al inicio.
         poemTextDisplayEl.scrollTop = 0;
         
         animationSessionId = Date.now();
@@ -309,12 +314,22 @@ document.addEventListener('DOMContentLoaded', () => {
     function playNextPoem() { displayPoem((currentPoemIndex + 1) % allPoems.length); }
     function playPrevPoem() { displayPoem((currentPoemIndex - 1 + allPoems.length) % allPoems.length); }
     
+    // CAMBIO: Se simplifica el evento de clic.
     postalContainer.addEventListener('click', (e) => {
         const card = e.target.closest('.postal-card');
-        if (card && !card.classList.contains('is-flipping')) {
+        // Se asegura de que no se pueda hacer clic varias veces mientras la transición está en curso.
+        if (card && !card.classList.contains('is-flipping')) { 
             const poemIndex = parseInt(card.dataset.poemIndex, 10);
-            card.classList.add('is-flipping');
-            setTimeout(() => { displayPoem(poemIndex); card.classList.remove('is-flipping'); }, 800);
+            
+            // Agregamos la clase 'is-flipping' para "bloquear" la tarjeta en estado volteado
+            // durante la transición, evitando que se voltee si el cursor se mueve.
+            card.classList.add('is-flipping'); 
+            
+            // Después del tiempo de la animación, mostramos el poema y desbloqueamos la tarjeta.
+            setTimeout(() => { 
+                displayPoem(poemIndex); 
+                card.classList.remove('is-flipping'); 
+            }, 800);
         }
     });
 
