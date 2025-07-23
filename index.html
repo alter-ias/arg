@@ -126,19 +126,59 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchStartX = 0;
     let animationSessionId = 0;
 
-    const parseCsvRow = (row) => {
-        const result = []; let field = ''; let inQuotes = false;
-        for (let i = 0; i < row.length; i++) {
-            const char = row[i];
-            if (char === '"') {
-                if (inQuotes && row[i+1] === '"') { field += '"'; i++; } 
-                else { inQuotes = !inQuotes; }
-            } else if (char === ',' && !inQuotes) { result.push(field); field = ''; } 
-            else { field += char; }
+    // CAMBIO: Nueva función de parsing de CSV que maneja saltos de línea en celdas.
+    const parseCSV = (csvText) => {
+        const rows = [];
+        let currentRow = [];
+        let field = '';
+        let inQuotes = false;
+
+        // Normalizamos los saltos de línea a \n
+        csvText = csvText.replace(/\r\n/g, '\n');
+
+        for (let i = 0; i < csvText.length; i++) {
+            const char = csvText[i];
+
+            if (inQuotes) {
+                if (char === '"') {
+                    // Si el siguiente carácter también es una comilla, es una comilla escapada ("")
+                    if (i + 1 < csvText.length && csvText[i + 1] === '"') {
+                        field += '"';
+                        i++; // Saltamos la siguiente comilla
+                    } else {
+                        // Fin del campo entrecomillado
+                        inQuotes = false;
+                    }
+                } else {
+                    field += char;
+                }
+            } else {
+                if (char === '"') {
+                    inQuotes = true;
+                } else if (char === ',') {
+                    currentRow.push(field);
+                    field = '';
+                } else if (char === '\n') {
+                    currentRow.push(field);
+                    if (currentRow.length > 1 || (currentRow.length === 1 && currentRow[0].trim() !== '')) {
+                       rows.push(currentRow);
+                    }
+                    currentRow = [];
+                    field = '';
+                } else {
+                    field += char;
+                }
+            }
         }
-        result.push(field);
-        return result.map(f => f.startsWith('"') && f.endsWith('"') ? f.slice(1, -1).replace(/""/g, '"') : f);
+        // Añadir la última fila si el archivo no termina con un salto de línea
+        if (field || currentRow.length > 0) {
+             currentRow.push(field);
+             rows.push(currentRow);
+        }
+
+        return rows;
     };
+
 
     const shuffleArray = (array) => {
         for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; }
@@ -148,16 +188,29 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`${googleSheetCsvUrl}&_=${new Date().getTime()}`);
             if (!response.ok) throw new Error("No se pudo conectar a la base de datos.");
+            
             const csvText = await response.text();
             if (!csvText) throw new Error("La base de datos está vacía.");
-            const rows = csvText.trim().split(/\r?\n/).slice(1);
-            allPoems = rows.map(row => {
-                if (!row.trim()) return null;
-                const parsedRow = parseCsvRow(row);
-                const [title, poemText, soundId, videoId, imagenPostalId, generative] = parsedRow.map(field => field.trim());
+            
+            // CAMBIO: Usamos la nueva función de parsing y eliminamos la antigua lógica.
+            const parsedData = parseCSV(csvText);
+            
+            // La primera fila son los encabezados, la quitamos.
+            const dataRows = parsedData.slice(1);
+
+            allPoems = dataRows.map(row => {
+                if (row.length < 5) return null; // Asegurarse de que la fila tiene suficientes columnas
+                
+                // La fila ya está parseada en un array.
+                const [title, poemText, soundId, videoId, imagenPostalId, generative] = row.map(field => field.trim());
+
+                // CAMBIO: El poema ahora puede tener saltos de línea, los convertimos a <br> para HTML.
+                const formattedPoemText = poemText.replace(/\n/g, '<br>');
+
                 if (!title || !soundId || !videoId || !imagenPostalId) { return null; }
-                return { title, poemText, soundId, videoId, imagenPostalId, generative };
+                return { title, poemText: formattedPoemText, soundId, videoId, imagenPostalId, generative };
             }).filter(p => p !== null);
+
             if (allPoems.length === 0) throw new Error("No se pudo procesar ninguna fila válida.");
             shuffleArray(allPoems);
             renderPostals();
@@ -217,6 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         poemTextDisplayEl.innerHTML = ''; // Limpieza para robustez
         poemTextDisplayEl.classList.remove('is-animating');
         
+        // CAMBIO: Ahora el texto del poema ya viene con <br>, así que el split funciona correctamente.
         const words = textToAnimate.replace(/<br>/g, ' <br> ').split(' ');
         let elementsToAnimate = [];
 
