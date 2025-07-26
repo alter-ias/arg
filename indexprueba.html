@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lotería Tapatía</title>
+    
+    <link rel="icon" type="image/png" href="./assets/img/logo01.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --background-color: #0A0A0A;
+            --text-color: #EAEAEA;
+            --secondary-text-color: #b3b3b3;
+            --text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.9);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { height: 100%; scroll-behavior: smooth; }
+        body { color: var(--text-color); font-family: 'Montserrat', sans-serif; background-color: var(--background-color); min-height: 100%; overflow-y: auto; }
+        
+        #background-video { position: fixed; top: 50%; left: 50%; width: 100vw; height: 100vh; min-width: 100%; min-height: 100%; z-index: -1; transform: translateX(-50%) translateY(-50%); object-fit: cover; filter: brightness(0.4); transition: opacity 1s ease-in-out; opacity: 0; }
+        #background-video.is-active { opacity: 1; }
+
+        .page-wrapper { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 2; }
+        .view-container { width: 100%; min-height: 100vh; position: absolute; top: 0; left: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; opacity: 1; visibility: visible; transition: opacity 0.7s ease-in-out, visibility 0.7s ease-in-out; }
+        #postal-selection-view { position: relative; }
+        .view-container.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        #postal-selection-view .header { text-align: center; margin: 40px 0; }
+        #postal-selection-view .logo { height: 60px; width: auto; margin-bottom: 15px; }
+        #postal-selection-view .title { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 700; letter-spacing: 3px; text-shadow: var(--text-shadow); }
+        #postal-selection-view .subtitle { font-size: 1rem; color: var(--secondary-text-color); font-weight: 400; margin-top: 10px; max-width: 500px; line-height: 1.5; }
+        
+        #tabla-wrapper { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 940px; position: relative; }
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(30, 30, 30, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: background-color 0.3s, transform 0.3s, opacity 0.3s;
+        }
+        .nav-arrow:hover { background-color: rgba(50, 50, 50, 0.9); transform: translateY(-50%) scale(1.1); }
+        .nav-arrow.is-hidden { opacity: 0; pointer-events: none; }
+        #prev-tabla { left: -10px; }
+        #next-tabla { right: -10px; }
+        
+        /* 1. Contenedor principal que permite el scroll horizontal */
+        #postal-container {
+            display: flex;
+            flex-wrap: nowrap;
+            width: 100%;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory; /* Activa el "snap" */
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch; /* Mejora la experiencia en iOS */
+        }
+        #postal-container::-webkit-scrollbar { display: none; }
+
+        /* 2. Cada "tabla" de 16 cartas */
+        .tabla-grid {
+            flex: 0 0 100%; /* Cada tabla ocupa el 100% del ancho del contenedor */
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 10px;
+            scroll-snap-align: center; /* Centra la tabla al hacer scroll */
+        }
+
+        .postal-card { width: 100%; aspect-ratio: 2 / 3; cursor: pointer; transition: transform 0.5s ease, box-shadow 0.5s ease; transform-style: preserve-3d; }
+        .postal-card:hover { transform: translateY(-10px) scale(1.05); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
+        .postal-card .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
+        .postal-card.is-flipping .card-inner { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
+        .card-front img { width: 100%; height: 100%; object-fit: cover; }
+        .card-back { background-color: #1a1a1a; transform: rotateY(180deg); display: flex; align-items: center; justify-content: center; text-align: center; padding: 15px; isolation: isolate; }
+        .card-back::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: var(--card-bg-image); background-size: cover; background-position: center; filter: brightness(0.3); z-index: -1; border-radius: 14px; }
+        .card-back p { font-weight: bold; font-size: 1.3rem; color: white; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        
+        #poem-display-view { justify-content: space-between; touch-action: none; position: fixed; background-size: cover; background-position: center center; transition: background-image 0.5s ease-in-out; }
+        #poem-content { text-align: center; width: 90%; max-width: 800px; display: flex; flex-direction: column; background-color: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px; }
+        #poem-title { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 700; margin-bottom: 20px; text-shadow: var(--text-shadow); }
+        #poem-text-display { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; line-height: 1.6; color: var(--text-color); text-shadow: var(--text-shadow); text-align: center; max-height: 60vh; overflow-y: auto; scrollbar-width: none; padding: 0 15px; }
+        #poem-text-display::-webkit-scrollbar { display: none; }
+        #poem-text-display p { margin-bottom: 1.5rem; opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        #poem-text-display p:last-child { margin-bottom: 0; }
+        #poem-text-display.is-visible p { opacity: 1; transform: translateY(0); }
+        
+        .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid var(--text-color); border-right-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #loading-message { font-style: italic; color: var(--secondary-text-color); margin-top: 20px; }
+        
+        @media (max-width: 768px) {
+            #tabla-wrapper { max-width: 100%; padding: 0 5px; }
+            #prev-tabla { left: 5px; }
+            #next-tabla { right: 5px; }
+            .tabla-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } /* 2x2 en móvil */
+            #poem-title { font-size: 2rem; margin-bottom: 20px; }
+            #poem-text-display { font-size: 1.2rem; max-height: 65vh; }
+        }
+    </style>
+</head>
+<body>
+    <audio id="audio-player"></audio>
+    <video autoplay muted loop playsinline id="background-video" src="./assets/vid/fondo01.webm"></video>
+    
+    <div class="page-wrapper">
+        <div id="postal-selection-view" class="view-container">
+            <header class="header">
+                <img src="./assets/img/logo01.png" alt="Lotería Tapatía Logo" class="logo">
+                <h1 class="title">LOTERÍA TAPATÍA</h1>
+                <p class="subtitle">La Lotería Tapatía es un proyecto literario que explora y celebra la identidad de Guadalajara a través de viñetas breves y evocadoras...</p>
+            </header>
+            
+            <div id="tabla-wrapper">
+                <button id="prev-tabla" class="nav-arrow is-hidden"><i class="bi bi-arrow-left-short"></i></button>
+                <main id="postal-container"></main>
+                <button id="next-tabla" class="nav-arrow is-hidden"><i class="bi bi-arrow-right-short"></i></button>
+            </div>
+        </div>
+        
+        <div id="poem-display-view" class="view-container is-hidden">
+            <div id="poem-content">
+                <h2 id="poem-title"></h2>
+                <div id="poem-text-display"></div>
+            </div>
+        </div>
+    </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const postalContainer = document.getElementById('postal-container');
+    const prevTablaBtn = document.getElementById('prev-tabla');
+    const nextTablaBtn = document.getElementById('next-tabla');
+    // ... (otras constantes sin cambios)
+    const postalSelectionView = document.getElementById('postal-selection-view');
+    const poemDisplayView = document.getElementById('poem-display-view');
+    const poemTitleEl = document.getElementById('poem-title');
+    const poemTextDisplayEl = document.getElementById('poem-text-display');
+    const audioPlayer = document.getElementById('audio-player');
+    const backgroundVideo = document.getElementById('background-video');
+
+    const cloudName = 'dahrwkdzd'; 
+    const cloudinaryVideoBaseUrl = `https://res.cloudinary.com/${cloudName}/video/upload/`;
+    const cloudinaryImageBaseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
+    const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
+
+    let allPoems = [];
+    let currentPoemIndex = -1;
+    let isPoemViewOpen = false;
+    let touchStartX = 0;
+    
+    const cardsPerTabla = 16;
+    let totalTablas = 0;
+    const mainBackgroundVideoSrc = './assets/vid/fondo01.webm';
+
+    // ... (funciones parseCSV y shuffleArray sin cambios)
+    const parseCSV = (csvText) => { /* ... */ };
+    const shuffleArray = (array) => { /* ... */ };
+
+    async function loadPoemsData() {
+        postalContainer.innerHTML = `<div class="spinner"></div><p id="loading-message">Construyendo los universos...</p>`;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+        try {
+            const response = await fetch(googleSheetCsvUrl, { cache: 'reload', signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (!response.ok) throw new Error(`Error de red (${response.status})`);
+            
+            const csvText = await response.text();
+            if (!csvText) throw new Error("La base de datos está vacía.");
+            
+            const parsedData = parseCSV(csvText);
+            const dataRows = parsedData.slice(1);
+            allPoems = dataRows.map(row => {
+                if (!row || row.length < 5) return null;
+                const [title, poemText, soundId, videoId, imagenPostalId] = row.map(field => field ? field.trim() : '');
+                if (!title || !poemText || !imagenPostalId) return null; 
+                return { title, poemText, soundId, videoId, imagenPostalId, originalIndex: 0 };
+            }).filter(p => p !== null).map((poem, index) => ({...poem, originalIndex: index })); // Asignar índice original
+
+            if (allPoems.length === 0) throw new Error("No se encontraron cartas válidas.");
+            
+            shuffleArray(allPoems);
+            totalTablas = Math.ceil(allPoems.length / cardsPerTabla);
+            renderAllTablas(); // Nueva función que renderiza todo
+
+        } catch (error) {
+            clearTimeout(timeoutId);
+            let errorMessage = error.message;
+            if (error.name === 'AbortError') { errorMessage = "La conexión tardó demasiado. Intenta recargar."; }
+            console.error('Error al cargar la Lotería:', error);
+            postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80; max-width: 500px;"><b>Error:</b><br>${errorMessage}</p>`;
+        }
+    }
+
+    // 3. Nueva función para renderizar todas las tablas a la vez
+    function renderAllTablas() {
+        postalContainer.innerHTML = ''; // Limpiar el spinner
+
+        for (let i = 0; i < totalTablas; i++) {
+            const tablaGrid = document.createElement('div');
+            tablaGrid.className = 'tabla-grid';
+
+            const startIndex = i * cardsPerTabla;
+            const endIndex = startIndex + cardsPerTabla;
+            const poemsForThisTabla = allPoems.slice(startIndex, endIndex);
+
+            poemsForThisTabla.forEach((poem) => {
+                const card = document.createElement('div');
+                card.className = 'postal-card';
+                // Usar el índice original del poema antes de barajar
+                card.dataset.poemIndex = allPoems.findIndex(p => p.originalIndex === poem.originalIndex);
+                const postalImageUrl = `${cloudinaryImageBaseUrl}w_400,c_fill,q_auto,f_auto/${poem.imagenPostalId}`;
+                card.style.setProperty('--card-bg-image', `url('${postalImageUrl}')`);
+                card.innerHTML = `<div class="card-inner"><div class="card-face card-front"><img src="${postalImageUrl}" alt="Postal para '${poem.title}'" loading="lazy"></div><div class="card-face card-back"><p>${poem.title}</p></div></div>`;
+                tablaGrid.appendChild(card);
+            });
+            postalContainer.appendChild(tablaGrid);
+        }
+        updateArrowVisibility(); // Actualizar flechas al inicio
+    }
+
+    function updateArrowVisibility() {
+        const scrollLeft = postalContainer.scrollLeft;
+        const containerWidth = postalContainer.clientWidth;
+        
+        // Escondemos la flecha izquierda si estamos al principio
+        prevTablaBtn.classList.toggle('is-hidden', scrollLeft < 10);
+        
+        // Escondemos la flecha derecha si hemos llegado al final del scroll
+        const maxScrollLeft = postalContainer.scrollWidth - containerWidth;
+        nextTablaBtn.classList.toggle('is-hidden', scrollLeft >= maxScrollLeft - 10);
+    }
+    
+    // 4. Event listeners para las flechas que ahora hacen scroll
+    nextTablaBtn.addEventListener('click', () => {
+        postalContainer.scrollBy({ left: postalContainer.clientWidth, behavior: 'smooth' });
+    });
+
+    prevTablaBtn.addEventListener('click', () => {
+        postalContainer.scrollBy({ left: -postalContainer.clientWidth, behavior: 'smooth' });
+    });
+
+    // 5. Sincronizar las flechas al hacer scroll con el dedo
+    let scrollTimeout;
+    postalContainer.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(updateArrowVisibility, 150); // Espera a que termine el scroll para actualizar
+    });
+    
+    // --- Resto de funciones (displayPoem, closePoemView, etc.) sin cambios ---
+
+    loadPoemsData();
+});
+</script>
+</body>
+</html>
