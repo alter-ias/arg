@@ -125,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let totalTablas = 0;
     const mainBackgroundVideoSrc = './assets/vid/fondo01.webm';
 
-    // 3. Sistema de estado de cartas persistente
     let flippedCardIndices = new Set();
     const storageKey = 'loteriaTapatia_flippedCards';
 
@@ -140,10 +139,65 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(storageKey, JSON.stringify([...flippedCardIndices]));
     };
     
-    // ... (parseCSV y shuffleArray sin cambios) ...
+    // ----------- INICIO DEL CÓDIGO RESTAURADO -----------
+    const parseCSV = (csvText) => {
+        if (typeof csvText !== 'string') return [];
+        const rows = []; let currentRow = []; let field = ''; let inQuotes = false;
+        csvText = csvText.replace(/\r\n/g, '\n');
+        for (let i = 0; i < csvText.length; i++) {
+            const char = csvText[i];
+            if (inQuotes) {
+                if (char === '"') { if (i + 1 < csvText.length && csvText[i + 1] === '"') { field += '"'; i++; } else { inQuotes = false; } } else { field += char; }
+            } else {
+                if (char === '"') { inQuotes = true; } else if (char === ',') { currentRow.push(field); field = ''; } else if (char === '\n') {
+                    currentRow.push(field); if (currentRow.length > 1 || (currentRow.length === 1 && currentRow[0].trim() !== '')) { rows.push(currentRow); } currentRow = []; field = '';
+                } else { field += char; }
+            }
+        }
+        if (field || currentRow.length > 0) { currentRow.push(field); rows.push(currentRow); }
+        return rows;
+    };
+
+    const shuffleArray = (array) => {
+        for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; }
+    };
+    // ----------- FIN DEL CÓDIGO RESTAURADO -----------
 
     async function loadPoemsData() {
-        // ... (código de carga y manejo de errores sin cambios) ...
+        postalContainer.innerHTML = `<div class="spinner"></div><p id="loading-message">Construyendo los universos...</p>`;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+        try {
+            const response = await fetch(googleSheetCsvUrl, { cache: 'reload', signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (!response.ok) throw new Error(`Error de red (${response.status})`);
+            
+            const csvText = await response.text();
+            const parsedData = parseCSV(csvText); // Ahora esta función existe y no fallará
+            if (!parsedData || parsedData.length < 2) { throw new Error("La base de datos está vacía o tiene formato incorrecto."); }
+
+            const dataRows = parsedData.slice(1);
+            allPoems = dataRows.map((row, originalIndex) => {
+                if (!row || row.length < 5) return null;
+                const [title, poemText, soundId, videoId, imagenPostalId] = row.map(field => field ? field.trim() : '');
+                if (!title || !poemText || !imagenPostalId) return null; 
+                return { title, poemText, soundId, videoId, imagenPostalId, originalIndex };
+            }).filter(p => p !== null);
+
+            if (allPoems.length === 0) throw new Error("No se encontraron cartas válidas en la base de datos.");
+            
+            shuffleArray(allPoems);
+            totalTablas = Math.ceil(allPoems.length / cardsPerTabla);
+            renderTabla();
+
+        } catch (error) {
+            clearTimeout(timeoutId);
+            let errorMessage = error.message;
+            if (error.name === 'AbortError') { errorMessage = "La conexión tardó demasiado. Intenta recargar la página."; }
+            console.error('Error al cargar la Lotería:', error);
+            postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80; max-width: 500px;"><b>Error:</b><br>${errorMessage}</p>`;
+        }
     }
 
     function renderTabla() {
@@ -157,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'postal-card';
             card.dataset.poemIndex = poem.originalIndex;
             
-            // 2. Al renderizar, aplicar el estado guardado
             if (flippedCardIndices.has(poem.originalIndex)) {
                 card.classList.add('is-flipping');
             }
@@ -176,56 +229,114 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function displayPoem(poemIndex) {
-        // ... (sin cambios) ...
+        const currentPoem = allPoems.find(p => p.originalIndex === poemIndex);
+        if (!currentPoem) return;
+        currentPoemIndex = allPoems.indexOf(currentPoem);
+
+        poemTextDisplayEl.scrollTop = 0;
+        poemTitleEl.textContent = currentPoem.title;
+        poemTextDisplayEl.innerHTML = '';
+        poemTextDisplayEl.classList.remove('is-visible');
+        
+        const paragraphs = (currentPoem.poemText || '').split(/\n/g).filter(p => p.trim() !== '');
+        paragraphs.forEach(pText => {
+            const p = document.createElement('p');
+            p.textContent = pText;
+            poemTextDisplayEl.appendChild(p);
+        });
+
+        const triggerTextAnimation = () => {
+            const pElements = poemTextDisplayEl.querySelectorAll('p');
+            pElements.forEach((p, index) => { p.style.transitionDelay = `${index * 150}ms`; });
+            poemTextDisplayEl.classList.add('is-visible');
+        };
+
+        if (!isPoemViewOpen) {
+            history.pushState({ poem: currentPoem.title }, "");
+            postalSelectionView.classList.add('is-hidden');
+            poemDisplayView.classList.remove('is-hidden');
+            document.body.style.overflow = 'hidden';
+            isPoemViewOpen = true;
+        }
+
+        if (currentPoem.soundId) {
+            audioPlayer.src = `${cloudinaryVideoBaseUrl}${currentPoem.soundId}`;
+            audioPlayer.loop = true;
+            audioPlayer.play().catch(e => console.error("Error al reproducir audio:", e));
+        }
+
+        poemDisplayView.style.backgroundImage = 'none';
+        backgroundVideo.style.display = 'none';
+
+        if (currentPoem.videoId) {
+            backgroundVideo.style.display = 'block';
+            backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${currentPoem.videoId}`;
+            backgroundVideo.load();
+            backgroundVideo.oncanplaythrough = () => {
+                backgroundVideo.play();
+                triggerTextAnimation();
+                backgroundVideo.oncanplaythrough = null;
+            };
+        } else {
+            const imageUrl = `${cloudinaryImageBaseUrl}q_auto,f_auto/${currentPoem.imagenPostalId}`;
+            poemDisplayView.style.backgroundImage = `url('${imageUrl}')`;
+            setTimeout(triggerTextAnimation, 100);
+        }
     }
     
     function closePoemView() {
-        // ... (sin cambios) ...
+        if (!isPoemViewOpen) return;
+        audioPlayer.pause();
+        audioPlayer.src = '';
+        backgroundVideo.pause();
+        backgroundVideo.style.display = 'block';
+        poemDisplayView.style.backgroundImage = 'none';
+        if (backgroundVideo.src !== mainBackgroundVideoSrc) {
+            backgroundVideo.src = mainBackgroundVideoSrc;
+            backgroundVideo.play().catch(()=>{});
+        }
+        poemDisplayView.classList.add('is-hidden');
+        postalSelectionView.classList.remove('is-hidden');
+        document.body.style.overflow = 'auto';
+        isPoemViewOpen = false;
+        currentPoemIndex = -1;
     }
 
-    function playNextPoem() { /* ... sin cambios ... */ }
-    function playPrevPoem() { /* ... sin cambios ... */ }
+    function playNextPoem() { displayPoem(allPoems[(currentPoemIndex + 1) % allPoems.length].originalIndex); }
+    function playPrevPoem() { displayPoem(allPoems[(currentPoemIndex - 1 + allPoems.length) % allPoems.length].originalIndex); }
 
-    // --- Event Listeners con la nueva lógica ---
-    
     nextTablaBtn.addEventListener('click', () => { if (currentTabla < totalTablas - 1) { currentTabla++; renderTabla(); } });
     prevTablaBtn.addEventListener('click', () => { if (currentTabla > 0) { currentTabla--; renderTabla(); } });
     
     postalContainer.addEventListener('click', (e) => {
         const card = e.target.closest('.postal-card');
         if (!card || isPoemViewOpen) return;
-
         const poemIndex = parseInt(card.dataset.poemIndex, 10);
         
-        // 4. Lógica de voltear y des-voltear la carta
         if (card.classList.contains('is-flipping')) {
-            // La carta ya está volteada, la devolvemos a su estado original
             card.classList.remove('is-flipping');
             flippedCardIndices.delete(poemIndex);
             saveFlippedState();
         } else {
-            // La carta está de frente, la volteamos y mostramos el poema
             card.classList.add('is-flipping');
             flippedCardIndices.add(poemIndex);
             saveFlippedState();
             
-            // 1. Aumentar el tiempo de espera antes de mostrar el poema
             setTimeout(() => {
                 displayPoem(poemIndex);
-            }, 1500); // 1.5 segundos
+            }, 1500);
         }
     });
 
     window.addEventListener('popstate', (e) => { if(isPoemViewOpen) { closePoemView(); } });
-    document.addEventListener('keydown', (e) => { /* ... sin cambios ... */ });
+    document.addEventListener('keydown', (e) => { if (!isPoemViewOpen) return; if (e.key === 'Escape') { history.back(); } if (e.key === 'ArrowRight') { playNextPoem(); } if (e.key === 'ArrowLeft') { playPrevPoem(); } });
     let touchStartX = 0;
     poemDisplayView.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-    poemDisplayView.addEventListener('touchend', (e) => { /* ... sin cambios ... */ });
+    poemDisplayView.addEventListener('touchend', (e) => { const touchEndX = e.changedTouches[0].screenX; const swipeDistance = touchEndX - touchStartX; if (swipeDistance > 50) playPrevPoem(); else if (swipeDistance < -50) playNextPoem(); });
     
     backgroundVideo.oncanplaythrough = () => { backgroundVideo.classList.add('is-active'); backgroundVideo.oncanplaythrough = null; };
     
-    // --- Iniciar la aplicación ---
-    loadFlippedState(); // Cargar estado guardado al iniciar
+    loadFlippedState();
     loadPoemsData();
 });
 </script>
