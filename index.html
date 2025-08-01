@@ -111,9 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevTablaBtn = document.getElementById('prev-tabla');
     const nextTablaBtn = document.getElementById('next-tabla');
 
-    const cloudName = 'dahrwkdzd'; 
-    const cloudinaryVideoBaseUrl = `https://res.cloudinary.com/${cloudName}/video/upload/`;
-    const cloudinaryImageBaseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
+    // <-- CAMBIO AQUÍ: Eliminamos las variables de URL base. Ya no son necesarias.
+    // const cloudName = 'dahrwkdzd'; 
+    // const cloudinaryVideoBaseUrl = `https://res.cloudinary.com/${cloudName}/video/upload/`;
+    // const cloudinaryImageBaseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
     const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
 
     let allPoems = [];
@@ -139,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(storageKey, JSON.stringify([...flippedCardIndices]));
     };
     
-    // ----------- INICIO DEL CÓDIGO RESTAURADO -----------
     const parseCSV = (csvText) => {
         if (typeof csvText !== 'string') return [];
         const rows = []; let currentRow = []; let field = ''; let inQuotes = false;
@@ -161,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const shuffleArray = (array) => {
         for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; }
     };
-    // ----------- FIN DEL CÓDIGO RESTAURADO -----------
 
     async function loadPoemsData() {
         postalContainer.innerHTML = `<div class="spinner"></div><p id="loading-message">Construyendo los universos...</p>`;
@@ -174,15 +173,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(`Error de red (${response.status})`);
             
             const csvText = await response.text();
-            const parsedData = parseCSV(csvText); // Ahora esta función existe y no fallará
+            const parsedData = parseCSV(csvText);
             if (!parsedData || parsedData.length < 2) { throw new Error("La base de datos está vacía o tiene formato incorrecto."); }
 
             const dataRows = parsedData.slice(1);
+            // <-- CAMBIO AQUÍ: Los nombres de las variables ahora reflejan que son URLs completas
             allPoems = dataRows.map((row, originalIndex) => {
                 if (!row || row.length < 5) return null;
-                const [title, poemText, soundId, videoId, imagenPostalId] = row.map(field => field ? field.trim() : '');
-                if (!title || !poemText || !imagenPostalId) return null; 
-                return { title, poemText, soundId, videoId, imagenPostalId, originalIndex };
+                const [title, poemText, soundUrl, videoUrl, imageUrl] = row.map(field => field ? field.trim() : '');
+                if (!title || !poemText || !imageUrl) return null; 
+                return { title, poemText, soundUrl, videoUrl, imageUrl, originalIndex };
             }).filter(p => p !== null);
 
             if (allPoems.length === 0) throw new Error("No se encontraron cartas válidas en la base de datos.");
@@ -214,8 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (flippedCardIndices.has(poem.originalIndex)) {
                 card.classList.add('is-flipping');
             }
-
-            const postalImageUrl = `${cloudinaryImageBaseUrl}w_400,c_fill,q_auto,f_auto/${poem.imagenPostalId}`;
+            
+            // <-- CAMBIO AQUÍ: Usamos directamente la URL de la imagen que viene de la hoja.
+            const postalImageUrl = poem.imageUrl; 
             card.style.setProperty('--card-bg-image', `url('${postalImageUrl}')`);
             card.innerHTML = `<div class="card-inner"><div class="card-face card-front"><img src="${postalImageUrl}" alt="Postal para '${poem.title}'" loading="lazy"></div><div class="card-face card-back"><p>${poem.title}</p></div></div>`;
             postalContainer.appendChild(card);
@@ -259,8 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
             isPoemViewOpen = true;
         }
 
-        if (currentPoem.soundId) {
-            audioPlayer.src = `${cloudinaryVideoBaseUrl}${currentPoem.soundId}`;
+        if (currentPoem.soundUrl) { // <-- CAMBIO AQUÍ: Usamos la URL directamente.
+            audioPlayer.src = currentPoem.soundUrl;
             audioPlayer.loop = true;
             audioPlayer.play().catch(e => console.error("Error al reproducir audio:", e));
         }
@@ -268,17 +269,17 @@ document.addEventListener('DOMContentLoaded', () => {
         poemDisplayView.style.backgroundImage = 'none';
         backgroundVideo.style.display = 'none';
 
-        if (currentPoem.videoId) {
+        if (currentPoem.videoUrl) { // <-- CAMBIO AQUÍ: Usamos la URL directamente.
             backgroundVideo.style.display = 'block';
-            backgroundVideo.src = `${cloudinaryVideoBaseUrl}q_auto,f_auto/${currentPoem.videoId}`;
+            backgroundVideo.src = currentPoem.videoUrl;
             backgroundVideo.load();
             backgroundVideo.oncanplaythrough = () => {
                 backgroundVideo.play();
                 triggerTextAnimation();
                 backgroundVideo.oncanplaythrough = null;
             };
-        } else {
-            const imageUrl = `${cloudinaryImageBaseUrl}q_auto,f_auto/${currentPoem.imagenPostalId}`;
+        } else { // <-- CAMBIO AQUÍ: Usamos la URL de la imagen directamente.
+            const imageUrl = currentPoem.imageUrl;
             poemDisplayView.style.backgroundImage = `url('${imageUrl}')`;
             setTimeout(triggerTextAnimation, 100);
         }
