@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Semanal de ARG - Edición Especial</title>
+    <!-- Google Fonts: Importamos las fuentes con sus variantes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display+SC:wght@400;700;900&family=Special+Elite&display=swap" rel="stylesheet">
+    
+    <style>
+        /* BASE: El lienzo del periódico */
+        body {
+            font-family: 'Libre Baskerville', serif; /* Una serif clásica y legible como base */
+            background-color: #d8d0c0; /* Fondo más oscuro para contrastar con el "papel" */
+            color: #1a1a1a; /* Color de la tinta */
+            margin: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding: 3rem; /* Margen amplio alrededor de la "página" */
+            
+            /* Sutil textura de ruido para el fondo */
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKkFgAAAADklEQVQIHWNgGPbg+A8AB0MABsM/p/cAAAAASUVORK5CYII=');
+            background-repeat: repeat;
+            background-size: 3px 3px;
+            
+            /* Efecto de grano para el fondo */
+            box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Contenedor principal: La "hoja de periódico" */
+        .page-wrapper {
+            max-width: 1000px; /* Ancho de la hoja de periódico */
+            margin: 0 auto;
+            background-color: #fcf6e8; /* Color de papel ligeramente amarillento */
+            border: 2px solid #333; /* Borde que enmarca el periódico */
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2), inset 0 0 100px rgba(0,0,0,0.05); /* Sombra para darle volumen, y una sombra interna sutil */
+            
+            /* Filtros para simular papel viejo y la irregularidad de la impresión */
+            filter: sepia(0.3) contrast(1.1) brightness(1.05);
+            position: relative;
+            z-index: 1; /* Para que esté por encima de la textura del body */
+        }
+
+        /* Encabezado: La cabecera del periódico */
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #1a1a1a;
+            padding: 3rem 2rem 1.5rem;
+            border-bottom: 5px double #1a1a1a; /* Doble línea gruesa para la cabecera */
+            position: relative;
+            z-index: 2; /* Para que los filtros de .page-wrapper no afecten demasiado directamente */
+        }
+
+        .header-content h1 {
+            font-family: 'Playfair Display SC', serif; /* Small Caps para un titular de prensa */
+            font-size: 8rem; /* Tamaño muy grande y audaz */
+            margin: 0;
+            font-weight: 900;
+            letter-spacing: -6px; /* Letras muy juntas, efecto condensado */
+            text-transform: uppercase;
+            line-height: 0.8;
+            /* Efecto de tinta "sangrada" o ligeramente desenfocada */
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), -1px -1px 1px rgba(0, 0, 0, 0.1);
+            filter: blur(0.2px); /* Un desenfoque muy, muy sutil */
+        }
+
+        .header-content p {
+            font-family: 'Libre Baskerville', serif; /* Subtítulo con serif clásico */
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px; /* Más espaciado para la fecha/slogan */
+            padding: 0.8rem 1.5rem;
+            border: 1px solid #1a1a1a; /* Recuadro para la fecha/slogan */
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.7); /* Ligeramente translúcido para la capa de papel */
+            /* Efecto de tinta "sangrada" */
+            text-shadow: 0.5px 0.5px 0.5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Contenido Principal */
+        main {
+            padding: 2.5rem 2rem;
+            position: relative;
+        }
+
+        .seccion {
+            margin-bottom: 5rem;
+            position: relative;
+        }
+        
+        /* Línea divisoria de sección (estilo de grabado) */
+        .seccion:not(#video-section):not(:last-child)::after {
+            content: '';
+            display: block;
+            width: 70%;
+            max-width: 500px;
+            margin: 4.5rem auto 0;
+            border-bottom: 1px solid #777; /* Línea superior */
+            border-top: 1px solid #777; /* Línea inferior */
+            height: 0px; /* Para que las dos líneas se peguen */
+            position: relative;
+            top: 2px; /* Pequeño ajuste visual */
+        }
+
+        .seccion h2 {
+            font-family: 'Playfair Display SC', serif;
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #1a1a1a;
+            display: inline-block;
+            margin-left: auto;
+            margin-right: auto;
+            /* Efecto de tinta "sangrada" */
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+            filter: blur(0.1px);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem; /* Espacio entre artículos/columnas */
+            align-items: start; /* Para que las cajas se alineen arriba si el contenido es desigual */
+        }
+
+        .grid-item {
+            background-color: transparent; /* Permite ver la textura del "papel" */
+            border: 1px dashed #777; /* Borde punteado tenue, como un recorte */
+            display: flex;
+            flex-direction: column;
+            box-shadow: none;
+            padding: 1rem 1rem 1.5rem; /* Padding interno para el contenido del artículo */
+            
+            /* Pequeña rotación y transformación para dar un toque de "imperfecto" */
+            transform: rotate(var(--rotate, 0deg)) scale(var(--scale, 1));
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .grid-item:nth-child(even) { /* Ligeras variaciones para algunos elementos */
+            --rotate: 0.2deg;
+        }
+        .grid-item:nth-child(odd) {
+            --rotate: -0.2deg;
+        }
+
+        .grid-item h3 {
+            font-family: 'Playfair Display SC', serif; /* Título de artículo con Small Caps */
+            font-size: 1.8rem;
+            margin: 0 0 0.8rem 0;
+            line-height: 1.2;
+            font-weight: 700;
+            text-transform: capitalize; /* Capitaliza la primera letra de cada palabra */
+            /* Efecto de tinta "sangrada" */
+            text-shadow: 0.5px 0.5px 0.5px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-item p {
+            font-family: 'Special Elite', monospace; /* ¡Máquina de escribir para el cuerpo del texto! */
+            font-size: 0.9rem; /* Tamaño adecuado para máquina de escribir */
+            line-height: 1.7; /* Mayor interlineado para legibilidad */
+            padding: 0;
+            text-align: justify; /* Texto justificado para simular columna de periódico */
+            margin-top: 0.5rem;
+            flex-grow: 1;
+            /* Ligero efecto de tinta irregular */
+            color: #2b2b2b; /* Tinta un poco más suave para máquina de escribir */
+            text-shadow: 0.2px 0.2px 0.2px rgba(0, 0, 0, 0.05); /* Muy sutil */
+        }
+        
+        .grid-item iframe {
+            padding: 0;
+            box-sizing: border-box;
+            flex-grow: 1;
+            border: 1px solid #777; /* Borde para iframes */
+            border-radius: 0;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.7rem 1.4rem;
+            border: 1px solid #1a1a1a;
+            color: #1a1a1a;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s, transform 0.2s;
+            margin: 1.5rem 0 0 auto;
+            align-self: flex-end;
+            font-family: 'Libre Baskerville', serif; /* Botón con fuente clásica */
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            /* Efecto de tinta "sangrada" */
+            text-shadow: 0.2px 0.2px 0.2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn:hover {
+            background-color: #1a1a1a;
+            color: #fcfcfc;
+            transform: translateY(-2px); /* Pequeño levantamiento al pasar el ratón */
+        }
+
+        .image-parallax-container {
+            overflow: hidden;
+            height: 250px; /* Altura de imagen para artículos */
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid #bbb; /* Línea sutil bajo la imagen */
+            border-top: 1px solid #bbb; /* Línea sutil sobre la imagen */
+            
+        }
+        
+        .parallax-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.2) brightness(1.1); /* Blanco y negro con alto contraste */
+            transition: transform 0.1s linear;
+            /* Simular efecto de semitono con un overlay de SVG (muy experimental, puede no ser perfecto) */
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nNycgaGVpZ2h0PSc3JyB2aWV3Qm94PScwIDAgNyA3JyBmaWxsPSdjYycpIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHJlY3Qgd2lkdGg9JzEnIGhlaWdodD0nMScvPjxyZWN0IHk9JzInIHdpZHRoPScxJyBoZWlnaHQ9JzEnLz48cmVjdCB4PScyJyB3aWR0aD0nMScgaGVpZ2h0PScxJy8+PHJlY3QgeD0nMycgeT0nNCcgd2lkdGg9JzEnIGhlaWdodD0nMScvPjxyZWN0IHhyPScyJyB5PSc2JyB3aWR0aD0nMScgaGVpZ2h0PScxJy8+PC9zdmc+');
+            background-size: 7px 7px;
+            background-blend-mode: overlay; /* Mezcla la textura de puntos sobre la imagen */
+            opacity: 0.95; /* Suaviza el impacto de la imagen */
+        }
+        
+        /* SECCIÓN DE VIDEO/MULTIMEDIA - Como un recuadro especial del periódico */
+        #video-section {
+            height: auto;
+            padding: 3.5rem 2rem;
+            background-color: #e6e0d0; /* Fondo más oscuro para la sección de multimedia */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 4rem 0;
+            border: 2px dashed #555; /* Borde punteado más marcado */
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.05); /* Sombra interna para profundidad */
+        }
+
+        #video-section h2 {
+            margin-bottom: 3rem;
+            border-bottom: 2px solid #555;
+            text-shadow: 0.5px 0.5px 0.5px rgba(0, 0, 0, 0.1);
+        }
+        
+        #video-section .video-wrapper {
+            width: 90%;
+            max-width: 900px;
+            gap: 2rem;
+            overflow-y: visible;
+        }
+        
+        .video-container {
+            width: 100%;
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Sombra sutil para el video */
+            border: 2px solid #333; /* Borde más pronunciado para los videos */
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Footer - Información legal al pie de página */
+        footer {
+            background-color: #fcf6e8; /* Mismo color que el "papel" */
+            color: #1a1a1a;
+            text-align: center;
+            padding: 1.5rem 2rem;
+            font-size: 0.85rem;
+            border-top: 2px dashed #777; /* Línea divisoria punteada */
+            font-family: 'Libre Baskerville', serif;
+            text-shadow: 0.1px 0.1px 0.1px rgba(0, 0, 0, 0.02); /* Muy sutil */
+        }
+
+        /* Animaciones - Suavizadas para un aspecto más clásico */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Ajustar los delays */
+        .grid-container .animate-on-scroll.is-visible:nth-child(2),
+        #video-section .video-wrapper .animate-on-scroll.is-visible:nth-child(2) {
+            transition-delay: 0.1s;
+        }
+        .grid-container .animate-on-scroll.is-visible:nth-child(3) {
+            transition-delay: 0.2s;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            .page-wrapper {
+                border: none;
+                box-shadow: none;
+            }
+            header {
+                padding: 1.5rem 1rem 1rem;
+            }
+            .header-content h1 {
+                font-size: 4rem;
+                letter-spacing: -3px;
+            }
+            .header-content p {
+                font-size: 0.85rem;
+                letter-spacing: 2px;
+                padding: 0.5rem 1rem;
+            }
+            main {
+                padding: 1.5rem 1rem;
+            }
+            .seccion h2 {
+                font-size: 2.2rem;
+                margin-bottom: 2rem;
+            }
+            .grid-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .grid-item {
+                padding: 0.8rem 0.8rem 1.2rem;
+            }
+            .grid-item h3 {
+                font-size: 1.5rem;
+            }
+            .grid-item p {
+                font-size: 0.85rem;
+                line-height: 1.6;
+            }
+            .image-parallax-container {
+                height: 180px;
+            }
+            #video-section {
+                padding: 2rem 1.5rem;
+                margin: 3rem 0;
+            }
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-wrapper">
+        <header>
+            <div class="header-content">
+                <h1>EL SEMANAL DE ARG</h1>
+                <p>La Voz Poética de la Actualidad - Edición Julio 2025</p>
+            </div>
+        </header>
+
+        <main>
+            <section class="seccion">
+                <h2 class="animate-on-scroll">Crónicas Recientes</h2>
+                <div class="grid-container">
+                    <div class="grid-item animate-on-scroll">
+                        <div class="image-parallax-container">
+                            <img src="assets/img/img01.png" alt="Imagen 1" class="parallax-image">
+                        </div>
+                        <h3>El Baile Cósmico de Mercurio Retrógrado</h3>
+                        <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo, invitándote a la reflexión profunda y al redescubrimiento interior.</p>
+                        <a href="#" class="btn">Desentrañar</a>
+                    </div>
+                    <div class="grid-item animate-on-scroll">
+                        <div class="image-parallax-container">
+                            <img src="assets/img/img02.png" alt="Imagen 2" class="parallax-image">
+                        </div>
+                        <h3>Urano en Géminis: Un Canto a la Nueva Era de la Conexión</h3>
+                        <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa que teje los hilos invisibles de nuestra consciencia colectiva.</p>
+                        <a href="https://alter-ias.github.io/heptaglota/loteriatapatia.html" class="btn">Leer Prosa</a>
+                    </div>
+                    <div class="grid-item animate-on-scroll">
+                        <div class="image-parallax-container">
+                            <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
+                        </div>
+                        <h3>Solsticio de Verano: La Llama Perpetua del Alma</h3>
+                        <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable que reside en cada uno de nosotros.</p>
+                        <a href="#" class="btn">Meditar Aquí</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="seccion" id="video-section">
+                <h2 class="animate-on-scroll">Voces Grabadas: Archivo Sonoro y Visual</h2>
+                <div class="video-wrapper">
+                    <div class="video-container animate-on-scroll">
+                        <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-container animate-on-scroll">
+                        <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <section class="seccion">
+                <h2 class="animate-on-scroll">La Audioteca del Pensamiento</h2>
+                <div class="grid-container">
+                    <div class="grid-item animate-on-scroll">
+                        <iframe data-testid="embed-iframe" style="border-radius:0px; border: 1px solid #777;" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        <h3>El Secreto de la Felicidad en el Caos Moderno</h3>
+                        <p>Un diálogo íntimo sobre la búsqueda de la serenidad en la vorágine de hoy. Escucha las claves para encontrar tu centro, incluso cuando el mundo parece girar sin rumbo fijo.</p>
+                        <a href="#" class="btn">Escuchar el Episodio</a>
+                    </div>
+                    <div class="grid-item animate-on-scroll">
+                        <iframe data-testid="embed-iframe" style="border-radius:0px; border: 1px solid #777;" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        <h3>Desbloqueando tu Potencial Creador</h3>
+                        <p>Embárcate en un viaje sonoro para despertar al artista que llevas dentro. Descubre cómo la inspiración fluye cuando te atreves a romper los moldes y liberar tu verdadera esencia creativa.</p>
+                        <a href="#" class="btn">Inspirarse</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 - El Semanal de ARG. Todos los derechos reservados. Impreso con pasión en la imprenta del Alma.</p>
+        </footer>
+    </div>
+
+    <script>
+        // SCRIPT 1: ANIMACIÓN DE ENTRADA GENERAL
+        const animatedElements = document.querySelectorAll('.animate-on-scroll');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // Opcional: Desactivar la observación después de que se active para ahorrar recursos
+                    // observer.unobserve(entry.target); 
+                }
+            });
+        }, { threshold: 0.1 }); // Se activa cuando el 10% del elemento es visible
+        animatedElements.forEach(element => observer.observe(element));
+
+        // SCRIPT 2: EFECTO PARALLAX PARA IMÁGENES DE TARJETAS (suavizado y adaptado)
+        document.addEventListener('scroll', function() {
+            const parallaxImages = document.querySelectorAll('.parallax-image');
+            for (let img of parallaxImages) {
+                const container = img.parentElement;
+                const rect = container.getBoundingClientRect();
+                
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    const percentVisible = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+                    const moveAmount = (percentVisible - 0.5) * 8; // Movimiento muy sutil
+                    img.style.transform = `translateY(${moveAmount * -1}%) scale(1.01)`; // Escala casi imperceptible
+                }
+            }
+        });
+
+        // SCRIPT 3: Pequeña aleatoriedad en las rotaciones de los grid-item para el efecto "impresión manual"
+        document.querySelectorAll('.grid-item').forEach(item => {
+            const randomRotation = (Math.random() - 0.5) * 0.4; // Entre -0.2deg y 0.2deg
+            item.style.setProperty('--rotate', `${randomRotation}deg`);
+        });
+    </script>
+
+</body>
+</html>
