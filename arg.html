@@ -60,13 +60,13 @@
 
         /* Contenido Principal */
         main {
-            padding: 2rem 0; /* Se quita padding lateral para la sección de video */
+            padding: 2rem 0;
         }
 
         .seccion {
             margin-bottom: 5rem;
             position: relative;
-            padding: 0 2rem; /* Se añade padding aquí para que afecte a las otras secciones */
+            padding: 0 2rem;
         }
         
         .seccion:not(#video-section):not(:last-child)::after {
@@ -140,31 +140,35 @@
             transition: transform 0.1s linear;
         }
         
-        /* SECCIÓN DE VIDEO A PANTALLA COMPLETA */
+        /* SECCIÓN DE VIDEO A PANTALLA COMPLETA CON VIDEOS APILADOS */
         #video-section {
-            height: 100vh; /* Ocupa toda la altura de la pantalla */
-            width: 100vw; /* Ocupa todo el ancho de la pantalla */
-            padding: 0; /* Sin padding */
-            margin-left: calc(-50vw + 50%); /* Truco para centrar y expandir a todo el ancho */
+            height: 100vh;
+            width: 100vw;
+            padding: 0;
+            margin-left: calc(-50vw + 50%);
             margin-right: calc(-50vw + 50%);
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #000; /* Fondo negro para inmersión */
+            background-color: #000;
         }
         
         #video-section .video-wrapper {
-            width: 90%; /* El video ocupa el 90% del ancho de la pantalla */
-            max-width: 1400px; /* Un límite para pantallas ultra-anchas */
+            width: 80%; /* Contenedor principal de los videos */
+            max-width: 900px;
+            display: flex;
+            flex-direction: column; /* Apila los videos verticalmente */
+            gap: 2rem; /* Espacio entre los videos */
         }
         
         .video-container {
+            width: 100%; /* Cada video ocupa el 100% del wrapper */
             position: relative;
             padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
             border-radius: 8px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
         .video-container iframe {
             position: absolute;
@@ -184,8 +188,9 @@
             opacity: 1;
             transform: translateY(0) rotate(0) scale(1);
         }
-        .grid-container .animate-on-scroll.is-visible:nth-child(2) {
-            transition-delay: 0.1s;
+        .grid-container .animate-on-scroll.is-visible:nth-child(2),
+        #video-section .animate-on-scroll.is-visible:nth-child(2) {
+            transition-delay: 0.1s; /* Retraso para el segundo elemento en cualquier lista */
         }
         .grid-container .animate-on-scroll.is-visible:nth-child(3) {
             transition-delay: 0.2s;
@@ -240,10 +245,13 @@
             </div>
         </section>
 
-        <!-- SECCIÓN DE VIDEO A PANTALLA COMPLETA -->
+        <!-- SECCIÓN DE VIDEO CON DOS VIDEOS APILADOS -->
         <section class="seccion" id="video-section">
-            <div class="video-wrapper animate-on-scroll">
-                <div class="video-container">
+            <div class="video-wrapper">
+                <div class="video-container animate-on-scroll">
+                    <iframe src="https://www.youtube.com/embed/-62GMuwZDG0?si=OZ4B5eFJhQx0_fst" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                <div class="video-container animate-on-scroll">
                     <iframe src="https://www.youtube.com/embed/rylzygPxio4?si=y1JORYHgvCvv8Sui" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
             </div>
