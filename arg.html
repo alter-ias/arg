@@ -140,7 +140,7 @@
             transition: transform 0.1s linear;
         }
         
-        /* SECCIÓN DE VIDEO A PANTALLA COMPLETA CON VIDEOS APILADOS */
+        /* SECCIÓN DE VIDEO CON CONTENEDOR A PRUEBA DE ZOOM */
         #video-section {
             height: 100vh;
             width: 100vw;
@@ -154,21 +154,24 @@
         }
         
         #video-section .video-wrapper {
-            width: 80%; /* Contenedor principal de los videos */
+            width: 80%;
             max-width: 900px;
+            max-height: 90vh; /* Límite de altura */
             display: flex;
-            flex-direction: column; /* Apila los videos verticalmente */
-            gap: 2rem; /* Espacio entre los videos */
+            flex-direction: column;
+            gap: 2rem;
+            overflow-y: auto; /* AÑADIDO CLAVE: Scroll si el contenido es muy alto */
         }
         
         .video-container {
-            width: 100%; /* Cada video ocupa el 100% del wrapper */
+            width: 100%;
             position: relative;
             padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
             border-radius: 8px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0; /* Evita que los videos se encojan */
         }
         .video-container iframe {
             position: absolute;
@@ -189,8 +192,8 @@
             transform: translateY(0) rotate(0) scale(1);
         }
         .grid-container .animate-on-scroll.is-visible:nth-child(2),
-        #video-section .animate-on-scroll.is-visible:nth-child(2) {
-            transition-delay: 0.1s; /* Retraso para el segundo elemento en cualquier lista */
+        #video-section .video-wrapper .animate-on-scroll.is-visible:nth-child(2) {
+            transition-delay: 0.1s;
         }
         .grid-container .animate-on-scroll.is-visible:nth-child(3) {
             transition-delay: 0.2s;
@@ -245,14 +248,14 @@
             </div>
         </section>
 
-        <!-- SECCIÓN DE VIDEO CON DOS VIDEOS APILADOS -->
         <section class="seccion" id="video-section">
             <div class="video-wrapper">
+                <!-- CORRECCIÓN: Usando youtube-nocookie.com para mejorar privacidad -->
                 <div class="video-container animate-on-scroll">
-                    <iframe src="https://www.youtube.com/embed/-62GMuwZDG0?si=OZ4B5eFJhQx0_fst" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=OZ4B5eFJhQx0_fst" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <div class="video-container animate-on-scroll">
-                    <iframe src="https://www.youtube.com/embed/rylzygPxio4?si=y1JORYHgvCvv8Sui" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=y1JORYHgvCvv8Sui" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
             </div>
         </section>
