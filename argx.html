@@ -12,35 +12,37 @@
     <style>
         /* BASE: El lienzo del periódico */
         body {
-            font-family: 'Libre Baskerville', serif; /* Una serif clásica y legible como base */
-            background-color: #d8d0c0; /* Fondo más oscuro para contrastar con el "papel" */
-            color: #1a1a1a; /* Color de la tinta */
+            font-family: 'Libre Baskerville', serif; /* Serif clásico para legibilidad */
+            color: #1a1a1a; /* Tinta negra muy oscura */
             margin: 0;
             line-height: 1.6;
             overflow-x: hidden;
-            padding: 3rem; /* Margen amplio alrededor de la "página" */
+            padding: 2.5rem; /* Márgenes exteriores para simular la mesa donde descansa el periódico */
             
-            /* Sutil textura de ruido para el fondo */
-            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKkFgAAAADklEQVQIHWNgGPbg+A8AB0MABsM/p/cAAAAASUVORK5CYII=');
-            background-repeat: repeat;
-            background-size: 3px 3px;
+            /* Fondo general de la página - La superficie donde reposa el periódico */
+            background-image: url('assets/img/fondopaper.png');
+            background-size: cover; /* La imagen cubre todo el área */
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed; /* El fondo no se desplaza con el scroll */
+            background-color: #c0b8a3; /* Color de respaldo para el fondo */
             
-            /* Efecto de grano para el fondo */
+            /* Efecto de grano o viñeteado para el fondo general */
             box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.1);
         }
 
         /* Contenedor principal: La "hoja de periódico" */
         .page-wrapper {
             max-width: 1000px; /* Ancho de la hoja de periódico */
-            margin: 0 auto;
+            margin: 0 auto; /* Centrar la página */
             background-color: #fcf6e8; /* Color de papel ligeramente amarillento */
             border: 2px solid #333; /* Borde que enmarca el periódico */
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2), inset 0 0 100px rgba(0,0,0,0.05); /* Sombra para darle volumen, y una sombra interna sutil */
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2), inset 0 0 100px rgba(0,0,0,0.05); /* Sombra suave para darle profundidad de objeto */
             
             /* Filtros para simular papel viejo y la irregularidad de la impresión */
             filter: sepia(0.3) contrast(1.1) brightness(1.05);
             position: relative;
-            z-index: 1; /* Para que esté por encima de la textura del body */
+            z-index: 1; /* Para que esté por encima del fondo del body */
         }
 
         /* Encabezado: La cabecera del periódico */
@@ -225,6 +227,7 @@
             filter: grayscale(100%) contrast(1.2) brightness(1.1); /* Blanco y negro con alto contraste */
             transition: transform 0.1s linear;
             /* Simular efecto de semitono con un overlay de SVG (muy experimental, puede no ser perfecto) */
+            /* Este SVG simula una textura de puntos. Ajusta el background-size para controlar la densidad */
             background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nNycgaGVpZ2h0PSc3JyB2aWV3Qm94PScwIDAgNyA3JyBmaWxsPSdjYycpIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHJlY3Qgd2lkdGg9JzEnIGhlaWdodD0nMScvPjxyZWN0IHk9JzInIHdpZHRoPScxJyBoZWlnaHQ9JzEnLz48cmVjdCB4PScyJyB3aWR0aD0nMScgaGVpZ2h0PScxJy8+PHJlY3QgeD0nMycgeT0nNCcgd2lkdGg9JzEnIGhlaWdodD0nMScvPjxyZWN0IHhyPScyJyB5PSc2JyB3aWR0aD0nMScgaGVpZ2h0PScxJy8+PC9zdmc+');
             background-size: 7px 7px;
             background-blend-mode: overlay; /* Mezcla la textura de puntos sobre la imagen */
@@ -311,6 +314,7 @@
         @media (max-width: 768px) {
             body {
                 padding: 1rem;
+                background-attachment: scroll; /* Para móviles, el fondo puede scrollear */
             }
             .page-wrapper {
                 border: none;
@@ -397,7 +401,7 @@
                         <div class="image-parallax-container">
                             <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
                         </div>
-                        <h3>Solsticio de Verano: La Llama Perpetua del Alma</h3>
+                        <h3>El Solsticio de Verano: La Llama Perpetua del Alma</h3>
                         <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable que reside en cada uno de nosotros.</p>
                         <a href="#" class="btn">Meditar Aquí</a>
                     </div>
