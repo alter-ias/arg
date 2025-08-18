@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display+SC:wght@400;700;900&family=Special+Elite&display=swap" rel="stylesheet">
     
-    <style>
+       <style>
         /* BASE: El fondo de papel es ahora el lienzo principal */
         body {
             margin: 0;
@@ -17,8 +17,11 @@
             font-family: 'Libre Baskerville', serif;
             color: #1a1a1a;
             
-            /* ¡El papel viejo es el fondo de toda la página! */
-            background-image: url('assets/img/fondopaper.png');
+            /* ¡AQUÍ ESTÁ EL CAMBIO! Capa negra semitransparente sobre la imagen de fondo */
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+                url('assets/img/fondopaper.png');
+            
             background-size: cover;
             background-attachment: fixed; /* ¡Clave! El fondo no se mueve con el scroll. */
             background-position: center;
@@ -35,12 +38,10 @@
             color: white;
             position: relative;
             
-            /* ¡Aquí va tu nueva imagen de cabecera! */
             background-image: url('assets/img/header-background.png'); /* <<<--- CAMBIA ESTO POR LA RUTA DE TU IMAGEN */
             background-size: cover;
             background-position: center center;
             
-            /* Sombra interna para dar profundidad a la cabecera */
             box-shadow: inset 0 -50px 50px -20px rgba(0,0,0,0.3);
         }
 
@@ -65,7 +66,7 @@
             padding: 0.6rem 1.2rem;
             border: none;
             display: inline-block;
-            background-color: #5a554a; /* Color oscuro del recuadro, extraído de la imagen */
+            background-color: #5a554a;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
@@ -74,10 +75,7 @@
             max-width: 1100px;
             margin: 4rem auto;
             padding: 3rem;
-            
-            /* ¡La clave de la opacidad! */
-            background-color: rgba(252, 246, 232, 0); /* Papel semitransparente, ligeramente más opaco para legibilidad */
-            
+            background-color: rgba(252, 246, 232, 0.75); 
             border: 1px solid rgba(0,0,0,0.1);
             box-shadow: 0 5px 25px rgba(0,0,0,0.1);
         }
@@ -96,7 +94,7 @@
             text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
         }
 
-        .seccion .center-title { /* Contenedor para centrar el H2 */
+        .seccion .center-title {
              text-align: center;
              margin-bottom: 2.5rem;
         }
@@ -109,7 +107,7 @@
         }
 
         .grid-item {
-            background-color: rgba(255, 255, 255, 0.4); /* Fondo de tarjeta un poco más claro y semitransparente */
+            background-color: rgba(255, 255, 255, 0.6); 
             border: 1px dashed #777;
             display: flex;
             flex-direction: column;
@@ -169,7 +167,6 @@
             transform: translateY(-2px);
         }
 
-        /* Iframes de Video y Spotify */
         .video-container {
              width: 100%;
              position: relative;
@@ -190,7 +187,6 @@
             margin-bottom: 1rem;
         }
         
-        /* Footer */
         footer {
             text-align: center;
             font-size: 0.9rem;
@@ -198,7 +194,6 @@
             padding-top: 2rem;
         }
         
-        /* RESPONSIVE DESIGN */
         @media (max-width: 768px) {
              body {
                 padding: 0;
@@ -218,7 +213,6 @@
                 padding: 2rem 1.5rem;
              }
         }
-
     </style>
 </head>
 <body>
