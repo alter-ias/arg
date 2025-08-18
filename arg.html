@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inspirado en Chani</title>
+    <title>alanruizgalicia</title>
     <style>
         /* Estilos Generales */
         body {
@@ -37,7 +37,7 @@
             z-index: -1;
             transform: translateX(-50%) translateY(-50%);
             background-size: cover;
-            transition: 1s;
+            filter: brightness(0.7); /* Ligeramente más oscuro para que el texto resalte */
         }
 
         .header-content {
@@ -45,14 +45,17 @@
         }
 
         .header-content h1 {
-            font-size: 4rem;
+            font-size: 6rem; /* Más grande y audaz */
             margin: 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
         }
 
         .header-content p {
             font-size: 1.5rem;
             margin-top: 1rem;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
         }
 
         /* Contenido Principal */
@@ -61,13 +64,13 @@
         }
 
         .seccion {
-            margin-bottom: 4rem;
+            margin-bottom: 5rem;
         }
 
         .seccion h2 {
             text-align: center;
             font-size: 2.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
@@ -124,8 +127,8 @@
             padding-bottom: 56.25%; /* Proporción 16:9 */
             height: 0;
             overflow: hidden;
-            max-width: 100%;
-            background: #000;
+            max-width: 800px; /* Ancho máximo para el video */
+            border: 1px solid #ddd;
             margin: 0 auto;
         }
 
@@ -137,11 +140,11 @@
             height: 100%;
         }
 
-        /* Estilos para Animación en Scroll */
+        /* NUEVAS ANIMACIONES EN SCROLL */
         .animate-on-scroll {
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            transform: translateY(50px); /* Empieza 50px más abajo */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
 
         .animate-on-scroll.is-visible {
@@ -149,17 +152,24 @@
             transform: translateY(0);
         }
 
+        /* Efecto escalonado para las tarjetas */
+        .grid-container .animate-on-scroll.is-visible:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+        .grid-container .animate-on-scroll.is-visible:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+        .grid-container .animate-on-scroll.is-visible:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+
+
         /* Pie de Página */
         footer {
             background-color: #333;
             color: white;
             text-align: center;
             padding: 2rem;
-        }
-
-        .footer-logo {
-            width: 150px;
-            margin-bottom: 1rem;
         }
     </style>
 </head>
@@ -171,8 +181,8 @@
             Tu navegador no soporta videos HTML5.
         </video>
         <div class="header-content">
-            <h1>Bienvenido a Nuestro Universo</h1>
-            <p>Explora la magia que te rodea</p>
+            <h1>ARG</h1>
+            <p>Alan Ruíz Galicia</p>
         </div>
     </header>
 
@@ -198,10 +208,10 @@
             </div>
         </section>
 
-        <!-- SECCIÓN DE VIDEO DE YOUTUBE -->
-        <section class="seccion animate-on-scroll">
-            <h2>Inspiración Visual</h2>
-            <div class="video-container">
+        <!-- SECCIÓN DE VIDEO DE YOUTUBE CORREGIDA -->
+        <section class="seccion">
+            <h2 class="animate-on-scroll">Inspiración Visual</h2>
+            <div class="video-container animate-on-scroll">
                 <iframe src="https://www.youtube.com/embed/rylzygPxio4?si=y1JORYHgvCvv8Sui" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
         </section>
@@ -210,11 +220,11 @@
             <h2 class="animate-on-scroll">Podcast de la Semana</h2>
             <div class="grid-container">
                 <div class="grid-item animate-on-scroll">
-                    <h3>Astrología para el Alma</h3>
+                    <!-- Título H3 eliminado -->
                     <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 </div>
                 <div class="grid-item animate-on-scroll">
-                    <h3>Mitos y Estrellas</h3>
+                    <!-- Título H3 eliminado -->
                     <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 </div>
             </div>
@@ -222,29 +232,23 @@
     </main>
 
     <footer>
-        <img src="assets/img/logo01.png" alt="Logo Footer" class="footer-logo">
-        <p>&copy; 2025 - Inspirado en Chani. Todos los derechos reservados.</p>
+        <p>&copy; 2025 - ARG. Todos los derechos reservados.</p>
     </footer>
 
     <script>
-        // Efecto Parallax para el video de fondo
-        window.addEventListener('scroll', function() {
-            const videoFondo = document.getElementById('video-fondo');
-            const scrollPosition = window.pageYOffset;
-            videoFondo.style.transform = `translateX(-50%) translateY(calc(-50% + ${scrollPosition * 0.4}px))`;
-        });
-
-        // Lógica para animar elementos al hacer scroll
+        // Lógica para animar elementos al hacer scroll (mejorada)
         const animatedElements = document.querySelectorAll('.animate-on-scroll');
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
+                    // Opcional: deja de observar el elemento una vez que es visible
+                    // observer.unobserve(entry.target); 
                 }
             });
         }, {
-            threshold: 0.1 // El elemento se considera visible cuando el 10% de él se ve
+            threshold: 0.1 // El elemento se anima cuando el 10% es visible
         });
 
         animatedElements.forEach(element => {
@@ -253,4 +257,4 @@
     </script>
 
 </body>
-</html>
+</html>```
