@@ -4,55 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>El Semanal de ARG - Edición Especial</title>
-    <!-- Google Fonts: Importamos las fuentes con sus variantes -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display+SC:wght@400;700;900&family=Special+Elite&display=swap" rel="stylesheet">
     
     <style>
-        /* BASE: El fondo de la ventana (como la superficie donde descansa el periódico) */
-        body {
-            font-family: 'Libre Baskerville', serif; /* Serif clásico para legibilidad */
-            color: #1a1a1a; /* Tinta negra muy oscura */
+        /* BASE: Preparación para el scroll horizontal */
+        html, body {
             margin: 0;
-            line-height: 1.6;
-            overflow-x: hidden;
-            padding: 2.5rem; /* Márgenes exteriores para simular la mesa donde descansa el periódico */
+            padding: 0;
+            width: 100%;
+            height: 100vh; /* Ocupa toda la altura de la ventana */
+            overflow: hidden; /* Oculta scrollbars por defecto */
+            font-family: 'Libre Baskerville', serif;
+            color: #1a1a1a;
             
-            /* Fondo simple para el body, ya que el papel ahora estará en .page-wrapper */
-            background-color: #c0b8a3; 
-            /* Sombra interna para un efecto de viñeteado general, sutil */
-            box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.15); 
-        }
-
-        /* Contenedor principal: La "hoja de periódico" sobre la que todo se imprime */
-        .page-wrapper {
-            max-width: 1000px; /* Ancho de la hoja de periódico */
-            margin: 0 auto; /* Centrar la página */
-            
-            /* ¡Aquí la textura de papel de fondo! */
+            /* ¡El papel viejo ahora es el fondo de toda la página! */
             background-image: url('assets/img/fondopaper.png');
-            background-size: cover; /* La imagen cubre todo el área de la página */
-            background-repeat: no-repeat;
-            background-position: center center;
-            
-            border: 2px solid #333; /* Borde que enmarca el periódico */
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2); /* Sombra suave para darle profundidad de objeto */
-            position: relative;
-            z-index: 1; /* Para que esté por encima del fondo del body */
+            background-size: cover;
+            background-attachment: fixed; /* El fondo no se mueve con el scroll */
+            background-position: center;
         }
 
-        /* Encabezado: La portada con el video de fondo */
-        header {
+        /* CONTENEDOR PRINCIPAL PARA SCROLL HORIZONTAL */
+        #content-wrapper {
+            display: flex; /* Alinea las secciones horizontalmente */
+            width: 100%; /* Ocupa el 100% del body */
+            height: 100vh;
+            overflow-x: auto; /* Permite el scroll horizontal */
+            overflow-y: hidden; /* Previene el scroll vertical */
+            
+            /* ¡La magia del "snap"! */
+            scroll-snap-type: x mandatory; /* Fuerza el anclaje en el eje X */
+            -webkit-overflow-scrolling: touch; /* Mejora la experiencia en iOS */
+        }
+
+        /* ESTILO COMÚN PARA TODAS LAS SECCIONES-PANTALLA */
+        .full-screen-section {
+            width: 100vw; /* Cada sección ocupa el ancho completo de la ventana */
+            height: 100vh; /* Cada sección ocupa la altura completa */
+            flex-shrink: 0; /* Evita que las secciones se encojan */
+            scroll-snap-align: start; /* Cada sección es un punto de anclaje */
             position: relative;
-            height: 100vh; /* Altura completa de la ventana */
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            overflow-y: auto; /* Permite scroll interno si el contenido es muy alto */
+        }
+
+        /* Encabezado: La portada con el video */
+        header {
+            color: white;
             text-align: center;
-            color: white; /* Texto blanco para resaltar sobre el video */
-            overflow: hidden;
-            border-bottom: 5px double rgba(255, 255, 255, 0.8); /* Doble línea de separación, ahora blanca */
         }
 
         #video-fondo {
@@ -66,13 +72,7 @@
             z-index: -1;
             transform: translateX(-50%) translateY(-50%);
             background-size: cover;
-            filter: brightness(0.7); /* Oscurece el video para legibilidad del texto */
-        }
-
-        .header-content {
-            z-index: 1;
-            width: 100%;
-            padding: 0 1rem; /* Pequeño padding para el contenido */
+            filter: brightness(0.6);
         }
 
         .header-content h1 {
@@ -83,8 +83,8 @@
             letter-spacing: -6px;
             text-transform: uppercase;
             line-height: 0.8;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7); /* Sombra para resaltar sobre el video */
-            filter: blur(0.2px); /* Un desenfoque muy, muy sutil para el efecto de "tinta impresa" */
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+            filter: blur(0.2px);
         }
 
         .header-content p {
@@ -94,35 +94,16 @@
             text-transform: uppercase;
             letter-spacing: 3px;
             padding: 0.8rem 1.5rem;
-            border: 1px solid white; /* Recuadro blanco para la fecha/slogan */
+            border: 1px solid white;
             display: inline-block;
-            background-color: rgba(0, 0, 0, 0.3); /* Fondo semitransparente oscuro para el texto */
+            background-color: rgba(0, 0, 0, 0.4);
             text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
         }
 
-        /* Contenido Principal - Los bloques semitransparentes sobre el fondo de papel */
-        main {
-            padding: 2.5rem 2rem;
-            background-color: rgba(255, 255, 255, 0.75); /* Fondo blanco semitransparente para ver el papel */
-        }
-
-        .seccion {
-            margin-bottom: 5rem;
-            position: relative;
-        }
-        
-        /* Línea divisoria de sección (estilo de grabado) */
-        .seccion:not(#video-section):not(:last-child)::after {
-            content: '';
-            display: block;
-            width: 70%;
-            max-width: 500px;
-            margin: 4.5rem auto 0;
-            border-bottom: 1px solid #777;
-            border-top: 1px solid #777;
-            height: 0px;
-            position: relative;
-            top: 2px;
+        /* Contenido Principal - Secciones de Crónicas y Podcast */
+        .content-container {
+            width: 100%;
+            max-width: 1100px; /* Ancho máximo para el contenido dentro de una sección */
         }
 
         .seccion h2 {
@@ -135,8 +116,6 @@
             padding-bottom: 0.5rem;
             border-bottom: 2px solid #1a1a1a;
             display: inline-block;
-            margin-left: auto;
-            margin-right: auto;
             text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
             filter: blur(0.1px);
         }
@@ -149,24 +128,15 @@
         }
 
         .grid-item {
-            background-color: rgba(255, 255, 255, 0.75); /* Fondo blanco semitransparente para ver el papel */
-            border: 1px dashed #777;
+            /* ¡Opacidad para ver el fondo! */
+            background-color: rgba(252, 246, 232, 0.85); /* Papel semitransparente */
+            border: 1px dashed #555;
             display: flex;
             flex-direction: column;
-            box-shadow: none;
             padding: 1rem 1rem 1.5rem;
-            
-            transform: rotate(var(--rotate, 0deg)) scale(var(--scale, 1));
-            transition: transform 0.3s ease-in-out;
+            transform: rotate(var(--rotate, 0deg));
         }
-
-        .grid-item:nth-child(even) {
-            --rotate: 0.2deg;
-        }
-        .grid-item:nth-child(odd) {
-            --rotate: -0.2deg;
-        }
-
+        
         .grid-item h3 {
             font-family: 'Playfair Display SC', serif;
             font-size: 1.8rem;
@@ -178,25 +148,28 @@
         }
 
         .grid-item p {
-            font-family: 'Special Elite', monospace; /* ¡Máquina de escribir! */
+            font-family: 'Special Elite', monospace;
             font-size: 0.9rem;
             line-height: 1.7;
-            padding: 0;
             text-align: justify;
             margin-top: 0.5rem;
             flex-grow: 1;
             color: #2b2b2b;
-            text-shadow: 0.2px 0.2px 0.2px rgba(0, 0, 0, 0.05);
         }
         
-        .grid-item iframe {
-            padding: 0;
-            box-sizing: border-box;
-            flex-grow: 1;
-            border: 1px solid #777;
-            border-radius: 0;
-            margin-bottom: 1rem;
-            background-color: white; /* Fondo blanco para los iframes, para que se vean nítidos */
+        .image-parallax-container {
+            overflow: hidden;
+            height: 250px;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid #bbb;
+            border-top: 1px solid #bbb;
+        }
+        
+        .parallax-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.1s linear;
         }
 
         .btn {
@@ -211,9 +184,7 @@
             font-family: 'Libre Baskerville', serif;
             font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente para ver el papel */
-            text-shadow: 0.2px 0.2px 0.2px rgba(0, 0, 0, 0.05);
+            background-color: rgba(255, 255, 255, 0.9);
         }
 
         .btn:hover {
@@ -221,48 +192,13 @@
             color: #fcfcfc;
             transform: translateY(-2px);
         }
-
-        .image-parallax-container {
-            overflow: hidden;
-            height: 250px;
-            margin-bottom: 1.2rem;
-            border-bottom: 1px solid #bbb;
-            border-top: 1px solid #bbb;
-        }
         
-        .parallax-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            /* Eliminados los filtros para mostrar las imágenes en su estado original */
-            transition: transform 0.1s linear;
-        }
-        
-        /* SECCIÓN DE VIDEO/MULTIMEDIA - Como un recuadro especial del periódico */
-        #video-section {
-            height: auto;
-            padding: 3.5rem 2rem;
-            background-color: rgba(230, 224, 208, 0.9); /* Fondo ligeramente más oscuro y semitransparente */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 4rem 0;
-            border: 2px dashed #555;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
-        }
-
-        #video-section h2 {
-            margin-bottom: 3rem;
-            border-bottom: 2px solid #555;
-            text-shadow: 0.5px 0.5px 0.5px rgba(0, 0, 0, 0.1);
-        }
-        
+        /* SECCIÓN DE VIDEO/MULTIMEDIA */
         #video-section .video-wrapper {
             width: 90%;
             max-width: 900px;
+            display: flex;
             gap: 2rem;
-            overflow-y: visible;
         }
         
         .video-container {
@@ -271,10 +207,9 @@
             padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
-            border-radius: 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             border: 2px solid #333;
-            background-color: black; /* Fondo negro para los videos, si la carga es lenta */
+            background-color: black;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         .video-container iframe {
             position: absolute;
@@ -284,98 +219,56 @@
             height: 100%;
         }
 
-        /* Footer - Información legal al pie de página */
+        /* Footer - Última "página" horizontal */
         footer {
-            background-color: rgba(252, 246, 232, 0.75); /* Fondo blanco semitransparente para ver el papel */
-            color: #1a1a1a;
-            text-align: center;
-            padding: 1.5rem 2rem;
+            background-color: rgba(252, 246, 232, 0.85); /* Papel semitransparente */
             font-size: 0.85rem;
             border-top: 2px dashed #777;
-            font-family: 'Libre Baskerville', serif;
-            text-shadow: 0.1px 0.1px 0.1px rgba(0, 0, 0, 0.02);
         }
 
-        /* Animaciones - Suavizadas */
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        .animate-on-scroll.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        /* Ajustar los delays */
-        .grid-container .animate-on-scroll.is-visible:nth-child(2),
-        #video-section .video-wrapper .animate-on-scroll.is-visible:nth-child(2) {
-            transition-delay: 0.1s;
-        }
-        .grid-container .animate-on-scroll.is-visible:nth-child(3) {
-            transition-delay: 0.2s;
-        }
-
-        /* Responsive Design */
+        /* RESPONSIVE DESIGN: Volvemos al scroll vertical en móviles */
         @media (max-width: 768px) {
-            body {
+            html, body {
+                height: auto; /* Permite que el contenido determine la altura */
+                overflow: auto; /* Vuelve a los scrollbars normales */
+            }
+
+            #content-wrapper {
+                display: block; /* Deshace el flexbox, apila las secciones */
+                width: auto;
+                height: auto;
+                overflow: visible; /* Quita el control de scroll */
+                scroll-snap-type: none; /* Desactiva el snap */
+            }
+            
+            .full-screen-section {
+                width: auto;
+                height: auto; /* Las secciones tienen la altura de su contenido */
+                min-height: 100vh; /* La cabecera sigue ocupando al menos la pantalla completa */
                 padding: 1rem;
-                background-attachment: scroll; /* Para móviles, el fondo puede scrollear */
             }
-            .page-wrapper {
-                border: none;
-                box-shadow: none;
+
+            .seccion {
+                min-height: 0; /* Restablece el min-height para secciones de contenido */
+                padding: 4rem 1rem;
             }
-            header {
-                padding: 1.5rem 1rem 1rem;
-            }
+
             .header-content h1 {
                 font-size: 4rem;
                 letter-spacing: -3px;
             }
-            .header-content p {
-                font-size: 0.85rem;
-                letter-spacing: 2px;
-                padding: 0.5rem 1rem;
-            }
-            main {
-                padding: 1.5rem 1rem;
-            }
-            .seccion h2 {
-                font-size: 2.2rem;
-                margin-bottom: 2rem;
-            }
-            .grid-container {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            .grid-item {
-                padding: 0.8rem 0.8rem 1.2rem;
-            }
-            .grid-item h3 {
-                font-size: 1.5rem;
-            }
-            .grid-item p {
-                font-size: 0.85rem;
-                line-height: 1.6;
-            }
-            .image-parallax-container {
-                height: 180px;
-            }
-            #video-section {
-                padding: 2rem 1.5rem;
-                margin: 3rem 0;
-            }
-            .btn {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.8rem;
+            
+            #video-section .video-wrapper {
+                flex-direction: column; /* Apila los videos en móvil */
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="page-wrapper">
-        <header>
+    <div id="content-wrapper">
+
+        <header class="full-screen-section">
             <video autoplay muted loop id="video-fondo">
                 <source src="assets/vid/fondo0.webm" type="video/webm">
                 Tu navegador no soporta videos HTML5.
@@ -386,11 +279,11 @@
             </div>
         </header>
 
-        <main>
-            <section class="seccion">
-                <h2 class="animate-on-scroll">Crónicas Recientes</h2>
+        <section class="seccion full-screen-section">
+            <div class="content-container">
+                <h2>Crónicas Recientes</h2>
                 <div class="grid-container">
-                    <div class="grid-item animate-on-scroll">
+                    <div class="grid-item">
                         <div class="image-parallax-container">
                             <img src="assets/img/img01.png" alt="Imagen 1" class="parallax-image">
                         </div>
@@ -398,7 +291,7 @@
                         <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo, invitándote a la reflexión profunda y al redescubrimiento interior.</p>
                         <a href="#" class="btn">Desentrañar</a>
                     </div>
-                    <div class="grid-item animate-on-scroll">
+                    <div class="grid-item">
                         <div class="image-parallax-container">
                             <img src="assets/img/img02.png" alt="Imagen 2" class="parallax-image">
                         </div>
@@ -406,7 +299,7 @@
                         <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa que teje los hilos invisibles de nuestra consciencia colectiva.</p>
                         <a href="https://alter-ias.github.io/heptaglota/loteriatapatia.html" class="btn">Leer Prosa</a>
                     </div>
-                    <div class="grid-item animate-on-scroll">
+                    <div class="grid-item">
                         <div class="image-parallax-container">
                             <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
                         </div>
@@ -415,59 +308,57 @@
                         <a href="#" class="btn">Meditar Aquí</a>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section class="seccion" id="video-section">
-                <h2 class="animate-on-scroll">Voces Grabadas: Archivo Sonoro y Visual</h2>
+        <section class="seccion full-screen-section" id="video-section">
+             <div class="content-container">
+                <h2>Voces Grabadas: Archivo Sonoro y Visual</h2>
                 <div class="video-wrapper">
-                    <div class="video-container animate-on-scroll">
+                    <div class="video-container">
                         <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
-                    <div class="video-container animate-on-scroll">
+                    <div class="video-container">
                         <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
                 </div>
-            </section>
+             </div>
+        </section>
 
-            <section class="seccion">
-                <h2 class="animate-on-scroll">La Audioteca del Pensamiento</h2>
+        <section class="seccion full-screen-section">
+             <div class="content-container">
+                <h2>La Audioteca del Pensamiento</h2>
                 <div class="grid-container">
-                    <div class="grid-item animate-on-scroll">
-                        <iframe data-testid="embed-iframe" style="border-radius:0px; border: 1px solid #777;" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    <div class="grid-item">
+                        <iframe data-testid="embed-iframe" style="border: 1px solid #777;" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                         <h3>El Secreto de la Felicidad en el Caos Moderno</h3>
                         <p>Un diálogo íntimo sobre la búsqueda de la serenidad en la vorágine de hoy. Escucha las claves para encontrar tu centro, incluso cuando el mundo parece girar sin rumbo fijo.</p>
                         <a href="#" class="btn">Escuchar el Episodio</a>
                     </div>
-                    <div class="grid-item animate-on-scroll">
-                        <iframe data-testid="embed-iframe" style="border-radius:0px; border: 1px solid #777;" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    <div class="grid-item">
+                        <iframe data-testid="embed-iframe" style="border: 1px solid #777;" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                         <h3>Desbloqueando tu Potencial Creador</h3>
                         <p>Embárcate en un viaje sonoro para despertar al artista que llevas dentro. Descubre cómo la inspiración fluye cuando te atreves a romper los moldes y liberar tu verdadera esencia creativa.</p>
                         <a href="#" class="btn">Inspirarse</a>
                     </div>
                 </div>
-            </section>
-        </main>
+            </div>
+        </section>
 
-        <footer>
-            <p>&copy; 2025 - El Semanal de ARG. Todos los derechos reservados. Impreso con pasión en la imprenta del Alma.</p>
+        <footer class="full-screen-section">
+            <p>&copy; 2025 - El Semanal de ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p>
         </footer>
+
     </div>
 
     <script>
-        // SCRIPT 1: ANIMACIÓN DE ENTRADA GENERAL
-        const animatedElements = document.querySelectorAll('.animate-on-scroll');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    // Opcional: Desactivar la observación después de que se active para ahorrar recursos
-                    // observer.unobserve(entry.target); 
-                }
-            });
-        }, { threshold: 0.1 }); // Se activa cuando el 10% del elemento es visible
-        animatedElements.forEach(element => observer.observe(element));
+        // SCRIPT 1: Pequeña aleatoriedad en las rotaciones para efecto "impresión manual"
+        document.querySelectorAll('.grid-item').forEach(item => {
+            const randomRotation = (Math.random() - 0.5) * 0.4; // Entre -0.2deg y 0.2deg
+            item.style.setProperty('--rotate', `${randomRotation}deg`);
+        });
 
-        // SCRIPT 2: EFECTO PARALLAX PARA IMÁGENES DE TARJETAS (suavizado y adaptado)
+        // SCRIPT 2: Parallax para imágenes (Ajustado para el nuevo layout)
         document.addEventListener('scroll', function() {
             const parallaxImages = document.querySelectorAll('.parallax-image');
             for (let img of parallaxImages) {
@@ -476,28 +367,14 @@
                 
                 if (rect.top < window.innerHeight && rect.bottom > 0) {
                     const percentVisible = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-                    const moveAmount = (percentVisible - 0.5) * 8; // Movimiento muy sutil
-                    img.style.transform = `translateY(${moveAmount * -1}%) scale(1.01)`; // Escala casi imperceptible
+                    const moveAmount = (percentVisible - 0.5) * 8;
+                    img.style.transform = `translateY(${moveAmount * -1}%) scale(1.01)`;
                 }
             }
         });
 
-        // SCRIPT 3: Pequeña aleatoriedad en las rotaciones de los grid-item para el efecto "impresión manual"
-        document.querySelectorAll('.grid-item').forEach(item => {
-            const randomRotation = (Math.random() - 0.5) * 0.4; // Entre -0.2deg y 0.2deg
-            item.style.setProperty('--rotate', `${randomRotation}deg`);
-        });
-
-        // SCRIPT 4: Parallax para el video de fondo (restaurado)
-        window.addEventListener('scroll', function() {
-            const videoFondo = document.getElementById('video-fondo');
-            // Asegúrate de que el video exista antes de intentar manipularlo
-            if (videoFondo) {
-                const scrollPosition = window.pageYOffset;
-                // Ajusta el factor para controlar la velocidad del parallax
-                videoFondo.style.transform = `translateX(-50%) translateY(calc(-50% + ${scrollPosition * 0.25}px))`;
-            }
-        });
+        // NOTA: El parallax del video de fondo no es necesario con esta estructura
+        // ya que el header es una sección fija de 100vh.
     </script>
 
 </body>
