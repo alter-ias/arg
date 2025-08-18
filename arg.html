@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspirado en Chani</title>
+    <style>
+        /* Estilos Generales */
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Encabezado */
+        header {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        #video-fondo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            transform: translateX(-50%) translateY(-50%);
+            background-size: cover;
+            transition: 1s;
+        }
+
+        .header-content {
+            z-index: 1;
+        }
+
+        .header-content h1 {
+            font-size: 4rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content p {
+            font-size: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Contenido Principal */
+        main {
+            padding: 2rem;
+        }
+
+        .seccion {
+            margin-bottom: 4rem;
+        }
+
+        .seccion h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .grid-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .grid-item img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        .grid-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border: 1px solid #333;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #333;
+            color: white;
+        }
+
+        /* Pie de Página */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .footer-logo {
+            width: 150px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <video autoplay muted loop id="video-fondo">
+            <source src="assets/vid/fondo0.webm" type="video/webm">
+            Tu navegador no soporta videos HTML5.
+        </video>
+        <div class="header-content">
+            <h1>Bienvenido a Nuestro Universo</h1>
+            <p>Explora la magia que te rodea</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="seccion">
+            <h2>Novedades</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <img src="assets/img/img01.png" alt="Imagen 1">
+                    <h3>Guía de Mercurio Retrógrado</h3>
+                    <a href="#" class="btn">Leer Más</a>
+                </div>
+                <div class="grid-item">
+                    <img src="assets/img/img02.png" alt="Imagen 2">
+                    <h3>Urano en Géminis</h3>
+                    <a href="#" class="btn">Leer Más</a>
+                </div>
+                <div class="grid-item">
+                    <img src="assets/img/img03.png" alt="Imagen 3">
+                    <h3>Solsticio de Verano</h3>
+                    <a href="#" class="btn">Leer Más</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion">
+            <h2>Podcast de la Semana</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <img src="assets/img/logo01.png" alt="Logo Podcast 1">
+                    <h3>Astrología para el Alma</h3>
+                    <a href="#" class="btn">Escuchar</a>
+                </div>
+                <div class="grid-item">
+                    <img src="assets/img/logo02.png" alt="Logo Podcast 2">
+                    <h3>Mitos y Estrellas</h3>
+                    <a href="#" class="btn">Escuchar</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <img src="assets/img/logo01.png" alt="Logo Footer" class="footer-logo">
+        <p>&copy; 2025 - Inspirado en Chani. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Efecto Parallax para el video de fondo
+        window.addEventListener('scroll', function() {
+            const videoFondo = document.getElementById('video-fondo');
+            const scrollPosition = window.pageYOffset;
+            videoFondo.style.transform = `translateX(-50%) translateY(calc(-50% + ${scrollPosition * 0.4}px))`;
+        });
+    </script>
+
+</body>
+</html>
