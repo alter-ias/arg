@@ -3,412 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Diario de ARG - Edición Especial</title>
-    <!-- Google Fonts para un estilo de periódico -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    
+    <title>alanruizgalicia</title>
     <style>
-        /* Estilos Generales - Inspiración en papel y tinta */
+        /* Estilos Generales */
         body {
-            font-family: 'Merriweather', serif; /* Fuente serif para el cuerpo del texto */
-            background-color: #f0f0e8; /* Fondo de papel ligero */
-            color: #1a1a1a; /* Tinta negra/gris muy oscuro */
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #f5f5f5;
+            color: #333;
             margin: 0;
-            line-height: 1.6;
-            overflow-x: hidden; /* Previene el scroll horizontal no deseado */
-            padding: 1.5rem; /* Margen general alrededor de la "página" del periódico */
+            overflow-x: hidden;
         }
+            /* Encabezado */
+    header {
+        position: relative;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        overflow: hidden;
+    }
 
-        /* Contenedor principal para simular la página del periódico */
-        .page-wrapper {
-            max-width: 1100px; /* Ancho máximo de la "página" */
-            margin: 0 auto; /* Centrar la página */
-            background-color: #fcfcfc; /* Color del "papel" */
-            border: 1px solid #e0e0e0; /* Borde sutil alrededor de la página */
-            box-shadow: 0 0 25px rgba(0,0,0,0.08); /* Sombra suave para darle profundidad de objeto */
-        }
+    #video-fondo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -1;
+        transform: translateX(-50%) translateY(-50%);
+        background-size: cover;
+        filter: brightness(0.7);
+    }
 
-        /* Encabezado - La cabecera del periódico */
-        header {
-            height: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: #1a1a1a;
-            padding: 2.5rem 2rem 1.5rem; /* Padding superior, lateral, inferior */
-            border-bottom: 3px double #333; /* Doble línea de separación */
-        }
+    .header-content {
+        z-index: 1;
+    }
 
-        .header-content {
-            z-index: 1;
-            width: 100%; /* Asegura que el contenido ocupe el ancho disponible */
-        }
+    .header-content h1 {
+        font-size: 6rem;
+        margin: 0;
+        font-weight: bold;
+        letter-spacing: 5px;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+    }
 
-        .header-content h1 {
-            font-family: 'Playfair Display', serif; /* Fuente destacada para el nombre del periódico */
-            font-size: 7rem; /* Tamaño muy grande */
-            margin: 0;
-            font-weight: 900; /* Extra bold */
-            letter-spacing: -4px; /* Letras más juntas, estilo condensado */
-            text-transform: uppercase;
-            line-height: 0.8; /* Reduce el espacio entre letras */
-        }
+    .header-content p {
+        font-size: 1.5rem;
+        margin-top: 1rem;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    }
 
-        .header-content p {
-            font-family: 'Merriweather', serif;
-            font-size: 1.1rem;
-            margin-top: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            padding-top: 0.5rem;
-            border-top: 1px solid #333; /* Línea delgada sobre la descripción */
-            display: inline-block; /* Para que la línea se ajuste al texto */
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
+    /* Contenido Principal */
+    main {
+        padding: 2rem 0;
+    }
 
-        /* Contenido Principal */
-        main {
-            padding: 2.5rem 2rem; /* Padding lateral y vertical dentro de la página */
-        }
+    .seccion {
+        margin-bottom: 5rem;
+        position: relative;
+        padding: 0 2rem;
+    }
+    
+    .seccion:not(#video-section):not(:last-child)::after {
+        content: '';
+        display: block;
+        width: 50%;
+        max-width: 400px;
+        margin: 6rem auto 0;
+        border-bottom: 2px dotted #ccc;
+    }
 
-        .seccion {
-            margin-bottom: 4rem; /* Espacio entre secciones */
-            position: relative;
-        }
-        
-        /* Línea divisoria entre secciones */
-        .seccion:not(#video-section):not(:last-child)::after {
-            content: '';
-            display: block;
-            width: 80%; /* Más ancho que antes */
-            max-width: 600px;
-            margin: 3.5rem auto 0; /* Más cerca de la sección anterior */
-            border-bottom: 1px solid #ccc; /* Línea sólida simple */
-        }
+    .seccion h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 3rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
 
-        .seccion h2 {
-            font-family: 'Playfair Display', serif;
-            text-align: center;
-            font-size: 2.8rem; /* Tamaño de titular de sección */
-            margin-bottom: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #333; /* Línea de titular fuerte */
-            display: inline-block; /* Para que el borde se ajuste al texto */
-            margin-left: auto;
-            margin-right: auto;
-        }
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2.5rem;
+        align-items: stretch;
+    }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Más compacto, tipo columna */
-            gap: 2rem; /* Espacio entre "artículos" */
-            align-items: stretch;
-        }
+    .grid-item {
+        background-color: white;
+        border: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .grid-item h3 {
+        font-size: 1.2rem;
+        margin: 1.5rem 1rem;
+    }
+    
+    .grid-item iframe {
+        padding: 1rem;
+        box-sizing: border-box;
+        flex-grow: 1;
+    }
 
-        .grid-item {
-            background-color: transparent; /* Permite ver el "papel" de fondo */
-            border: 1px solid #e0e0e0; /* Borde sutil alrededor de cada artículo */
-            display: flex;
-            flex-direction: column;
-            box-shadow: none; /* Eliminar sombras modernas */
-            padding-bottom: 1.5rem;
-        }
-        
-        .grid-item h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem; /* Título de artículo más grande */
-            margin: 1.2rem 1rem 0.5rem; /* Márgenes ajustados */
-            line-height: 1.3;
-            font-weight: 700;
-        }
+    .btn {
+        display: inline-block;
+        padding: 0.8rem 1.5rem;
+        border: 1px solid #333;
+        color: #333;
+        text-decoration: none;
+        transition: background-color 0.3s, color 0.3s;
+        margin: 0 1.5rem 1.5rem auto;
+        align-self: flex-end;
+    }
 
-        .grid-item p {
-            font-family: 'Merriweather', serif;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            padding: 0 1rem;
-            text-align: justify; /* Texto justificado para simular columna de periódico */
-            margin-top: 0.5rem;
-            flex-grow: 1; /* Permite que el párrafo ocupe el espacio disponible */
-        }
-        
-        .grid-item iframe {
-            padding: 1rem;
-            box-sizing: border-box;
-            flex-grow: 1;
-            border: 1px solid #ccc; /* Borde en iframes */
-        }
+    .btn:hover {
+        background-color: #333;
+        color: white;
+    }
 
-        .btn {
-            display: inline-block;
-            padding: 0.7rem 1.4rem;
-            border: 1px solid #1a1a1a;
-            color: #1a1a1a;
-            text-decoration: none;
-            transition: background-color 0.2s, color 0.2s;
-            margin: 1.5rem 1rem 0 auto; /* Ajustar margen para el botón */
-            align-self: flex-end;
-            font-family: 'Merriweather', serif;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    .image-parallax-container {
+        overflow: hidden;
+        height: 280px;
+    }
+    
+    .parallax-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.1s linear;
+    }
+    
+    /* SECCIÓN DE VIDEO CON CONTENEDOR A PRUEBA DE ZOOM */
+    #video-section {
+        height: 100vh;
+        width: 100vw;
+        padding: 0;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #000;
+    }
+    
+    #video-section .video-wrapper {
+        width: 80%;
+        max-width: 900px;
+        max-height: 90vh; /* Límite de altura */
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        overflow-y: auto; /* AÑADIDO CLAVE: Scroll si el contenido es muy alto */
+    }
+    
+    .video-container {
+        width: 100%;
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        flex-shrink: 0; /* Evita que los videos se encojan */
+    }
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
 
-        .btn:hover {
-            background-color: #1a1a1a;
-            color: white;
-        }
+    /* Animaciones */
+    .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(50px) rotate(2deg) scale(0.95);
+        transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .animate-on-scroll.is-visible {
+        opacity: 1;
+        transform: translateY(0) rotate(0) scale(1);
+    }
+    .grid-container .animate-on-scroll.is-visible:nth-child(2),
+    #video-section .video-wrapper .animate-on-scroll.is-visible:nth-child(2) {
+        transition-delay: 0.1s;
+    }
+    .grid-container .animate-on-scroll.is-visible:nth-child(3) {
+        transition-delay: 0.2s;
+    }
 
-        .image-parallax-container {
-            overflow: hidden;
-            height: 220px; /* Altura de imagen más pequeña */
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #eee; /* Línea sutil bajo la imagen */
-        }
-        
-        .parallax-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(100%); /* Imágenes en blanco y negro */
-            transition: transform 0.1s linear;
-        }
-        
-        /* SECCIÓN DE VIDEO/MULTIMEDIA - Adaptada al estilo de periódico */
-        #video-section {
-            height: auto; /* No ocupa toda la altura de la ventana */
-            width: auto; /* Se ajusta al page-wrapper */
-            padding: 3.5rem 2rem; /* Padding interno */
-            background-color: #e8e8e0; /* Fondo ligeramente diferente para destacar */
-            display: flex;
-            flex-direction: column; /* Apila el título y los videos */
-            align-items: center;
-            justify-content: center;
-            margin: 4rem 0; /* Espacio alrededor de la sección */
-            border: 1px solid #ccc; /* Borde para enmarcar */
-        }
-
-        #video-section h2 {
-            margin-bottom: 3rem; /* Más espacio bajo el título de sección de video */
-            border-bottom: 2px solid #555; /* Borde de título más oscuro */
-        }
-        
-        #video-section .video-wrapper {
-            width: 95%; /* Más ancho dentro de la sección */
-            max-width: 900px;
-            max-height: none; /* No limita la altura si hay muchos videos */
-            gap: 1.5rem;
-            overflow-y: visible; /* Asegura que el scroll del wrapper no esconda los videos */
-        }
-        
-        .video-container {
-            width: 100%;
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border-radius: 0; /* Esquinas afiladas */
-            box-shadow: none; /* Eliminar sombras */
-            border: 1px solid #777; /* Borde más pronunciado para los videos */
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Animaciones - Suavizadas para un aspecto más clásico */
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(20px); /* Movimiento más suave, sin rotación/escala */
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .animate-on-scroll.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        /* Ajustar los delays ligeramente */
-        .grid-container .animate-on-scroll.is-visible:nth-child(2),
-        #video-section .video-wrapper .animate-on-scroll.is-visible:nth-child(2) {
-            transition-delay: 0.08s;
-        }
-        .grid-container .animate-on-scroll.is-visible:nth-child(3) {
-            transition-delay: 0.16s;
-        }
-
-        footer {
-            background-color: #fcfcfc; /* Mismo color que el "papel" */
-            color: #1a1a1a;
-            text-align: center;
-            padding: 1.5rem 2rem;
-            font-size: 0.85rem;
-            border-top: 1px solid #ccc; /* Línea divisoria superior */
-            font-family: 'Merriweather', serif;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            body {
-                padding: 1rem;
-            }
-            .page-wrapper {
-                box-shadow: none; /* Quitar sombra en pantallas pequeñas */
-                border: none; /* Quitar borde en pantallas pequeñas */
-            }
-            header {
-                padding: 2rem 1rem 1rem;
-            }
-            .header-content h1 {
-                font-size: 4rem; /* Reducir tamaño de la cabecera */
-                letter-spacing: -2px;
-            }
-            .header-content p {
-                font-size: 0.9rem;
-                letter-spacing: 1px;
-            }
-            main {
-                padding: 2rem 1.5rem;
-            }
-            .seccion h2 {
-                font-size: 2rem;
-            }
-            .grid-container {
-                grid-template-columns: 1fr; /* Una columna en móviles */
-                gap: 1.5rem;
-            }
-            .grid-item h3 {
-                font-size: 1.4rem;
-            }
-            .grid-item p {
-                font-size: 0.9rem;
-            }
-            #video-section {
-                padding: 2.5rem 1.5rem;
-                margin: 3rem 0;
-            }
-        }
-    </style>
+    footer {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 2rem;
+    }
+</style>
 </head>
 <body>
-
-    <div class="page-wrapper">
-        <header>
-            <!-- Eliminado el video de fondo para la estética de periódico -->
-            <div class="header-content">
-                <h1>EL DIARIO DE ARG</h1>
-                <p>Alan Ruíz Galicia - Edición del 24 de Julio, 2025</p>
-            </div>
-        </header>
-
-        <main>
-            <section class="seccion">
-                <h2 class="animate-on-scroll">Últimas Noticias</h2>
-                <div class="grid-container">
-                    <div class="grid-item animate-on-scroll">
-                        <div class="image-parallax-container">
-                            <img src="assets/img/img01.png" alt="Imagen 1" class="parallax-image">
-                        </div>
-                        <h3>Guía Definitiva de Mercurio Retrógrado</h3>
-                        <p>Descubre cómo sobrevivir y prosperar durante los periodos de Mercurio Retrógrado. Nuestro experto astrólogo te ofrece consejos prácticos y una perspectiva renovada para navegar esta influencia celestial.</p>
-                        <a href="#" class="btn">Leer Artículo Completo</a>
-                    </div>
-                    <div class="grid-item animate-on-scroll">
-                        <div class="image-parallax-container">
-                            <img src="assets/img/img02.png" alt="Imagen 2" class="parallax-image">
-                        </div>
-                        <h3>Urano en Géminis: Un Análisis Profundo de los Cambios que se avecinan</h3>
-                        <p>Urano ha entrado en Géminis, marcando una era de innovaciones en la comunicación y el pensamiento. Exploramos las implicaciones de este tránsito en nuestra vida diaria y en la sociedad.</p>
-                        <a href="https://alter-ias.github.io/heptaglota/loteriatapatia.html" class="btn">Explorar el Tema</a>
-                    </div>
-                    <div class="grid-item animate-on-scroll">
-                        <div class="image-parallax-container">
-                            <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
-                        </div>
-                        <h3>El Solsticio de Verano y su Impacto Energético</h3>
-                        <p>Con la llegada del solsticio, la energía vital alcanza su punto máximo. Aprende a canalizar esta poderosa vibración para el crecimiento personal y la manifestación de tus deseos más profundos.</p>
-                        <a href="#" class="btn">Saber Más Aquí</a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="seccion" id="video-section">
-                <h2 class="animate-on-scroll">Reportajes Audiovisuales</h2>
-                <div class="video-wrapper">
-                    <!-- CORRECCIÓN: Usando youtube-nocookie.com para mejorar privacidad -->
-                    <div class="video-container animate-on-scroll">
-                        <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                    </div>
-                    <div class="video-container animate-on-scroll">
-                        <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                    </div>
-                </div>
-            </section>
-
-            <section class="seccion">
-                <h2 class="animate-on-scroll">Nuestra Sección de Podcast</h2>
-                <div class="grid-container">
-                    <div class="grid-item animate-on-scroll">
-                        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                        <h3>El Secreto de la Felicidad en el Caos Moderno</h3>
-                        <p>Únete a nosotros mientras exploramos las filosofías antiguas y la ciencia moderna para encontrar caminos hacia la serenidad en un mundo cada vez más acelerado.</p>
-                    </div>
-                    <div class="grid-item animate-on-scroll">
-                        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                        <h3>Desbloqueando tu Potencial Creador</h3>
-                        <p>En este episodio, te guiamos a través de ejercicios prácticos y técnicas innovadoras para despertar y nutrir tu creatividad, sea cual sea tu campo de acción.</p>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>&copy; 2025 - El Diario de ARG. Todos los derechos reservados.</p>
-        </footer>
+    <header>
+    <video autoplay muted loop id="video-fondo">
+        <source src="assets/vid/fondo0.webm" type="video/webm">
+        Tu navegador no soporta videos HTML5.
+    </video>
+    <div class="header-content">
+        <h1>ARG</h1>
+        <p>Alan Ruíz Galicia</p>
     </div>
+</header>
 
-    <script>
-        // SCRIPT 1: Eliminado el parallax del video de fondo ya que el video ha sido quitado.
+<main>
+    <section class="seccion">
+        <h2 class="animate-on-scroll">Novedades</h2>
+        <div class="grid-container">
+            <div class="grid-item animate-on-scroll">
+                <div class="image-parallax-container">
+                    <img src="assets/img/img01.png" alt="Imagen 1" class="parallax-image">
+                </div>
+                <h3>Guía de Mercurio Retrógrado</h3>
+                <a href="#" class="btn">Leer Más</a>
+            </div>
+            <div class="grid-item animate-on-scroll">
+                <div class="image-parallax-container">
+                    <img src="assets/img/img02.png" alt="Imagen 2" class="parallax-image">
+                </div>
+                <h3>Urano en Géminis</h3>
+                <a href="https://alter-ias.github.io/heptaglota/loteriatapatia.html" class="btn">Leer Más</a>
+            </div>
+            <div class="grid-item animate-on-scroll">
+                <div class="image-parallax-container">
+                    <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
+                </div>
+                <h3>Solsticio de Verano</h3>
+                <a href="#" class="btn">Leer Más</a>
+            </div>
+        </div>
+    </section>
 
-        // SCRIPT 2: ANIMACIÓN DE ENTRADA GENERAL
-        const animatedElements = document.querySelectorAll('.animate-on-scroll');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    // Opcional: Desactivar la observación después de que se active para ahorrar recursos
-                    // observer.unobserve(entry.target); 
-                }
-            });
-        }, { threshold: 0.1 }); // Se activa cuando el 10% del elemento es visible
-        animatedElements.forEach(element => observer.observe(element));
+    <section class="seccion" id="video-section">
+        <div class="video-wrapper">
+            <!-- CORRECCIÓN: Usando youtube-nocookie.com para mejorar privacidad -->
+            <div class="video-container animate-on-scroll">
+                <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=OZ4B5eFJhQx0_fst" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div class="video-container animate-on-scroll">
+                <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=y1JORYHgvCvv8Sui" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
 
-        // SCRIPT 3: EFECTO PARALLAX PARA IMÁGENES DE TARJETAS (suavizado)
-        document.addEventListener('scroll', function() {
-            const parallaxImages = document.querySelectorAll('.parallax-image');
-            for (let img of parallaxImages) {
-                const container = img.parentElement;
-                const rect = container.getBoundingClientRect();
-                
-                // Solo aplicar si el contenedor está en la vista
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    // Calcula qué porcentaje del contenedor es visible en la pantalla
-                    const percentVisible = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-                    // Ajusta la cantidad de movimiento para hacerlo más sutil
-                    const moveAmount = (percentVisible - 0.5) * 10; // Reducido de 40 a 10
-                    img.style.transform = `translateY(${moveAmount * -1}%) scale(1.02)`; // Escala más sutil
-                }
+    <section class="seccion">
+        <h2 class="animate-on-scroll">Podcast de la Semana</h2>
+        <div class="grid-container">
+            <div class="grid-item animate-on-scroll">
+                <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+            <div class="grid-item animate-on-scroll">
+                <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2025 - ARG. Todos los derechos reservados.</p>
+</footer>
+
+<script>
+    // SCRIPT 1: PARALLAX PARA VIDEO DE FONDO
+    window.addEventListener('scroll', function() {
+        const videoFondo = document.getElementById('video-fondo');
+        const scrollPosition = window.pageYOffset;
+        videoFondo.style.transform = `translateX(-50%) translateY(calc(-50% + ${scrollPosition * 0.25}px))`;
+    });
+
+    // SCRIPT 2: ANIMACIÓN DE ENTRADA GENERAL
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
             }
         });
-    </script>
+    }, { threshold: 0.1 });
+    animatedElements.forEach(element => observer.observe(element));
 
+    // SCRIPT 3: EFECTO PARALLAX PARA IMÁGENES DE TARJETAS
+    document.addEventListener('scroll', function() {
+        const parallaxImages = document.querySelectorAll('.parallax-image');
+        for (let img of parallaxImages) {
+            const container = img.parentElement;
+            const rect = container.getBoundingClientRect();
+            
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                const percentVisible = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+                const moveAmount = (percentVisible - 0.5) * 40; 
+                img.style.transform = `translateY(${moveAmount * -1}%) scale(1.1)`;
+            }
+        }
+    });
+</script>
 </body>
 </html>
