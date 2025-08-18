@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display+SC:wght@400;700;900&family=Special+Elite&display=swap" rel="stylesheet">
     
     <style>
-        /* BASE: El lienzo del periódico */
+        /* BASE: El fondo de la ventana (como la superficie donde descansa el periódico) */
         body {
             font-family: 'Libre Baskerville', serif; /* Serif clásico para legibilidad */
             color: #1a1a1a; /* Tinta negra muy oscura */
@@ -19,77 +19,91 @@
             overflow-x: hidden;
             padding: 2.5rem; /* Márgenes exteriores para simular la mesa donde descansa el periódico */
             
-            /* Fondo general de la página - La superficie donde reposa el periódico */
-            background-image: url('assets/img/fondopaper.png');
-            background-size: cover; /* La imagen cubre todo el área */
-            background-repeat: no-repeat;
-            background-position: center center;
-            background-attachment: fixed; /* El fondo no se desplaza con el scroll */
-            background-color: #c0b8a3; /* Color de respaldo para el fondo */
-            
-            /* Efecto de grano o viñeteado para el fondo general */
-            box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.1);
+            /* Fondo simple para el body, ya que el papel ahora estará en .page-wrapper */
+            background-color: #c0b8a3; 
+            /* Sombra interna para un efecto de viñeteado general, sutil */
+            box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.15); 
         }
 
-        /* Contenedor principal: La "hoja de periódico" */
+        /* Contenedor principal: La "hoja de periódico" sobre la que todo se imprime */
         .page-wrapper {
             max-width: 1000px; /* Ancho de la hoja de periódico */
             margin: 0 auto; /* Centrar la página */
-            background-color: #fcf6e8; /* Color de papel ligeramente amarillento */
-            border: 2px solid #333; /* Borde que enmarca el periódico */
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2), inset 0 0 100px rgba(0,0,0,0.05); /* Sombra suave para darle profundidad de objeto */
             
-            /* Filtros para simular papel viejo y la irregularidad de la impresión */
-            filter: sepia(0.3) contrast(1.1) brightness(1.05);
+            /* ¡Aquí la textura de papel de fondo! */
+            background-image: url('assets/img/fondopaper.png');
+            background-size: cover; /* La imagen cubre todo el área de la página */
+            background-repeat: no-repeat;
+            background-position: center center;
+            
+            border: 2px solid #333; /* Borde que enmarca el periódico */
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2); /* Sombra suave para darle profundidad de objeto */
             position: relative;
             z-index: 1; /* Para que esté por encima del fondo del body */
         }
 
-        /* Encabezado: La cabecera del periódico */
+        /* Encabezado: La portada con el video de fondo */
         header {
+            position: relative;
+            height: 100vh; /* Altura completa de la ventana */
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: #1a1a1a;
-            padding: 3rem 2rem 1.5rem;
-            border-bottom: 5px double #1a1a1a; /* Doble línea gruesa para la cabecera */
-            position: relative;
-            z-index: 2; /* Para que los filtros de .page-wrapper no afecten demasiado directamente */
+            color: white; /* Texto blanco para resaltar sobre el video */
+            overflow: hidden;
+            border-bottom: 5px double rgba(255, 255, 255, 0.8); /* Doble línea de separación, ahora blanca */
+        }
+
+        #video-fondo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            transform: translateX(-50%) translateY(-50%);
+            background-size: cover;
+            filter: brightness(0.7); /* Oscurece el video para legibilidad del texto */
+        }
+
+        .header-content {
+            z-index: 1;
+            width: 100%;
+            padding: 0 1rem; /* Pequeño padding para el contenido */
         }
 
         .header-content h1 {
-            font-family: 'Playfair Display SC', serif; /* Small Caps para un titular de prensa */
-            font-size: 8rem; /* Tamaño muy grande y audaz */
+            font-family: 'Playfair Display SC', serif;
+            font-size: 8rem;
             margin: 0;
             font-weight: 900;
-            letter-spacing: -6px; /* Letras muy juntas, efecto condensado */
+            letter-spacing: -6px;
             text-transform: uppercase;
             line-height: 0.8;
-            /* Efecto de tinta "sangrada" o ligeramente desenfocada */
-            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), -1px -1px 1px rgba(0, 0, 0, 0.1);
-            filter: blur(0.2px); /* Un desenfoque muy, muy sutil */
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7); /* Sombra para resaltar sobre el video */
+            filter: blur(0.2px); /* Un desenfoque muy, muy sutil para el efecto de "tinta impresa" */
         }
 
         .header-content p {
-            font-family: 'Libre Baskerville', serif; /* Subtítulo con serif clásico */
+            font-family: 'Libre Baskerville', serif;
             font-size: 1.1rem;
             margin-top: 1.5rem;
             text-transform: uppercase;
-            letter-spacing: 3px; /* Más espaciado para la fecha/slogan */
+            letter-spacing: 3px;
             padding: 0.8rem 1.5rem;
-            border: 1px solid #1a1a1a; /* Recuadro para la fecha/slogan */
+            border: 1px solid white; /* Recuadro blanco para la fecha/slogan */
             display: inline-block;
-            background-color: rgba(255, 255, 255, 0.7); /* Ligeramente translúcido para la capa de papel */
-            /* Efecto de tinta "sangrada" */
-            text-shadow: 0.5px 0.5px 0.5px rgba(0, 0, 0, 0.1);
+            background-color: rgba(0, 0, 0, 0.3); /* Fondo semitransparente oscuro para el texto */
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
         }
 
-        /* Contenido Principal */
+        /* Contenido Principal - Los bloques semitransparentes sobre el fondo de papel */
         main {
             padding: 2.5rem 2rem;
-            position: relative;
+            background-color: rgba(255, 255, 255, 0.75); /* Fondo blanco semitransparente para ver el papel */
         }
 
         .seccion {
@@ -104,11 +118,11 @@
             width: 70%;
             max-width: 500px;
             margin: 4.5rem auto 0;
-            border-bottom: 1px solid #777; /* Línea superior */
-            border-top: 1px solid #777; /* Línea inferior */
-            height: 0px; /* Para que las dos líneas se peguen */
+            border-bottom: 1px solid #777;
+            border-top: 1px solid #777;
+            height: 0px;
             position: relative;
-            top: 2px; /* Pequeño ajuste visual */
+            top: 2px;
         }
 
         .seccion h2 {
@@ -123,7 +137,6 @@
             display: inline-block;
             margin-left: auto;
             margin-right: auto;
-            /* Efecto de tinta "sangrada" */
             text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
             filter: blur(0.1px);
         }
@@ -131,24 +144,23 @@
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2.5rem; /* Espacio entre artículos/columnas */
-            align-items: start; /* Para que las cajas se alineen arriba si el contenido es desigual */
+            gap: 2.5rem;
+            align-items: start;
         }
 
         .grid-item {
-            background-color: transparent; /* Permite ver la textura del "papel" */
-            border: 1px dashed #777; /* Borde punteado tenue, como un recorte */
+            background-color: rgba(255, 255, 255, 0.75); /* Fondo blanco semitransparente para ver el papel */
+            border: 1px dashed #777;
             display: flex;
             flex-direction: column;
             box-shadow: none;
-            padding: 1rem 1rem 1.5rem; /* Padding interno para el contenido del artículo */
+            padding: 1rem 1rem 1.5rem;
             
-            /* Pequeña rotación y transformación para dar un toque de "imperfecto" */
             transform: rotate(var(--rotate, 0deg)) scale(var(--scale, 1));
             transition: transform 0.3s ease-in-out;
         }
 
-        .grid-item:nth-child(even) { /* Ligeras variaciones para algunos elementos */
+        .grid-item:nth-child(even) {
             --rotate: 0.2deg;
         }
         .grid-item:nth-child(odd) {
@@ -156,36 +168,35 @@
         }
 
         .grid-item h3 {
-            font-family: 'Playfair Display SC', serif; /* Título de artículo con Small Caps */
+            font-family: 'Playfair Display SC', serif;
             font-size: 1.8rem;
             margin: 0 0 0.8rem 0;
             line-height: 1.2;
             font-weight: 700;
-            text-transform: capitalize; /* Capitaliza la primera letra de cada palabra */
-            /* Efecto de tinta "sangrada" */
+            text-transform: capitalize;
             text-shadow: 0.5px 0.5px 0.5px rgba(0, 0, 0, 0.1);
         }
 
         .grid-item p {
-            font-family: 'Special Elite', monospace; /* ¡Máquina de escribir para el cuerpo del texto! */
-            font-size: 0.9rem; /* Tamaño adecuado para máquina de escribir */
-            line-height: 1.7; /* Mayor interlineado para legibilidad */
+            font-family: 'Special Elite', monospace; /* ¡Máquina de escribir! */
+            font-size: 0.9rem;
+            line-height: 1.7;
             padding: 0;
-            text-align: justify; /* Texto justificado para simular columna de periódico */
+            text-align: justify;
             margin-top: 0.5rem;
             flex-grow: 1;
-            /* Ligero efecto de tinta irregular */
-            color: #2b2b2b; /* Tinta un poco más suave para máquina de escribir */
-            text-shadow: 0.2px 0.2px 0.2px rgba(0, 0, 0, 0.05); /* Muy sutil */
+            color: #2b2b2b;
+            text-shadow: 0.2px 0.2px 0.2px rgba(0, 0, 0, 0.05);
         }
         
         .grid-item iframe {
             padding: 0;
             box-sizing: border-box;
             flex-grow: 1;
-            border: 1px solid #777; /* Borde para iframes */
+            border: 1px solid #777;
             border-radius: 0;
             margin-bottom: 1rem;
+            background-color: white; /* Fondo blanco para los iframes, para que se vean nítidos */
         }
 
         .btn {
@@ -197,55 +208,48 @@
             transition: background-color 0.2s, color 0.2s, transform 0.2s;
             margin: 1.5rem 0 0 auto;
             align-self: flex-end;
-            font-family: 'Libre Baskerville', serif; /* Botón con fuente clásica */
+            font-family: 'Libre Baskerville', serif;
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            /* Efecto de tinta "sangrada" */
+            background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente para ver el papel */
             text-shadow: 0.2px 0.2px 0.2px rgba(0, 0, 0, 0.05);
         }
 
         .btn:hover {
             background-color: #1a1a1a;
             color: #fcfcfc;
-            transform: translateY(-2px); /* Pequeño levantamiento al pasar el ratón */
+            transform: translateY(-2px);
         }
 
         .image-parallax-container {
             overflow: hidden;
-            height: 250px; /* Altura de imagen para artículos */
+            height: 250px;
             margin-bottom: 1.2rem;
-            border-bottom: 1px solid #bbb; /* Línea sutil bajo la imagen */
-            border-top: 1px solid #bbb; /* Línea sutil sobre la imagen */
-            
+            border-bottom: 1px solid #bbb;
+            border-top: 1px solid #bbb;
         }
         
         .parallax-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(100%) contrast(1.2) brightness(1.1); /* Blanco y negro con alto contraste */
+            /* Eliminados los filtros para mostrar las imágenes en su estado original */
             transition: transform 0.1s linear;
-            /* Simular efecto de semitono con un overlay de SVG (muy experimental, puede no ser perfecto) */
-            /* Este SVG simula una textura de puntos. Ajusta el background-size para controlar la densidad */
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nNycgaGVpZ2h0PSc3JyB2aWV3Qm94PScwIDAgNyA3JyBmaWxsPSdjYycpIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHJlY3Qgd2lkdGg9JzEnIGhlaWdodD0nMScvPjxyZWN0IHk9JzInIHdpZHRoPScxJyBoZWlnaHQ9JzEnLz48cmVjdCB4PScyJyB3aWR0aD0nMScgaGVpZ2h0PScxJy8+PHJlY3QgeD0nMycgeT0nNCcgd2lkdGg9JzEnIGhlaWdodD0nMScvPjxyZWN0IHhyPScyJyB5PSc2JyB3aWR0aD0nMScgaGVpZ2h0PScxJy8+PC9zdmc+');
-            background-size: 7px 7px;
-            background-blend-mode: overlay; /* Mezcla la textura de puntos sobre la imagen */
-            opacity: 0.95; /* Suaviza el impacto de la imagen */
         }
         
         /* SECCIÓN DE VIDEO/MULTIMEDIA - Como un recuadro especial del periódico */
         #video-section {
             height: auto;
             padding: 3.5rem 2rem;
-            background-color: #e6e0d0; /* Fondo más oscuro para la sección de multimedia */
+            background-color: rgba(230, 224, 208, 0.9); /* Fondo ligeramente más oscuro y semitransparente */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             margin: 4rem 0;
-            border: 2px dashed #555; /* Borde punteado más marcado */
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.05); /* Sombra interna para profundidad */
+            border: 2px dashed #555;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
         }
 
         #video-section h2 {
@@ -268,8 +272,9 @@
             height: 0;
             overflow: hidden;
             border-radius: 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Sombra sutil para el video */
-            border: 2px solid #333; /* Borde más pronunciado para los videos */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid #333;
+            background-color: black; /* Fondo negro para los videos, si la carga es lenta */
         }
         .video-container iframe {
             position: absolute;
@@ -281,17 +286,17 @@
 
         /* Footer - Información legal al pie de página */
         footer {
-            background-color: #fcf6e8; /* Mismo color que el "papel" */
+            background-color: rgba(252, 246, 232, 0.75); /* Fondo blanco semitransparente para ver el papel */
             color: #1a1a1a;
             text-align: center;
             padding: 1.5rem 2rem;
             font-size: 0.85rem;
-            border-top: 2px dashed #777; /* Línea divisoria punteada */
+            border-top: 2px dashed #777;
             font-family: 'Libre Baskerville', serif;
-            text-shadow: 0.1px 0.1px 0.1px rgba(0, 0, 0, 0.02); /* Muy sutil */
+            text-shadow: 0.1px 0.1px 0.1px rgba(0, 0, 0, 0.02);
         }
 
-        /* Animaciones - Suavizadas para un aspecto más clásico */
+        /* Animaciones - Suavizadas */
         .animate-on-scroll {
             opacity: 0;
             transform: translateY(20px);
@@ -371,6 +376,10 @@
 
     <div class="page-wrapper">
         <header>
+            <video autoplay muted loop id="video-fondo">
+                <source src="assets/vid/fondo0.webm" type="video/webm">
+                Tu navegador no soporta videos HTML5.
+            </video>
             <div class="header-content">
                 <h1>EL SEMANAL DE ARG</h1>
                 <p>La Voz Poética de la Actualidad - Edición Julio 2025</p>
@@ -477,6 +486,17 @@
         document.querySelectorAll('.grid-item').forEach(item => {
             const randomRotation = (Math.random() - 0.5) * 0.4; // Entre -0.2deg y 0.2deg
             item.style.setProperty('--rotate', `${randomRotation}deg`);
+        });
+
+        // SCRIPT 4: Parallax para el video de fondo (restaurado)
+        window.addEventListener('scroll', function() {
+            const videoFondo = document.getElementById('video-fondo');
+            // Asegúrate de que el video exista antes de intentar manipularlo
+            if (videoFondo) {
+                const scrollPosition = window.pageYOffset;
+                // Ajusta el factor para controlar la velocidad del parallax
+                videoFondo.style.transform = `translateX(-50%) translateY(calc(-50% + ${scrollPosition * 0.25}px))`;
+            }
         });
     </script>
 
