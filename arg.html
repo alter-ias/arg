@@ -37,7 +37,7 @@
             z-index: -1;
             transform: translateX(-50%) translateY(-50%);
             background-size: cover;
-            filter: brightness(0.7); /* Ligeramente más oscuro para que el texto resalte */
+            filter: brightness(0.7);
         }
 
         .header-content {
@@ -45,7 +45,7 @@
         }
 
         .header-content h1 {
-            font-size: 6rem; /* Más grande y audaz */
+            font-size: 6rem;
             margin: 0;
             font-weight: bold;
             letter-spacing: 5px;
@@ -65,6 +65,17 @@
 
         .seccion {
             margin-bottom: 5rem;
+            position: relative;
+        }
+
+        /* DIVISORES DE SECCIÓN */
+        .seccion:not(:last-child)::after {
+            content: '';
+            display: block;
+            width: 50%;
+            max-width: 400px;
+            margin: 6rem auto 0; /* Aumenta el espacio después de la sección */
+            border-bottom: 2px dotted #ccc;
         }
 
         .seccion h2 {
@@ -121,15 +132,16 @@
             color: white;
         }
 
-        /* Estilos para el Video de YouTube Responsivo */
+        /* Estilos para el Video de YouTube Corregido */
         .video-container {
             position: relative;
-            padding-bottom: 56.25%; /* Proporción 16:9 */
+            padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
-            max-width: 800px; /* Ancho máximo para el video */
-            border: 1px solid #ddd;
+            max-width: 800px;
             margin: 0 auto;
+            border-radius: 8px; /* Bordes redondeados sutiles */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
         }
 
         .video-container iframe {
@@ -143,16 +155,16 @@
         /* NUEVAS ANIMACIONES EN SCROLL */
         .animate-on-scroll {
             opacity: 0;
-            transform: translateY(50px); /* Empieza 50px más abajo */
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transform: translateY(40px) scale(0.98); /* Inicia más abajo y ligeramente más pequeño */
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .animate-on-scroll.is-visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
 
-        /* Efecto escalonado para las tarjetas */
+        /* Efecto escalonado (cascada) para las tarjetas */
         .grid-container .animate-on-scroll.is-visible:nth-child(1) {
             transition-delay: 0.1s;
         }
@@ -162,7 +174,6 @@
         .grid-container .animate-on-scroll.is-visible:nth-child(3) {
             transition-delay: 0.3s;
         }
-
 
         /* Pie de Página */
         footer {
@@ -208,9 +219,8 @@
             </div>
         </section>
 
-        <!-- SECCIÓN DE VIDEO DE YOUTUBE CORREGIDA -->
+        <!-- SECCIÓN DE VIDEO DE YOUTUBE SIN TÍTULO Y CON MEJOR ESTILO -->
         <section class="seccion">
-            <h2 class="animate-on-scroll">Inspiración Visual</h2>
             <div class="video-container animate-on-scroll">
                 <iframe src="https://www.youtube.com/embed/rylzygPxio4?si=y1JORYHgvCvv8Sui" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
@@ -220,11 +230,9 @@
             <h2 class="animate-on-scroll">Podcast de la Semana</h2>
             <div class="grid-container">
                 <div class="grid-item animate-on-scroll">
-                    <!-- Título H3 eliminado -->
                     <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 </div>
                 <div class="grid-item animate-on-scroll">
-                    <!-- Título H3 eliminado -->
                     <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 </div>
             </div>
@@ -236,15 +244,21 @@
     </footer>
 
     <script>
-        // Lógica para animar elementos al hacer scroll (mejorada)
+        // SCRIPT 1: PARALLAX PARA EL VIDEO DE FONDO (RESTAURADO)
+        window.addEventListener('scroll', function() {
+            const videoFondo = document.getElementById('video-fondo');
+            const scrollPosition = window.pageYOffset;
+            // Se usa un multiplicador pequeño para un efecto sutil
+            videoFondo.style.transform = `translateX(-50%) translateY(calc(-50% + ${scrollPosition * 0.25}px))`;
+        });
+
+        // SCRIPT 2: LÓGICA PARA ANIMAR ELEMENTOS AL HACER SCROLL
         const animatedElements = document.querySelectorAll('.animate-on-scroll');
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
-                    // Opcional: deja de observar el elemento una vez que es visible
-                    // observer.unobserve(entry.target); 
                 }
             });
         }, {
@@ -257,4 +271,4 @@
     </script>
 
 </body>
-</html>```
+</html>
