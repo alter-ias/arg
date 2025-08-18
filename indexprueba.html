@@ -224,8 +224,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function displayPoem(poemIndex) {
+        // --- INICIO SCRIPT DE DIAGNÓSTICO ---
+        console.group(`[Diagnóstico] Intentando mostrar poema con índice: ${poemIndex}`);
+        
         const currentPoem = allPoems.find(p => p.originalIndex === poemIndex);
-        if (!currentPoem) return;
+        
+        if (!currentPoem) {
+            console.error("No se encontró el poema con el índice original proporcionado. Saliendo.");
+            console.groupEnd();
+            return;
+        }
+        
+        console.log("Poema encontrado. Datos recibidos del CSV:", currentPoem);
+        // --- FIN SCRIPT DE DIAGNÓSTICO ---
+
         currentPoemIndex = allPoems.indexOf(currentPoem);
 
         poemTextDisplayEl.scrollTop = 0;
@@ -259,18 +271,19 @@ document.addEventListener('DOMContentLoaded', () => {
             audioPlayer.loop = true;
             audioPlayer.play().catch(e => console.error("Error al reproducir audio:", e));
         }
-
-        // --- INICIO DE LA LÓGICA CORREGIDA ---
-
-        // 1. Reseteamos ambos fondos para empezar de cero.
+        
         poemDisplayView.style.backgroundImage = 'none';
         backgroundVideo.style.display = 'none';
         
-        // 2. Creamos una condición clara para verificar si hay un video.
         const hasValidVideo = currentPoem.videoUrl && currentPoem.videoUrl.trim().length > 5;
+        
+        // --- INICIO SCRIPT DE DIAGNÓSTICO ---
+        console.log(`URL del video recibida: "${currentPoem.videoUrl}"`);
+        console.log(`Evaluación de 'hasValidVideo': ${hasValidVideo}`);
+        // --- FIN SCRIPT DE DIAGNÓSTICO ---
 
         if (hasValidVideo) {
-            // 3. PRIORIDAD 1: Si hay video, lo usamos.
+            console.log("DECISIÓN: Hay video válido. Reproduciendo video...");
             backgroundVideo.style.display = 'block';
             backgroundVideo.src = currentPoem.videoUrl;
             backgroundVideo.load();
@@ -279,20 +292,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 triggerTextAnimation();
                 backgroundVideo.oncanplaythrough = null;
             };
-            // Fallback si la URL es válida pero el video no carga
             backgroundVideo.onerror = () => {
-                 console.error("Error al cargar el video:", currentPoem.videoUrl);
+                 console.error("Error al cargar el video. Usando imagen de respaldo.", currentPoem.videoUrl);
                  backgroundVideo.style.display = 'none';
                  poemDisplayView.style.backgroundImage = `url('${currentPoem.imageUrl}')`;
                  setTimeout(triggerTextAnimation, 100);
             }
 
         } else {
-            // 4. PRIORIDAD 2 (FALLBACK): Si no hay video, usamos la imagen.
+            console.log("DECISIÓN: No hay video válido. Mostrando imagen de respaldo.");
             poemDisplayView.style.backgroundImage = `url('${currentPoem.imageUrl}')`;
             setTimeout(triggerTextAnimation, 100);
         }
-        // --- FIN DE LA LÓGICA CORREGIDA ---
+        console.groupEnd(); // Cierra el grupo de diagnóstico
     }
     
     function closePoemView() {
@@ -300,12 +312,17 @@ document.addEventListener('DOMContentLoaded', () => {
         audioPlayer.pause();
         audioPlayer.src = '';
         backgroundVideo.pause();
+        
+        // Vuelve a poner el video de fondo principal y lo reproduce
+        backgroundVideo.src = mainBackgroundVideoSrc;
+        backgroundVideo.play().catch((e)=>{
+            // Este error es el 404 que ves.
+            console.error(`No se pudo cargar el video de fondo principal en la ruta: '${mainBackgroundVideoSrc}'. Verifica que la ruta sea correcta en tu repositorio.`, e);
+        });
+        
         backgroundVideo.style.display = 'block';
         poemDisplayView.style.backgroundImage = 'none';
-        if (backgroundVideo.src !== mainBackgroundVideoSrc) {
-            backgroundVideo.src = mainBackgroundVideoSrc;
-            backgroundVideo.play().catch(()=>{});
-        }
+        
         poemDisplayView.classList.add('is-hidden');
         postalSelectionView.classList.remove('is-hidden');
         document.body.style.overflow = 'auto';
