@@ -60,21 +60,21 @@
 
         /* Contenido Principal */
         main {
-            padding: 2rem;
+            padding: 2rem 0; /* Se quita padding lateral para la sección de video */
         }
 
         .seccion {
             margin-bottom: 5rem;
             position: relative;
+            padding: 0 2rem; /* Se añade padding aquí para que afecte a las otras secciones */
         }
-
-        /* DIVISORES DE SECCIÓN */
-        .seccion:not(:last-child)::after {
+        
+        .seccion:not(#video-section):not(:last-child)::after {
             content: '';
             display: block;
             width: 50%;
             max-width: 400px;
-            margin: 6rem auto 0; /* Aumenta el espacio después de la sección */
+            margin: 6rem auto 0;
             border-bottom: 2px dotted #ccc;
         }
 
@@ -89,32 +89,27 @@
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            gap: 2.5rem;
             align-items: stretch;
         }
 
         .grid-item {
             background-color: white;
             border: 1px solid #ddd;
-            padding: 1.5rem;
-            text-align: center;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
         
-        .grid-item img {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 1rem;
-        }
-
         .grid-item h3 {
             font-size: 1.2rem;
-            margin-bottom: 1.5rem;
+            margin: 1.5rem 1rem;
         }
         
         .grid-item iframe {
-            flex-grow: 1; 
+            padding: 1rem;
+            box-sizing: border-box;
+            flex-grow: 1;
         }
 
         .btn {
@@ -124,7 +119,8 @@
             color: #333;
             text-decoration: none;
             transition: background-color 0.3s, color 0.3s;
-            margin-top: auto; 
+            margin: 0 1.5rem 1.5rem auto;
+            align-self: flex-end;
         }
 
         .btn:hover {
@@ -132,18 +128,44 @@
             color: white;
         }
 
-        /* Estilos para el Video de YouTube Corregido */
+        .image-parallax-container {
+            overflow: hidden;
+            height: 280px;
+        }
+        
+        .parallax-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.1s linear;
+        }
+        
+        /* SECCIÓN DE VIDEO A PANTALLA COMPLETA */
+        #video-section {
+            height: 100vh; /* Ocupa toda la altura de la pantalla */
+            width: 100vw; /* Ocupa todo el ancho de la pantalla */
+            padding: 0; /* Sin padding */
+            margin-left: calc(-50vw + 50%); /* Truco para centrar y expandir a todo el ancho */
+            margin-right: calc(-50vw + 50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000; /* Fondo negro para inmersión */
+        }
+        
+        #video-section .video-wrapper {
+            width: 90%; /* El video ocupa el 90% del ancho de la pantalla */
+            max-width: 1400px; /* Un límite para pantallas ultra-anchas */
+        }
+        
         .video-container {
             position: relative;
             padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
-            max-width: 800px;
-            margin: 0 auto;
-            border-radius: 8px; /* Bordes redondeados sutiles */
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
-
         .video-container iframe {
             position: absolute;
             top: 0;
@@ -152,30 +174,23 @@
             height: 100%;
         }
 
-        /* NUEVAS ANIMACIONES EN SCROLL */
+        /* Animaciones */
         .animate-on-scroll {
             opacity: 0;
-            transform: translateY(40px) scale(0.98); /* Inicia más abajo y ligeramente más pequeño */
-            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateY(50px) rotate(2deg) scale(0.95);
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
-
         .animate-on-scroll.is-visible {
             opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        /* Efecto escalonado (cascada) para las tarjetas */
-        .grid-container .animate-on-scroll.is-visible:nth-child(1) {
-            transition-delay: 0.1s;
+            transform: translateY(0) rotate(0) scale(1);
         }
         .grid-container .animate-on-scroll.is-visible:nth-child(2) {
-            transition-delay: 0.2s;
+            transition-delay: 0.1s;
         }
         .grid-container .animate-on-scroll.is-visible:nth-child(3) {
-            transition-delay: 0.3s;
+            transition-delay: 0.2s;
         }
 
-        /* Pie de Página */
         footer {
             background-color: #333;
             color: white;
@@ -202,27 +217,35 @@
             <h2 class="animate-on-scroll">Novedades</h2>
             <div class="grid-container">
                 <div class="grid-item animate-on-scroll">
-                    <img src="assets/img/img01.png" alt="Imagen 1">
+                    <div class="image-parallax-container">
+                        <img src="assets/img/img01.png" alt="Imagen 1" class="parallax-image">
+                    </div>
                     <h3>Guía de Mercurio Retrógrado</h3>
                     <a href="#" class="btn">Leer Más</a>
                 </div>
                 <div class="grid-item animate-on-scroll">
-                    <img src="assets/img/img02.png" alt="Imagen 2">
+                    <div class="image-parallax-container">
+                        <img src="assets/img/img02.png" alt="Imagen 2" class="parallax-image">
+                    </div>
                     <h3>Urano en Géminis</h3>
                     <a href="https://alter-ias.github.io/heptaglota/loteriatapatia.html" class="btn">Leer Más</a>
                 </div>
                 <div class="grid-item animate-on-scroll">
-                    <img src="assets/img/img03.png" alt="Imagen 3">
+                    <div class="image-parallax-container">
+                        <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
+                    </div>
                     <h3>Solsticio de Verano</h3>
                     <a href="#" class="btn">Leer Más</a>
                 </div>
             </div>
         </section>
 
-        <!-- SECCIÓN DE VIDEO DE YOUTUBE SIN TÍTULO Y CON MEJOR ESTILO -->
-        <section class="seccion">
-            <div class="video-container animate-on-scroll">
-                <iframe src="https://www.youtube.com/embed/rylzygPxio4?si=y1JORYHgvCvv8Sui" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <!-- SECCIÓN DE VIDEO A PANTALLA COMPLETA -->
+        <section class="seccion" id="video-section">
+            <div class="video-wrapper animate-on-scroll">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/rylzygPxio4?si=y1JORYHgvCvv8Sui" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
             </div>
         </section>
 
@@ -244,29 +267,37 @@
     </footer>
 
     <script>
-        // SCRIPT 1: PARALLAX PARA EL VIDEO DE FONDO (RESTAURADO)
+        // SCRIPT 1: PARALLAX PARA VIDEO DE FONDO
         window.addEventListener('scroll', function() {
             const videoFondo = document.getElementById('video-fondo');
             const scrollPosition = window.pageYOffset;
-            // Se usa un multiplicador pequeño para un efecto sutil
             videoFondo.style.transform = `translateX(-50%) translateY(calc(-50% + ${scrollPosition * 0.25}px))`;
         });
 
-        // SCRIPT 2: LÓGICA PARA ANIMAR ELEMENTOS AL HACER SCROLL
+        // SCRIPT 2: ANIMACIÓN DE ENTRADA GENERAL
         const animatedElements = document.querySelectorAll('.animate-on-scroll');
-
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
                 }
             });
-        }, {
-            threshold: 0.1 // El elemento se anima cuando el 10% es visible
-        });
+        }, { threshold: 0.1 });
+        animatedElements.forEach(element => observer.observe(element));
 
-        animatedElements.forEach(element => {
-            observer.observe(element);
+        // SCRIPT 3: EFECTO PARALLAX PARA IMÁGENES DE TARJETAS
+        document.addEventListener('scroll', function() {
+            const parallaxImages = document.querySelectorAll('.parallax-image');
+            for (let img of parallaxImages) {
+                const container = img.parentElement;
+                const rect = container.getBoundingClientRect();
+                
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    const percentVisible = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+                    const moveAmount = (percentVisible - 0.5) * 40; 
+                    img.style.transform = `translateY(${moveAmount * -1}%) scale(1.1)`;
+                }
+            }
         });
     </script>
 
