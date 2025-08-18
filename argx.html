@@ -15,7 +15,6 @@
             margin: 0;
             padding: 0;
             font-family: 'Libre Baskerville', serif;
-            /* <<<--- CAMBIO PRINCIPAL: Color de texto por defecto a blanco */
             color: white;
             
             background-image: 
@@ -25,6 +24,9 @@
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
+            
+            /* <<<--- CAMBIO 1: Sombra base para todo el texto */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }
 
         /* Encabezado: La portada con la imagen estática */
@@ -38,7 +40,7 @@
             color: white;
             position: relative;
             
-            background-image: url('assets/img/header-background.png'); /* <<<--- CAMBIA ESTO POR LA RUTA DE TU IMAGEN */
+            background-image: url('assets/img/header-background.png');
             background-size: cover;
             background-position: center center;
             
@@ -89,10 +91,10 @@
             text-transform: uppercase;
             letter-spacing: 1.5px;
             padding-bottom: 0.5rem;
-            /* <<<--- CAMBIO: Borde del título a blanco */
             border-bottom: 2px solid white;
             display: inline-block;
-            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+            /* <<<--- CAMBIO 2: Sombra más pronunciada para títulos de sección */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
         }
 
         .seccion .center-title {
@@ -109,7 +111,6 @@
 
         .grid-item {
             background-color: rgba(255, 255, 255, 0.3); 
-            /* <<<--- CAMBIO: Borde de la tarjeta a blanco semitransparente */
             border: 1px dashed rgba(255, 255, 255, 0.7);
             display: flex;
             flex-direction: column;
@@ -122,6 +123,8 @@
             margin: 0 0 0.8rem 0;
             line-height: 1.2;
             font-weight: 700;
+            /* <<<--- CAMBIO 3: Sombra pronunciada para títulos de artículo */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
         }
 
         .grid-item p {
@@ -131,8 +134,8 @@
             text-align: justify;
             margin-top: 0.5rem;
             flex-grow: 1;
-            /* <<<--- CAMBIO: Color del párrafo a blanco (se hereda del body, pero lo reforzamos) */
             color: white;
+            /* La sombra se hereda del body, no es necesario añadirla aquí */
         }
         
         .image-parallax-container {
@@ -152,7 +155,6 @@
         .btn {
             display: inline-block;
             padding: 0.7rem 1.4rem;
-            /* <<<--- CAMBIO: Borde y color de texto del botón a blanco */
             border: 1px solid white;
             color: white;
             text-decoration: none;
@@ -162,13 +164,16 @@
             font-family: 'Libre Baskerville', serif;
             font-size: 0.9rem;
             text-transform: uppercase;
-            background-color: rgba(255, 255, 255, 0.2); /* Fondo ligeramente blanco para que se note */
+            background-color: rgba(255, 255, 255, 0.2);
+            /* La sombra se hereda del body */
         }
 
         .btn:hover {
             background-color: white;
-            color: #1a1a1a; /* Al pasar el ratón, el texto se vuelve negro */
+            color: #1a1a1a;
             transform: translateY(-2px);
+            /* <<<--- CAMBIO 4: Quitar la sombra en el hover para que el texto negro sea nítido */
+            text-shadow: none;
         }
 
         .video-container {
@@ -194,9 +199,9 @@
         footer {
             text-align: center;
             font-size: 0.9rem;
-            /* <<<--- CAMBIO: Borde del footer a blanco semitransparente */
             border-top: 2px dashed rgba(255, 255, 255, 0.7);
             padding-top: 2rem;
+            /* La sombra se hereda del body */
         }
         
         @media (max-width: 768px) {
