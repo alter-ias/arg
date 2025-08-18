@@ -98,6 +98,10 @@
             </div>
         </div>
     </div>
+
+<!-- 1. AÑADIMOS LA LIBRERÍA PAPA PARSE -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -136,62 +140,44 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(storageKey, JSON.stringify([...flippedCardIndices]));
     };
     
-    const parseCSV = (csvText) => {
-        if (typeof csvText !== 'string') return [];
-        const rows = []; let currentRow = []; let field = ''; let inQuotes = false;
-        csvText = csvText.replace(/\r\n/g, '\n');
-        for (let i = 0; i < csvText.length; i++) {
-            const char = csvText[i];
-            if (inQuotes) {
-                if (char === '"') { if (i + 1 < csvText.length && csvText[i + 1] === '"') { field += '"'; i++; } else { inQuotes = false; } } else { field += char; }
-            } else {
-                if (char === '"') { inQuotes = true; } else if (char === ',') { currentRow.push(field); field = ''; } else if (char === '\n') {
-                    currentRow.push(field); if (currentRow.length > 1 || (currentRow.length === 1 && currentRow[0].trim() !== '')) { rows.push(currentRow); } currentRow = []; field = '';
-                } else { field += char; }
-            }
-        }
-        if (field || currentRow.length > 0) { currentRow.push(field); rows.push(currentRow); }
-        return rows;
-    };
-
     const shuffleArray = (array) => {
         for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; }
     };
-
-    async function loadPoemsData() {
+    
+    // 2. REEMPLAZAMOS loadPoemsData CON LA VERSIÓN DE PAPA PARSE
+    function loadPoemsData() {
         postalContainer.innerHTML = `<div class="spinner"></div><p id="loading-message">Construyendo los universos...</p>`;
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-
+        
         try {
-            const response = await fetch(googleSheetCsvUrl, { cache: 'reload', signal: controller.signal });
-            clearTimeout(timeoutId);
-            if (!response.ok) throw new Error(`Error de red (${response.status})`);
-            
-            const csvText = await response.text();
-            const parsedData = parseCSV(csvText);
-            if (!parsedData || parsedData.length < 2) { throw new Error("La base de datos está vacía o tiene formato incorrecto."); }
+            Papa.parse(googleSheetCsvUrl, {
+                download: true,
+                header: false,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const dataRows = results.data.slice(1);
+                    
+                    allPoems = dataRows.map((row, originalIndex) => {
+                        if (!row || row.length < 5) return null;
+                        
+                        const [title, poemText, soundUrl, videoUrl, imageUrl] = row.map(field => field ? field.trim() : '');
+                        
+                        if (!title || !poemText || !imageUrl) return null;
+                        return { title, poemText, soundUrl, videoUrl, imageUrl, originalIndex };
+                    }).filter(p => p !== null);
 
-            const dataRows = parsedData.slice(1);
-            allPoems = dataRows.map((row, originalIndex) => {
-                if (!row || row.length < 5) return null;
-                const [title, poemText, soundUrl, videoUrl, imageUrl] = row.map(field => field ? field.trim() : '');
-                if (!title || !poemText || !imageUrl) return null; 
-                return { title, poemText, soundUrl, videoUrl, imageUrl, originalIndex };
-            }).filter(p => p !== null);
-
-            if (allPoems.length === 0) throw new Error("No se encontraron cartas válidas en la base de datos.");
-            
-            shuffleArray(allPoems);
-            totalTablas = Math.ceil(allPoems.length / cardsPerTabla);
-            renderTabla();
-
+                    if (allPoems.length === 0) throw new Error("No se encontraron cartas válidas en la base de datos.");
+                    
+                    shuffleArray(allPoems);
+                    totalTablas = Math.ceil(allPoems.length / cardsPerTabla);
+                    renderTabla();
+                },
+                error: function(err) {
+                    throw new Error("Error al cargar o parsear el CSV: " + err.message);
+                }
+            });
         } catch (error) {
-            clearTimeout(timeoutId);
-            let errorMessage = error.message;
-            if (error.name === 'AbortError') { errorMessage = "La conexión tardó demasiado. Intenta recargar la página."; }
             console.error('Error al cargar la Lotería:', error);
-            postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80; max-width: 500px;"><b>Error:</b><br>${errorMessage}</p>`;
+            postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80; max-width: 500px;"><b>Error:</b><br>${error.message}</p>`;
         }
     }
 
@@ -224,20 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function displayPoem(poemIndex) {
-        // --- INICIO SCRIPT DE DIAGNÓSTICO ---
-        console.group(`[Diagnóstico] Intentando mostrar poema con índice: ${poemIndex}`);
-        
         const currentPoem = allPoems.find(p => p.originalIndex === poemIndex);
-        
-        if (!currentPoem) {
-            console.error("No se encontró el poema con el índice original proporcionado. Saliendo.");
-            console.groupEnd();
-            return;
-        }
-        
-        console.log("Poema encontrado. Datos recibidos del CSV:", currentPoem);
-        // --- FIN SCRIPT DE DIAGNÓSTICO ---
-
+        if (!currentPoem) return;
         currentPoemIndex = allPoems.indexOf(currentPoem);
 
         poemTextDisplayEl.scrollTop = 0;
@@ -276,14 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
         backgroundVideo.style.display = 'none';
         
         const hasValidVideo = currentPoem.videoUrl && currentPoem.videoUrl.trim().length > 5;
-        
-        // --- INICIO SCRIPT DE DIAGNÓSTICO ---
-        console.log(`URL del video recibida: "${currentPoem.videoUrl}"`);
-        console.log(`Evaluación de 'hasValidVideo': ${hasValidVideo}`);
-        // --- FIN SCRIPT DE DIAGNÓSTICO ---
 
         if (hasValidVideo) {
-            console.log("DECISIÓN: Hay video válido. Reproduciendo video...");
             backgroundVideo.style.display = 'block';
             backgroundVideo.src = currentPoem.videoUrl;
             backgroundVideo.load();
@@ -300,11 +268,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         } else {
-            console.log("DECISIÓN: No hay video válido. Mostrando imagen de respaldo.");
             poemDisplayView.style.backgroundImage = `url('${currentPoem.imageUrl}')`;
             setTimeout(triggerTextAnimation, 100);
         }
-        console.groupEnd(); // Cierra el grupo de diagnóstico
     }
     
     function closePoemView() {
@@ -312,17 +278,10 @@ document.addEventListener('DOMContentLoaded', () => {
         audioPlayer.pause();
         audioPlayer.src = '';
         backgroundVideo.pause();
-        
-        // Vuelve a poner el video de fondo principal y lo reproduce
         backgroundVideo.src = mainBackgroundVideoSrc;
-        backgroundVideo.play().catch((e)=>{
-            // Este error es el 404 que ves.
-            console.error(`No se pudo cargar el video de fondo principal en la ruta: '${mainBackgroundVideoSrc}'. Verifica que la ruta sea correcta en tu repositorio.`, e);
-        });
-        
+        backgroundVideo.play().catch(()=>{});
         backgroundVideo.style.display = 'block';
         poemDisplayView.style.backgroundImage = 'none';
-        
         poemDisplayView.classList.add('is-hidden');
         postalSelectionView.classList.remove('is-hidden');
         document.body.style.overflow = 'auto';
