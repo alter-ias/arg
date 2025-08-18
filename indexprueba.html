@@ -111,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevTablaBtn = document.getElementById('prev-tabla');
     const nextTablaBtn = document.getElementById('next-tabla');
 
-    // <-- CAMBIO AQUÍ: Eliminamos las variables de URL base. Ya no son necesarias.
     const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
 
     let allPoems = [];
@@ -174,7 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!parsedData || parsedData.length < 2) { throw new Error("La base de datos está vacía o tiene formato incorrecto."); }
 
             const dataRows = parsedData.slice(1);
-            // <-- CAMBIO AQUÍ: Los nombres de las variables ahora reflejan que son URLs completas
             allPoems = dataRows.map((row, originalIndex) => {
                 if (!row || row.length < 5) return null;
                 const [title, poemText, soundUrl, videoUrl, imageUrl] = row.map(field => field ? field.trim() : '');
@@ -212,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.classList.add('is-flipping');
             }
             
-            // <-- CAMBIO AQUÍ: Usamos directamente la URL de la imagen que viene de la hoja.
             const postalImageUrl = poem.imageUrl; 
             card.style.setProperty('--card-bg-image', `url('${postalImageUrl}')`);
             card.innerHTML = `<div class="card-inner"><div class="card-face card-front"><img src="${postalImageUrl}" alt="Postal para '${poem.title}'" loading="lazy"></div><div class="card-face card-back"><p>${poem.title}</p></div></div>`;
@@ -263,24 +260,39 @@ document.addEventListener('DOMContentLoaded', () => {
             audioPlayer.play().catch(e => console.error("Error al reproducir audio:", e));
         }
 
+        // --- INICIO DE LA LÓGICA CORREGIDA ---
+
+        // 1. Reseteamos ambos fondos para empezar de cero.
         poemDisplayView.style.backgroundImage = 'none';
         backgroundVideo.style.display = 'none';
+        
+        // 2. Creamos una condición clara para verificar si hay un video.
+        const hasValidVideo = currentPoem.videoUrl && currentPoem.videoUrl.trim().length > 5;
 
-        // <-- CAMBIO AQUÍ: Usamos la URL del video directamente desde el objeto 'currentPoem'.
-        if (currentPoem.videoUrl) {
+        if (hasValidVideo) {
+            // 3. PRIORIDAD 1: Si hay video, lo usamos.
             backgroundVideo.style.display = 'block';
             backgroundVideo.src = currentPoem.videoUrl;
             backgroundVideo.load();
             backgroundVideo.oncanplaythrough = () => {
                 backgroundVideo.play();
                 triggerTextAnimation();
-                backgroundVideo.oncanplaythrough = null; // Evita que se dispare múltiples veces
+                backgroundVideo.oncanplaythrough = null;
             };
-        } else { // <-- CAMBIO AQUÍ: Si no hay video, usamos la URL de la imagen directamente.
-            const imageUrl = currentPoem.imageUrl;
-            poemDisplayView.style.backgroundImage = `url('${imageUrl}')`;
+            // Fallback si la URL es válida pero el video no carga
+            backgroundVideo.onerror = () => {
+                 console.error("Error al cargar el video:", currentPoem.videoUrl);
+                 backgroundVideo.style.display = 'none';
+                 poemDisplayView.style.backgroundImage = `url('${currentPoem.imageUrl}')`;
+                 setTimeout(triggerTextAnimation, 100);
+            }
+
+        } else {
+            // 4. PRIORIDAD 2 (FALLBACK): Si no hay video, usamos la imagen.
+            poemDisplayView.style.backgroundImage = `url('${currentPoem.imageUrl}')`;
             setTimeout(triggerTextAnimation, 100);
         }
+        // --- FIN DE LA LÓGICA CORREGIDA ---
     }
     
     function closePoemView() {
