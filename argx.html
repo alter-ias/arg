@@ -15,7 +15,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Libre Baskerville', serif;
-            /* <<<--- CAMBIO 1: Color de texto principal a blanco */
+            /* <<<--- CAMBIO PRINCIPAL: Color de texto por defecto a blanco */
             color: white;
             
             background-image: 
@@ -38,7 +38,7 @@
             color: white;
             position: relative;
             
-            background-image: url('assets/img/header-background.png');
+            background-image: url('assets/img/header-background.png'); /* <<<--- CAMBIA ESTO POR LA RUTA DE TU IMAGEN */
             background-size: cover;
             background-position: center center;
             
@@ -89,7 +89,7 @@
             text-transform: uppercase;
             letter-spacing: 1.5px;
             padding-bottom: 0.5rem;
-            /* <<<--- CAMBIO 2: Borde del título a blanco */
+            /* <<<--- CAMBIO: Borde del título a blanco */
             border-bottom: 2px solid white;
             display: inline-block;
             text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
@@ -109,7 +109,7 @@
 
         .grid-item {
             background-color: rgba(255, 255, 255, 0.3); 
-            /* <<<--- CAMBIO 3: Borde de la tarjeta a blanco semitransparente */
+            /* <<<--- CAMBIO: Borde de la tarjeta a blanco semitransparente */
             border: 1px dashed rgba(255, 255, 255, 0.7);
             display: flex;
             flex-direction: column;
@@ -131,7 +131,7 @@
             text-align: justify;
             margin-top: 0.5rem;
             flex-grow: 1;
-            /* <<<--- CAMBIO 4: Color del párrafo a blanco */
+            /* <<<--- CAMBIO: Color del párrafo a blanco (se hereda del body, pero lo reforzamos) */
             color: white;
         }
         
@@ -152,7 +152,7 @@
         .btn {
             display: inline-block;
             padding: 0.7rem 1.4rem;
-            /* <<<--- CAMBIO 5: Borde y color de texto del botón a blanco */
+            /* <<<--- CAMBIO: Borde y color de texto del botón a blanco */
             border: 1px solid white;
             color: white;
             text-decoration: none;
@@ -194,7 +194,7 @@
         footer {
             text-align: center;
             font-size: 0.9rem;
-            /* <<<--- CAMBIO 6: Borde del footer a blanco semitransparente */
+            /* <<<--- CAMBIO: Borde del footer a blanco semitransparente */
             border-top: 2px dashed rgba(255, 255, 255, 0.7);
             padding-top: 2rem;
         }
@@ -219,6 +219,102 @@
              }
         }
     </style>
-    <!-- ... el resto de tu HTML permanece igual ... -->
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1>EL SEMANAL DE ARG</h1>
+            <p>LA VOZ POÉTICA DE LA ACTUALIDAD - EDICIÓN JULIO 2025</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="seccion content-block">
+            <div class="center-title">
+                <h2>Crónicas Recientes</h2>
+            </div>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <div class="image-parallax-container">
+                        <img src="assets/img/img01.png" alt="Imagen 1" class="parallax-image">
+                    </div>
+                    <h3>El Baile Cósmico de Mercurio Retrógrado</h3>
+                    <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo, invitándote a la reflexión profunda y al redescubrimiento interior.</p>
+                    <a href="#" class="btn">Desentrañar</a>
+                </div>
+                <div class="grid-item">
+                    <div class="image-parallax-container">
+                        <img src="assets/img/img02.png" alt="Imagen 2" class="parallax-image">
+                    </div>
+                    <h3>Urano en Géminis: Un Canto a la Nueva Era</h3>
+                    <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa que teje los hilos invisibles de nuestra consciencia colectiva.</p>
+                    <a href="https://alter-ias.github.io/heptaglota/loteriatapatia.html" class="btn">Leer Prosa</a>
+                </div>
+                <div class="grid-item">
+                    <div class="image-parallax-container">
+                        <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
+                    </div>
+                    <h3>El Solsticio de Verano: La Llama Perpetua del Alma</h3>
+                    <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable que reside en cada uno de nosotros.</p>
+                    <a href="#" class="btn">Meditar Aquí</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion content-block">
+            <div class="center-title">
+                <h2>Voces Grabadas: Archivo Sonoro y Visual</h2>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <section class="seccion content-block">
+            <div class="center-title">
+                <h2>La Audioteca del Pensamiento</h2>
+            </div>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <iframe data-testid="embed-iframe" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    <h3>El Secreto de la Felicidad en el Caos Moderno</h3>
+                    <p>Un diálogo íntimo sobre la búsqueda de la serenidad en la vorágine de hoy. Escucha las claves para encontrar tu centro, incluso cuando el mundo parece girar sin rumbo fijo.</p>
+                    <a href="#" class="btn">Escuchar el Episodio</a>
+                </div>
+                <div class="grid-item">
+                    <iframe data-testid="embed-iframe" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    <h3>Desbloqueando tu Potencial Creador</h3>
+                    <p>Embárcate en un viaje sonoro para despertar al artista que llevas dentro. Descubre cómo la inspiración fluye cuando te atreves a romper los moldes y liberar tu verdadera esencia creativa.</p>
+                    <a href="#" class="btn">Inspirarse</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="content-block">
+        <p>&copy; 2025 - El Semanal de ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p>
+    </footer>
+
+    <script>
+        // Script para parallax en imágenes (opcional pero añade un toque dinámico)
+        document.addEventListener('scroll', function() {
+            const parallaxImages = document.querySelectorAll('.parallax-image');
+            for (let img of parallaxImages) {
+                const container = img.parentElement;
+                const rect = container.getBoundingClientRect();
+                
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    const percentVisible = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+                    const moveAmount = (percentVisible - 0.5) * 8;
+                    img.style.transform = `translateY(${moveAmount * -1}%) scale(1.05)`;
+                }
+            }
+        });
+    </script>
+
 </body>
 </html>
