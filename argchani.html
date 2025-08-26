@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARG - Edición Especial</title>
     
@@ -12,10 +12,12 @@
     
     <style>
         :root {
-            --main-gap: 2rem; /* Variable para el espaciado */
+            --main-gap: 2rem;
+            /* --- NUEVO: Variable global para bordes redondeados --- */
+            --border-radius: 12px;
         }
         /* ======================================================= */
-        /* BASE: ESTILO MINIMALISTA (LIENZO BLANCO)                */
+        /* BASE Y LAYOUT                                           */
         /* ======================================================= */
         body {
             margin: 0;
@@ -27,60 +29,6 @@
             line-height: 1.7;
         }
 
-        /* ======================================================= */
-        /* ENCABEZADO Y TÍTULO PRINCIPAL                           */
-        /* ======================================================= */
-        header {
-            text-align: center;
-            padding: 4rem 1.5rem 2rem 1.5rem;
-        }
-
-        .header-content h1 {
-            font-family: 'Special Elite', sans-serif;
-            font-size: 6rem;
-            font-weight: 400;
-            line-height: 1.1;
-            letter-spacing: 2px;
-            margin: 0;
-            color: transparent;
-            -webkit-text-stroke: 2px #1a1a1a;
-            text-stroke: 2px #1a1a1a;
-        }
-
-        .header-content p {
-            font-family: 'Special Elite', monospace;
-            font-size: 1rem;
-            margin-top: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        /* ======================================================= */
-        /* NAVEGACIÓN PRINCIPAL                                    */
-        /* ======================================================= */
-        .main-nav {
-            width: 100%;
-            padding: 1rem 0;
-            background-color: #fdfdfd;
-            border-top: 2px solid #1a1a1a;
-            border-bottom: 2px solid #1a1a1a;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            margin-top: 2rem;
-        }
-
-        .main-nav ul { margin: 0; padding: 0; list-style: none; display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; }
-        .main-nav a { font-family: 'Special Elite', monospace; text-decoration: none; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; padding: 0.5rem 0; position: relative; }
-        .main-nav a::after { content: ''; position: absolute; width: 100%; height: 2px; bottom: 0; left: 0; background-color: #1a1a1a; transform: scaleX(0); transform-origin: bottom right; transition: transform 0.25s ease-out; }
-        .main-nav a:hover::after { transform: scaleX(1); transform-origin: bottom left; }
-
-        /* ======================================================= */
-        /* ESTRUCTURA DE CONTENIDO Y SECCIONES                     */
-        /* ======================================================= */
-        
-        /* --- NUEVO: LAYOUT PRINCIPAL DE DOS COLUMNAS --- */
         .main-layout {
             padding: 0 var(--main-gap);
         }
@@ -90,35 +38,61 @@
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: var(--main-gap);
-                align-items: flex-start; /* Alinea las columnas en la parte superior */
+                align-items: flex-start;
             }
         }
-
-        .content-block {
-            /* max-width ya no es necesario aquí, lo controlan las columnas */
-            margin: 0 auto;
-            padding: 3rem 1.5rem;
-        }
         
+        /* ======================================================= */
+        /* ENCABEZADO Y NAVEGACIÓN                                 */
+        /* ======================================================= */
+        header { text-align: center; padding: 4rem 1.5rem 2rem 1.5rem; }
+        .header-content h1 { font-family: 'Special Elite', sans-serif; font-size: 6rem; font-weight: 400; line-height: 1.1; letter-spacing: 2px; margin: 0; color: transparent; -webkit-text-stroke: 2px #1a1a1a; text-stroke: 2px #1a1a1a; }
+        .header-content p { font-family: 'Special Elite', monospace; font-size: 1rem; margin-top: 1rem; text-transform: uppercase; letter-spacing: 2px; }
+        .main-nav { width: 100%; padding: 1rem 0; background-color: #fdfdfd; border-top: 2px solid #1a1a1a; border-bottom: 2px solid #1a1a1a; text-align: center; position: sticky; top: 0; z-index: 1000; margin-top: 2rem; }
+        .main-nav ul { margin: 0; padding: 0; list-style: none; display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; }
+        .main-nav a { font-family: 'Special Elite', monospace; text-decoration: none; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; padding: 0.5rem 0; position: relative; }
+        .main-nav a::after { content: ''; position: absolute; width: 100%; height: 2px; bottom: 0; left: 0; background-color: #1a1a1a; transform: scaleX(0); transform-origin: bottom right; transition: transform 0.25s ease-out; }
+        .main-nav a:hover::after { transform: scaleX(1); transform-origin: bottom left; }
+
+        /* ======================================================= */
+        /* SECCIONES Y CONTENIDO                                   */
+        /* ======================================================= */
+        .content-block { margin: 0 auto; padding: 3rem 1.5rem; }
         .seccion { opacity: 0; transition: opacity 1s ease-in-out; }
         .seccion.is-visible { opacity: 1; }
         .seccion h2 { font-family: 'Special Elite', monospace; font-size: 1.8rem; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 3rem; }
         .center-title { margin: 0; padding: 0; }
-
-        /* ======================================================= */
-        /* CUADRÍCULA Y ELEMENTOS                                  */
-        /* ======================================================= */
         .grid-container, .media-grid { perspective: 2000px; }
         .grid-container { display: grid; grid-template-columns: 1fr; gap: 3rem; }
         .grid-item { text-align: center; }
         .grid-item h3 { font-family: 'Special Elite', monospace; font-size: 1.5rem; text-transform: uppercase; margin: 1rem 0 0.5rem 0; }
         .grid-item p { font-size: 1rem; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto; }
+        
+        /* --- BORDES REDONDEADOS APLICADOS --- */
+        .image-parallax-container,
+        .video-container,
+        .loteria-wrapper,
+        .btn {
+            border-radius: var(--border-radius);
+        }
+
+        /* --- Asegurar que el contenido respete los bordes redondeados --- */
+        .image-parallax-container,
+        .video-container,
+        .loteria-wrapper {
+            overflow: hidden;
+        }
+
+        .spotify-container iframe {
+            border-radius: var(--border-radius);
+        }
+        
         .image-parallax-container { height: 300px; margin-bottom: 1rem; border: 2px solid #1a1a1a; }
         .parallax-image { width: 100%; height: 100%; object-fit: cover; }
         .btn { display: inline-block; padding: 0.8rem 1.8rem; border: 2px solid #1a1a1a; color: #1a1a1a; background-color: transparent; text-decoration: none; transition: background-color 0.2s, color 0.2s; margin-top: 1.5rem; font-family: 'Special Elite', monospace; font-size: 1rem; text-transform: uppercase; cursor: pointer; }
         .btn:hover { background-color: #1a1a1a; color: #fdfdfd; }
         .video-container, .spotify-container { border: 2px solid #1a1a1a; margin-bottom: 1.5rem; }
-        .video-container { width: 100%; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
+        .video-container { width: 100%; position: relative; padding-bottom: 56.25%; height: 0; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         .spotify-container iframe { display: block; }
         .media-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
@@ -129,39 +103,29 @@
         .seccion.is-visible .grid-item:nth-child(3), .seccion.is-visible .media-grid > div:nth-child(3) { transition-delay: 0.6s; }
         .seccion.is-visible .media-grid > div:nth-child(4) { transition-delay: 0.8s; }
         
-        /* --- CORREGIDO: Contenedor de Lotería Responsivo --- */
-        .loteria-wrapper {
-            width: 100%;
-            aspect-ratio: 16 / 9; /* Mantiene la proporción y elimina el scroll */
-            border: 2px solid #1a1a1a;
-            overflow: hidden;
-        }
-        .loteria-wrapper iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+        .loteria-wrapper { width: 100%; aspect-ratio: 16 / 9; border: 2px solid #1a1a1a; }
+        .loteria-wrapper iframe { width: 100%; height: 100%; border: none; }
         
         @media (min-width: 992px) {
             #ecos-ruinas .grid-container { grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
             #ecos-ruinas .grid-item h3 { font-size: 1.2rem; }
             #ecos-ruinas .grid-item p { font-size: 0.9rem; }
         }
-        
         @media (min-width: 768px) { .spotify-grid { grid-template-columns: 1fr 1fr; } }
         
+        /* ======================================================= */
+        /* MODAL Y FOOTER                                          */
+        /* ======================================================= */
         .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(26, 26, 26, 0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
         .modal-container.is-active { opacity: 1; pointer-events: auto; }
-        .modal-content { background-color: #fdfdfd; padding: 3rem; border: 2px solid #1a1a1a; max-width: 800px; width: 90%; position: relative; max-height: 80vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.3s ease-in-out; }
+        .modal-content { background-color: #fdfdfd; padding: 3rem; border: 2px solid #1a1a1a; max-width: 800px; width: 90%; position: relative; max-height: 80vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.3s ease-in-out; border-radius: var(--border-radius); }
         .modal-container.is-active .modal-content { transform: scale(1); }
         .modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; font-family: sans-serif; cursor: pointer; line-height: 1; color: #1a1a1a; }
         #modal-title { font-family: 'Special Elite', monospace; font-size: 1.8rem; text-transform: uppercase; margin-top: 0; }
         #modal-body p { font-family: 'Special Elite', monospace; font-size: 1.1rem; line-height: 1.8; }
-        
         .artistic-divider { border: none; height: 20px; margin: 3rem auto; width: 80%; max-width: 300px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 5'%3E%3Cpath d='M0,2.5 Q25,0 50,2.5 T100,2.5' fill='none' stroke='%231a1a1a' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
-        @media (min-width: 1200px) { .artistic-divider { display: none; } } /* Ocultamos divisores en layout de PC */
-
-        footer { text-align: center; font-size: 0.9rem; padding-top: 2rem; margin-top: 2rem; border-top: 2px solid #1a1a1a; }
+        @media (min-width: 1200px) { .artistic-divider { display: none; } }
+        footer { text-align: center; font-size: 0.9rem; padding: 2rem var(--main-gap) 2rem var(--main-gap); margin-top: 2rem; border-top: 2px solid #1a1a1a; }
         
         @media (max-width: 768px) {
             body { font-size: 16px; }
@@ -194,7 +158,7 @@
     </header>
 
     <main class="main-layout">
-        <!-- Columna Izquierda -->
+        <!-- Columna Izquierda (Re-balanceada) -->
         <div class="main-column">
             <section id="ecos-ruinas" class="seccion content-block">
                 <div class="center-title"><h2>Ecos en las Ruinas</h2></div>
@@ -219,9 +183,16 @@
                     </div>
                 </div>
             </section>
+            
+            <hr class="artistic-divider">
+
+            <section id="ironias-volterianas" class="seccion content-block">
+                <div class="center-title"><h2>Ironías Volterianas</h2></div>
+                <p style="text-align: center;">(Contenido de la sección "Ironías Volterianas").</p>
+            </section>
         </div>
 
-        <!-- Columna Derecha -->
+        <!-- Columna Derecha (Re-balanceada) -->
         <div class="main-column">
             <section id="archivo-sonoro-visual" class="seccion content-block">
                 <div class="center-title"><h2>Archivo Sonoro y Visual</h2></div>
@@ -235,6 +206,8 @@
                 </div>
             </section>
 
+            <hr class="artistic-divider">
+
             <section id="loteria-tapatia" class="seccion content-block">
                 <div class="center-title"><h2>Lotería Tapatía</h2></div>
                 <div class="loteria-wrapper">
@@ -242,11 +215,8 @@
                 </div>
             </section>
 
-            <section id="ironias-volterianas" class="seccion content-block">
-                <div class="center-title"><h2>Ironías Volterianas</h2></div>
-                <p style="text-align: center;">(Contenido de la sección "Ironías Volterianas").</p>
-            </section>
-
+            <hr class="artistic-divider">
+            
             <section id="atlas-cielo" class="seccion content-block">
                 <div class="center-title"><h2>Atlas del Cielo</h2></div>
                 <p style="text-align: center;">(Contenido de la sección "Atlas del Cielo").</p>
@@ -255,7 +225,7 @@
     </main>
     
     <footer class="content-block">
-        <p>&copy; 2025 - El Semanal de ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p>
+        <p>&copy; 2025 - ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p>
     </footer>
 
     <div id="modal-container" class="modal-container">
