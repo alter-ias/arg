@@ -99,6 +99,7 @@
         </div>
     </div>
 
+<!-- Ya no necesitamos PapaParse, pero lo dejo por si lo usas en otro lado. Se podría quitar. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -113,10 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevTablaBtn = document.getElementById('prev-tabla');
     const nextTablaBtn = document.getElementById('next-tabla');
 
-    const originalSheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
-    
-    // --- LÍNEA MODIFICADA ---
-    const googleSheetCsvUrl = `https://corsproxy.io/?${encodeURIComponent(originalSheetUrl)}`;
+    // --- INICIO DE LA SOLUCIÓN DEFINITIVA ---
+    // Ya no hay enlaces externos. Cargamos el archivo local.
+    const dataUrl = './data/datos.json';
+    // --- FIN DE LA SOLUCIÓN DEFINITIVA ---
 
     let allPoems = [];
     let currentPoemIndex = -1;
@@ -145,44 +146,37 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; }
     };
 
+    // --- CÓDIGO MODIFICADO PARA CARGAR EL ARCHIVO LOCAL JSON ---
     function loadPoemsData() {
         postalContainer.innerHTML = `<div class="spinner"></div><p id="loading-message">Construyendo los universos...</p>`;
 
-        fetch(googleSheetCsvUrl)
+        fetch(dataUrl)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Error de red al intentar cargar el CSV: ${response.statusText}`);
+                    throw new Error(`Error de red al cargar el archivo de datos: ${response.statusText}`);
                 }
-                return response.text();
+                return response.json();
             })
-            .then(csvText => {
-                Papa.parse(csvText, {
-                    header: false,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        const dataRows = results.data.slice(1);
-                        
-                        allPoems = dataRows.map((row, originalIndex) => {
-                            if (!row || row.length < 5) return null;
-                            
-                            const [title, poemText, soundUrl, videoUrl, imageUrl] = row.map(field => field ? field.trim() : '');
-                            
-                            if (!title || !poemText || !imageUrl) return null;
-                            return { title, poemText, soundUrl, videoUrl, imageUrl, originalIndex };
-                        }).filter(p => p !== null);
+            .then(data => {
+                // El JSON es un array de arrays, igual que el resultado de PapaParse
+                const dataRows = data.slice(1); // Omitimos la fila de encabezados
+                
+                allPoems = dataRows.map((row, originalIndex) => {
+                    if (!row || row.length < 5) return null;
+                    
+                    const [title, poemText, soundUrl, videoUrl, imageUrl] = row.map(field => field ? String(field).trim() : '');
+                    
+                    if (!title || !poemText || !imageUrl) return null;
+                    return { title, poemText, soundUrl, videoUrl, imageUrl, originalIndex };
+                }).filter(p => p !== null);
 
-                        if (allPoems.length === 0) {
-                            throw new Error("No se encontraron cartas válidas en la base de datos. El CSV podría estar vacío o mal formado.");
-                        }
-                        
-                        shuffleArray(allPoems);
-                        totalTablas = Math.ceil(allPoems.length / cardsPerTabla);
-                        renderTabla();
-                    },
-                    error: function(err) {
-                        throw new Error("Error al parsear el CSV: " + err.message);
-                    }
-                });
+                if (allPoems.length === 0) {
+                    throw new Error("No se encontraron cartas válidas en la base de datos. El archivo JSON podría estar vacío o mal formado.");
+                }
+                
+                shuffleArray(allPoems);
+                totalTablas = Math.ceil(allPoems.length / cardsPerTabla);
+                renderTabla();
             })
             .catch(error => {
                 console.error('Error al cargar la Lotería:', error);
