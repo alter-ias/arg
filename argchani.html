@@ -35,14 +35,14 @@
         .main-nav a:hover::after { transform: scaleX(1); transform-origin: bottom left; }
 
         /* ======================================================= */
-        /* SECCIONES Y CONTENIDO                                   */
+        /* SECCIONES Y CONTENIDO GENERAL                           */
         /* ======================================================= */
         .content-block { margin: 0 auto; padding: 3rem 1.5rem; }
         .seccion { opacity: 0; transition: opacity 1s ease-in-out; }
         .seccion.is-visible { opacity: 1; }
         .seccion h2 { font-family: 'Special Elite', monospace; font-size: 1.8rem; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 3rem; }
-        .grid-item h3 { font-family: 'Special Elite', monospace; font-size: 1.5rem; text-transform: uppercase; margin: 1rem 0 0.5rem 0; }
-        .grid-item p { font-size: 1rem; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .grid-item h3, .v-slide-content h3 { font-family: 'Special Elite', monospace; font-size: 1.5rem; text-transform: uppercase; margin: 1rem 0 0.5rem 0; }
+        .grid-item p, .v-slide-content p { font-size: 1rem; max-width: 600px; margin-left: auto; margin-right: auto; }
         .image-parallax-container, .video-container, .btn { border-radius: var(--border-radius); }
         .image-parallax-container, .video-container { overflow: hidden; }
         .spotify-container iframe { border-radius: var(--border-radius); }
@@ -55,24 +55,33 @@
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         .spotify-container iframe { display: block; }
         .media-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-        .grid-item, .media-grid > div, .alternating-item, .carousel-slide, .loteria-preview { opacity: 0; transform: rotateY(-90deg) scale(0.9); transform-origin: left center; transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
-        .seccion.is-visible .grid-item, .seccion.is-visible .media-grid > div, .seccion.is-visible .alternating-item, .seccion.is-visible .carousel-slide, .seccion.is-visible .loteria-preview { opacity: 1; transform: rotateY(0deg) scale(1); }
-        .seccion.is-visible > div > *:nth-child(1) { transition-delay: 0.2s; }
-        .seccion.is-visible > div > *:nth-child(2) { transition-delay: 0.4s; }
-        .seccion.is-visible > div > *:nth-child(3) { transition-delay: 0.6s; }
-        .seccion.is-visible > div > *:nth-child(4) { transition-delay: 0.8s; }
+        .grid-item, .media-grid > div, .alternating-item, .carousel-slide, .loteria-preview, .carousel-3d-slide, .v-carousel-slide { opacity: 0; transform: rotateY(-90deg) scale(0.9); transform-origin: left center; transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+        .seccion.is-visible .grid-item, .seccion.is-visible .media-grid > div, .seccion.is-visible .alternating-item, .seccion.is-visible .carousel-slide, .seccion.is-visible .loteria-preview, .seccion.is-visible .carousel-3d-slide, .seccion.is-visible .v-carousel-slide { opacity: 1; transform: rotateY(0deg) scale(1); }
+
+        /* --- LAYOUT #1: CARRUSEL 3D (ECOS EN LAS RUINAS) --- */
+        .carousel-3d-container { position: relative; width: 100%; height: 500px; perspective: 1500px; }
+        .carousel-3d-scene { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1); }
+        .carousel-3d-slide { position: absolute; left: 10%; right: 10%; top: 0; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.6s; background: #fdfdfd; }
+        .carousel-3d-slide:not(.is-active) { opacity: 0.6; cursor: pointer; }
+        .carousel-3d-slide .image-parallax-container { height: 250px; } /* Altura más pequeña para el carrusel */
+
+        /* --- LAYOUT #2: SLIDER VERTICAL (IRONÍAS VOLTERIANAS) --- */
+        .v-carousel-container { position: relative; text-align: center; }
+        .v-carousel-viewport { height: 550px; overflow: hidden; border-radius: var(--border-radius); border: 2px solid #1a1a1a; }
+        .v-carousel-track { height: 100%; transition: transform 0.6s ease-in-out; }
+        .v-carousel-slide { height: 100%; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .v-slide-content { width: 100%; }
+        .v-carousel-btn { position: absolute; left: 50%; transform: translateX(-50%); background-color: rgba(253, 253, 253, 0.7); border: 2px solid #1a1a1a; color: #1a1a1a; border-radius: 50%; width: 45px; height: 45px; font-size: 1.5rem; cursor: pointer; z-index: 10; transition: background-color 0.2s, transform 0.2s; }
+        .v-carousel-btn:hover { background-color: #fdfdfd; transform: translateX(-50%) scale(1.1); }
+        .v-carousel-btn.prev { top: -25px; }
+        .v-carousel-btn.next { bottom: -25px; }
+        .v-carousel-btn.is-hidden { display: none; }
         
-        /* --- LAYOUTS ESPECÍFICOS --- */
-        .grid-container { display: grid; grid-template-columns: 1fr; gap: 3rem; perspective: 2000px; }
-        .grid-item { text-align: center; }
-        @media (min-width: 992px) { #ecos-ruinas .grid-container { grid-template-columns: 1fr 1fr 1fr; gap: 2rem; } #ecos-ruinas .grid-item h3 { font-size: 1.2rem; } #ecos-ruinas .grid-item p { font-size: 0.9rem; } }
-        .alternating-layout { display: flex; flex-direction: column; gap: 3rem; }
-        .alternating-item { display: flex; flex-direction: column; gap: 1.5rem; align-items: center; text-align: center; }
-        @media (min-width: 768px) { .alternating-item { flex-direction: row; text-align: left; } .alternating-item:nth-child(even) { flex-direction: row-reverse; } .alternating-item .image-parallax-container { flex: 0 0 40%; } .alternating-item .text-content { flex: 1; } }
+        /* --- LAYOUT #3: SLIDER HORIZONTAL (ATLAS DEL CIELO) --- */
         .carousel-container { position: relative; }
         .carousel-viewport { overflow: hidden; border-radius: var(--border-radius); }
         .carousel-track { display: flex; transition: transform 0.5s ease-in-out; }
-        .carousel-slide { flex: 0 0 100%; padding: 1px; }
+        .carousel-slide { flex: 0 0 100%; padding: 1px; text-align: center; }
         .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background-color: rgba(253, 253, 253, 0.7); border: 2px solid #1a1a1a; color: #1a1a1a; border-radius: 50%; width: 45px; height: 45px; font-size: 1.5rem; cursor: pointer; z-index: 10; transition: background-color 0.2s, transform 0.2s; }
         .carousel-btn:hover { background-color: #fdfdfd; transform: translateY(-50%) scale(1.1); }
         .carousel-btn.prev { left: -20px; }
@@ -80,17 +89,15 @@
         .carousel-btn.is-hidden { display: none; }
         @media (min-width: 768px) { .spotify-grid { grid-template-columns: 1fr 1fr; } }
 
+        /* --- LOTERÍA Y MODALES --- */
         .loteria-preview { display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 16 / 9; border: 2px solid #1a1a1a; border-radius: var(--border-radius); background-color: #1a1a1a; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .loteria-preview:hover { transform: scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
         .loteria-preview img { max-width: 40%; max-height: 40%; height: auto; filter: invert(1); }
-        
         .loteria-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0A0A0A; z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease-in-out; }
         .loteria-modal-container.is-active { opacity: 1; pointer-events: auto; }
         .loteria-close-btn { position: absolute; top: 20px; left: 20px; font-size: 2rem; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3010; line-height: 1; }
         #loteria-iframe-wrapper { width: 100%; height: 100%; }
         #loteria-iframe-wrapper iframe { width: 100%; height: 100%; border: none; }
-
-        /* --- MODAL DE TEXTO Y FOOTER --- */
         .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(26, 26, 26, 0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
         .modal-container.is-active { opacity: 1; pointer-events: auto; }
         .modal-content { background-color: #fdfdfd; padding: 3rem; border: 2px solid #1a1a1a; max-width: 800px; width: 90%; position: relative; max-height: 80vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.3s ease-in-out; border-radius: var(--border-radius); }
@@ -98,10 +105,8 @@
         .modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; font-family: sans-serif; cursor: pointer; line-height: 1; color: #1a1a1a; }
         #modal-title { font-family: 'Special Elite', monospace; font-size: 1.8rem; text-transform: uppercase; margin-top: 0; }
         #modal-body p { font-family: 'Special Elite', monospace; font-size: 1.1rem; line-height: 1.8; }
-        
         .artistic-divider { border: none; height: 20px; margin: 3rem auto; width: 80%; max-width: 300px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 5'%3E%3Cpath d='M0,2.5 Q25,0 50,2.5 T100,2.5' fill='none' stroke='%231a1a1a' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
         @media (min-width: 1200px) { .artistic-divider { display: none; } }
-        
         footer { text-align: center; font-size: 0.9rem; padding: 2rem var(--main-gap) 2rem var(--main-gap); margin-top: 2rem; border-top: 2px solid #1a1a1a; }
         
         @media (max-width: 768px) {
@@ -133,7 +138,17 @@
     <main class="main-layout">
         <!-- Columna Izquierda -->
         <div class="main-column">
-            <section id="ecos-ruinas" class="seccion content-block"><div class="center-title"><h2>Ecos en las Ruinas</h2></div><div class="grid-container"><div class="grid-item"><div class="image-parallax-container"><img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image"></div><h3>El Baile Cósmico de Mercurio Retrógrado</h3><p>Las estrellas susurran historias antiguas...</p><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo...</p>">Ver Entrada</button></div><div class="grid-item"><div class="image-parallax-container"><img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image"></div><h3>Urano en Géminis</h3><p>Los vientos del cambio traen la energía...</p><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro...</p>">Ver Entrada</button></div><div class="grid-item"><div class="image-parallax-container"><img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image"></div><h3>El Solsticio de Verano</h3><p>En el cenit del sol, el espíritu se enciende...</p><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio...</p>">Ver Entrada</button></div></div></section>
+            <section id="ecos-ruinas" class="seccion content-block">
+                <div class="center-title"><h2>Ecos en las Ruinas</h2></div>
+                <div class="carousel-3d-container">
+                    <div class="carousel-3d-scene">
+                        <div class="carousel-3d-slide"><div class="image-parallax-container"><img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image"></div><h3>El Baile Cósmico de Mercurio Retrógrado</h3><p>Las estrellas susurran historias antiguas...</p><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo...</p>">Ver Entrada</button></div>
+                        <div class="carousel-3d-slide"><div class="image-parallax-container"><img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image"></div><h3>Urano en Géminis</h3><p>Los vientos del cambio traen la energía...</p><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro...</p>">Ver Entrada</button></div>
+                        <div class="carousel-3d-slide"><div class="image-parallax-container"><img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image"></div><h3>El Solsticio de Verano</h3><p>En el cenit del sol, el espíritu se enciende...</p><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio...</p>">Ver Entrada</button></div>
+                    </div>
+                </div>
+                <button class="carousel-btn prev">&#8249;</button><button class="carousel-btn next">&#8250;</button>
+            </section>
             
             <hr class="artistic-divider">
 
@@ -141,7 +156,19 @@
         </div>
         <!-- Columna Derecha -->
         <div class="main-column">
-            <section id="ironias-volterianas" class="seccion content-block"><div class="center-title"><h2>Ironías Volterianas</h2></div><div class="alternating-layout"><div class="alternating-item"><div class="image-parallax-container"><img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image"></div><div class="text-content"><h3>El Baile Cósmico de Mercurio Retrógrado</h3><p>Las estrellas susurran historias antiguas...</p><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo...</p>">Ver Entrada</button></div></div><div class="alternating-item"><div class="image-parallax-container"><img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image"></div><div class="text-content"><h3>Urano en Géminis</h3><p>Los vientos del cambio traen la energía...</p><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro...</p>">Ver Entrada</button></div></div><div class="alternating-item"><div class="image-parallax-container"><img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image"></div><div class="text-content"><h3>El Solsticio de Verano</h3><p>En el cenit del sol, el espíritu se enciende...</p><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio...</p>">Ver Entrada</button></div></div></div></section>
+            <section id="ironias-volterianas" class="seccion content-block">
+                <div class="center-title"><h2>Ironías Volterianas</h2></div>
+                <div class="v-carousel-container">
+                    <div class="v-carousel-viewport">
+                        <div class="v-carousel-track">
+                            <div class="v-carousel-slide"><div class="v-slide-content"><div class="image-parallax-container"><img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image"></div><h3>El Baile Cósmico de Mercurio Retrógrado</h3><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo...</p>">Ver Entrada</button></div></div>
+                            <div class="v-carousel-slide"><div class="v-slide-content"><div class="image-parallax-container"><img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image"></div><h3>Urano en Géminis</h3><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro...</p>">Ver Entrada</button></div></div>
+                            <div class="v-carousel-slide"><div class="v-slide-content"><div class="image-parallax-container"><img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image"></div><h3>El Solsticio de Verano</h3><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio...</p>">Ver Entrada</button></div></div>
+                        </div>
+                    </div>
+                    <button class="v-carousel-btn prev">&#8963;</button><button class="v-carousel-btn next">&#8964;</button>
+                </div>
+            </section>
             
             <hr class="artistic-divider">
 
@@ -149,7 +176,7 @@
             
             <hr class="artistic-divider">
             
-            <section id="atlas-cielo" class="seccion content-block"><div class="center-title"><h2>Atlas del Cielo</h2></div><div class="carousel-container"><div class="carousel-viewport"><div class="carousel-track"><div class="carousel-slide grid-item"><div class="image-parallax-container"><img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image"></div><h3>El Baile Cósmico de Mercurio Retrógrado</h3><p>Las estrellas susurran historias antiguas...</p><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo...</p>">Ver Entrada</button></div><div class="carousel-slide grid-item"><div class="image-parallax-container"><img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image"></div><h3>Urano en Géminis</h3><p>Los vientos del cambio traen la energía...</p><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro...</p>">Ver Entrada</button></div><div class="carousel-slide grid-item"><div class="image-parallax-container"><img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image"></div><h3>El Solsticio de Verano</h3><p>En el cenit del sol, el espíritu se enciende...</p><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio...</p>">Ver Entrada</button></div></div></div><button class="carousel-btn prev">&#8249;</button><button class="carousel-btn next">&#8250;</button></div></section>
+            <section id="atlas-cielo" class="seccion content-block"><div class="center-title"><h2>Atlas del Cielo</h2></div><div class="carousel-container"><div class="carousel-viewport"><div class="carousel-track"><div class="carousel-slide"><div class="image-parallax-container"><img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image"></div><h3>El Baile Cósmico de Mercurio Retrógrado</h3><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo...</p>">Ver Entrada</button></div><div class="carousel-slide"><div class="image-parallax-container"><img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image"></div><h3>Urano en Géminis</h3><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro...</p>">Ver Entrada</button></div><div class="carousel-slide"><div class="image-parallax-container"><img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image"></div><h3>El Solsticio de Verano</h3><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio...</p>">Ver Entrada</button></div></div></div><button class="carousel-btn prev">&#8249;</button><button class="carousel-btn next">&#8250;</button></div></section>
         </div>
     </main>
     
@@ -185,41 +212,79 @@
                 wrapper: document.getElementById('loteria-iframe-wrapper'),
                 closeButton: document.getElementById('loteria-close-btn'),
                 open() {
-                    const iframeSrc = this.launcher.dataset.iframeSrc;
-                    if (!iframeSrc || this.container.classList.contains('is-active')) return;
+                    if (this.container.classList.contains('is-active')) return;
                     const iframe = document.createElement('iframe');
-                    iframe.src = iframeSrc;
-                    this.wrapper.innerHTML = '';
-                    this.wrapper.appendChild(iframe);
+                    iframe.src = this.launcher.dataset.iframeSrc;
+                    this.wrapper.innerHTML = ''; this.wrapper.appendChild(iframe);
                     this.container.classList.add('is-active');
                     history.pushState({ modal: 'loteria' }, '', '#loteria');
                 },
                 close() {
                     if (!this.container.classList.contains('is-active')) return;
-                    this.container.classList.remove('is-active');
-                    this.wrapper.innerHTML = '';
+                    this.container.classList.remove('is-active'); this.wrapper.innerHTML = '';
                 }
             };
             loteriaModal.launcher.addEventListener('click', () => loteriaModal.open());
             loteriaModal.closeButton.addEventListener('click', () => history.back());
             
-            window.addEventListener('popstate', (e) => {
-                if (loteriaModal.container.classList.contains('is-active')) {
-                    loteriaModal.close();
-                }
-            });
-
+            window.addEventListener('popstate', () => { if (loteriaModal.container.classList.contains('is-active')) loteriaModal.close(); });
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    if (loteriaModal.container.classList.contains('is-active')) {
-                        history.back();
-                    } else if (textModal.container.classList.contains('is-active')) {
-                        textModal.close();
-                    }
-                }
+                if (e.key === 'Escape') { if (loteriaModal.container.classList.contains('is-active')) history.back(); else if (textModal.container.classList.contains('is-active')) textModal.close(); }
             });
 
-            // Lógica del Carrusel
+            // Lógica para todos los Carruseles
+            // Carrusel 3D
+            const carousel3d = document.querySelector('.carousel-3d-container');
+            if(carousel3d) {
+                const scene = carousel3d.querySelector('.carousel-3d-scene');
+                const slides = Array.from(scene.children);
+                const nextButton = carousel3d.querySelector('.next');
+                const prevButton = carousel3d.querySelector('.prev');
+                let currentIndex = 0;
+                const slideAngle = 360 / slides.length;
+                
+                function rotateCarousel() {
+                    const rotation = -currentIndex * slideAngle;
+                    scene.style.transform = `translateZ(-288px) rotateY(${rotation}deg)`;
+                }
+
+                slides.forEach((slide, index) => {
+                    const angle = index * slideAngle;
+                    slide.style.transform = `rotateY(${angle}deg) translateZ(288px)`;
+                    slide.addEventListener('click', () => {
+                        if(index !== currentIndex) {
+                            currentIndex = index;
+                            rotateCarousel();
+                        }
+                    });
+                });
+                
+                prevButton.addEventListener('click', () => { currentIndex--; rotateCarousel(); });
+                nextButton.addEventListener('click', () => { currentIndex++; rotateCarousel(); });
+                
+                rotateCarousel(); // Init
+            }
+            
+            // Carrusel Vertical
+            document.querySelectorAll('.v-carousel-container').forEach(carousel => {
+                const track = carousel.querySelector('.v-carousel-track');
+                const slides = Array.from(track.children);
+                if (slides.length === 0) return;
+                const nextButton = carousel.querySelector('.next');
+                const prevButton = carousel.querySelector('.prev');
+                let currentIndex = 0;
+                const updateCarousel = () => {
+                    const slideHeight = slides[0].getBoundingClientRect().height;
+                    track.style.transform = `translateY(-${slideHeight * currentIndex}px)`;
+                    prevButton.classList.toggle('is-hidden', currentIndex === 0);
+                    nextButton.classList.toggle('is-hidden', currentIndex === slides.length - 1);
+                };
+                nextButton.addEventListener('click', () => { if (currentIndex < slides.length - 1) { currentIndex++; updateCarousel(); } });
+                prevButton.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; updateCarousel(); } });
+                updateCarousel();
+            });
+
+            // Carrusel Horizontal
             document.querySelectorAll('.carousel-container').forEach(carousel => {
                 const track = carousel.querySelector('.carousel-track');
                 const slides = Array.from(track.children);
@@ -229,10 +294,10 @@
                 let currentIndex = 0;
                 const updateCarousel = () => {
                     const slideWidth = slides[0].getBoundingClientRect().width;
-                    track.style.transform = 'translateX(-' + slideWidth * currentIndex + 'px)';
+                    track.style.transform = `translateX(-${slideWidth * currentIndex}px)`;
                     prevButton.classList.toggle('is-hidden', currentIndex === 0);
                     nextButton.classList.toggle('is-hidden', currentIndex === slides.length - 1);
-                }
+                };
                 nextButton.addEventListener('click', () => { if (currentIndex < slides.length - 1) { currentIndex++; updateCarousel(); } });
                 prevButton.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; updateCarousel(); } });
                 window.addEventListener('resize', updateCarousel);
