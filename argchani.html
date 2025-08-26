@@ -3,154 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Página Web</title>
+    <title>El Semanal de ARG - Edición Especial</title>
+    
+    <!-- Google Fonts (NUEVA SELECCIÓN) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Distressed&family=Special+Elite&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- Estilos Generales --- */
+        /* ======================================================= */
+        /* BASE: ESTILO MINIMALISTA (LIENZO BLANCO)                */
+        /* ======================================================= */
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: #333;
-            background-color: #f9f9f9;
+            padding: 0;
+            font-family: 'Special Elite', monospace; /* Fuente base para todo */
+            color: #1a1a1a; /* Texto negro */
+            background-color: #fdfdfd; /* Un blanco ligeramente roto, más suave a la vista */
+            font-size: 18px; /* Aumentamos el tamaño base para mejor legibilidad */
+            line-height: 1.7;
         }
 
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        /* --- Estructura del Encabezado --- */
-        .site-header {
-            background-color: #f9f9f9;
-            padding: 15px 40px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        /* --- Barra Superior (Logo y Búsqueda) --- */
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 15px;
-        }
-
-        .logo {
-            font-size: 2.5em;
-            font-weight: 500;
-            letter-spacing: 1px;
-            /* Simula la fuente "CHANI" */
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-        }
-
-        .search-container {
-            border: 1px solid #ccc;
-            border-radius: 50px;
-            padding: 8px 15px;
+        /* ======================================================= */
+        /* ENCABEZADO Y TÍTULO PRINCIPAL                           */
+        /* ======================================================= */
+        header {
+            min-height: 50vh;
             display: flex;
             align-items: center;
-        }
-
-        .search-container input {
-            border: none;
-            outline: none;
-            background: transparent;
-            font-size: 0.9em;
-            margin-right: 8px;
-            min-width: 200px;
-        }
-
-        .search-container svg {
-            width: 18px;
-            height: 18px;
-            stroke: #555;
-        }
-
-        /* --- Barra de Navegación --- */
-        nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 15px 0 0 0;
-            display: flex;
             justify-content: center;
-            gap: 30px; /* Espacio entre los enlaces */
-            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            padding: 4rem 1.5rem;
+            /* Eliminamos todas las imágenes y fondos complejos */
         }
 
-        nav ul li a {
+        .header-content h1 {
+            font-family: 'Rubik Distressed', sans-serif;
+            font-size: 6rem;
+            font-weight: 400; /* Esta fuente no necesita bold */
+            line-height: 1.1;
+            letter-spacing: 2px;
+            margin: 0;
+            
+            /* EFECTO DE TEXTO HUECO (COMO EN LA REFERENCIA) */
+            color: transparent;
+            -webkit-text-stroke: 2px #1a1a1a; /* Borde del texto */
+            text-stroke: 2px #1a1a1a;
+        }
+
+        .header-content p {
+            font-family: 'Special Elite', monospace;
+            font-size: 1rem;
+            margin-top: 1rem;
             text-transform: uppercase;
-            font-size: 0.8em;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            padding: 5px 0;
-            transition: color 0.3s;
+            letter-spacing: 2px;
         }
 
-        nav ul li a:hover {
-            color: #888;
+        /* ======================================================= */
+        /* ESTRUCTURA DE CONTENIDO Y SECCIONES                     */
+        /* ======================================================= */
+        .content-block {
+            max-width: 800px; /* Hacemos el contenido más estrecho para facilitar la lectura */
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+            /* Eliminamos todos los bordes, fondos y sombras */
         }
 
-        /* --- Contenido Principal --- */
-        main {
-            padding: 20px 40px;
+        .seccion h2 {
+            font-family: 'Special Elite', monospace;
+            font-size: 1.8rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 3rem;
         }
         
-        section {
-            min-height: 600px; /* Altura de ejemplo para ver el desplazamiento */
-            padding-top: 40px; /* Espacio para que el título no quede oculto bajo el futuro header fijo */
-            border-bottom: 1px dashed #ccc;
-        }
-        
-        h2 {
-            font-size: 2.5em;
-            font-weight: 300;
+        /* Ocultamos el div que centraba el título, ya no es necesario */
+        .center-title {
+            margin: 0;
+            padding: 0;
         }
 
+        /* ======================================================= */
+        /* CUADRÍCULA Y ELEMENTOS                                  */
+        /* ======================================================= */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr; /* Una sola columna por defecto */
+            gap: 3rem;
+        }
+
+        .grid-item {
+            /* Eliminamos fondos, bordes y paddings complejos */
+            text-align: center;
+        }
+        
+        .grid-item h3 {
+            font-family: 'Special Elite', monospace;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .grid-item p {
+            font-size: 1rem;
+            text-align: center;
+            max-width: 600px; /* Centramos y limitamos el ancho del texto */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .image-parallax-container {
+            height: 300px; /* Hacemos las imágenes un poco más altas */
+            margin-bottom: 1rem;
+            border: 2px solid #1a1a1a; /* Borde simple y negro */
+        }
+        
+        .parallax-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.1s linear;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.8rem;
+            border: 2px solid #1a1a1a;
+            color: #1a1a1a;
+            background-color: transparent;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            margin-top: 1.5rem;
+            font-family: 'Special Elite', monospace;
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            background-color: #1a1a1a;
+            color: #fdfdfd;
+        }
+
+        /* Videos y Spotify embeds */
+        .video-container, .grid-item iframe {
+            border: 2px solid #1a1a1a;
+            margin-bottom: 1.5rem;
+        }
+
+        .video-container {
+             width: 100%;
+             position: relative;
+             padding-bottom: 56.25%;
+             height: 0;
+             overflow: hidden;
+        }
+        .video-container iframe {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        }
+
+
+        /* ======================================================= */
+        /* DIVISOR ARTÍSTICO                                       */
+        /* ======================================================= */
+        .artistic-divider {
+            border: none;
+            height: 20px;
+            margin: 3rem auto;
+            width: 80%;
+            max-width: 300px;
+            /* Usamos una imagen SVG directamente en el CSS para la línea "hecha a mano" */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 5'%3E%3Cpath d='M0,2.5 Q25,0 50,2.5 T100,2.5' fill='none' stroke='%231a1a1a' stroke-width='1.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        
+        /* ======================================================= */
+        /* FOOTER                                                  */
+        /* ======================================================= */
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 2px solid #1a1a1a;
+        }
+        
+        /* ======================================================= */
+        /* AJUSTES PARA MÓVILES                                    */
+        /* ======================================================= */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+
+            .header-content h1 {
+                font-size: 3.5rem;
+                -webkit-text-stroke-width: 1px;
+                text-stroke-width: 1px;
+            }
+
+            .header-content p {
+                font-size: 0.8rem;
+            }
+
+            .content-block {
+                padding: 2rem 1rem;
+            }
+            
+            .seccion h2 {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <header class="site-header">
-        <div class="header-top">
-            <div class="logo">
-                <a href="#">TU LOGO</a>
-            </div>
-            <div class="search-container">
-                <input type="search" placeholder="Search">
-                <!-- Icono de lupa (SVG) -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            </div>
+    <header>
+        <div class="header-content">
+            <h1>EL SEMANAL DE ARG</h1>
+            <p>LA VOZ POÉTICA DE LA ACTUALIDAD - EDICIÓN JULIO 2025</p>
         </div>
-        <nav>
-            <ul>
-                <li><a href="#ecos-en-las-ruinas">Ecos en las Ruinas</a></li>
-                <li><a href="#loteria-tapatia">Lotería Tapatía</a></li>
-                <li><a href="#ironias-volterianas">Ironías Volterianas</a></li>
-                <li><a href="#atlas-del-cielo">Atlas del Cielo</a></li>
-            </ul>
-        </nav>
     </header>
 
     <main>
-        <section id="ecos-en-las-ruinas">
-            <h2>Ecos en las Ruinas</h2>
-            <p>Aquí va el contenido de esta sección...</p>
+        <section class="seccion content-block">
+            <div class="center-title">
+                <h2>Crónicas Recientes</h2>
+            </div>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <div class="image-parallax-container">
+                        <img src="assets/img/img01.png" alt="Imagen 1" class="parallax-image">
+                    </div>
+                    <h3>El Baile Cósmico de Mercurio Retrógrado</h3>
+                    <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo, invitándote a la reflexión profunda y al redescubrimiento interior.</p>
+                    <a href="#" class="btn">Desentrañar</a>
+                </div>
+                <div class="grid-item">
+                    <div class="image-parallax-container">
+                        <img src="assets/img/img02.png" alt="Imagen 2" class="parallax-image">
+                    </div>
+                    <h3>Urano en Géminis: Un Canto a la Nueva Era</h3>
+                    <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa que teje los hilos invisibles de nuestra consciencia colectiva.</p>
+                    <a href="https://alter-ias.github.io/heptaglota/loteriatapatia.html" class="btn">Leer Prosa</a>
+                </div>
+                <div class="grid-item">
+                    <div class="image-parallax-container">
+                        <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
+                    </div>
+                    <h3>El Solsticio de Verano: La Llama Perpetua del Alma</h3>
+                    <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable que reside en cada uno de nosotros.</p>
+                    <a href="#" class="btn">Meditar Aquí</a>
+                </div>
+            </div>
         </section>
 
-        <section id="loteria-tapatia">
-            <h2>Lotería Tapatía</h2>
-            <p>Aquí va el contenido de esta sección...</p>
+        <hr class="artistic-divider">
+
+        <section class="seccion content-block">
+            <div class="center-title">
+                <h2>Voces Grabadas: Archivo Sonoro y Visual</h2>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
         </section>
 
-        <section id="ironias-volterianas">
-            <h2>Ironías Volterianas</h2>
-            <p>Aquí va el contenido de esta sección...</p>
-        </section>
+        <hr class="artistic-divider">
 
-        <section id="atlas-del-cielo">
-            <h2>Atlas del Cielo</h2>
-            <p>Aquí va el contenido de esta sección...</p>
+        <section class="seccion content-block">
+            <div class="center-title">
+                <h2>La Audioteca del Pensamiento</h2>
+            </div>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    <h3>El Secreto de la Felicidad en el Caos Moderno</h3>
+                    <p>Un diálogo íntimo sobre la búsqueda de la serenidad en la vorágine de hoy. Escucha las claves para encontrar tu centro, incluso cuando el mundo parece girar sin rumbo fijo.</p>
+                </div>
+                <div class="grid-item">
+                    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    <h3>Desbloqueando tu Potencial Creador</h3>
+                    <p>Embárcate en un viaje sonoro para despertar al artista que llevas dentro. Descubre cómo la inspiración fluye cuando te atreves a romper los moldes y liberar tu verdadera esencia creativa.</p>
+                </div>
+            </div>
         </section>
     </main>
+    
+    <footer class="content-block">
+        <p>&copy; 2025 - El Semanal de ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p>
+    </footer>
+
+    <script>
+        // Script para parallax en imágenes (opcional pero añade un toque dinámico)
+        document.addEventListener('scroll', function() {
+            const parallaxImages = document.querySelectorAll('.parallax-image');
+            for (let img of parallaxImages) {
+                const container = img.parentElement;
+                const rect = container.getBoundingClientRect();
+                
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    const percentVisible = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+                    const moveAmount = (percentVisible - 0.5) * 8;
+                    img.style.transform = `translateY(${moveAmount * -1}%) scale(1.05)`;
+                }
+            }
+        });
+    </script>
 
 </body>
 </html>
