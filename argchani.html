@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARG - Edición Especial</title>
     
@@ -11,6 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik+Distressed&family=Special+Elite&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --main-gap: 2rem; /* Variable para el espaciado */
+        }
         /* ======================================================= */
         /* BASE: ESTILO MINIMALISTA (LIENZO BLANCO)                */
         /* ======================================================= */
@@ -68,222 +71,84 @@
             margin-top: 2rem;
         }
 
-        .main-nav ul {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            flex-wrap: wrap;
-        }
-
-        .main-nav a {
-            font-family: 'Special Elite', monospace;
-            text-decoration: none;
-            color: #1a1a1a;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 1rem;
-            padding: 0.5rem 0;
-            position: relative;
-        }
-
-        .main-nav a::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: #1a1a1a;
-            transform: scaleX(0);
-            transform-origin: bottom right;
-            transition: transform 0.25s ease-out;
-        }
-
-        .main-nav a:hover::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
-        }
+        .main-nav ul { margin: 0; padding: 0; list-style: none; display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; }
+        .main-nav a { font-family: 'Special Elite', monospace; text-decoration: none; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; padding: 0.5rem 0; position: relative; }
+        .main-nav a::after { content: ''; position: absolute; width: 100%; height: 2px; bottom: 0; left: 0; background-color: #1a1a1a; transform: scaleX(0); transform-origin: bottom right; transition: transform 0.25s ease-out; }
+        .main-nav a:hover::after { transform: scaleX(1); transform-origin: bottom left; }
 
         /* ======================================================= */
         /* ESTRUCTURA DE CONTENIDO Y SECCIONES                     */
         /* ======================================================= */
+        
+        /* --- NUEVO: LAYOUT PRINCIPAL DE DOS COLUMNAS --- */
+        .main-layout {
+            padding: 0 var(--main-gap);
+        }
+        
+        @media (min-width: 1200px) {
+            .main-layout {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--main-gap);
+                align-items: flex-start; /* Alinea las columnas en la parte superior */
+            }
+        }
+
         .content-block {
-            max-width: 800px;
+            /* max-width ya no es necesario aquí, lo controlan las columnas */
             margin: 0 auto;
             padding: 3rem 1.5rem;
         }
         
-        .seccion {
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
-
-        .seccion.is-visible {
-            opacity: 1;
-        }
-
-        .seccion h2 {
-            font-family: 'Special Elite', monospace;
-            font-size: 1.8rem;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 3rem;
-        }
-        
-        .center-title {
-            margin: 0;
-            padding: 0;
-        }
+        .seccion { opacity: 0; transition: opacity 1s ease-in-out; }
+        .seccion.is-visible { opacity: 1; }
+        .seccion h2 { font-family: 'Special Elite', monospace; font-size: 1.8rem; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 3rem; }
+        .center-title { margin: 0; padding: 0; }
 
         /* ======================================================= */
         /* CUADRÍCULA Y ELEMENTOS                                  */
         /* ======================================================= */
-        .grid-container, .media-grid {
-            perspective: 2000px;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 3rem;
-        }
-
-        .grid-item {
-            text-align: center;
-        }
+        .grid-container, .media-grid { perspective: 2000px; }
+        .grid-container { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+        .grid-item { text-align: center; }
+        .grid-item h3 { font-family: 'Special Elite', monospace; font-size: 1.5rem; text-transform: uppercase; margin: 1rem 0 0.5rem 0; }
+        .grid-item p { font-size: 1rem; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .image-parallax-container { height: 300px; margin-bottom: 1rem; border: 2px solid #1a1a1a; }
+        .parallax-image { width: 100%; height: 100%; object-fit: cover; }
+        .btn { display: inline-block; padding: 0.8rem 1.8rem; border: 2px solid #1a1a1a; color: #1a1a1a; background-color: transparent; text-decoration: none; transition: background-color 0.2s, color 0.2s; margin-top: 1.5rem; font-family: 'Special Elite', monospace; font-size: 1rem; text-transform: uppercase; cursor: pointer; }
+        .btn:hover { background-color: #1a1a1a; color: #fdfdfd; }
+        .video-container, .spotify-container { border: 2px solid #1a1a1a; margin-bottom: 1.5rem; }
+        .video-container { width: 100%; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .spotify-container iframe { display: block; }
+        .media-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        .grid-item, .media-grid > div { opacity: 0; transform: rotateY(-90deg) scale(0.9); transform-origin: left center; transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+        .seccion.is-visible .grid-item, .seccion.is-visible .media-grid > div { opacity: 1; transform: rotateY(0deg) scale(1); }
+        .seccion.is-visible .grid-item:nth-child(1), .seccion.is-visible .media-grid > div:nth-child(1) { transition-delay: 0.2s; }
+        .seccion.is-visible .grid-item:nth-child(2), .seccion.is-visible .media-grid > div:nth-child(2) { transition-delay: 0.4s; }
+        .seccion.is-visible .grid-item:nth-child(3), .seccion.is-visible .media-grid > div:nth-child(3) { transition-delay: 0.6s; }
+        .seccion.is-visible .media-grid > div:nth-child(4) { transition-delay: 0.8s; }
         
-        .grid-item h3 {
-            font-family: 'Special Elite', monospace;
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            margin: 1rem 0 0.5rem 0;
-        }
-
-        .grid-item p {
-            font-size: 1rem;
-            text-align: center;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .image-parallax-container {
-            height: 300px;
-            margin-bottom: 1rem;
-            border: 2px solid #1a1a1a;
-        }
-        
-        .parallax-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 0.8rem 1.8rem;
-            border: 2px solid #1a1a1a;
-            color: #1a1a1a;
-            background-color: transparent;
-            text-decoration: none;
-            transition: background-color 0.2s, color 0.2s;
-            margin-top: 1.5rem;
-            font-family: 'Special Elite', monospace;
-            font-size: 1rem;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #1a1a1a;
-            color: #fdfdfd;
-        }
-
-        .video-container, .spotify-container {
-            border: 2px solid #1a1a1a;
-            margin-bottom: 1.5rem;
-        }
-
-        .video-container {
-             width: 100%;
-             position: relative;
-             padding-bottom: 56.25%;
-             height: 0;
-             overflow: hidden;
-        }
-        .video-container iframe {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        }
-        
-        .spotify-container iframe {
-            display: block;
-        }
-        
-        .media-grid {
-             display: grid;
-             grid-template-columns: 1fr;
-             gap: 2rem;
-        }
-        
-        .grid-item, .media-grid > div {
-            opacity: 0;
-            transform: rotateY(-90deg) scale(0.9);
-            transform-origin: left center;
-            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
-        }
-
-        .seccion.is-visible .grid-item,
-        .seccion.is-visible .media-grid > div {
-            opacity: 1;
-            transform: rotateY(0deg) scale(1);
-        }
-
-        .seccion.is-visible .grid-item:nth-child(1),
-        .seccion.is-visible .media-grid > div:nth-child(1) {
-            transition-delay: 0.2s;
-        }
-        .seccion.is-visible .grid-item:nth-child(2),
-        .seccion.is-visible .media-grid > div:nth-child(2) {
-            transition-delay: 0.4s;
-        }
-        .seccion.is-visible .grid-item:nth-child(3),
-        .seccion.is-visible .media-grid > div:nth-child(3) {
-            transition-delay: 0.6s;
-        }
-        .seccion.is-visible .media-grid > div:nth-child(4) {
-            transition-delay: 0.8s;
-        }
-        
-        /* --- ESTILOS PARA LA LOTERÍA --- */
+        /* --- CORREGIDO: Contenedor de Lotería Responsivo --- */
         .loteria-wrapper {
             width: 100%;
-            height: 85vh; /* Altura del 85% de la ventana visible */
-            max-height: 800px; /* Una altura máxima para pantallas muy altas */
+            aspect-ratio: 16 / 9; /* Mantiene la proporción y elimina el scroll */
             border: 2px solid #1a1a1a;
-            overflow: hidden; /* Oculta cualquier desbordamiento */
+            overflow: hidden;
         }
         .loteria-wrapper iframe {
             width: 100%;
             height: 100%;
-            border: none; /* Quitamos el borde del iframe, el contenedor ya lo tiene */
+            border: none;
         }
         
         @media (min-width: 992px) {
-            #ecos-ruinas .grid-container {
-                grid-template-columns: 1fr 1fr 1fr;
-                gap: 2rem;
-            }
+            #ecos-ruinas .grid-container { grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
             #ecos-ruinas .grid-item h3 { font-size: 1.2rem; }
             #ecos-ruinas .grid-item p { font-size: 0.9rem; }
         }
         
-        @media (min-width: 768px) {
-            .spotify-grid { grid-template-columns: 1fr 1fr; }
-        }
+        @media (min-width: 768px) { .spotify-grid { grid-template-columns: 1fr 1fr; } }
         
         .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(26, 26, 26, 0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
         .modal-container.is-active { opacity: 1; pointer-events: auto; }
@@ -294,6 +159,8 @@
         #modal-body p { font-family: 'Special Elite', monospace; font-size: 1.1rem; line-height: 1.8; }
         
         .artistic-divider { border: none; height: 20px; margin: 3rem auto; width: 80%; max-width: 300px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 5'%3E%3Cpath d='M0,2.5 Q25,0 50,2.5 T100,2.5' fill='none' stroke='%231a1a1a' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
+        @media (min-width: 1200px) { .artistic-divider { display: none; } } /* Ocultamos divisores en layout de PC */
+
         footer { text-align: center; font-size: 0.9rem; padding-top: 2rem; margin-top: 2rem; border-top: 2px solid #1a1a1a; }
         
         @media (max-width: 768px) {
@@ -326,89 +193,65 @@
         </nav>
     </header>
 
-    <main>
-        <!-- SECCIÓN 1: ECOS EN LAS RUINAS -->
-        <section id="ecos-ruinas" class="seccion content-block">
-            <div class="center-title">
-                <h2>Ecos en las Ruinas</h2>
-            </div>
-            <div class="grid-container">
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img01.png" alt="Mercurio retrógrado representado con estética de collage" class="parallax-image">
+    <main class="main-layout">
+        <!-- Columna Izquierda -->
+        <div class="main-column">
+            <section id="ecos-ruinas" class="seccion content-block">
+                <div class="center-title"><h2>Ecos en las Ruinas</h2></div>
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <div class="image-parallax-container"><img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image"></div>
+                        <h3>El Baile Cósmico de Mercurio Retrógrado</h3>
+                        <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso...</p>
+                        <button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo...</p>">Ver Entrada</button>
                     </div>
-                    <h3>El Baile Cósmico de Mercurio Retrógrado</h3>
-                    <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo...</p>
-                    <button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo del ensayo sobre Mercurio Retrógrado. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.</p><p>Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.</p>">Ver Entrada</button>
-                </div>
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img02.png" alt="Urano en Géminis representado con estética de collage" class="parallax-image">
+                    <div class="grid-item">
+                        <div class="image-parallax-container"><img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image"></div>
+                        <h3>Urano en Géminis: Un Canto a la Nueva Era</h3>
+                        <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales...</p>
+                        <button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro...</p>">Ver Entrada</button>
                     </div>
-                    <h3>Urano en Géminis: Un Canto a la Nueva Era</h3>
-                    <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa...</p>
-                    <button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro acerca de Urano en Géminis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam. In vel mi sit amet augue congue elementum.</p><p>Morbi in ipsum sit amet pede facilisis laoreet. Donec lacus nunc, viverra nec, blandit vel, egestas et, augue. Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim. Curabitur sit amet mauris. Morbi in dui quis est pulvinar ullamcorper.</p>">Ver Entrada</button>
-                </div>
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img03.png" alt="Solsticio de verano representado con estética de collage" class="parallax-image">
+                    <div class="grid-item">
+                        <div class="image-parallax-container"><img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image"></div>
+                        <h3>El Solsticio de Verano: La Llama Perpetua del Alma</h3>
+                        <p>En el cenit del sol, el espíritu se enciende. Una crónica poética sobre la luz inquebrantable...</p>
+                        <button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio...</p>">Ver Entrada</button>
                     </div>
-                    <h3>El Solsticio de Verano: La Llama Perpetua del Alma</h3>
-                    <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable...</p>
-                    <button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio de Verano. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla.</p><p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem.</p>">Ver Entrada</button>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
-        <hr class="artistic-divider">
-
-        <!-- SECCIÓN 2: ARCHIVO SONORO Y VISUAL -->
-        <section id="archivo-sonoro-visual" class="seccion content-block">
-            <div class="center-title">
-                <h2>Archivo Sonoro y Visual</h2>
-            </div>
-            <div class="media-grid">
-                <div class="video-container"><iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
-                <div class="video-container"><iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
-                <div class="spotify-grid media-grid">
-                     <div class="spotify-container"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-                     <div class="spotify-container"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+        <!-- Columna Derecha -->
+        <div class="main-column">
+            <section id="archivo-sonoro-visual" class="seccion content-block">
+                <div class="center-title"><h2>Archivo Sonoro y Visual</h2></div>
+                <div class="media-grid">
+                    <div class="video-container"><iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="video-container"><iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allowfullscreen></iframe></div>
+                    <div class="spotify-grid media-grid">
+                         <div class="spotify-container"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen></iframe></div>
+                         <div class="spotify-container"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen></iframe></div>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <hr class="artistic-divider">
+            <section id="loteria-tapatia" class="seccion content-block">
+                <div class="center-title"><h2>Lotería Tapatía</h2></div>
+                <div class="loteria-wrapper">
+                    <iframe src="https://alter-ias.github.io/arg/loteriatapatiax.html" title="Aplicación Lotería Tapatía" scrolling="no"></iframe>
+                </div>
+            </section>
 
-        <!-- SECCIÓN 3: LOTERÍA TAPATÍA (INTEGRADA) -->
-        <section id="loteria-tapatia" class="seccion content-block">
-            <div class="center-title">
-                <h2>Lotería Tapatía</h2>
-            </div>
-            <!-- Contenedor para el iframe de la lotería -->
-            <div class="loteria-wrapper">
-                <iframe src="https://alter-ias.github.io/arg/loteriatapatiax.html" title="Aplicación Lotería Tapatía"></iframe>
-            </div>
-        </section>
+            <section id="ironias-volterianas" class="seccion content-block">
+                <div class="center-title"><h2>Ironías Volterianas</h2></div>
+                <p style="text-align: center;">(Contenido de la sección "Ironías Volterianas").</p>
+            </section>
 
-        <hr class="artistic-divider">
-
-        <!-- SECCIÓN 4: IRONÍAS VOLTERIANAS -->
-        <section id="ironias-volterianas" class="seccion content-block">
-            <div class="center-title">
-                <h2>Ironías Volterianas</h2>
-            </div>
-            <p style="text-align: center;">(Contenido de la sección "Ironías Volterianas").</p>
-        </section>
-
-        <hr class="artistic-divider">
-
-        <!-- SECCIÓN 5: ATLAS DEL CIELO -->
-        <section id="atlas-cielo" class="seccion content-block">
-            <div class="center-title">
-                <h2>Atlas del Cielo</h2>
-            </div>
-            <p style="text-align: center;">(Contenido de la sección "Atlas del Cielo").</p>
-        </section>
+            <section id="atlas-cielo" class="seccion content-block">
+                <div class="center-title"><h2>Atlas del Cielo</h2></div>
+                <p style="text-align: center;">(Contenido de la sección "Atlas del Cielo").</p>
+            </section>
+        </div>
     </main>
     
     <footer class="content-block">
@@ -431,7 +274,7 @@
                     entry.target.classList.add('is-visible');
                 }
             });
-        }, { threshold: 0.15 });
+        }, { threshold: 0.1 });
         sectionsToAnimate.forEach(section => { observer.observe(section); });
 
         const modalContainer = document.getElementById('modal-container');
@@ -454,4 +297,4 @@
     </script>
 
 </body>
-</html>```
+</html>
