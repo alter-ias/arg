@@ -113,7 +113,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevTablaBtn = document.getElementById('prev-tabla');
     const nextTablaBtn = document.getElementById('next-tabla');
 
-    const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
+    // --- INICIO DE LA CORRECCIÓN ---
+
+    // LÍNEA ORIGINAL (COMENTADA)
+    // const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
+
+    // LÍNEAS NUEVAS CON LA SOLUCIÓN DEL PROXY CORS
+    const originalSheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
+    const googleSheetCsvUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(originalSheetUrl)}`;
+
+    // --- FIN DE LA CORRECCIÓN ---
 
     let allPoems = [];
     let currentPoemIndex = -1;
