@@ -114,7 +114,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextTablaBtn = document.getElementById('next-tabla');
 
     const originalSheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?gid=0&single=true&output=csv';
-    const googleSheetCsvUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(originalSheetUrl)}`;
+    
+    // --- LÍNEA MODIFICADA ---
+    const googleSheetCsvUrl = `https://corsproxy.io/?${encodeURIComponent(originalSheetUrl)}`;
 
     let allPoems = [];
     let currentPoemIndex = -1;
@@ -142,9 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const shuffleArray = (array) => {
         for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; }
     };
-
-    // --- INICIO DE LA MODIFICACIÓN ---
-    // Se reemplaza la función loadPoemsData para usar fetch y luego parsear.
 
     function loadPoemsData() {
         postalContainer.innerHTML = `<div class="spinner"></div><p id="loading-message">Construyendo los universos...</p>`;
@@ -190,8 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80; max-width: 500px;"><b>Error:</b><br>${error.message}</p>`;
             });
     }
-
-    // --- FIN DE LA MODIFICACIÓN ---
 
     function renderTabla() {
         postalContainer.innerHTML = '';
