@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARG - Edición Especial</title>
+    <title>El Semanal de ARG - Edición Especial</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik+Distressed&family=Special+Elite&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <!-- NOTA: He cambiado la fuente del título como en tu código base -->
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Special+Elite&display=swap" rel="stylesheet">
     
     <style>
         /* ======================================================= */
@@ -22,8 +23,6 @@
             background-color: #fdfdfd;
             font-size: 18px;
             line-height: 1.7;
-            
-            /* --- NUEVO: AÑADIMOS PERSPECTIVA PARA EL EFECTO 3D --- */
             perspective: 1000px;
         }
 
@@ -36,15 +35,14 @@
         }
 
         .header-content h1 {
-            font-family: 'Special Elite', sans-serif;
-            font-size: 6rem;
+            /* --- TIPOGRAFÍA DEL TÍTULO ACTUALIZADA --- */
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 6.5rem; /* Ajuste ligero para la nueva fuente */
             font-weight: 400;
             line-height: 1.1;
             letter-spacing: 2px;
             margin: 0;
-            color: transparent;
-            -webkit-text-stroke: 2px #1a1a1a;
-            text-stroke: 2px #1a1a1a;
+            color: #1a1a1a; /* Eliminamos el efecto hueco para esta fuente gótica */
         }
 
         .header-content p {
@@ -119,19 +117,14 @@
             padding: 3rem 1.5rem;
         }
         
-        /* --- NUEVO: ESTILOS PARA LA ANIMACIÓN 3D DE LAS SECCIONES --- */
         .seccion {
-            /* Estado inicial: inclinado y semi-transparente */
-            opacity: 0.5;
+            opacity: 0;
             transform: rotateX(-15deg);
             transform-origin: top center;
-            
-            /* Transición suave para la animación */
             transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                         transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* Estado final: cuando la sección es visible */
         .seccion.is-visible {
             opacity: 1;
             transform: rotateX(0deg);
@@ -189,7 +182,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.1s linear; /* Mantenemos una pequeña transición por si se quiere reusar */
         }
 
         .btn {
@@ -211,7 +203,6 @@
             color: #fdfdfd;
         }
 
-        /* Videos y Spotify embeds */
         .video-container, .spotify-container {
             border: 2px solid #1a1a1a;
             margin-bottom: 1.5rem;
@@ -237,6 +228,37 @@
              grid-template-columns: 1fr;
              gap: 2rem;
         }
+
+        /* --- NUEVO: ANIMACIÓN EN CASCADA PARA LOS ELEMENTOS INTERNOS --- */
+        .grid-item, .media-grid > div {
+            /* Estado inicial */
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            transition-delay: 0.2s; /* Un retraso base */
+        }
+
+        /* Cuando la sección es visible, los hijos empiezan su animación */
+        .seccion.is-visible .grid-item,
+        .seccion.is-visible .media-grid > div {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Aplicamos el retraso secuencial (staggering) */
+        .seccion.is-visible .grid-item:nth-child(2),
+        .seccion.is-visible .media-grid > div:nth-child(2) {
+            transition-delay: 0.4s;
+        }
+        .seccion.is-visible .grid-item:nth-child(3),
+        .seccion.is-visible .media-grid > div:nth-child(3) {
+            transition-delay: 0.6s;
+        }
+        /* El grid de Spotify es el 4º hijo de media-grid */
+        .seccion.is-visible .media-grid > div:nth-child(4) {
+             transition-delay: 0.8s;
+        }
+
         
         @media (min-width: 768px) {
             .spotify-grid {
@@ -278,9 +300,7 @@
             }
 
             .header-content h1 {
-                font-size: 3.5rem;
-                -webkit-text-stroke-width: 1px;
-                text-stroke-width: 1px;
+                font-size: 4rem; /* Ajustado para la nueva fuente en móviles */
             }
 
             .header-content p {
@@ -309,8 +329,8 @@
 
     <header>
         <div class="header-content">
-            <h1>ARG</h1>
-            <p>Jardín Digital de Alan Ruíz Galicia</p>
+            <h1>El Semanal de ARG</h1>
+            <p>LA VOZ POÉTICA DE LA ACTUALIDAD - EDICIÓN JULIO 2025</p>
         </div>
         
         <nav class="main-nav">
@@ -333,7 +353,7 @@
             <div class="grid-container">
                 <div class="grid-item">
                     <div class="image-parallax-container">
-                        <img src="assets/img/img01.png" alt="Imagen 1" class="parallax-image">
+                        <img src="https://i.ibb.co/cyv75sH/img01.png" alt="Mercurio retrógrado representado con estética de collage" class="parallax-image">
                     </div>
                     <h3>El Baile Cósmico de Mercurio Retrógrado</h3>
                     <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo, invitándote a la reflexión profunda y al redescubrimiento interior.</p>
@@ -341,7 +361,7 @@
                 </div>
                 <div class="grid-item">
                     <div class="image-parallax-container">
-                        <img src="assets/img/img02.png" alt="Imagen 2" class="parallax-image">
+                        <img src="https://i.ibb.co/3Wbfvj2/img02.png" alt="Urano en Géminis representado con estética de collage" class="parallax-image">
                     </div>
                     <h3>Urano en Géminis: Un Canto a la Nueva Era</h3>
                     <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa que teje los hilos invisibles de nuestra consciencia colectiva.</p>
@@ -349,7 +369,7 @@
                 </div>
                 <div class="grid-item">
                     <div class="image-parallax-container">
-                        <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
+                        <img src="https://i.ibb.co/M5tdyp1/img03.png" alt="Solsticio de verano representado con estética de collage" class="parallax-image">
                     </div>
                     <h3>El Solsticio de Verano: La Llama Perpetua del Alma</h3>
                     <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable que reside en cada uno de nosotros.</p>
@@ -417,30 +437,23 @@
         <p>&copy; 2025 - El Semanal de ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p>
     </footer>
 
-    <!-- --- NUEVO SCRIPT PARA LA ANIMACIÓN 3D --- -->
     <script>
-        // Seleccionamos todas las secciones que queremos animar
         const sectionsToAnimate = document.querySelectorAll('.seccion');
 
-        // Configuramos el Intersection Observer
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                // Si la sección está en la pantalla (intersecting)
                 if (entry.isIntersecting) {
-                    // Le añadimos la clase 'is-visible' para activar la animación
                     entry.target.classList.add('is-visible');
                 }
             });
         }, {
-            // Opciones: la animación se dispara cuando el 15% del elemento es visible
             threshold: 0.15 
         });
 
-        // Le decimos al observer que vigile cada una de las secciones
         sectionsToAnimate.forEach(section => {
             observer.observe(section);
         });
     </script>
 
 </body>
-</html>```
+</html>
