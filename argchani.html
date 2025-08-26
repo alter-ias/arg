@@ -143,7 +143,7 @@
         /* CUADRÍCULA Y ELEMENTOS                                  */
         /* ======================================================= */
         .grid-container, .media-grid {
-            perspective: 2000px; /* Aumentamos perspectiva para un efecto más notable */
+            perspective: 2000px;
         }
 
         .grid-container {
@@ -195,6 +195,7 @@
             font-family: 'Special Elite', monospace;
             font-size: 1rem;
             text-transform: uppercase;
+            cursor: pointer;
         }
 
         .btn:hover {
@@ -202,7 +203,6 @@
             color: #fdfdfd;
         }
 
-        /* Videos y Spotify embeds */
         .video-container, .spotify-container {
             border: 2px solid #1a1a1a;
             margin-bottom: 1.5rem;
@@ -229,23 +229,19 @@
              gap: 2rem;
         }
         
-        /* --- NUEVO EFECTO 3D: "CARD FLIP" --- */
         .grid-item, .media-grid > div {
             opacity: 0;
-            /* Estado inicial: rotado 90 grados (de canto) y ligeramente encogido */
             transform: rotateY(-90deg) scale(0.9);
             transform-origin: left center;
             transition: opacity 0.7s ease-out, transform 0.7s ease-out;
         }
 
-        /* Estado final: cuando la sección es visible, los elementos giran a su posición */
         .seccion.is-visible .grid-item,
         .seccion.is-visible .media-grid > div {
             opacity: 1;
             transform: rotateY(0deg) scale(1);
         }
 
-        /* Retraso secuencial para el efecto en cascada */
         .seccion.is-visible .grid-item:nth-child(1),
         .seccion.is-visible .media-grid > div:nth-child(1) {
             transition-delay: 0.2s;
@@ -262,10 +258,89 @@
             transition-delay: 0.8s;
         }
         
+        /* --- NUEVO: ESTILOS PARA LA CUADRÍCULA HORIZONTAL EN PC --- */
+        @media (min-width: 992px) {
+            #ecos-ruinas .grid-container {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 2rem;
+            }
+
+            #ecos-ruinas .grid-item h3 {
+                font-size: 1.2rem; /* Hacemos el título un poco más pequeño para que quepa bien */
+            }
+
+            #ecos-ruinas .grid-item p {
+                font-size: 0.9rem; /* Y el párrafo también */
+            }
+        }
+        
         @media (min-width: 768px) {
             .spotify-grid {
                 grid-template-columns: 1fr 1fr;
             }
+        }
+        
+        /* --- NUEVO: ESTILOS PARA EL MODAL --- */
+        .modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(26, 26, 26, 0.9);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .modal-container.is-active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: #fdfdfd;
+            padding: 3rem;
+            border: 2px solid #1a1a1a;
+            max-width: 800px;
+            width: 90%;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.95);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .modal-container.is-active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2.5rem;
+            font-family: sans-serif;
+            cursor: pointer;
+            line-height: 1;
+            color: #1a1a1a;
+        }
+        
+        #modal-title {
+             font-family: 'Special Elite', monospace;
+             font-size: 1.8rem;
+             text-transform: uppercase;
+             margin-top: 0;
+        }
+        
+        #modal-body p {
+            font-family: 'Special Elite', monospace;
+            font-size: 1.1rem;
+            line-height: 1.8;
         }
 
         /* ======================================================= */
@@ -357,30 +432,39 @@
             <div class="grid-container">
                 <div class="grid-item">
                     <div class="image-parallax-container">
-                        <!-- RUTA DE IMAGEN CORREGIDA -->
                         <img src="assets/img/img01.png" alt="Mercurio retrógrado representado con estética de collage" class="parallax-image">
                     </div>
                     <h3>El Baile Cósmico de Mercurio Retrógrado</h3>
-                    <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo, invitándote a la reflexión profunda y al redescubrimiento interior.</p>
-                    <a href="#" class="btn">Desentrañar</a>
+                    <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo...</p>
+                    <button class="btn btn-modal" 
+                            data-title="El Baile Cósmico de Mercurio Retrógrado" 
+                            data-content="<p>Este es el contenido completo del ensayo sobre Mercurio Retrógrado. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.</p><p>Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.</p>">
+                        Ver Entrada
+                    </button>
                 </div>
                 <div class="grid-item">
                     <div class="image-parallax-container">
-                        <!-- RUTA DE IMAGEN CORREGIDA -->
                         <img src="assets/img/img02.png" alt="Urano en Géminis representado con estética de collage" class="parallax-image">
                     </div>
                     <h3>Urano en Géminis: Un Canto a la Nueva Era</h3>
-                    <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa que teje los hilos invisibles de nuestra consciencia colectiva.</p>
-                    <a href="https://alter-ias.github.io/heptaglota/loteriatapatia.html" class="btn">Leer Prosa</a>
+                    <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa...</p>
+                    <button class="btn btn-modal"
+                            data-title="Urano en Géminis: Un Canto a la Nueva Era"
+                            data-content="<p>Aquí se despliega el texto íntegro acerca de Urano en Géminis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam. In vel mi sit amet augue congue elementum.</p><p>Morbi in ipsum sit amet pede facilisis laoreet. Donec lacus nunc, viverra nec, blandit vel, egestas et, augue. Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim. Curabitur sit amet mauris. Morbi in dui quis est pulvinar ullamcorper.</p>">
+                        Ver Entrada
+                    </button>
                 </div>
                 <div class="grid-item">
                     <div class="image-parallax-container">
-                        <!-- RUTA DE IMAGEN CORREGIDA -->
                         <img src="assets/img/img03.png" alt="Solsticio de verano representado con estética de collage" class="parallax-image">
                     </div>
                     <h3>El Solsticio de Verano: La Llama Perpetua del Alma</h3>
-                    <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable que reside en cada uno de nosotros.</p>
-                    <a href="#" class="btn">Meditar Aquí</a>
+                    <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable...</p>
+                    <button class="btn btn-modal"
+                            data-title="El Solsticio de Verano: La Llama Perpetua del Alma"
+                            data-content="<p>El ensayo completo sobre el Solsticio de Verano. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla.</p><p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem.</p>">
+                        Ver Entrada
+                    </button>
                 </div>
             </div>
         </section>
@@ -444,9 +528,21 @@
         <p>&copy; 2025 - El Semanal de ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p>
     </footer>
 
-    <script>
-        const sectionsToAnimate = document.querySelectorAll('.seccion');
+    <!-- --- NUEVO: ESTRUCTURA DEL MODAL --- -->
+    <div id="modal-container" class="modal-container">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 id="modal-title"></h2>
+            <div id="modal-body"></div>
+        </div>
+    </div>
 
+
+    <script>
+        // --- SCRIPT UNIFICADO: ANIMACIÓN DE SCROLL + LÓGICA DEL MODAL ---
+
+        // Parte 1: Animación de Scroll con Intersection Observer
+        const sectionsToAnimate = document.querySelectorAll('.seccion');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -456,10 +552,44 @@
         }, {
             threshold: 0.15 
         });
-
         sectionsToAnimate.forEach(section => {
             observer.observe(section);
         });
+
+
+        // Parte 2: Lógica del Modal
+        const modalContainer = document.getElementById('modal-container');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const modalButtons = document.querySelectorAll('.btn-modal');
+        const closeModalButton = document.querySelector('.modal-close');
+
+        // Abrir el modal
+        modalButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const title = button.dataset.title;
+                const content = button.dataset.content;
+                
+                modalTitle.textContent = title;
+                modalBody.innerHTML = content;
+                
+                modalContainer.classList.add('is-active');
+            });
+        });
+
+        // Cerrar el modal
+        const closeModal = () => {
+            modalContainer.classList.remove('is-active');
+        };
+
+        closeModalButton.addEventListener('click', closeModal);
+        modalContainer.addEventListener('click', (e) => {
+            // Se cierra solo si se hace clic en el fondo, no en el contenido
+            if (e.target === modalContainer) {
+                closeModal();
+            }
+        });
+
     </script>
 
 </body>
