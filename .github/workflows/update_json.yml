@@ -1,0 +1,47 @@
+# Nombre del workflow, aparecerá en la pestaña "Actions" de GitHub
+name: Actualizar Datos desde Google Sheets
+
+# Define cuándo se ejecutará esta acción
+on:
+  # Opción 1: Ejecución programada (schedule)
+  # Esto se ejecuta todos los días a las 06:00 UTC (medianoche en CDMX)
+  # Puedes ajustar la hora usando un generador de "cron": https://crontab.guru/
+  schedule:
+    - cron: '0 6 * * *'
+
+  # Opción 2: Ejecución manual (workflow_dispatch)
+  # Esto añade un botón "Run workflow" en la pestaña Actions de GitHub
+  # para que puedas actualizarlo cuando quieras.
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Clona tu repositorio para que el robot tenga acceso a tus archivos
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      # 2. Configura el entorno de Python
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # 3. Instala las librerías que necesita el script (en este caso, 'requests')
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      # 4. Ejecuta el script de Python que creamos
+      - name: Ejecutar el script de actualización
+        run: python update_data.py
+
+      # 5. Revisa si el archivo datos.json cambió y, si es así, lo sube automáticamente
+      - name: Hacer commit y push de los cambios
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: Actualización automática de datos desde Google Sheets"
+          file_pattern: data/datos.json
