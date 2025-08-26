@@ -86,7 +86,7 @@
         
         .loteria-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0A0A0A; z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease-in-out; }
         .loteria-modal-container.is-active { opacity: 1; pointer-events: auto; }
-        .loteria-close-btn { position: absolute; top: 20px; /* --- BOTÓN MOVIDO A LA IZQUIERDA --- */ left: 20px; font-size: 2rem; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3010; line-height: 1; }
+        .loteria-close-btn { position: absolute; top: 20px; left: 20px; font-size: 2rem; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3010; line-height: 1; }
         #loteria-iframe-wrapper { width: 100%; height: 100%; }
         #loteria-iframe-wrapper iframe { width: 100%; height: 100%; border: none; }
 
@@ -99,9 +99,7 @@
         #modal-title { font-family: 'Special Elite', monospace; font-size: 1.8rem; text-transform: uppercase; margin-top: 0; }
         #modal-body p { font-family: 'Special Elite', monospace; font-size: 1.1rem; line-height: 1.8; }
         
-        /* --- DIVISORES RESTAURADOS --- */
         .artistic-divider { border: none; height: 20px; margin: 3rem auto; width: 80%; max-width: 300px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 5'%3E%3Cpath d='M0,2.5 Q25,0 50,2.5 T100,2.5' fill='none' stroke='%231a1a1a' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
-        /* Se ocultan solo en el layout de PC */
         @media (min-width: 1200px) { .artistic-divider { display: none; } }
         
         footer { text-align: center; font-size: 0.9rem; padding: 2rem var(--main-gap) 2rem var(--main-gap); margin-top: 2rem; border-top: 2px solid #1a1a1a; }
@@ -136,15 +134,21 @@
         <!-- Columna Izquierda -->
         <div class="main-column">
             <section id="ecos-ruinas" class="seccion content-block"><div class="center-title"><h2>Ecos en las Ruinas</h2></div><div class="grid-container"><div class="grid-item"><div class="image-parallax-container"><img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image"></div><h3>El Baile Cósmico de Mercurio Retrógrado</h3><p>Las estrellas susurran historias antiguas...</p><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo...</p>">Ver Entrada</button></div><div class="grid-item"><div class="image-parallax-container"><img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image"></div><h3>Urano en Géminis</h3><p>Los vientos del cambio traen la energía...</p><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro...</p>">Ver Entrada</button></div><div class="grid-item"><div class="image-parallax-container"><img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image"></div><h3>El Solsticio de Verano</h3><p>En el cenit del sol, el espíritu se enciende...</p><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio...</p>">Ver Entrada</button></div></div></section>
+            
             <hr class="artistic-divider">
-            <section id="ironias-volterianas" class="seccion content-block"><div class="center-title"><h2>Ironías Volterianas</h2></div><div class="alternating-layout"><div class="alternating-item"><div class="image-parallax-container"><img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image"></div><div class="text-content"><h3>El Baile Cósmico de Mercurio Retrógrado</h3><p>Las estrellas susurran historias antiguas...</p><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo...</p>">Ver Entrada</button></div></div><div class="alternating-item"><div class="image-parallax-container"><img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image"></div><div class="text-content"><h3>Urano en Géminis</h3><p>Los vientos del cambio traen la energía...</p><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro...</p>">Ver Entrada</button></div></div><div class="alternating-item"><div class="image-parallax-container"><img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image"></div><div class="text-content"><h3>El Solsticio de Verano</h3><p>En el cenit del sol, el espíritu se enciende...</p><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio...</p>">Ver Entrada</button></div></div></div></section>
+
+            <section id="loteria-tapatia" class="seccion content-block"><div class="center-title"><h2>Lotería Tapatía</h2></div><div class="loteria-preview" id="loteria-launcher" data-iframe-src="https://alter-ias.github.io/arg/loteriatapatiax.html"><img src="assets/img/logoloteria.png" alt="Logo Lotería Tapatía"></div></section>
         </div>
         <!-- Columna Derecha -->
         <div class="main-column">
+            <section id="ironias-volterianas" class="seccion content-block"><div class="center-title"><h2>Ironías Volterianas</h2></div><div class="alternating-layout"><div class="alternating-item"><div class="image-parallax-container"><img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image"></div><div class="text-content"><h3>El Baile Cósmico de Mercurio Retrógrado</h3><p>Las estrellas susurran historias antiguas...</p><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo...</p>">Ver Entrada</button></div></div><div class="alternating-item"><div class="image-parallax-container"><img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image"></div><div class="text-content"><h3>Urano en Géminis</h3><p>Los vientos del cambio traen la energía...</p><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro...</p>">Ver Entrada</button></div></div><div class="alternating-item"><div class="image-parallax-container"><img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image"></div><div class="text-content"><h3>El Solsticio de Verano</h3><p>En el cenit del sol, el espíritu se enciende...</p><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio...</p>">Ver Entrada</button></div></div></div></section>
+            
+            <hr class="artistic-divider">
+
             <section id="archivo-sonoro-visual" class="seccion content-block"><div class="center-title"><h2>Archivo Sonoro y Visual</h2></div><div class="media-grid"><div class="video-container"><iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allowfullscreen></iframe></div><div class="video-container"><iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allowfullscreen></iframe></div><div class="spotify-grid media-grid"><div class="spotify-container"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen></iframe></div><div class="spotify-container"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen></iframe></div></div></div></section>
+            
             <hr class="artistic-divider">
-            <section id="loteria-tapatia" class="seccion content-block"><div class="center-title"><h2>Lotería Tapatía</h2></div><div class="loteria-preview" id="loteria-launcher" data-iframe-src="https://alter-ias.github.io/arg/loteriatapatiax.html"><img src="assets/img/logoloteria.png" alt="Logo Lotería Tapatía"></div></section>
-            <hr class="artistic-divider">
+            
             <section id="atlas-cielo" class="seccion content-block"><div class="center-title"><h2>Atlas del Cielo</h2></div><div class="carousel-container"><div class="carousel-viewport"><div class="carousel-track"><div class="carousel-slide grid-item"><div class="image-parallax-container"><img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image"></div><h3>El Baile Cósmico de Mercurio Retrógrado</h3><p>Las estrellas susurran historias antiguas...</p><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo...</p>">Ver Entrada</button></div><div class="carousel-slide grid-item"><div class="image-parallax-container"><img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image"></div><h3>Urano en Géminis</h3><p>Los vientos del cambio traen la energía...</p><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro...</p>">Ver Entrada</button></div><div class="carousel-slide grid-item"><div class="image-parallax-container"><img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image"></div><h3>El Solsticio de Verano</h3><p>En el cenit del sol, el espíritu se enciende...</p><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio...</p>">Ver Entrada</button></div></div></div><button class="carousel-btn prev">&#8249;</button><button class="carousel-btn next">&#8250;</button></div></section>
         </div>
     </main>
@@ -199,14 +203,12 @@
             loteriaModal.launcher.addEventListener('click', () => loteriaModal.open());
             loteriaModal.closeButton.addEventListener('click', () => history.back());
             
-            // Manejador de eventos de historial (botón atrás del móvil/navegador)
             window.addEventListener('popstate', (e) => {
                 if (loteriaModal.container.classList.contains('is-active')) {
                     loteriaModal.close();
                 }
             });
 
-            // Cerrar modales con tecla Escape
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     if (loteriaModal.container.classList.contains('is-active')) {
