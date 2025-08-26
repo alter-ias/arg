@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Semanal de ARG - Edición Especial</title>
+    <title>ARG - Edición Especial</title>
     
     <!-- Google Fonts (NUEVA SELECCIÓN) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,17 +28,13 @@
         /* ENCABEZADO Y TÍTULO PRINCIPAL                           */
         /* ======================================================= */
         header {
-            min-height: 50vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            /* El header ahora es un contenedor para el título y la navegación */
             text-align: center;
-            padding: 4rem 1.5rem;
-            /* Eliminamos todas las imágenes y fondos complejos */
+            padding: 4rem 1.5rem 2rem 1.5rem; /* Ajustamos padding inferior */
         }
 
         .header-content h1 {
-            font-family: 'Rubik Distressed', sans-serif;
+            font-family: 'Special Elite', sans-serif;
             font-size: 6rem;
             font-weight: 400; /* Esta fuente no necesita bold */
             line-height: 1.1;
@@ -58,6 +54,63 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
+        
+        /* ======================================================= */
+        /* NAVEGACIÓN PRINCIPAL (NUEVO)                            */
+        /* ======================================================= */
+        .main-nav {
+            width: 100%;
+            padding: 1rem 0;
+            background-color: #fdfdfd;
+            border-top: 2px solid #1a1a1a;
+            border-bottom: 2px solid #1a1a1a;
+            text-align: center;
+            position: sticky; /* Hacemos que se quede pegado arriba */
+            top: 0;
+            z-index: 1000; /* Aseguramos que esté por encima de otros elementos */
+            margin-top: 2rem; /* Espacio entre el título y la barra */
+        }
+
+        .main-nav ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem; /* Aumentamos la separación */
+            flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
+        }
+
+        .main-nav a {
+            font-family: 'Special Elite', monospace;
+            text-decoration: none;
+            color: #1a1a1a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1rem;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        /* Efecto hover con línea inferior */
+        .main-nav a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #1a1a1a;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+
+        .main-nav a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
 
         /* ======================================================= */
         /* ESTRUCTURA DE CONTENIDO Y SECCIONES                     */
@@ -66,7 +119,6 @@
             max-width: 800px; /* Hacemos el contenido más estrecho para facilitar la lectura */
             margin: 0 auto;
             padding: 3rem 1.5rem;
-            /* Eliminamos todos los bordes, fondos y sombras */
         }
 
         .seccion h2 {
@@ -78,7 +130,6 @@
             margin-bottom: 3rem;
         }
         
-        /* Ocultamos el div que centraba el título, ya no es necesario */
         .center-title {
             margin: 0;
             padding: 0;
@@ -94,7 +145,6 @@
         }
 
         .grid-item {
-            /* Eliminamos fondos, bordes y paddings complejos */
             text-align: center;
         }
         
@@ -108,15 +158,15 @@
         .grid-item p {
             font-size: 1rem;
             text-align: center;
-            max-width: 600px; /* Centramos y limitamos el ancho del texto */
+            max-width: 600px;
             margin-left: auto;
             margin-right: auto;
         }
         
         .image-parallax-container {
-            height: 300px; /* Hacemos las imágenes un poco más altas */
+            height: 300px;
             margin-bottom: 1rem;
-            border: 2px solid #1a1a1a; /* Borde simple y negro */
+            border: 2px solid #1a1a1a;
         }
         
         .parallax-image {
@@ -145,7 +195,6 @@
             color: #fdfdfd;
         }
 
-        /* Videos y Spotify embeds */
         .video-container, .grid-item iframe {
             border: 2px solid #1a1a1a;
             margin-bottom: 1.5rem;
@@ -172,7 +221,6 @@
             margin: 3rem auto;
             width: 80%;
             max-width: 300px;
-            /* Usamos una imagen SVG directamente en el CSS para la línea "hecha a mano" */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 5'%3E%3Cpath d='M0,2.5 Q25,0 50,2.5 T100,2.5' fill='none' stroke='%231a1a1a' stroke-width='1.5'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: center;
@@ -214,6 +262,14 @@
             .seccion h2 {
                 font-size: 1.5rem;
             }
+
+            .main-nav ul {
+                gap: 1rem 1.5rem; /* Menor separación en móviles */
+            }
+
+            .main-nav a {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -221,9 +277,24 @@
 
     <header>
         <div class="header-content">
-            <h1>EL SEMANAL DE ARG</h1>
-            <p>LA VOZ POÉTICA DE LA ACTUALIDAD - EDICIÓN JULIO 2025</p>
+            <h1>ARG</h1>
+            <p>Jardín Digital de Alan Ruíz Galicia</p>
         </div>
+        
+        <!-- =============================== -->
+        <!-- INICIO DEL ENCABEZADO AÑADIDO   -->
+        <!-- =============================== -->
+        <nav class="main-nav">
+            <ul>
+                <li><a href="#ecos-ruinas">Ecos en las Ruinas</a></li>
+                <li><a href="#loteria-tapatia">Lotería Tapatía</a></li>
+                <li><a href="#ironias-volterianas">Ironías Volterianas</a></li>
+                <li><a href="#atlas-cielo">Atlas del Cielo</a></li>
+            </ul>
+        </nav>
+        <!-- =============================== -->
+        <!-- FIN DEL ENCABEZADO AÑADIDO      -->
+        <!-- =============================== -->
     </header>
 
     <main>
@@ -292,6 +363,47 @@
                 </div>
             </div>
         </section>
+        
+        <!-- ======================================================= -->
+        <!-- INICIO DE LAS NUEVAS SECCIONES CON ID PARA EL MENÚ      -->
+        <!-- ======================================================= -->
+
+        <hr class="artistic-divider">
+
+        <section id="ecos-ruinas" class="seccion content-block">
+            <div class="center-title">
+                <h2>Ecos en las Ruinas</h2>
+            </div>
+            <p style="text-align: center;">(Aquí puedes colocar el contenido de esta sección. Puedes usar la misma estructura de 'grid-container' que en las secciones anteriores para mantener la coherencia).</p>
+        </section>
+
+        <hr class="artistic-divider">
+
+        <section id="loteria-tapatia" class="seccion content-block">
+            <div class="center-title">
+                <h2>Lotería Tapatía</h2>
+            </div>
+            <p style="text-align: center;">(Contenido de la sección "Lotería Tapatía").</p>
+        </section>
+
+        <hr class="artistic-divider">
+
+        <section id="ironias-volterianas" class="seccion content-block">
+            <div class="center-title">
+                <h2>Ironías Volterianas</h2>
+            </div>
+            <p style="text-align: center;">(Contenido de la sección "Ironías Volterianas").</p>
+        </section>
+
+        <hr class="artistic-divider">
+
+        <section id="atlas-cielo" class="seccion content-block">
+            <div class="center-title">
+                <h2>Atlas del Cielo</h2>
+            </div>
+            <p style="text-align: center;">(Contenido de la sección "Atlas del Cielo").</p>
+        </section>
+
     </main>
     
     <footer class="content-block">
@@ -316,4 +428,4 @@
     </script>
 
 </body>
-</html>
+</html>```
