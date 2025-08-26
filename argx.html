@@ -9,243 +9,280 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display+SC:wght@400;700;900&family=Special+Elite&display=swap" rel="stylesheet">
     
-       <style>
-        /* INICIO: Estilos para el video de fondo */
+     <style>
+    /* INICIO: Estilos para el video de fondo */
+    #background-video {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -100;
+        object-fit: cover;
+    }
+    /* FIN: Estilos para el video de fondo */
+
+    /* BASE */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Libre Baskerville', serif;
+        color: white;
+        background-color: #1a1a1a; /* Color de fondo si el video no carga */
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Capa superpuesta para oscurecer el video */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5));
+        z-index: -99;
+    }
+
+    /* Encabezado */
+    header {
+        height: 70vh;
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        position: relative;
+        background-image: url('assets/img/header-background.png');
+        background-size: cover;
+        background-position: center center;
+        box-shadow: inset 0 -50px 50px -20px rgba(0,0,0,0.3);
+    }
+
+    .header-content h1 {
+        font-family: 'Playfair Display SC', serif;
+        font-size: 7rem;
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: -4px;
+        text-transform: uppercase;
+        line-height: 0.9;
+        text-shadow: 2px 3px 6px rgba(0, 0, 0, 0.6);
+        filter: blur(0.2px);
+    }
+
+    .header-content p {
+        font-family: 'Libre Baskerville', serif;
+        font-size: 1rem;
+        margin-top: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        padding: 0.6rem 1.2rem;
+        border: none;
+        display: inline-block;
+        background-color: #5a554a;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Contenido Principal */
+    .content-block {
+        max-width: 1100px;
+        margin: 4rem auto;
+        padding: 3rem;
+        background-color: transparent; 
+        border: 1px solid rgba(0,0,0,0.1);
+        box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    }
+
+    .seccion h2 {
+        font-family: 'Playfair Display SC', serif;
+        font-size: 2.8rem;
+        margin-top: 0;
+        margin-bottom: 2.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid white;
+        display: inline-block;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    }
+
+    .seccion .center-title {
+         text-align: center;
+         margin-bottom: 2.5rem;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2.5rem;
+        align-items: stretch;
+    }
+
+    .grid-item {
+        background-color: transparent; 
+        border: 1px dashed rgba(255, 255, 255, 0.7);
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+    
+    .grid-item h3 {
+        font-family: 'Playfair Display SC', serif;
+        font-size: 1.8rem;
+        margin: 0 0 0.8rem 0;
+        line-height: 1.2;
+        font-weight: 700;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    }
+
+    .grid-item p {
+        font-family: 'Special Elite', monospace;
+        font-size: 1rem;
+        line-height: 1.7;
+        text-align: justify;
+        margin-top: 0.5rem;
+        flex-grow: 1;
+        color: white;
+    }
+    
+    .image-parallax-container {
+        overflow: hidden;
+        height: 250px;
+        margin-bottom: 1.2rem;
+        border: 1px solid #ddd;
+    }
+    
+    .parallax-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.1s linear;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 0.7rem 1.4rem;
+        border: 1px solid white;
+        color: white;
+        text-decoration: none;
+        transition: background-color 0.2s, color 0.2s, transform 0.2s;
+        margin: 1.5rem 0 0 auto;
+        align-self: flex-end;
+        font-family: 'Libre Baskerville', serif;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn:hover {
+        background-color: white;
+        color: #1a1a1a;
+        transform: translateY(-2px);
+        text-shadow: none;
+    }
+
+    .video-container {
+         width: 100%;
+         position: relative;
+         padding-bottom: 56.25%;
+         height: 0;
+         overflow: hidden;
+         border: 2px solid #333;
+         background-color: black;
+         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+         margin-bottom: 2rem;
+    }
+    .video-container iframe {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    }
+
+    .grid-item iframe {
+        border: 1px solid #777;
+        margin-bottom: 1rem;
+    }
+    
+    footer {
+        text-align: center;
+        font-size: 0.9rem;
+        border-top: 2px dashed rgba(255, 255, 255, 0.7);
+        padding-top: 2rem;
+    }
+    
+    /* ======================================================= */
+    /* ESTILOS PARA MÓVILES (TABLETS Y TELÉFONOS)              */
+    /* ======================================================= */
+    @media (max-width: 768px) {
+        
+        /* --- 1. GESTIÓN DEL FONDO --- */
         #background-video {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: -100;
-            object-fit: cover; /* Asegura que el video cubra todo el espacio */
+            /* Ocultamos el video en pantallas pequeñas por rendimiento y ahorro de datos */
+            display: none;
         }
-        /* FIN: Estilos para el video de fondo */
 
-        /* BASE: El fondo de papel es ahora el lienzo principal */
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Libre Baskerville', serif;
-            color: white;
-            
-            /* Eliminamos la imagen de fondo estática y dejamos un color base */
-            background-color: #1a1a1a;
-            
-            /* <<<--- CAMBIO 1: Sombra base para todo el texto */
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-        }
-
-        /* Creamos una capa superpuesta para oscurecer el video y mejorar la legibilidad */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5));
-            z-index: -99;
-        }
-
-
-        /* Encabezado: La portada con la imagen estática */
-        header {
-            height: 70vh;
-            min-height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            position: relative;
-            
-            background-image: url('assets/img/header-background.png');
+            /* Restablecemos la imagen de fondo estática que tenías antes, solo para móviles */
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+                url('assets/img/fondopaper.png');
             background-size: cover;
-            background-position: center center;
-            
-            box-shadow: inset 0 -50px 50px -20px rgba(0,0,0,0.3);
+            background-attachment: fixed; /* Mantiene el fondo fijo al hacer scroll */
+            background-position: center;
+            padding: 0;
+        }
+
+        /* Ocultamos la capa de superposición, ya que el degradado está en el body ahora */
+        body::before {
+            display: none;
+        }
+        
+        /* --- 2. AJUSTES DE TIPOGRAFÍA Y TAMAÑO --- */
+        header {
+            height: 50vh;
+            min-height: 280px; /* Reducimos la altura mínima */
         }
 
         .header-content h1 {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 7rem;
-            margin: 0;
-            font-weight: 700;
-            letter-spacing: -4px;
-            text-transform: uppercase;
-            line-height: 0.9;
-            text-shadow: 2px 3px 6px rgba(0, 0, 0, 0.6);
-            filter: blur(0.2px);
+            /* Reducimos drásticamente el título principal */
+            font-size: 3.5rem; 
+            letter-spacing: -2px;
         }
 
         .header-content p {
-            font-family: 'Libre Baskerville', serif;
-            font-size: 1rem;
-            margin-top: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            padding: 0.6rem 1.2rem;
-            border: none;
-            display: inline-block;
-            background-color: #5a554a;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            letter-spacing: 1px;
+            padding: 0.5rem 1rem;
         }
-
-        /* Contenedor para el contenido principal, centrado y semitransparente */
-        .content-block {
-            max-width: 1100px;
-            margin: 4rem auto;
-            padding: 3rem;
-            background-color: rgba(252, 246, 232, 0); 
-            border: 1px solid rgba(0,0,0,0.1);
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
-        }
-
+        
         .seccion h2 {
-            font-family: 'Playfair Display SC', serif;
-            text-align: center;
-            font-size: 2.8rem;
-            margin-top: 0;
-            margin-bottom: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid white;
-            display: inline-block;
-            /* <<<--- CAMBIO 2: Sombra más pronunciada para títulos de sección */
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-        }
-
-        .seccion .center-title {
-             text-align: center;
-             margin-bottom: 2.5rem;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2.5rem;
-            align-items: stretch;
-        }
-
-        .grid-item {
-            background-color: rgba(255, 255, 255, 0); 
-            border: 1px dashed rgba(255, 255, 255, 0.7);
-            display: flex;
-            flex-direction: column;
-            padding: 1.5rem;
+            font-size: 2rem; /* Reducimos los títulos de sección */
         }
         
         .grid-item h3 {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 1.8rem;
-            margin: 0 0 0.8rem 0;
-            line-height: 1.2;
-            font-weight: 700;
-            /* <<<--- CAMBIO 3: Sombra pronunciada para títulos de artículo */
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            font-size: 1.5rem; /* Reducimos los títulos de las tarjetas */
         }
 
-        .grid-item p {
-            font-family: 'Special Elite', monospace;
-            font-size: 1rem;
-            line-height: 1.7;
-            text-align: justify;
-            margin-top: 0.5rem;
-            flex-grow: 1;
-            color: white;
-            /* La sombra se hereda del body, no es necesario añadirla aquí */
-        }
-        
-        .image-parallax-container {
-            overflow: hidden;
-            height: 250px;
-            margin-bottom: 1.2rem;
-            border: 1px solid #ddd;
-        }
-        
-        .parallax-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.1s linear;
+        /* --- 3. OPTIMIZACIÓN DE ESPACIO --- */
+        .content-block {
+            /* Eliminamos márgenes laterales y reducimos el padding para ganar espacio */
+            margin: 0;
+            padding: 3rem 1.5rem;
         }
 
-        .btn {
-            display: inline-block;
-            padding: 0.7rem 1.4rem;
-            border: 1px solid white;
-            color: white;
-            text-decoration: none;
-            transition: background-color 0.2s, color 0.2s, transform 0.2s;
-            margin: 1.5rem 0 0 auto;
-            align-self: flex-end;
-            font-family: 'Libre Baskerville', serif;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            background-color: rgba(255, 255, 255, 0.2);
-            /* La sombra se hereda del body */
+        .grid-container {
+            /* Reducimos el espacio entre elementos de la cuadrícula */
+            gap: 1.5rem;
         }
 
-        .btn:hover {
-            background-color: white;
-            color: #1a1a1a;
-            transform: translateY(-2px);
-            /* <<<--- CAMBIO 4: Quitar la sombra en el hover para que el texto negro sea nítido */
-            text-shadow: none;
+        .grid-item {
+            padding: 1.2rem;
         }
-
-        .video-container {
-             width: 100%;
-             position: relative;
-             padding-bottom: 56.25%;
-             height: 0;
-             overflow: hidden;
-             border: 2px solid #333;
-             background-color: black;
-             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-             margin-bottom: 2rem;
-        }
-        .video-container iframe {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        }
-
-        .grid-item iframe {
-            border: 1px solid #777;
-            margin-bottom: 1rem;
-        }
-        
-        footer {
-            text-align: center;
-            font-size: 0.9rem;
-            border-top: 2px dashed rgba(255, 255, 255, 0.7);
-            padding-top: 2rem;
-            /* La sombra se hereda del body */
-        }
-        
-        @media (max-width: 768px) {
-             body {
-                padding: 0;
-             }
-             header {
-                height: 50vh;
-             }
-             .header-content h1 {
-                font-size: 4rem;
-                letter-spacing: -3px;
-            }
-             .header-content p {
-                font-size: 0.85rem;
-            }
-             .content-block {
-                margin: 0;
-                padding: 2rem 1.5rem;
-             }
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
 
