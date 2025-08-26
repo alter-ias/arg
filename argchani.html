@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Semanal de ARG - Edición Especial</title>
+    <title>ARG - Edición Especial</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
-    <!-- NOTA: He cambiado la fuente del título como en tu código base -->
-    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Special+Elite&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Distressed&family=Special+Elite&display=swap" rel="stylesheet">
     
     <style>
         /* ======================================================= */
@@ -23,7 +22,6 @@
             background-color: #fdfdfd;
             font-size: 18px;
             line-height: 1.7;
-            perspective: 1000px;
         }
 
         /* ======================================================= */
@@ -35,14 +33,15 @@
         }
 
         .header-content h1 {
-            /* --- TIPOGRAFÍA DEL TÍTULO ACTUALIZADA --- */
-            font-family: 'UnifrakturMaguntia', cursive;
-            font-size: 6.5rem; /* Ajuste ligero para la nueva fuente */
+            font-family: 'Special Elite', sans-serif;
+            font-size: 6rem;
             font-weight: 400;
             line-height: 1.1;
             letter-spacing: 2px;
             margin: 0;
-            color: #1a1a1a; /* Eliminamos el efecto hueco para esta fuente gótica */
+            color: transparent;
+            -webkit-text-stroke: 2px #1a1a1a;
+            text-stroke: 2px #1a1a1a;
         }
 
         .header-content p {
@@ -117,17 +116,14 @@
             padding: 3rem 1.5rem;
         }
         
+        /* --- MODIFICADO: La sección ahora solo se desvanece, la animación 3D pasa a los hijos --- */
         .seccion {
             opacity: 0;
-            transform: rotateX(-15deg);
-            transform-origin: top center;
-            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                        transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: opacity 1s ease-in-out;
         }
 
         .seccion.is-visible {
             opacity: 1;
-            transform: rotateX(0deg);
         }
 
         .seccion h2 {
@@ -147,6 +143,12 @@
         /* ======================================================= */
         /* CUADRÍCULA Y ELEMENTOS                                  */
         /* ======================================================= */
+        
+        /* --- NUEVO: AÑADIMOS PERSPECTIVA A LOS CONTENEDORES --- */
+        .grid-container, .media-grid {
+            perspective: 1500px;
+        }
+
         .grid-container {
             display: grid;
             grid-template-columns: 1fr;
@@ -229,23 +231,25 @@
              gap: 2rem;
         }
 
-        /* --- NUEVO: ANIMACIÓN EN CASCADA PARA LOS ELEMENTOS INTERNOS --- */
+        /* --- NUEVO: ESTILOS PARA LA ANIMACIÓN 3D EN CASCADA DE LOS HIJOS --- */
         .grid-item, .media-grid > div {
-            /* Estado inicial */
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-            transition-delay: 0.2s; /* Un retraso base */
+            transform: rotateY(-30deg);
+            transform-origin: left center; /* El giro se origina desde la izquierda */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
 
-        /* Cuando la sección es visible, los hijos empiezan su animación */
         .seccion.is-visible .grid-item,
         .seccion.is-visible .media-grid > div {
             opacity: 1;
-            transform: translateY(0);
+            transform: rotateY(0deg);
         }
 
-        /* Aplicamos el retraso secuencial (staggering) */
+        /* Retraso secuencial para el efecto en cascada */
+        .seccion.is-visible .grid-item:nth-child(1),
+        .seccion.is-visible .media-grid > div:nth-child(1) {
+            transition-delay: 0.2s;
+        }
         .seccion.is-visible .grid-item:nth-child(2),
         .seccion.is-visible .media-grid > div:nth-child(2) {
             transition-delay: 0.4s;
@@ -254,11 +258,10 @@
         .seccion.is-visible .media-grid > div:nth-child(3) {
             transition-delay: 0.6s;
         }
-        /* El grid de Spotify es el 4º hijo de media-grid */
+        /* El grid de Spotify es el 4º hijo */
         .seccion.is-visible .media-grid > div:nth-child(4) {
-             transition-delay: 0.8s;
+            transition-delay: 0.8s;
         }
-
         
         @media (min-width: 768px) {
             .spotify-grid {
@@ -300,7 +303,9 @@
             }
 
             .header-content h1 {
-                font-size: 4rem; /* Ajustado para la nueva fuente en móviles */
+                font-size: 3.5rem;
+                -webkit-text-stroke-width: 1px;
+                text-stroke-width: 1px;
             }
 
             .header-content p {
@@ -329,8 +334,8 @@
 
     <header>
         <div class="header-content">
-            <h1>El Semanal de ARG</h1>
-            <p>LA VOZ POÉTICA DE LA ACTUALIDAD - EDICIÓN JULIO 2025</p>
+            <h1>ARG</h1>
+            <p>Jardín Digital de Alan Ruíz Galicia</p>
         </div>
         
         <nav class="main-nav">
