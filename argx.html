@@ -10,6 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display+SC:wght@400;700;900&family=Special+Elite&display=swap" rel="stylesheet">
     
        <style>
+        /* INICIO: Estilos para el video de fondo */
+        #background-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            object-fit: cover; /* Asegura que el video cubra todo el espacio */
+        }
+        /* FIN: Estilos para el video de fondo */
+
         /* BASE: El fondo de papel es ahora el lienzo principal */
         body {
             margin: 0;
@@ -17,17 +31,25 @@
             font-family: 'Libre Baskerville', serif;
             color: white;
             
-            background-image: 
-                linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
-                url('assets/img/fondopaper.png');
-            
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
+            /* Eliminamos la imagen de fondo estática y dejamos un color base */
+            background-color: #1a1a1a;
             
             /* <<<--- CAMBIO 1: Sombra base para todo el texto */
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }
+
+        /* Creamos una capa superpuesta para oscurecer el video y mejorar la legibilidad */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5));
+            z-index: -99;
+        }
+
 
         /* Encabezado: La portada con la imagen estática */
         header {
@@ -226,6 +248,12 @@
     </style>
 </head>
 <body>
+
+    <!-- VIDEO DE FONDO -->
+    <video autoplay loop muted playsinline id="background-video">
+        <source src="assets/vid/fondoarg01.webm" type="video/webm">
+        Tu navegador no soporta videos HTML5.
+    </video>
 
     <header>
         <div class="header-content">
