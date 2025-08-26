@@ -116,7 +116,6 @@
             padding: 3rem 1.5rem;
         }
         
-        /* --- MODIFICADO: La sección ahora solo se desvanece, la animación 3D pasa a los hijos --- */
         .seccion {
             opacity: 0;
             transition: opacity 1s ease-in-out;
@@ -143,10 +142,8 @@
         /* ======================================================= */
         /* CUADRÍCULA Y ELEMENTOS                                  */
         /* ======================================================= */
-        
-        /* --- NUEVO: AÑADIMOS PERSPECTIVA A LOS CONTENEDORES --- */
         .grid-container, .media-grid {
-            perspective: 1500px;
+            perspective: 2000px; /* Aumentamos perspectiva para un efecto más notable */
         }
 
         .grid-container {
@@ -205,6 +202,7 @@
             color: #fdfdfd;
         }
 
+        /* Videos y Spotify embeds */
         .video-container, .spotify-container {
             border: 2px solid #1a1a1a;
             margin-bottom: 1.5rem;
@@ -230,19 +228,21 @@
              grid-template-columns: 1fr;
              gap: 2rem;
         }
-
-        /* --- NUEVO: ESTILOS PARA LA ANIMACIÓN 3D EN CASCADA DE LOS HIJOS --- */
+        
+        /* --- NUEVO EFECTO 3D: "CARD FLIP" --- */
         .grid-item, .media-grid > div {
             opacity: 0;
-            transform: rotateY(-30deg);
-            transform-origin: left center; /* El giro se origina desde la izquierda */
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            /* Estado inicial: rotado 90 grados (de canto) y ligeramente encogido */
+            transform: rotateY(-90deg) scale(0.9);
+            transform-origin: left center;
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
         }
 
+        /* Estado final: cuando la sección es visible, los elementos giran a su posición */
         .seccion.is-visible .grid-item,
         .seccion.is-visible .media-grid > div {
             opacity: 1;
-            transform: rotateY(0deg);
+            transform: rotateY(0deg) scale(1);
         }
 
         /* Retraso secuencial para el efecto en cascada */
@@ -258,7 +258,6 @@
         .seccion.is-visible .media-grid > div:nth-child(3) {
             transition-delay: 0.6s;
         }
-        /* El grid de Spotify es el 4º hijo */
         .seccion.is-visible .media-grid > div:nth-child(4) {
             transition-delay: 0.8s;
         }
@@ -358,7 +357,8 @@
             <div class="grid-container">
                 <div class="grid-item">
                     <div class="image-parallax-container">
-                        <img src="https://i.ibb.co/cyv75sH/img01.png" alt="Mercurio retrógrado representado con estética de collage" class="parallax-image">
+                        <!-- RUTA DE IMAGEN CORREGIDA -->
+                        <img src="assets/img/img01.png" alt="Mercurio retrógrado representado con estética de collage" class="parallax-image">
                     </div>
                     <h3>El Baile Cósmico de Mercurio Retrógrado</h3>
                     <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo, invitándote a la reflexión profunda y al redescubrimiento interior.</p>
@@ -366,7 +366,8 @@
                 </div>
                 <div class="grid-item">
                     <div class="image-parallax-container">
-                        <img src="https://i.ibb.co/3Wbfvj2/img02.png" alt="Urano en Géminis representado con estética de collage" class="parallax-image">
+                        <!-- RUTA DE IMAGEN CORREGIDA -->
+                        <img src="assets/img/img02.png" alt="Urano en Géminis representado con estética de collage" class="parallax-image">
                     </div>
                     <h3>Urano en Géminis: Un Canto a la Nueva Era</h3>
                     <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa que teje los hilos invisibles de nuestra consciencia colectiva.</p>
@@ -374,7 +375,8 @@
                 </div>
                 <div class="grid-item">
                     <div class="image-parallax-container">
-                        <img src="https://i.ibb.co/M5tdyp1/img03.png" alt="Solsticio de verano representado con estética de collage" class="parallax-image">
+                        <!-- RUTA DE IMAGEN CORREGIDA -->
+                        <img src="assets/img/img03.png" alt="Solsticio de verano representado con estética de collage" class="parallax-image">
                     </div>
                     <h3>El Solsticio de Verano: La Llama Perpetua del Alma</h3>
                     <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable que reside en cada uno de nosotros.</p>
