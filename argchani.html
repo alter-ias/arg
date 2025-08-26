@@ -3,24 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Semanal de ARG - Edición Especial</title>
-    
-    <!-- Google Fonts (NUEVA SELECCIÓN) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik+Distressed&family=Special+Elite&display=swap" rel="stylesheet">
-    
-    <style>
-        /* ======================================================= */
-        /* BASE: ESTILO MINIMALISTA (LIENZO BLANCO)                */
-        /* ======================================================= */
-        body {
-            margin: 0;<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Semanal de ARG - Edición Especial</title>
+    <title>ARG - Edición Especial</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,11 +17,14 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Special Elite', monospace; /* Fuente base para todo */
-            color: #1a1a1a; /* Texto negro */
-            background-color: #fdfdfd; /* Un blanco ligeramente roto, más suave a la vista */
-            font-size: 18px; /* Aumentamos el tamaño base para mejor legibilidad */
+            font-family: 'Special Elite', monospace;
+            color: #1a1a1a;
+            background-color: #fdfdfd;
+            font-size: 18px;
             line-height: 1.7;
+            
+            /* --- NUEVO: AÑADIMOS PERSPECTIVA PARA EL EFECTO 3D --- */
+            perspective: 1000px;
         }
 
         /* ======================================================= */
@@ -132,6 +118,24 @@
             margin: 0 auto;
             padding: 3rem 1.5rem;
         }
+        
+        /* --- NUEVO: ESTILOS PARA LA ANIMACIÓN 3D DE LAS SECCIONES --- */
+        .seccion {
+            /* Estado inicial: inclinado y semi-transparente */
+            opacity: 0.5;
+            transform: rotateX(-15deg);
+            transform-origin: top center;
+            
+            /* Transición suave para la animación */
+            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Estado final: cuando la sección es visible */
+        .seccion.is-visible {
+            opacity: 1;
+            transform: rotateX(0deg);
+        }
 
         .seccion h2 {
             font-family: 'Special Elite', monospace;
@@ -185,7 +189,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.1s linear;
+            transition: transform 0.1s linear; /* Mantenemos una pequeña transición por si se quiere reusar */
         }
 
         .btn {
@@ -225,7 +229,7 @@
         }
         
         .spotify-container iframe {
-            display: block; /* Para eliminar espacios extra */
+            display: block;
         }
         
         .media-grid {
@@ -234,13 +238,11 @@
              gap: 2rem;
         }
         
-        /* Grid de 2 columnas para Spotify en pantallas grandes */
         @media (min-width: 768px) {
             .spotify-grid {
                 grid-template-columns: 1fr 1fr;
             }
         }
-
 
         /* ======================================================= */
         /* DIVISOR ARTÍSTICO                                       */
@@ -323,7 +325,7 @@
     </header>
 
     <main>
-        <!-- SECCIÓN 1: ECOS EN LAS RUINAS (ANTES CRÓNICAS RECIENTES) -->
+        <!-- SECCIÓN 1: ECOS EN LAS RUINAS -->
         <section id="ecos-ruinas" class="seccion content-block">
             <div class="center-title">
                 <h2>Ecos en las Ruinas</h2>
@@ -358,13 +360,12 @@
 
         <hr class="artistic-divider">
 
-        <!-- SECCIÓN 2: ARCHIVO SONORO Y VISUAL (SECCIONES COMBINADAS) -->
+        <!-- SECCIÓN 2: ARCHIVO SONORO Y VISUAL -->
         <section id="archivo-sonoro-visual" class="seccion content-block">
             <div class="center-title">
                 <h2>Archivo Sonoro y Visual</h2>
             </div>
             <div class="media-grid">
-                <!-- Videos de YouTube -->
                 <div class="video-container">
                     <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
@@ -372,7 +373,6 @@
                     <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 
-                <!-- Reproductores de Spotify en su propia sub-cuadrícula -->
                 <div class="spotify-grid media-grid">
                      <div class="spotify-container">
                         <iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
@@ -414,436 +414,31 @@
     </main>
     
     <footer class="content-block">
-        <p>&copy; 2025 - ARG. Todos los derechos reservados.</p>
-    </footer>
-
-    <script>
-        document.addEventListener('scroll', function() {
-            const parallaxImages = document.querySelectorAll('.parallax-image');
-            for (let img of parallaxImages) {
-                const container = img.parentElement;
-                const rect = container.getBoundingClientRect();
-                
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    const percentVisible = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-                    const moveAmount = (percentVisible - 0.5) * 8;
-                    img.style.transform = `translateY(${moveAmount * -1}%) scale(1.05)`;
-                }
-            }
-        });
-    </script>
-
-</body>
-</html>
-
-            padding: 0;
-            font-family: 'Special Elite', monospace; /* Fuente base para todo */
-            color: #1a1a1a; /* Texto negro */
-            background-color: #fdfdfd; /* Un blanco ligeramente roto, más suave a la vista */
-            font-size: 18px; /* Aumentamos el tamaño base para mejor legibilidad */
-            line-height: 1.7;
-        }
-
-        /* ======================================================= */
-        /* ENCABEZADO Y TÍTULO PRINCIPAL                           */
-        /* ======================================================= */
-        header {
-            /* El header ahora es un contenedor para el título y la navegación */
-            text-align: center;
-            padding: 4rem 1.5rem 2rem 1.5rem; /* Ajustamos padding inferior */
-        }
-
-        .header-content h1 {
-            font-family: 'Rubik Distressed', sans-serif;
-            font-size: 6rem;
-            font-weight: 400; /* Esta fuente no necesita bold */
-            line-height: 1.1;
-            letter-spacing: 2px;
-            margin: 0;
-            
-            /* EFECTO DE TEXTO HUECO (COMO EN LA REFERENCIA) */
-            color: transparent;
-            -webkit-text-stroke: 2px #1a1a1a; /* Borde del texto */
-            text-stroke: 2px #1a1a1a;
-        }
-
-        .header-content p {
-            font-family: 'Special Elite', monospace;
-            font-size: 1rem;
-            margin-top: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        /* ======================================================= */
-        /* NAVEGACIÓN PRINCIPAL (NUEVO)                            */
-        /* ======================================================= */
-        .main-nav {
-            width: 100%;
-            padding: 1rem 0;
-            background-color: #fdfdfd;
-            border-top: 2px solid #1a1a1a;
-            border-bottom: 2px solid #1a1a1a;
-            text-align: center;
-            position: sticky; /* Hacemos que se quede pegado arriba */
-            top: 0;
-            z-index: 1000; /* Aseguramos que esté por encima de otros elementos */
-            margin-top: 2rem; /* Espacio entre el título y la barra */
-        }
-
-        .main-nav ul {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem; /* Aumentamos la separación */
-            flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
-        }
-
-        .main-nav a {
-            font-family: 'Special Elite', monospace;
-            text-decoration: none;
-            color: #1a1a1a;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 1rem;
-            padding: 0.5rem 0;
-            position: relative;
-        }
-
-        /* Efecto hover con línea inferior */
-        .main-nav a::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: #1a1a1a;
-            transform: scaleX(0);
-            transform-origin: bottom right;
-            transition: transform 0.25s ease-out;
-        }
-
-        .main-nav a:hover::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
-        }
-
-
-        /* ======================================================= */
-        /* ESTRUCTURA DE CONTENIDO Y SECCIONES                     */
-        /* ======================================================= */
-        .content-block {
-            max-width: 800px; /* Hacemos el contenido más estrecho para facilitar la lectura */
-            margin: 0 auto;
-            padding: 3rem 1.5rem;
-        }
-
-        .seccion h2 {
-            font-family: 'Special Elite', monospace;
-            font-size: 1.8rem;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 3rem;
-        }
-        
-        .center-title {
-            margin: 0;
-            padding: 0;
-        }
-
-        /* ======================================================= */
-        /* CUADRÍCULA Y ELEMENTOS                                  */
-        /* ======================================================= */
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr; /* Una sola columna por defecto */
-            gap: 3rem;
-        }
-
-        .grid-item {
-            text-align: center;
-        }
-        
-        .grid-item h3 {
-            font-family: 'Special Elite', monospace;
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            margin: 1rem 0 0.5rem 0;
-        }
-
-        .grid-item p {
-            font-size: 1rem;
-            text-align: center;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .image-parallax-container {
-            height: 300px;
-            margin-bottom: 1rem;
-            border: 2px solid #1a1a1a;
-        }
-        
-        .parallax-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.1s linear;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 0.8rem 1.8rem;
-            border: 2px solid #1a1a1a;
-            color: #1a1a1a;
-            background-color: transparent;
-            text-decoration: none;
-            transition: background-color 0.2s, color 0.2s;
-            margin-top: 1.5rem;
-            font-family: 'Special Elite', monospace;
-            font-size: 1rem;
-            text-transform: uppercase;
-        }
-
-        .btn:hover {
-            background-color: #1a1a1a;
-            color: #fdfdfd;
-        }
-
-        .video-container, .grid-item iframe {
-            border: 2px solid #1a1a1a;
-            margin-bottom: 1.5rem;
-        }
-
-        .video-container {
-             width: 100%;
-             position: relative;
-             padding-bottom: 56.25%;
-             height: 0;
-             overflow: hidden;
-        }
-        .video-container iframe {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        }
-
-
-        /* ======================================================= */
-        /* DIVISOR ARTÍSTICO                                       */
-        /* ======================================================= */
-        .artistic-divider {
-            border: none;
-            height: 20px;
-            margin: 3rem auto;
-            width: 80%;
-            max-width: 300px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 5'%3E%3Cpath d='M0,2.5 Q25,0 50,2.5 T100,2.5' fill='none' stroke='%231a1a1a' stroke-width='1.5'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-        
-        /* ======================================================= */
-        /* FOOTER                                                  */
-        /* ======================================================= */
-        footer {
-            text-align: center;
-            font-size: 0.9rem;
-            padding-top: 2rem;
-            margin-top: 2rem;
-            border-top: 2px solid #1a1a1a;
-        }
-        
-        /* ======================================================= */
-        /* AJUSTES PARA MÓVILES                                    */
-        /* ======================================================= */
-        @media (max-width: 768px) {
-            body {
-                font-size: 16px;
-            }
-
-            .header-content h1 {
-                font-size: 3.5rem;
-                -webkit-text-stroke-width: 1px;
-                text-stroke-width: 1px;
-            }
-
-            .header-content p {
-                font-size: 0.8rem;
-            }
-
-            .content-block {
-                padding: 2rem 1rem;
-            }
-            
-            .seccion h2 {
-                font-size: 1.5rem;
-            }
-
-            .main-nav ul {
-                gap: 1rem 1.5rem; /* Menor separación en móviles */
-            }
-
-            .main-nav a {
-                font-size: 0.9rem;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="header-content">
-            <h1>EL SEMANAL DE ARG</h1>
-            <p>LA VOZ POÉTICA DE LA ACTUALIDAD - EDICIÓN JULIO 2025</p>
-        </div>
-        
-        <!-- =============================== -->
-        <!-- INICIO DEL ENCABEZADO AÑADIDO   -->
-        <!-- =============================== -->
-        <nav class="main-nav">
-            <ul>
-                <li><a href="#ecos-ruinas">Ecos en las Ruinas</a></li>
-                <li><a href="#loteria-tapatia">Lotería Tapatía</a></li>
-                <li><a href="#ironias-volterianas">Ironías Volterianas</a></li>
-                <li><a href="#atlas-cielo">Atlas del Cielo</a></li>
-            </ul>
-        </nav>
-        <!-- =============================== -->
-        <!-- FIN DEL ENCABEZADO AÑADIDO      -->
-        <!-- =============================== -->
-    </header>
-
-    <main>
-        <section class="seccion content-block">
-            <div class="center-title">
-                <h2>Crónicas Recientes</h2>
-            </div>
-            <div class="grid-container">
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img01.png" alt="Imagen 1" class="parallax-image">
-                    </div>
-                    <h3>El Baile Cósmico de Mercurio Retrógrado</h3>
-                    <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo, invitándote a la reflexión profunda y al redescubrimiento interior.</p>
-                    <a href="#" class="btn">Desentrañar</a>
-                </div>
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img02.png" alt="Imagen 2" class="parallax-image">
-                    </div>
-                    <h3>Urano en Géminis: Un Canto a la Nueva Era</h3>
-                    <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa que teje los hilos invisibles de nuestra consciencia colectiva.</p>
-                    <a href="https://alter-ias.github.io/heptaglota/loteriatapatia.html" class="btn">Leer Prosa</a>
-                </div>
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
-                    </div>
-                    <h3>El Solsticio de Verano: La Llama Perpetua del Alma</h3>
-                    <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable que reside en cada uno de nosotros.</p>
-                    <a href="#" class="btn">Meditar Aquí</a>
-                </div>
-            </div>
-        </section>
-
-        <hr class="artistic-divider">
-
-        <section class="seccion content-block">
-            <div class="center-title">
-                <h2>Voces Grabadas: Archivo Sonoro y Visual</h2>
-            </div>
-            <div class="video-container">
-                <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            </div>
-            <div class="video-container">
-                <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            </div>
-        </section>
-
-        <hr class="artistic-divider">
-
-        <section class="seccion content-block">
-            <div class="center-title">
-                <h2>La Audioteca del Pensamiento</h2>
-            </div>
-            <div class="grid-container">
-                <div class="grid-item">
-                    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                    <h3>El Secreto de la Felicidad en el Caos Moderno</h3>
-                    <p>Un diálogo íntimo sobre la búsqueda de la serenidad en la vorágine de hoy. Escucha las claves para encontrar tu centro, incluso cuando el mundo parece girar sin rumbo fijo.</p>
-                </div>
-                <div class="grid-item">
-                    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                    <h3>Desbloqueando tu Potencial Creador</h3>
-                    <p>Embárcate en un viaje sonoro para despertar al artista que llevas dentro. Descubre cómo la inspiración fluye cuando te atreves a romper los moldes y liberar tu verdadera esencia creativa.</p>
-                </div>
-            </div>
-        </section>
-        
-        <!-- ======================================================= -->
-        <!-- INICIO DE LAS NUEVAS SECCIONES CON ID PARA EL MENÚ      -->
-        <!-- ======================================================= -->
-
-        <hr class="artistic-divider">
-
-        <section id="ecos-ruinas" class="seccion content-block">
-            <div class="center-title">
-                <h2>Ecos en las Ruinas</h2>
-            </div>
-            <p style="text-align: center;">(Aquí puedes colocar el contenido de esta sección. Puedes usar la misma estructura de 'grid-container' que en las secciones anteriores para mantener la coherencia).</p>
-        </section>
-
-        <hr class="artistic-divider">
-
-        <section id="loteria-tapatia" class="seccion content-block">
-            <div class="center-title">
-                <h2>Lotería Tapatía</h2>
-            </div>
-            <p style="text-align: center;">(Contenido de la sección "Lotería Tapatía").</p>
-        </section>
-
-        <hr class="artistic-divider">
-
-        <section id="ironias-volterianas" class="seccion content-block">
-            <div class="center-title">
-                <h2>Ironías Volterianas</h2>
-            </div>
-            <p style="text-align: center;">(Contenido de la sección "Ironías Volterianas").</p>
-        </section>
-
-        <hr class="artistic-divider">
-
-        <section id="atlas-cielo" class="seccion content-block">
-            <div class="center-title">
-                <h2>Atlas del Cielo</h2>
-            </div>
-            <p style="text-align: center;">(Contenido de la sección "Atlas del Cielo").</p>
-        </section>
-
-    </main>
-    
-    <footer class="content-block">
         <p>&copy; 2025 - El Semanal de ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p>
     </footer>
 
+    <!-- --- NUEVO SCRIPT PARA LA ANIMACIÓN 3D --- -->
     <script>
-        // Script para parallax en imágenes (opcional pero añade un toque dinámico)
-        document.addEventListener('scroll', function() {
-            const parallaxImages = document.querySelectorAll('.parallax-image');
-            for (let img of parallaxImages) {
-                const container = img.parentElement;
-                const rect = container.getBoundingClientRect();
-                
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    const percentVisible = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-                    const moveAmount = (percentVisible - 0.5) * 8;
-                    img.style.transform = `translateY(${moveAmount * -1}%) scale(1.05)`;
+        // Seleccionamos todas las secciones que queremos animar
+        const sectionsToAnimate = document.querySelectorAll('.seccion');
+
+        // Configuramos el Intersection Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // Si la sección está en la pantalla (intersecting)
+                if (entry.isIntersecting) {
+                    // Le añadimos la clase 'is-visible' para activar la animación
+                    entry.target.classList.add('is-visible');
                 }
-            }
+            });
+        }, {
+            // Opciones: la animación se dispara cuando el 15% del elemento es visible
+            threshold: 0.15 
+        });
+
+        // Le decimos al observer que vigile cada una de las secciones
+        sectionsToAnimate.forEach(section => {
+            observer.observe(section);
         });
     </script>
 
