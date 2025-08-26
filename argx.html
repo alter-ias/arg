@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Semanal de ARG - Edición Especial</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display+SC:wght@400;700;900&family=Special+Elite&display=swap" rel="stylesheet">
-    
-     <style>
+<style>
     /* INICIO: Estilos para el video de fondo */
     #background-video {
         position: fixed;
@@ -30,7 +19,7 @@
         padding: 0;
         font-family: 'Libre Baskerville', serif;
         color: white;
-        background-color: #1a1a1a; /* Color de fondo si el video no carga */
+        background-color: #1a1a1a;
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
     }
 
@@ -42,7 +31,8 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
+        /* CAMBIO: Opacidad ajustada */
+        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
         z-index: -99;
     }
 
@@ -63,14 +53,15 @@
     }
 
     .header-content h1 {
-        font-family: 'Playfair Display SC', serif;
-        font-size: 7rem;
+        /* CAMBIO: Nueva tipografía experimental */
+        font-family: 'Oi', sans-serif;
+        font-size: 8rem; /* Aumentamos un poco para que la fuente luzca */
         margin: 0;
-        font-weight: 700;
-        letter-spacing: -4px;
+        font-weight: 400; /* Esta fuente no necesita bold */
+        letter-spacing: 0px;
         text-transform: uppercase;
-        line-height: 0.9;
-        text-shadow: 2px 3px 6px rgba(0, 0, 0, 0.6);
+        line-height: 1;
+        text-shadow: 3px 4px 8px rgba(0, 0, 0, 0.7);
         filter: blur(0.2px);
     }
 
@@ -98,11 +89,13 @@
     }
 
     .seccion h2 {
-        font-family: 'Playfair Display SC', serif;
-        font-size: 2.8rem;
+        /* CAMBIO: Nueva tipografía experimental */
+        font-family: 'UnifrakturMaguntia', cursive;
+        font-size: 3.5rem; /* Ajustamos el tamaño para la nueva fuente */
+        font-weight: 400; /* No necesita bold */
         margin-top: 0;
         margin-bottom: 2.5rem;
-        text-transform: uppercase;
+        text-transform: capitalize; /* Capitalize funciona mejor con este estilo */
         letter-spacing: 1.5px;
         padding-bottom: 0.5rem;
         border-bottom: 2px solid white;
@@ -131,11 +124,12 @@
     }
     
     .grid-item h3 {
-        font-family: 'Playfair Display SC', serif;
-        font-size: 1.8rem;
+        /* CAMBIO: Nueva tipografía experimental */
+        font-family: 'UnifrakturMaguntia', cursive;
+        font-size: 2.2rem; /* Ajustamos el tamaño */
+        font-weight: 400;
         margin: 0 0 0.8rem 0;
         line-height: 1.2;
-        font-weight: 700;
         text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
     }
 
@@ -217,38 +211,34 @@
     /* ======================================================= */
     @media (max-width: 768px) {
         
-        /* --- 1. GESTIÓN DEL FONDO --- */
         #background-video {
-            /* Ocultamos el video en pantallas pequeñas por rendimiento y ahorro de datos */
             display: none;
         }
 
         body {
-            /* Restablecemos la imagen de fondo estática que tenías antes, solo para móviles */
+            /* CAMBIO: Opacidad ajustada */
             background-image: 
-                linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)),
+                linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)),
                 url('assets/img/fondopaper.png');
             background-size: cover;
-            background-attachment: fixed; /* Mantiene el fondo fijo al hacer scroll */
+            background-attachment: fixed;
             background-position: center;
             padding: 0;
         }
 
-        /* Ocultamos la capa de superposición, ya que el degradado está en el body ahora */
         body::before {
             display: none;
         }
         
-        /* --- 2. AJUSTES DE TIPOGRAFÍA Y TAMAÑO --- */
         header {
             height: 50vh;
-            min-height: 280px; /* Reducimos la altura mínima */
+            min-height: 280px;
         }
 
         .header-content h1 {
-            /* Reducimos drásticamente el título principal */
-            font-size: 3.5rem; 
-            letter-spacing: -2px;
+            /* CAMBIO: Ajuste de fuente para móvil */
+            font-size: 5rem; 
+            letter-spacing: 0px;
         }
 
         .header-content p {
@@ -259,22 +249,21 @@
         }
         
         .seccion h2 {
-            font-size: 2rem; /* Reducimos los títulos de sección */
+            /* CAMBIO: Ajuste de fuente para móvil */
+            font-size: 2.8rem;
         }
         
         .grid-item h3 {
-            font-size: 1.5rem; /* Reducimos los títulos de las tarjetas */
+            /* CAMBIO: Ajuste de fuente para móvil */
+            font-size: 2rem;
         }
 
-        /* --- 3. OPTIMIZACIÓN DE ESPACIO --- */
         .content-block {
-            /* Eliminamos márgenes laterales y reducimos el padding para ganar espacio */
             margin: 0;
             padding: 3rem 1.5rem;
         }
 
         .grid-container {
-            /* Reducimos el espacio entre elementos de la cuadrícula */
             gap: 1.5rem;
         }
 
@@ -283,104 +272,3 @@
         }
     }
 </style>
-</head>
-<body>
-
-    <!-- VIDEO DE FONDO -->
-    <video autoplay loop muted playsinline id="background-video">
-        <source src="assets/vid/fondoarg01.webm" type="video/webm">
-        Tu navegador no soporta videos HTML5.
-    </video>
-
-    <header>
-        <div class="header-content">
-            <h1>EL SEMANAL DE ARG</h1>
-            <p>LA VOZ POÉTICA DE LA ACTUALIDAD - EDICIÓN JULIO 2025</p>
-        </div>
-    </header>
-
-    <main>
-        <section class="seccion content-block">
-            <div class="center-title">
-                <h2>Crónicas Recientes</h2>
-            </div>
-            <div class="grid-container">
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img01.png" alt="Imagen 1" class="parallax-image">
-                    </div>
-                    <h3>El Baile Cósmico de Mercurio Retrógrado</h3>
-                    <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo, invitándote a la reflexión profunda y al redescubrimiento interior.</p>
-                    <a href="#" class="btn">Desentrañar</a>
-                </div>
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img02.png" alt="Imagen 2" class="parallax-image">
-                    </div>
-                    <h3>Urano en Géminis: Un Canto a la Nueva Era</h3>
-                    <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa que teje los hilos invisibles de nuestra consciencia colectiva.</p>
-                    <a href="https://alter-ias.github.io/heptaglota/loteriatapatia.html" class="btn">Leer Prosa</a>
-                </div>
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
-                    </div>
-                    <h3>El Solsticio de Verano: La Llama Perpetua del Alma</h3>
-                    <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable que reside en cada uno de nosotros.</p>
-                    <a href="#" class="btn">Meditar Aquí</a>
-                </div>
-            </div>
-        </section>
-
-        <section class="seccion content-block">
-            <div class="center-title">
-                <h2>Voces Grabadas: Archivo Sonoro y Visual</h2>
-            </div>
-            <div class="video-container">
-                <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            </div>
-            <div class="video-container">
-                <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            </div>
-        </section>
-
-        <section class="seccion content-block">
-            <div class="center-title">
-                <h2>La Audioteca del Pensamiento</h2>
-            </div>
-            <div class="grid-container">
-                <div class="grid-item">
-<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>                    <h3>El Secreto de la Felicidad en el Caos Moderno</h3>
-                    <p>Un diálogo íntimo sobre la búsqueda de la serenidad en la vorágine de hoy. Escucha las claves para encontrar tu centro, incluso cuando el mundo parece girar sin rumbo fijo.</p>
-                </div>
-                <div class="grid-item">
-<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>                    <h3>Desbloqueando tu Potencial Creador</h3>
-                    <p>Embárcate en un viaje sonoro para despertar al artista que llevas dentro. Descubre cómo la inspiración fluye cuando te atreves a romper los moldes y liberar tu verdadera esencia creativa.</p>
-                </div>
-            </div>
-        </section>
-    </main>
-    
-    <footer class="content-block">
-        <p>&copy; 2025 - El Semanal de ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p>
-    </footer>
-
-    <script>
-        // Script para parallax en imágenes (opcional pero añade un toque dinámico)
-        document.addEventListener('scroll', function() {
-            const parallaxImages = document.querySelectorAll('.parallax-image');
-            for (let img of parallaxImages) {
-                const container = img.parentElement;
-                const rect = container.getBoundingClientRect();
-                
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    const percentVisible = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-                    const moveAmount = (percentVisible - 0.5) * 8;
-                    img.style.transform = `translateY(${moveAmount * -1}%) scale(1.05)`;
-                }
-            }
-        });
-    </script>
-
-</body>
-</html>
