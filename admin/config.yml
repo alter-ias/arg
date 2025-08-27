@@ -6,8 +6,8 @@ backend:
   # --- ¡IMPORTANTE! ---
   # Pega aquí el Client ID y el Client Secret que generaste
   # No uses comillas para estos valores
-  client_id: TU_CLIENT_ID_VA_AQUI
-  client_secret: TU_CLIENT_SECRET_VA_AQUI
+  client_id: Ov23liIaLFK6sR9PSY9p
+  client_secret: eaaba52ccec1ca6dfec333d43e04414e8bcc60d1
 
 # Dónde subir las imágenes que añadas desde el administrador
 media_folder: "assets/img/uploads"
