@@ -1,29 +1,172 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- (Metadatos y estilos similares al index.html) -->
-    <title>Audioteca - ARG</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARG - Edición Especial</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Distressed&family=Special+Elite&display=swap" rel="stylesheet">
+    
     <style>
-        body { margin: 0; padding: 0; font-family: 'Special Elite', monospace; color: #1a1a1a; background-color: #f0f0f0; }
-        .container { max-width: 900px; margin: 4rem auto; padding: 2rem; }
-        h1 { font-size: 2.5rem; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
-        .podcast-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 3rem; }
-        .podcast-item p { margin-top: 1rem; font-size: 1.1rem; }
+        :root {
+            --border-radius: 12px;
+        }
+        body { margin: 0; padding: 0; font-family: 'Special Elite', monospace; color: #1a1a1a; background-color: #f0f0f0; font-size: 17px; line-height: 1.6; }
+        
+        header { text-align: center; padding: 3rem 1.5rem 2rem 1.5rem; }
+        .header-content h1 { font-size: 5.5rem; font-family: 'Special Elite', sans-serif; font-weight: 400; line-height: 1.1; letter-spacing: 2px; margin: 0; color: transparent; -webkit-text-stroke: 1.5px #1a1a1a; text-stroke: 1.5px #1a1a1a; }
+        .header-content p { font-size: 0.9rem; margin-top: 1rem; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .main-nav { 
+            width: 100%; 
+            padding: 1rem 0; 
+            background-color: rgba(240, 240, 240, 0.8); 
+            backdrop-filter: blur(8px); 
+            border-top: 2px solid #1a1a1a; 
+            border-bottom: 2px solid #1a1a1a; 
+            text-align: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        .main-nav ul { margin: 0; padding: 0; list-style: none; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+        
+        /* Contenedor de cada elemento del menú */
+        .nav-item {
+            position: relative; /* Clave para el posicionamiento del mega menú */
+        }
+
+        .nav-item > a { 
+            display: block;
+            font-size: 0.9rem; 
+            text-decoration: none; 
+            color: #1a1a1a; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            padding: 0.5rem 1rem;
+        }
+        
+        /* Mega Menú Desplegable */
+        .mega-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto;
+            background-color: #fdfdfd;
+            border-radius: var(--border-radius);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+            transform: translateX(-50%) translateY(10px);
+        }
+        
+        .nav-item:hover > .mega-menu {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .mega-menu-content { display: flex; gap: 1.5rem; }
+        
+        .menu-item { text-align: center; width: 160px; }
+        .menu-item img { width: 100%; height: 100px; object-fit: cover; border-radius: calc(var(--border-radius) - 4px); margin-bottom: 0.5rem; }
+        .menu-item h3 { font-size: 0.9rem; margin: 0.5rem 0; }
+        .menu-item .btn { padding: 0.5rem 1rem; font-size: 0.8rem; margin-top: 0.5rem; border-radius: var(--border-radius); border: 2px solid #1a1a1a; cursor: pointer; background-color: transparent; color: #1a1a1a; font-family: 'Special Elite', monospace;}
+        
+        /* Estilo para los iconos de Archivo */
+        .archive-links { display: flex; justify-content: center; gap: 2rem; }
+        .archive-link { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #1a1a1a; transition: transform 0.2s ease; }
+        .archive-link:hover { transform: scale(1.05); }
+        .archive-icon { width: 60px; height: 60px; }
+        .archive-link span { margin-top: 0.5rem; font-size: 0.9rem; text-transform: uppercase; }
+
+        /* Estilos del Modal */
+        .modal-container { /* ... (código del modal sin cambios) ... */ }
+        
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Audioteca</h1>
-        <div class="podcast-grid">
-            <div class="podcast-item">
-                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen></iframe>
-                <p>Texto provisional para el primer podcast. Un diálogo sobre la creatividad y los procesos que la nutren en el mundo contemporáneo.</p>
-            </div>
-            <div class="podcast-item">
-                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen></iframe>
-                <p>Texto provisional para el segundo podcast. Conversaciones que exploran las intersecciones entre la tecnología, el arte y el pensamiento crítico.</p>
-            </div>
-        </div>
+
+    <header>
+        <div class="header-content"><h1>ARG</h1><p>Jardín Digital de Alan Ruíz Galicia</p></div>
+        <nav class="main-nav">
+            <ul>
+                <li class="nav-item">
+                    <a href="#ecos-ruinas">Ecos en las Ruinas</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-content">
+                            <div class="menu-item"><img src="assets/img/img01.png" alt=""><h3>Mercurio Retrógrado</h3><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>...</p>">Ver Entrada</button></div>
+                            <div class="menu-item"><img src="assets/img/img02.png" alt=""><h3>Urano en Géminis</h3><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>...</p>">Ver Entrada</button></div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item"><a href="#loteria-tapatia">Lotería Tapatía</a></li>
+                <li class="nav-item">
+                    <a href="#ironias-volterianas">Ironías Volterianas</a>
+                     <div class="mega-menu">
+                        <div class="mega-menu-content">
+                             <div class="menu-item"><img src="assets/img/img01.png" alt=""><h3>Mercurio Retrógrado</h3><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>...</p>">Ver Entrada</button></div>
+                             <div class="menu-item"><img src="assets/img/img02.png" alt=""><h3>Urano en Géminis</h3><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>...</p>">Ver Entrada</button></div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#atlas-cielo">Atlas del Cielo</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-content">
+                            <div class="menu-item"><img src="assets/img/img03.png" alt=""><h3>Solsticio de Verano</h3><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>...</p>">Ver Entrada</button></div>
+                             <div class="menu-item"><img src="assets/img/img02.png" alt=""><h3>Urano en Géminis</h3><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>...</p>">Ver Entrada</button></div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#archivo-sonoro-visual">Archivo Sonoro y Visual</a>
+                    <div class="mega-menu">
+                        <div class="archive-links">
+                            <a href="videoteca.html" class="archive-link">
+                                <svg class="archive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <span>Videoteca</span>
+                            </a>
+                            <a href="audioteca.html" class="archive-link">
+                                <svg class="archive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15.25a8 8 0 1 0 12 0C18 22 12 22 12 22s-6 0-6-6.75z"></path><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path></svg>
+                                <span>Audioteca</span>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- El resto de la página está vacía por ahora -->
+    <main></main>
+    <footer></footer>
+
+    <!-- Modal para Textos -->
+    <div id="text-modal-container" class="modal-container">
+        <!-- ... (estructura del modal) ... -->
     </div>
+    
+    <script>
+        // JavaScript mínimo para el modal de texto
+        document.addEventListener('DOMContentLoaded', () => {
+            const textModal = {
+                container: document.getElementById('text-modal-container'),
+                title: document.getElementById('modal-title'),
+                body: document.getElementById('modal-body'),
+                open(title, content) { /* ... */ },
+                close() { /* ... */ }
+            };
+            // ... (listeners del modal) ...
+        });
+    </script>
 </body>
-</html>```
+</html>
