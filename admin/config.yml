@@ -6,7 +6,7 @@ backend:
 media_folder: "assets/img/uploads"
 public_folder: "/arg/assets/img/uploads"
 
-# Colecciones
+# Colecciones: Un solo archivo con múltiples listas anidadas
 collections:
   - name: "contenido_web"
     label: "Contenido del Sitio"
