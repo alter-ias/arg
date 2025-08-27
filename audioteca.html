@@ -22,12 +22,18 @@
         .nav-item { position: relative; }
         .nav-item > a { display: block; font-size: 0.9rem; text-decoration: none; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; padding: 0.5rem 1rem; }
         .mega-menu { display: none; }
-        
-        /* Estilos específicos de la página de contenido */
+
+        /* Estilos de la página */
         .container { max-width: 900px; margin: 2rem auto; padding: 2rem; }
         .page-title { font-size: 2.5rem; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
         .content-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 3rem; }
         .content-item p { margin-top: 1rem; font-size: 1.1rem; }
+        
+        /* Estilos del Modal */
+        .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; background-color: rgba(26, 26, 26, 0.9); }
+        .modal-container.is-active { opacity: 1; pointer-events: auto; }
+        .modal-content { background-color: #fdfdfd; padding: 3rem; border-radius: var(--border-radius); max-width: 800px; width: 90%; position: relative; }
+        .modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; cursor: pointer; line-height: 1; color: #1a1a1a; background: none; border: none; }
     </style>
 </head>
 <body>
@@ -60,5 +66,12 @@
             </div>
         </div>
     </main>
+
+    <!-- El modal no es necesario aquí, pero el script lo busca, así que lo dejamos vacío -->
+    <div id="text-modal-container" class="modal-container" style="display: none;"></div>
+    
+    <script>
+        // No se necesita JS en esta página ya que no hay menús desplegables activos
+    </script>
 </body>
 </html>
