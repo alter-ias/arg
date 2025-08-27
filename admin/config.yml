@@ -1,30 +1,32 @@
-# Backend: Le decimos que use tu repositorio de GitHub
+# Backend: Le decimos que use tu repositorio de GitHub y cómo autenticarse
 backend:
   name: github
-  repo: alter-ias/arg # Esto ya es correcto para tu repo
-  branch: main # O la rama que uses
-  # --- ¡IMPORTANTE! ---
-  # Pega aquí el Client ID y el Client Secret que generaste
-  # No uses comillas para estos valores
+  repo: alter-ias/arg # Tu repositorio: usuario/nombre-del-repositorio
+  branch: main # Tu rama principal (cámbiala a "master" si usas esa)
+  base_url: https://api.github.com
+  
+  # --- ¡ACCIÓN REQUERIDA! ---
+  # Pega aquí el Client ID y el Client Secret que generaste en GitHub
+  # IMPORTANTE: No uses comillas para estos valores
   client_id: Ov23liIaLFK6sR9PSY9p
   client_secret: eaaba52ccec1ca6dfec333d43e04414e8bcc60d1
-
 # Dónde subir las imágenes que añadas desde el administrador
-media_folder: "assets/img/uploads"
-public_folder: "/arg/assets/img/uploads" # La ruta pública correcta para tu sitio
+media_folder: "assets/img/uploads" # La carpeta donde se guardarán las imágenes
+public_folder: "/arg/assets/img/uploads" # La ruta pública para acceder a esas imágenes
 
 # Configuración para editar un único archivo JSON
 collections:
-  - name: "paginas" # Nombre de la colección de archivos
-    label: "Páginas"
+  - name: "paginas" # Este es un identificador interno, no lo cambies
+    label: "Contenidos del Sitio Web" # Este es el título que verás en el panel
     files:
-      - label: "Contenido de la Página Principal"
-        name: "datosarg" # Identificador
-        file: "data/datosarg.json" # Ruta a tu archivo JSON
+      - label: "Entradas de Blog"
+        name: "entradas_blog" # Identificador interno para el grupo de entradas
+        file: "data/datosarg.json" # Ruta EXACTA a tu archivo de datos
         fields:
           - label: "Ecos en las Ruinas"
             name: "ecos-ruinas"
             widget: "list"
+            summary: "{{fields.titulo}}" # Muestra el título en la lista
             fields:
               - {label: "ID", name: "id", widget: "number", value_type: "int"}
               - {label: "Título", name: "titulo", widget: "string"}
@@ -33,6 +35,7 @@ collections:
           - label: "Ironías Volterianas"
             name: "ironias-volterianas"
             widget: "list"
+            summary: "{{fields.titulo}}"
             fields:
               - {label: "ID", name: "id", widget: "number", value_type: "int"}
               - {label: "Título", name: "titulo", widget: "string"}
@@ -41,6 +44,7 @@ collections:
           - label: "Atlas del Cielo"
             name: "atlas-cielo"
             widget: "list"
+            summary: "{{fields.titulo}}"
             fields:
               - {label: "ID", name: "id", widget: "number", value_type: "int"}
               - {label: "Título", name: "titulo", widget: "string"}
