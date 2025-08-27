@@ -1,0 +1,51 @@
+# Nombre del workflow, aparecerá en la pestaña "Actions" de GitHub
+name: Deploy ARG Page to GitHub Pages
+
+# Define cuándo se ejecutará esta acción
+on:
+  # Se activa en cada push a la rama principal
+  push:
+    branches: ["main"] # Cambia "main" si tu rama principal se llama "master"
+
+  # Permite ejecutarlo manualmente desde la pestaña "Actions"
+  workflow_dispatch:
+
+# --- SOLUCIÓN AL ERROR: Evita despliegues simultáneos ---
+# Cancela cualquier despliegue anterior que esté en progreso cuando llega uno nuevo.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Proceso de despliegue
+  deploy:
+    # Configuración de permisos para que la acción pueda desplegar en tu nombre
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      
+    # Define el entorno de despliegue
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+      
+    # Usa la última versión de Ubuntu para ejecutar el proceso
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Clona tu repositorio para tener acceso a tu código
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+        
+      # 2. Sube los archivos del sitio como un "artefacto" para que Pages pueda usarlos
+      # Por defecto, toma todo el contenido del repositorio.
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # El punto indica que suba todo desde la raíz
+          
+      # 3. Despliega el artefacto a GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
