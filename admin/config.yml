@@ -6,7 +6,7 @@ backend:
   auth_type: pkce
   
   # ¡ACCIÓN REQUERIDA! Pega tu Client ID de la app OAuth de GitHub aquí.
-  app_id: TU_CLIENT_ID_DE_GITHUB_VA_AQUI
+  app_id: Ov23liIaLFK6sR9PSY9p
 
 # Dónde subir las imágenes
 media_folder: "assets/img/uploads"
