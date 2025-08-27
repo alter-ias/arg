@@ -1,12 +1,13 @@
-# Backend: Volvemos al método de autenticación directa con GitHub
+# Backend: Autenticación directa con GitHub, el método original y correcto para GitHub Pages
 backend:
   name: github
   repo: alter-ias/arg # Tu usuario/repositorio
   branch: main # Tu rama principal
-  auth_type: pkce
   
-  # ¡ACCIÓN REQUERIDA! Pega tu Client ID de la app OAuth de GitHub aquí.
-  app_id: Ov23liIaLFK6sR9PSY9p
+  # --- ¡ACCIÓN REQUERIDA! ---
+  # Pega aquí el Client ID de tu aplicación OAuth de GitHub.
+  # ¡NO uses el Client Secret aquí!
+  client_id: Ov23liIaLFK6sR9PSY9p 
 
 # Dónde subir las imágenes
 media_folder: "assets/img/uploads"
