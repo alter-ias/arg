@@ -1,13 +1,20 @@
+  # Backend: Le decimos que use el servicio de Netlify para la autenticación con GitHub
 backend:
   name: github
-  repo: alter-ias/arg
-  branch: main
-  client_id: Ov23liIaLFK6sR9PSY9p
-  client_secret: eaaba52ccec1ca6dfec333d43e04414e8bcc60d1
-
+  repo: alter-ias/arg # Tu usuario/repositorio (esto está bien)
+  branch: main # Tu rama principal (esto está bien)
+  auth_type: "pkce"
+  
+  # --- ¡ACCIÓN REQUERIDA! ---
+  # Pega aquí tu "Client ID" de la aplicación OAuth de GitHub.
+  # Reemplaza TODO lo que está después de "app_id:".
+  app_id: Ov23liIaLFK6sR9PSY9p
+  
+# Dónde subir las imágenes
 media_folder: "assets/img/uploads"
 public_folder: "/arg/assets/img/uploads"
 
+# Colecciones: Editaremos un solo archivo
 collections:
   - name: "contenido_web"
     label: "Contenido del Sitio"
