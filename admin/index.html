@@ -4,19 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Administrador de Contenido</title>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 </head>
 <body>
-  <!-- Este script es el que maneja la autenticación y evita el "Not Found" -->
+  <!-- Incluye el script que maneja la autenticación de GitHub -->
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   <script>
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", user => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
-        }
-      });
+    // Este script es el intermediario para la autenticación de la ventana emergente
+    if (window.location.hash.includes("access_token")) {
+      const authCallback = (cb) => {
+        const hash = window.location.hash;
+        const params = new URLSearchParams(hash.substring(1));
+        const token = params.get("access_token");
+        cb({ token });
+      };
+      window.CMS.getBackend("github").authCallback(authCallback);
     }
   </script>
 </body>
