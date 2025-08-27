@@ -1,52 +1,33 @@
-# Backend: Le decimos que use tu repositorio de GitHub y cómo autenticarse
+# Backend: Configuración mínima y esencial
 backend:
   name: github
-  repo: alter-ias/arg # Tu repositorio: usuario/nombre-del-repositorio
-  branch: main # Tu rama principal (cámbiala a "master" si usas esa)
-  base_url: https://api.github.com
+  repo: alter-ias/arg # Tu usuario/repositorio
+  branch: main # Tu rama principal
   
-  # --- ¡ACCIÓN REQUERIDA! ---
-  # Pega aquí el Client ID y el Client Secret que generaste en GitHub
-  # IMPORTANTE: No uses comillas para estos valores
+  # --- Pega tus credenciales aquí ---
   client_id: Ov23liIaLFK6sR9PSY9p
   client_secret: eaaba52ccec1ca6dfec333d43e04414e8bcc60d1
-# Dónde subir las imágenes que añadas desde el administrador
-media_folder: "assets/img/uploads" # La carpeta donde se guardarán las imágenes
-public_folder: "/arg/assets/img/uploads" # La ruta pública para acceder a esas imágenes
 
-# Configuración para editar un único archivo JSON
+# Dónde subir las imágenes
+media_folder: "assets/img/uploads"
+public_folder: "/arg/assets/img/uploads"
+
+# Colecciones: Editaremos un solo archivo
 collections:
-  - name: "paginas" # Este es un identificador interno, no lo cambies
-    label: "Contenidos del Sitio Web" # Este es el título que verás en el panel
+  - name: "contenido_web"
+    label: "Contenido del Sitio"
     files:
-      - label: "Entradas de Blog"
-        name: "entradas_blog" # Identificador interno para el grupo de entradas
-        file: "data/datosarg.json" # Ruta EXACTA a tu archivo de datos
+      - label: "Datos Principales"
+        name: "datos_principales"
+        file: "data/datosarg.json"
         fields:
           - label: "Ecos en las Ruinas"
             name: "ecos-ruinas"
             widget: "list"
-            summary: "{{fields.titulo}}" # Muestra el título en la lista
-            fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
-              - {label: "Título", name: "titulo", widget: "string"}
-              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
-              - {label: "Contenido", name: "contenido", widget: "markdown"}
-          - label: "Ironías Volterianas"
-            name: "ironias-volterianas"
-            widget: "list"
             summary: "{{fields.titulo}}"
             fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
               - {label: "Título", name: "titulo", widget: "string"}
               - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
-              - {label: "Contenido", name: "contenido", widget: "markdown"}
-          - label: "Atlas del Cielo"
-            name: "atlas-cielo"
-            widget: "list"
-            summary: "{{fields.titulo}}"
-            fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
-              - {label: "Título", name: "titulo", widget: "string"}
-              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
+              - {label: "Contenido", name: "contenido", widget: "markdown"}# Backend: Le decimos que use tu repositorio de GitHub y cómo autenticarse
+
               - {label: "Contenido", name: "contenido", widget: "markdown"}
