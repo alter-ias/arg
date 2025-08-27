@@ -1,0 +1,48 @@
+# Backend: Le decimos que use tu repositorio de GitHub
+backend:
+  name: github
+  repo: alter-ias/arg # Esto ya es correcto para tu repo
+  branch: main # O la rama que uses
+  # --- ¡IMPORTANTE! ---
+  # Pega aquí el Client ID y el Client Secret que generaste
+  # No uses comillas para estos valores
+  client_id: TU_CLIENT_ID_VA_AQUI
+  client_secret: TU_CLIENT_SECRET_VA_AQUI
+
+# Dónde subir las imágenes que añadas desde el administrador
+media_folder: "assets/img/uploads"
+public_folder: "/arg/assets/img/uploads" # La ruta pública correcta para tu sitio
+
+# Configuración para editar un único archivo JSON
+collections:
+  - name: "paginas" # Nombre de la colección de archivos
+    label: "Páginas"
+    files:
+      - label: "Contenido de la Página Principal"
+        name: "datosarg" # Identificador
+        file: "data/datosarg.json" # Ruta a tu archivo JSON
+        fields:
+          - label: "Ecos en las Ruinas"
+            name: "ecos-ruinas"
+            widget: "list"
+            fields:
+              - {label: "ID", name: "id", widget: "number", value_type: "int"}
+              - {label: "Título", name: "titulo", widget: "string"}
+              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
+              - {label: "Contenido", name: "contenido", widget: "markdown"}
+          - label: "Ironías Volterianas"
+            name: "ironias-volterianas"
+            widget: "list"
+            fields:
+              - {label: "ID", name: "id", widget: "number", value_type: "int"}
+              - {label: "Título", name: "titulo", widget: "string"}
+              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
+              - {label: "Contenido", name: "contenido", widget: "markdown"}
+          - label: "Atlas del Cielo"
+            name: "atlas-cielo"
+            widget: "list"
+            fields:
+              - {label: "ID", name: "id", widget: "number", value_type: "int"}
+              - {label: "Título", name: "titulo", widget: "string"}
+              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
+              - {label: "Contenido", name: "contenido", widget: "markdown"}
