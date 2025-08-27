@@ -4,14 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Administrador de Contenido</title>
-  <!-- EL SCRIPT YA NO VA AQUÍ -->
+  
+  <!-- PASO 1: AÑADIMOS EL SCRIPT DEL WIDGET DE LOGIN DE NETLIFY -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <!-- Mensaje que se mostrará si el CMS no logra iniciarse -->
-  <h1>Cargando Administrador de Contenido...</h1>
-  <p>Si este mensaje no desaparece en unos segundos, por favor revisa la consola del navegador (F12) para ver si hay errores.</p>
-
-  <!-- EL SCRIPT AHORA VA AQUÍ, JUSTO ANTES DE CERRAR EL BODY -->
+  <!-- PASO 2: EL SCRIPT DE DECAP CMS AHORA VA AL FINAL DEL BODY -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 </body>
 </html>
