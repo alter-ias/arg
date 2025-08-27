@@ -34,12 +34,3 @@ collections:
               {label: "Contenido", name: "contenido", widget: "markdown"}
             ]}```
 
-### Pasos Finales
-
-1.  Sube el `config.yml` actualizado a tu repositorio de GitHub.
-2.  Espera dos minutos.
-3.  Ve a **`https://alter-ias.github.io/arg/admin/`**
-
-Ahora, cuando hagas clic en el botón de login, en lugar de un pop-up, la página te **redirigirá** a Netlify para que autorices la conexión. Una vez que lo hagas, te devolverá a tu panel de administración, completamente funcional.
-
-Te agradezco de verdad tu paciencia. Hemos llegado a la solución correcta y robusta.
