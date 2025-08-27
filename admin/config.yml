@@ -1,12 +1,16 @@
-# Backend: Configuración final y robusta
 backend:
   name: github
-  repo: alter-ias/arg # TU REPOSITORIO: usuario/nombre
-  branch: main # TU RAMA PRINCIPAL: main o master
+  repo: alter-ias/arg # Tu repositorio
+  branch: main # Tu rama principal
   auth_type: pkce
   
-  # ACCIÓN: Pega tu Client ID aquí debajo
+  # ¡ACCIÓN REQUERIDA!
+  # Vuelve a copiar y pegar tu Client ID aquí para estar 100% seguros.
   app_id: Ov23liIaLFK6sR9PSY9p
+  
+  # --- LÍNEA AÑADIDA PARA SOLUCIONAR EL ERROR ---
+  # Le dice explícitamente al servicio de autenticación cuál es tu dominio.
+  site_domain: alter-ias.github.io
 
 # Dónde subir las imágenes
 media_folder: "assets/img/uploads"
