@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- (Metadatos y estilos similares al index.html) -->
+    <title>Videoteca - ARG</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Special Elite', monospace; color: #1a1a1a; background-color: #f0f0f0; }
+        .container { max-width: 900px; margin: 4rem auto; padding: 2rem; }
+        h1 { font-size: 2.5rem; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .video-item p { margin-top: 1rem; font-size: 1.1rem; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 12px; overflow: hidden; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Videoteca</h1>
+        <div class="video-grid">
+            <div class="video-item">
+                <div class="video-container"><iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" frameborder="0" allowfullscreen></iframe></div>
+                <p>Texto provisional para el primer video. Aquí se puede añadir una descripción, contexto o transcripción del contenido audiovisual presentado arriba.</p>
+            </div>
+            <div class="video-item">
+                <div class="video-container"><iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" frameborder="0" allowfullscreen></iframe></div>
+                <p>Texto provisional para el segundo video. Explorando temas de interés colectivo a través de la lente del arte y la expresión digital.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
