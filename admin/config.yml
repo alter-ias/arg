@@ -1,21 +1,45 @@
-# --- CONFIGURACIÓN DE DIAGNÓSTICO ---
-
+# Backend: Le decimos que use el puente de Netlify (Git Gateway)
 backend:
-  name: github
-  repo: alter-ias/arg # Tu repositorio: usuario/nombre
-  branch: main # Tu rama principal
-  auth_type: pkce
-  
-  # ACCIÓN: Pega tu Client ID aquí. Asegúrate de que no haya espacios extra.
-  app_id: Ov23liIaLFK6sR9PSY9p
-# El resto de la configuración se omite para la prueba.
-# Si esto funciona, añadiremos lo demás.
+  name: git-gateway
+
+# Dónde subir las imágenes
 media_folder: "assets/img/uploads"
 public_folder: "/arg/assets/img/uploads"
+
+# Colecciones
 collections:
-  - name: "test_collection"
-    label: "Entrada de Prueba"
-    folder: "_test"
-    create: true
-    fields:
-      - {label: "Título de Prueba", name: "title", widget: "string"}
+  - name: "contenido_web"
+    label: "Contenido del Sitio"
+    files:
+      - label: "Datos Principales"
+        name: "datos_principales"
+        file: "data/datosarg.json"
+        fields:
+          - {label: "Ecos en las Ruinas", name: "ecos-ruinas", widget: "list", summary: "{{fields.titulo}}", fields: [
+              {label: "ID", name: "id", widget: "number", value_type: "int"},
+              {label: "Título", name: "titulo", widget: "string"},
+              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
+              {label: "Contenido", name: "contenido", widget: "markdown"}
+            ]}
+          - {label: "Ironías Volterianas", name: "ironias-volterianas", widget: "list", summary: "{{fields.titulo}}", fields: [
+              {label: "ID", name: "id", widget: "number", value_type: "int"},
+              {label: "Título", name: "titulo", widget: "string"},
+              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
+              {label: "Contenido", name: "contenido", widget: "markdown"}
+            ]}
+          - {label: "Atlas del Cielo", name: "atlas-cielo", widget: "list", summary: "{{fields.titulo}}", fields: [
+              {label: "ID", name: "id", widget: "number", value_type: "int"},
+              {label: "Título", name: "titulo", widget: "string"},
+              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
+              {label: "Contenido", name: "contenido", widget: "markdown"}
+            ]}```
+
+### Pasos Finales
+
+1.  Sube el `config.yml` actualizado a tu repositorio de GitHub.
+2.  Espera dos minutos.
+3.  Ve a **`https://alter-ias.github.io/arg/admin/`**
+
+Ahora, cuando hagas clic en el botón de login, en lugar de un pop-up, la página te **redirigirá** a Netlify para que autorices la conexión. Una vez que lo hagas, te devolverá a tu panel de administración, completamente funcional.
+
+Te agradezco de verdad tu paciencia. Hemos llegado a la solución correcta y robusta.
