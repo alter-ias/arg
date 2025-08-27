@@ -5,23 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARG - Edición Especial</title>
     
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik+Distressed&family=Special+Elite&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --main-gap: 1.5rem; /* Reducimos el espaciado general */
+            --main-gap: 1.5rem;
             --border-radius: 12px;
         }
         
-        body { margin: 0; padding: 0; font-family: 'Special Elite', monospace; color: #1a1a1a; background-color: #f0f0f0; font-size: 17px; line-height: 1.6; }
+        body { margin: 0; padding: 0; font-family: 'Special Elite', monospace; color: #1a1a1a; background-color: #f0f0f0; font-size: 16px; line-height: 1.6; }
         .main-layout { padding: 0 var(--main-gap); }
         @media (min-width: 1200px) { .main-layout { display: grid; grid-template-columns: 1fr 1fr; gap: var(--main-gap); align-items: flex-start; } }
         
         header { text-align: center; padding: 3rem 1.5rem 2rem 1.5rem; }
-        .header-content h1 { font-size: 5.5rem; /* Más pequeño */ font-family: 'Special Elite', sans-serif; font-weight: 400; line-height: 1.1; letter-spacing: 2px; margin: 0; color: transparent; -webkit-text-stroke: 1.5px #1a1a1a; text-stroke: 1.5px #1a1a1a; }
+        .header-content h1 { font-size: 5rem; font-family: 'Special Elite', sans-serif; font-weight: 400; line-height: 1.1; letter-spacing: 2px; margin: 0; color: transparent; -webkit-text-stroke: 1.5px #1a1a1a; text-stroke: 1.5px #1a1a1a; }
         .header-content p { font-size: 0.9rem; margin-top: 1rem; text-transform: uppercase; letter-spacing: 2px; }
         .main-nav { width: 100%; padding: 1rem 0; background-color: rgba(253,253,253,0.8); backdrop-filter: blur(5px); border-top: 2px solid #1a1a1a; border-bottom: 2px solid #1a1a1a; text-align: center; position: sticky; top: 0; z-index: 1000; margin-top: 2rem; }
         .main-nav ul { margin: 0; padding: 0; list-style: none; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
@@ -35,25 +34,26 @@
             transition: opacity 1s ease-in-out;
             background-color: #fdfdfd;
             border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* Sombra para dar profundidad */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         .seccion.is-visible { opacity: 1; }
-        .seccion h2 { font-size: 1.5rem; /* Más pequeño */ text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2rem; }
+        .seccion h2 { font-size: 1.4rem; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2rem; }
         
-        /* --- FONDOS CON TEXTURA --- */
         #ecos-ruinas { background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%23d6d6d6" fill-opacity="0.15" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E'); }
         #ironias-volterianas { background-image: url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23d6d6d6" fill-opacity="0.15" fill-rule="evenodd"%3E%3Ccircle cx="3" cy="3" r="3"/%3E%3Ccircle cx="13" cy="13" r="3"/%3E%3C/g%3E%3C/svg%3E'); }
         #archivo-sonoro-visual { background-image: url('data:image/svg+xml,%3Csvg width="6" height="6" viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23d6d6d6" fill-opacity="0.15"%3E%3Cpath d="M5 0h1L0 6V5zM6 5v1H5z"/%3E%3C/g%3E%3C/svg%3E'); }
         #atlas-cielo { background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"%3E%3Cg fill="%23d6d6d6" fill-opacity="0.15"%3E%3Cpath fill-rule="evenodd" d="M0 0h4v4H0V0zm4 4h4v4H4V4z"/%3E%3C/g%3E%3C/svg%3E'); }
 
-        .grid-item h3 { font-size: 1.3rem; }
+        .grid-item h3 { font-size: 1.2rem; }
         .grid-item p { font-size: 0.9rem; }
         .image-parallax-container, .video-container { border-radius: var(--border-radius); overflow: hidden; }
-        .image-parallax-container { height: 250px; /* Más pequeño */ margin-bottom: 1rem; }
+        .image-parallax-container { height: 220px; margin-bottom: 1rem; }
         .parallax-image { width: 100%; height: 100%; object-fit: cover; }
-        .btn { border: 2px solid #1a1a1a; border-radius: var(--border-radius); }
-        .video-container { width: 100%; position: relative; padding-bottom: 56.25%; height: 0; }
+        .btn { border: 2px solid #1a1a1a; border-radius: var(--border-radius); display: inline-block; padding: 0.6rem 1.5rem; color: #1a1a1a; background-color: transparent; text-decoration: none; transition: background-color 0.2s, color 0.2s; margin-top: 1rem; font-family: 'Special Elite', monospace; font-size: 0.9rem; text-transform: uppercase; cursor: pointer; }
+        .btn:hover { background-color: #1a1a1a; color: #fdfdfd; }
+        .video-container { width: 100%; max-width: 450px; margin: 0 auto; position: relative; padding-bottom: 56.25%; height: 0; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .spotify-container { max-width: 350px; margin: 0 auto; }
 
         .grid-container { display: grid; grid-template-columns: 1fr; gap: 2rem; }
         @media (min-width: 992px) { #ecos-ruinas .grid-container { grid-template-columns: 1fr 1fr 1fr; } }
@@ -74,12 +74,22 @@
         .loteria-preview:hover { transform: scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
         .loteria-preview img { max-width: 40%; max-height: 40%; height: auto; filter: invert(1); }
         
-        .modal-container, .loteria-modal-container { /* ... (sin cambios) ... */ }
+        .modal-container, .loteria-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
+        .modal-container.is-active, .loteria-modal-container.is-active { opacity: 1; pointer-events: auto; }
+        .modal-container { background-color: rgba(26, 26, 26, 0.9); }
+        .loteria-modal-container { background-color: #0A0A0A; }
+        .modal-content { background-color: #fdfdfd; padding: 3rem; border: 2px solid #1a1a1a; max-width: 800px; width: 90%; position: relative; max-height: 80vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.3s ease-in-out; border-radius: var(--border-radius); }
+        .modal-container.is-active .modal-content { transform: scale(1); }
+        .modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; font-family: sans-serif; cursor: pointer; line-height: 1; color: #1a1a1a; }
+        #modal-title { font-size: 1.5rem; }
+        #modal-body p { font-size: 1rem; }
+        #loteria-iframe-wrapper iframe { width: 100%; height: 100%; border: none; }
+        .loteria-close-btn { position: absolute; top: 20px; left: 20px; font-size: 2rem; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3010; line-height: 1; }
+
         .artistic-divider { border: none; height: 20px; margin: 3rem auto; width: 80%; max-width: 300px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 5'%3E%3Cpath d='M0,2.5 Q25,0 50,2.5 T100,2.5' fill='none' stroke='%231a1a1a' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
         @media (min-width: 1200px) { .artistic-divider { display: none; } }
         
         footer { text-align: center; font-size: 0.9rem; padding: 2rem var(--main-gap) 2rem var(--main-gap); margin-top: 2rem; border-top: 2px solid #1a1a1a; }
-        
     </style>
 </head>
 <body>
@@ -120,8 +130,17 @@
     
     <footer class="content-block"><p>&copy; 2025 - ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p></footer>
 
-    <div id="text-modal-container" class="modal-container"> <!-- ... --> </div>
-    <div id="loteria-modal-container" class="loteria-modal-container"> <!-- ... --> </div>
+    <div id="text-modal-container" class="modal-container">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 id="modal-title"></h2>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+    <div id="loteria-modal-container" class="loteria-modal-container">
+        <span id="loteria-close-btn" class="loteria-close-btn">&times;</span>
+        <div id="loteria-iframe-wrapper"></div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -134,13 +153,19 @@
 
             const textModal = {
                 container: document.getElementById('text-modal-container'),
-                title: document.querySelector('#text-modal-container h2'), // Selector más específico
-                body: document.querySelector('#text-modal-container div'), // Selector más específico
-                open(title, content) { this.title.textContent = title; this.body.innerHTML = content; this.container.classList.add('is-active'); },
-                close() { this.container.classList.remove('is-active'); }
+                title: document.getElementById('modal-title'),
+                body: document.getElementById('modal-body'),
+                open(title, content) {
+                    this.title.textContent = title;
+                    this.body.innerHTML = content;
+                    this.container.classList.add('is-active');
+                },
+                close() {
+                    this.container.classList.remove('is-active');
+                }
             };
             document.querySelectorAll('.btn-modal').forEach(button => button.addEventListener('click', () => textModal.open(button.dataset.title, button.dataset.content)));
-            document.querySelector('#text-modal-container .modal-close').addEventListener('click', () => textModal.close());
+            document.querySelector('.modal-close').addEventListener('click', () => textModal.close());
             textModal.container.addEventListener('click', (e) => { if (e.target === textModal.container) textModal.close(); });
             
             const loteriaModal = {
@@ -163,12 +188,15 @@
                     this.wrapper.innerHTML = '';
                 }
             };
-            if(loteriaModal.launcher) loteriaModal.launcher.addEventListener('click', () => loteriaModal.open());
-            if(loteriaModal.closeButton) loteriaModal.closeButton.addEventListener('click', () => history.back());
+            loteriaModal.launcher.addEventListener('click', () => loteriaModal.open());
+            loteriaModal.closeButton.addEventListener('click', () => history.back());
             
             window.addEventListener('popstate', () => { if (loteriaModal.container.classList.contains('is-active')) loteriaModal.close(); });
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') { if (loteriaModal.container.classList.contains('is-active')) history.back(); else if (textModal.container.classList.contains('is-active')) textModal.close(); }
+                if (e.key === 'Escape') {
+                    if (loteriaModal.container.classList.contains('is-active')) { history.back(); }
+                    else if (textModal.container.classList.contains('is-active')) { textModal.close(); }
+                }
             });
 
             const mediaTabs = document.querySelectorAll('.media-tab');
