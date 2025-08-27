@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audioteca - ARG</title>
+    <title>Videoteca - ARG</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik+Distressed&family=Special+Elite&display=swap" rel="stylesheet">
     
     <style>
-        /* (Estilos del header y nav copiados del index.html) */
         :root { --border-radius: 12px; }
         body { margin: 0; padding: 0; font-family: 'Special Elite', monospace; color: #1a1a1a; background-color: #f0f0f0; }
+        
         header { text-align: center; padding: 3rem 1.5rem 2rem 1.5rem; }
         .header-content h1 { font-size: 5.5rem; font-family: 'Special Elite', sans-serif; font-weight: 400; line-height: 1.1; letter-spacing: 2px; margin: 0; color: transparent; -webkit-text-stroke: 1.5px #1a1a1a; text-stroke: 1.5px #1a1a1a; }
         .header-content a { text-decoration: none; }
@@ -21,15 +21,26 @@
         .main-nav ul { margin: 0; padding: 0; list-style: none; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
         .nav-item { position: relative; }
         .nav-item > a { display: block; font-size: 0.9rem; text-decoration: none; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; padding: 0.5rem 1rem; }
-        .mega-menu { display: none; }
-
-        /* Estilos de la página */
+        .mega-menu { display: none; position: absolute; top: 100%; left: 50%; width: auto; background-color: #fdfdfd; border-radius: var(--border-radius); box-shadow: 0 15px 40px rgba(0,0,0,0.2); padding: 1.5rem; z-index: 1001; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; transform: translateX(-50%) translateY(10px); }
+        .nav-item:hover > .mega-menu { display: block; opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .mega-menu-content { display: flex; gap: 1.5rem; }
+        .menu-item { text-align: center; width: 160px; }
+        .menu-item img { width: 100%; height: 100px; object-fit: cover; border-radius: calc(var(--border-radius) - 4px); margin-bottom: 0.5rem; }
+        .menu-item h3 { font-size: 0.9rem; margin: 0.5rem 0; }
+        .menu-item .btn { padding: 0.5rem 1rem; font-size: 0.8rem; margin-top: 0.5rem; border-radius: var(--border-radius); border: 2px solid #1a1a1a; cursor: pointer; background-color: transparent; color: #1a1a1a; font-family: 'Special Elite', monospace;}
+        .archive-links { display: flex; justify-content: center; gap: 2rem; }
+        .archive-link { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #1a1a1a; transition: transform 0.2s ease; }
+        .archive-link:hover { transform: scale(1.05); }
+        .archive-icon { width: 60px; height: 60px; }
+        .archive-link span { margin-top: 0.5rem; font-size: 0.9rem; text-transform: uppercase; }
+        
         .container { max-width: 900px; margin: 2rem auto; padding: 2rem; }
         .page-title { font-size: 2.5rem; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
         .content-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 3rem; }
         .content-item p { margin-top: 1rem; font-size: 1.1rem; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 12px; overflow: hidden; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         
-        /* Estilos del Modal */
         .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; background-color: rgba(26, 26, 26, 0.9); }
         .modal-container.is-active { opacity: 1; pointer-events: auto; }
         .modal-content { background-color: #fdfdfd; padding: 3rem; border-radius: var(--border-radius); max-width: 800px; width: 90%; position: relative; }
@@ -44,34 +55,88 @@
         </div>
         <nav class="main-nav">
              <ul>
-                 <li class="nav-item"><a href="index.html#ecos-ruinas">Ecos en las Ruinas</a></li>
+                 <li class="nav-item">
+                     <a href="index.html#ecos-ruinas">Ecos en las Ruinas</a>
+                     <div class="mega-menu"><div class="mega-menu-content">
+                         <div class="menu-item"><img src="assets/img/img01.png" alt=""><h3>Mercurio Retrógrado</h3><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>...</p>">Ver Entrada</button></div>
+                         <div class="menu-item"><img src="assets/img/img02.png" alt=""><h3>Urano en Géminis</h3><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>...</p>">Ver Entrada</button></div>
+                     </div></div>
+                 </li>
                  <li class="nav-item"><a href="index.html#loteria-tapatia">Lotería Tapatía</a></li>
-                 <li class="nav-item"><a href="index.html#ironias-volterianas">Ironías Volterianas</a></li>
-                 <li class="nav-item"><a href="index.html#atlas-cielo">Atlas del Cielo</a></li>
-                 <li class="nav-item"><a href="index.html#archivo-sonoro-visual">Archivo Sonoro y Visual</a></li>
+                 <li class="nav-item">
+                     <a href="index.html#ironias-volterianas">Ironías Volterianas</a>
+                      <div class="mega-menu"><div class="mega-menu-content">
+                          <div class="menu-item"><img src="assets/img/img01.png" alt=""><h3>Mercurio Retrógrado</h3><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>...</p>">Ver Entrada</button></div>
+                          <div class="menu-item"><img src="assets/img/img02.png" alt=""><h3>Urano en Géminis</h3><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>...</p>">Ver Entrada</button></div>
+                      </div></div>
+                 </li>
+                 <li class="nav-item">
+                     <a href="index.html#atlas-cielo">Atlas del Cielo</a>
+                     <div class="mega-menu"><div class="mega-menu-content">
+                         <div class="menu-item"><img src="assets/img/img03.png" alt=""><h3>Solsticio de Verano</h3><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>...</p>">Ver Entrada</button></div>
+                         <div class="menu-item"><img src="assets/img/img02.png" alt=""><h3>Urano en Géminis</h3><button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>...</p>">Ver Entrada</button></div>
+                     </div></div>
+                 </li>
+                 <li class="nav-item">
+                     <a href="index.html#archivo-sonoro-visual">Archivo Sonoro y Visual</a>
+                     <div class="mega-menu"><div class="archive-links">
+                         <a href="videoteca.html" class="archive-link">
+                             <svg class="archive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                             <span>Videoteca</span>
+                         </a>
+                         <a href="audioteca.html" class="archive-link">
+                             <svg class="archive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15.25a8 8 0 1 0 12 0C18 22 12 22 12 22s-6 0-6-6.75z"></path><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path></svg>
+                             <span>Audioteca</span>
+                         </a>
+                     </div></div>
+                 </li>
              </ul>
         </nav>
     </header>
 
     <main class="container">
-        <h1 class="page-title">Audioteca</h1>
+        <h1 class="page-title">Videoteca</h1>
         <div class="content-grid">
             <div class="content-item">
-                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen></iframe>
-                <p>Texto provisional para el primer podcast. Un diálogo sobre la creatividad y los procesos que la nutren en el mundo contemporáneo.</p>
+                <div class="video-container"><iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" frameborder="0" allowfullscreen></iframe></div>
+                <p>Texto provisional para el primer video. Aquí se puede añadir una descripción, contexto o transcripción del contenido audiovisual presentado arriba.</p>
             </div>
             <div class="content-item">
-                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen></iframe>
-                <p>Texto provisional para el segundo podcast. Conversaciones que exploran las intersecciones entre la tecnología, el arte y el pensamiento crítico.</p>
+                <div class="video-container"><iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" frameborder="0" allowfullscreen></iframe></div>
+                <p>Texto provisional para el segundo video. Explorando temas de interés colectivo a través de la lente del arte y la expresión digital.</p>
             </div>
         </div>
     </main>
 
-    <!-- El modal no es necesario aquí, pero el script lo busca, así que lo dejamos vacío -->
-    <div id="text-modal-container" class="modal-container" style="display: none;"></div>
+    <div id="text-modal-container" class="modal-container">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2 id="modal-title"></h2>
+            <div id="modal-body"></div>
+        </div>
+    </div>
     
     <script>
-        // No se necesita JS en esta página ya que no hay menús desplegables activos
+        document.addEventListener('DOMContentLoaded', () => {
+            const textModal = {
+                container: document.getElementById('text-modal-container'),
+                title: document.getElementById('modal-title'),
+                body: document.getElementById('modal-body'),
+                open(title, content) { if(!this.container) return; this.title.textContent = title; this.body.innerHTML = content; this.container.classList.add('is-active'); },
+                close() { if(!this.container) return; this.container.classList.remove('is-active'); }
+            };
+            document.querySelectorAll('.btn-modal').forEach(button => {
+                button.addEventListener('click', (e) => { e.stopPropagation(); textModal.open(button.dataset.title, button.dataset.content); });
+            });
+            const closeModalButton = document.querySelector('.modal-close');
+            if(closeModalButton) closeModalButton.addEventListener('click', () => textModal.close());
+            if(textModal.container) {
+                textModal.container.addEventListener('click', (e) => { if (e.target === textModal.container) textModal.close(); });
+            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && textModal.container && textModal.container.classList.contains('is-active')) { textModal.close(); }
+            });
+        });
     </script>
 </body>
 </html>
