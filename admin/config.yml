@@ -1,45 +1,21 @@
+# --- CONFIGURACIÓN DE DIAGNÓSTICO ---
+
 backend:
   name: github
-  repo: alter-ias/arg # Tu repositorio
+  repo: alter-ias/arg # Tu repositorio: usuario/nombre
   branch: main # Tu rama principal
   auth_type: pkce
   
-  # ¡ACCIÓN REQUERIDA!
-  # Vuelve a copiar y pegar tu Client ID aquí para estar 100% seguros.
+  # ACCIÓN: Pega tu Client ID aquí. Asegúrate de que no haya espacios extra.
   app_id: Ov23liIaLFK6sR9PSY9p
-  
-  # --- LÍNEA AÑADIDA PARA SOLUCIONAR EL ERROR ---
-  # Le dice explícitamente al servicio de autenticación cuál es tu dominio.
-  site_domain: alter-ias.github.io
-
-# Dónde subir las imágenes
+# El resto de la configuración se omite para la prueba.
+# Si esto funciona, añadiremos lo demás.
 media_folder: "assets/img/uploads"
 public_folder: "/arg/assets/img/uploads"
-
-# Colecciones
 collections:
-  - name: "contenido_web"
-    label: "Contenido del Sitio"
-    files:
-      - label: "Datos Principales"
-        name: "datos_principales"
-        file: "data/datosarg.json"
-        fields:
-          - {label: "Ecos en las Ruinas", name: "ecos-ruinas", widget: "list", summary: "{{fields.titulo}}", fields: [
-              {label: "ID", name: "id", widget: "number", value_type: "int"},
-              {label: "Título", name: "titulo", widget: "string"},
-              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
-              {label: "Contenido", name: "contenido", widget: "markdown"}
-            ]}
-          - {label: "Ironías Volterianas", name: "ironias-volterianas", widget: "list", summary: "{{fields.titulo}}", fields: [
-              {label: "ID", name: "id", widget: "number", value_type: "int"},
-              {label: "Título", name: "titulo", widget: "string"},
-              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
-              {label: "Contenido", name: "contenido", widget: "markdown"}
-            ]}
-          - {label: "Atlas del Cielo", name: "atlas-cielo", widget: "list", summary: "{{fields.titulo}}", fields: [
-              {label: "ID", name: "id", widget: "number", value_type: "int"},
-              {label: "Título", name: "titulo", widget: "string"},
-              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
-              {label: "Contenido", name: "contenido", widget: "markdown"}
-            ]}
+  - name: "test_collection"
+    label: "Entrada de Prueba"
+    folder: "_test"
+    create: true
+    fields:
+      - {label: "Título de Prueba", name: "title", widget: "string"}
