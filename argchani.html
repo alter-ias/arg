@@ -17,6 +17,7 @@
         
         header { text-align: center; padding: 3rem 1.5rem 2rem 1.5rem; }
         .header-content h1 { font-size: 5.5rem; font-family: 'Special Elite', sans-serif; font-weight: 400; line-height: 1.1; letter-spacing: 2px; margin: 0; color: transparent; -webkit-text-stroke: 1.5px #1a1a1a; text-stroke: 1.5px #1a1a1a; }
+        .header-content a { text-decoration: none; }
         .header-content p { font-size: 0.9rem; margin-top: 1rem; text-transform: uppercase; letter-spacing: 2px; }
         
         .main-nav { 
@@ -33,22 +34,9 @@
         }
         .main-nav ul { margin: 0; padding: 0; list-style: none; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
         
-        /* Contenedor de cada elemento del menú */
-        .nav-item {
-            position: relative; /* Clave para el posicionamiento del mega menú */
-        }
-
-        .nav-item > a { 
-            display: block;
-            font-size: 0.9rem; 
-            text-decoration: none; 
-            color: #1a1a1a; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            padding: 0.5rem 1rem;
-        }
+        .nav-item { position: relative; }
+        .nav-item > a { display: block; font-size: 0.9rem; text-decoration: none; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; padding: 0.5rem 1rem; }
         
-        /* Mega Menú Desplegable */
         .mega-menu {
             display: none;
             position: absolute;
@@ -75,32 +63,35 @@
         }
         
         .mega-menu-content { display: flex; gap: 1.5rem; }
-        
         .menu-item { text-align: center; width: 160px; }
         .menu-item img { width: 100%; height: 100px; object-fit: cover; border-radius: calc(var(--border-radius) - 4px); margin-bottom: 0.5rem; }
         .menu-item h3 { font-size: 0.9rem; margin: 0.5rem 0; }
         .menu-item .btn { padding: 0.5rem 1rem; font-size: 0.8rem; margin-top: 0.5rem; border-radius: var(--border-radius); border: 2px solid #1a1a1a; cursor: pointer; background-color: transparent; color: #1a1a1a; font-family: 'Special Elite', monospace;}
         
-        /* Estilo para los iconos de Archivo */
         .archive-links { display: flex; justify-content: center; gap: 2rem; }
         .archive-link { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #1a1a1a; transition: transform 0.2s ease; }
         .archive-link:hover { transform: scale(1.05); }
         .archive-icon { width: 60px; height: 60px; }
         .archive-link span { margin-top: 0.5rem; font-size: 0.9rem; text-transform: uppercase; }
 
-        /* Estilos del Modal */
-        .modal-container { /* ... (código del modal sin cambios) ... */ }
+        .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; background-color: rgba(26, 26, 26, 0.9); }
+        .modal-container.is-active { opacity: 1; pointer-events: auto; }
+        .modal-content { background-color: #fdfdfd; padding: 3rem; border-radius: var(--border-radius); max-width: 800px; width: 90%; position: relative; }
+        .modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; cursor: pointer; line-height: 1; color: #1a1a1a; background: none; border: none; }
         
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-content"><h1>ARG</h1><p>Jardín Digital de Alan Ruíz Galicia</p></div>
+        <div class="header-content">
+            <a href="index.html"><h1>ARG</h1></a>
+            <p>Jardín Digital de Alan Ruíz Galicia</p>
+        </div>
         <nav class="main-nav">
             <ul>
                 <li class="nav-item">
-                    <a href="#ecos-ruinas">Ecos en las Ruinas</a>
+                    <a href="index.html#ecos-ruinas">Ecos en las Ruinas</a>
                     <div class="mega-menu">
                         <div class="mega-menu-content">
                             <div class="menu-item"><img src="assets/img/img01.png" alt=""><h3>Mercurio Retrógrado</h3><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>...</p>">Ver Entrada</button></div>
@@ -108,9 +99,9 @@
                         </div>
                     </div>
                 </li>
-                <li class="nav-item"><a href="#loteria-tapatia">Lotería Tapatía</a></li>
+                <li class="nav-item"><a href="index.html#loteria-tapatia">Lotería Tapatía</a></li>
                 <li class="nav-item">
-                    <a href="#ironias-volterianas">Ironías Volterianas</a>
+                    <a href="index.html#ironias-volterianas">Ironías Volterianas</a>
                      <div class="mega-menu">
                         <div class="mega-menu-content">
                              <div class="menu-item"><img src="assets/img/img01.png" alt=""><h3>Mercurio Retrógrado</h3><button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>...</p>">Ver Entrada</button></div>
@@ -119,7 +110,7 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a href="#atlas-cielo">Atlas del Cielo</a>
+                    <a href="index.html#atlas-cielo">Atlas del Cielo</a>
                     <div class="mega-menu">
                         <div class="mega-menu-content">
                             <div class="menu-item"><img src="assets/img/img03.png" alt=""><h3>Solsticio de Verano</h3><button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>...</p>">Ver Entrada</button></div>
@@ -128,7 +119,7 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a href="#archivo-sonoro-visual">Archivo Sonoro y Visual</a>
+                    <a href="index.html#archivo-sonoro-visual">Archivo Sonoro y Visual</a>
                     <div class="mega-menu">
                         <div class="archive-links">
                             <a href="videoteca.html" class="archive-link">
@@ -136,6 +127,7 @@
                                 <span>Videoteca</span>
                             </a>
                             <a href="audioteca.html" class="archive-link">
+                                <!-- ICONO CAMBIADO -->
                                 <svg class="archive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15.25a8 8 0 1 0 12 0C18 22 12 22 12 22s-6 0-6-6.75z"></path><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path></svg>
                                 <span>Audioteca</span>
                             </a>
@@ -146,26 +138,57 @@
         </nav>
     </header>
 
-    <!-- El resto de la página está vacía por ahora -->
-    <main></main>
-    <footer></footer>
+    <main>
+        <!-- Aquí irá el contenido de la página principal (las secciones flotantes) -->
+    </main>
 
-    <!-- Modal para Textos -->
     <div id="text-modal-container" class="modal-container">
-        <!-- ... (estructura del modal) ... -->
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2 id="modal-title"></h2>
+            <div id="modal-body"></div>
+        </div>
     </div>
     
     <script>
-        // JavaScript mínimo para el modal de texto
         document.addEventListener('DOMContentLoaded', () => {
             const textModal = {
                 container: document.getElementById('text-modal-container'),
                 title: document.getElementById('modal-title'),
                 body: document.getElementById('modal-body'),
-                open(title, content) { /* ... */ },
-                close() { /* ... */ }
+                open(title, content) {
+                    if(!this.container) return;
+                    this.title.textContent = title;
+                    this.body.innerHTML = content;
+                    this.container.classList.add('is-active');
+                },
+                close() {
+                    if(!this.container) return;
+                    this.container.classList.remove('is-active');
+                }
             };
-            // ... (listeners del modal) ...
+
+            document.querySelectorAll('.btn-modal').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    textModal.open(button.dataset.title, button.dataset.content);
+                });
+            });
+
+            const closeModalButton = document.querySelector('.modal-close');
+            if(closeModalButton) closeModalButton.addEventListener('click', () => textModal.close());
+            
+            if(textModal.container) {
+                textModal.container.addEventListener('click', (e) => { 
+                    if (e.target === textModal.container) textModal.close(); 
+                });
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && textModal.container && textModal.container.classList.contains('is-active')) {
+                    textModal.close();
+                }
+            });
         });
     </script>
 </body>
