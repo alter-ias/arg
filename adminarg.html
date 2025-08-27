@@ -63,7 +63,7 @@
         <div class="output-container">
             <h2>1. Copia este código:</h2>
             <textarea id="json-output" readonly></textarea>
-            <h2>2. Pégalo en el archivo `data/datos.json`</h2>
+            <h2>2. Pégalo en el archivo `data/datos2.json`</h2>
         </div>
     </div>
 
@@ -87,13 +87,13 @@
 
             async function loadData() {
                 try {
-                    const response = await fetch('./data/datos.json');
+                    const response = await fetch('./data/datos2.json');
                     allData = await response.json();
                     renderPosts();
                     updateJsonOutput();
                 } catch (error) {
-                    console.error("Error cargando datos.json:", error);
-                    alert("No se pudo cargar el archivo data/datos.json. Asegúrate de que exista en la carpeta 'data'.");
+                    console.error("Error cargando datos2.json:", error);
+                    alert("No se pudo cargar el archivo data/datos2.json. Asegúrate de que exista en la carpeta 'data'.");
                 }
             }
 
