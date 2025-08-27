@@ -1,30 +1,155 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- (Tu <head> se mantiene igual) -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARG - Edición Especial</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Distressed&family=Special+Elite&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --main-gap: 2rem;
+            --border-radius: 12px;
+        }
+        
+        body { margin: 0; padding: 0; font-family: 'Special Elite', monospace; color: #1a1a1a; background-color: #f0f0f0; font-size: 17px; line-height: 1.6; }
+        .main-layout { padding: 0 var(--main-gap); }
+        @media (min-width: 1200px) { .main-layout { display: grid; grid-template-columns: 1fr 1fr; gap: var(--main-gap); align-items: flex-start; } }
+        
+        header { text-align: center; padding: 3rem 1.5rem 2rem 1.5rem; }
+        .header-content h1 { font-size: 5.5rem; font-family: 'Special Elite', sans-serif; font-weight: 400; line-height: 1.1; letter-spacing: 2px; margin: 0; color: transparent; -webkit-text-stroke: 1.5px #1a1a1a; text-stroke: 1.5px #1a1a1a; }
+        .header-content p { font-size: 0.9rem; margin-top: 1rem; text-transform: uppercase; letter-spacing: 2px; }
+        .main-nav { width: 100%; padding: 1rem 0; background-color: rgba(240, 240, 240, 0.8); backdrop-filter: blur(8px); border-top: 2px solid #1a1a1a; border-bottom: 2px solid #1a1a1a; text-align: center; position: sticky; top: 0; z-index: 1000; }
+        .main-nav ul { margin: 0; padding: 0; list-style: none; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+        
+        .content-block { padding: 2.5rem 1.5rem; position: relative; }
+        .seccion-title { font-size: 1.5rem; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin: 0; padding: 1.5rem; cursor: default; }
+        
+        .mega-menu-container { position: relative; text-align: center; }
+        .mega-menu {
+            display: none;
+            position: absolute;
+            top: 90%;
+            left: 50%;
+            width: auto;
+            min-width: 350px;
+            background-color: #fdfdfd;
+            border-radius: var(--border-radius);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+            transform: translateX(-50%) translateY(-10px);
+        }
+        
+        .mega-menu-container:hover .mega-menu, .mega-menu:hover { display: block; opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .mega-menu-content { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+        
+        .menu-item { text-align: center; }
+        .menu-item img { width: 100%; height: 100px; object-fit: cover; border-radius: calc(var(--border-radius) - 4px); margin-bottom: 0.5rem; }
+        .menu-item h3 { font-size: 1rem; margin: 0.5rem 0; }
+        .menu-item .btn { padding: 0.5rem 1rem; font-size: 0.8rem; margin-top: 0.5rem; border-radius: var(--border-radius); border: 2px solid #1a1a1a; cursor: pointer; background: transparent; color: #1a1a1a; font-family: 'Special Elite', monospace; }
+        
+        .archive-links { display: flex; justify-content: center; gap: 2rem; }
+        .archive-link { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #1a1a1a; transition: transform 0.2s ease; }
+        .archive-link:hover { transform: scale(1.05); }
+        .archive-icon { width: 60px; height: 60px; }
+        .archive-link span { margin-top: 0.5rem; font-size: 0.9rem; text-transform: uppercase; }
+
+        .loteria-preview { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 250px; cursor: pointer; }
+        .loteria-launcher-content { transition: transform 0.3s ease; }
+        .loteria-preview:hover .loteria-launcher-content { transform: scale(1.05); }
+        .loteria-preview h2 { margin-bottom: 1rem; }
+        .loteria-preview img { display: block; width: 100%; max-width: 250px; height: auto; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2)); }
+        
+        .modal-container, .loteria-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
+        .modal-container.is-active, .loteria-modal-container.is-active { opacity: 1; pointer-events: auto; }
+        .modal-container { background-color: rgba(26, 26, 26, 0.9); }
+        .loteria-modal-container { background-color: #0A0A0A; }
+        .modal-content { background-color: #fdfdfd; padding: 3rem; border: 2px solid #1a1a1a; max-width: 800px; width: 90%; position: relative; max-height: 80vh; overflow-y: auto; border-radius: var(--border-radius); }
+        .modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; font-family: sans-serif; cursor: pointer; line-height: 1; color: #1a1a1a; background: none; border: none; }
+        #loteria-iframe-wrapper iframe { width: 100%; height: 100%; border: none; }
+        .loteria-close-btn { position: absolute; top: 20px; left: 20px; font-size: 2rem; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3010; line-height: 1; }
+        footer { text-align: center; font-size: 0.9rem; padding: 2rem var(--main-gap) 2rem var(--main-gap); margin-top: 2rem; border-top: 2px solid #1a1a1a; }
+    </style>
 </head>
 <body>
 
     <header>
-        <!-- (Tu <header> se mantiene igual, con todos los nav-item y mega-menu) -->
-        <!-- IMPORTANTE: El contenido del mega menú de "Ecos en las Ruinas" ahora estará vacío -->
+        <div class="header-content"><h1>ARG</h1><p>Jardín Digital de Alan Ruíz Galicia</p></div>
         <nav class="main-nav">
-             <ul>
-                 <li class="nav-item">
-                     <a href="#ecos-ruinas">Ecos en las Ruinas</a>
+            <ul>
+                <li class="nav-item mega-menu-container">
+                    <a href="#ecos-ruinas">Ecos en las Ruinas</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-content" id="ecos-ruinas-content">
+                            <!-- Contenido dinámico aquí -->
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item mega-menu-container"><a href="#loteria-tapatia">Lotería Tapatía</a></li>
+                <li class="nav-item mega-menu-container">
+                    <a href="#ironias-volterianas">Ironías Volterianas</a>
                      <div class="mega-menu">
-                         <!-- Este div se llenará dinámicamente -->
-                         <div class="mega-menu-content" id="ecos-ruinas-content"></div>
-                     </div>
-                 </li>
-                 <!-- (Resto de los elementos del menú sin cambios) -->
-             </ul>
+                        <div class="mega-menu-content" id="ironias-volterianas-content">
+                            <!-- Contenido dinámico aquí -->
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item mega-menu-container">
+                    <a href="#atlas-cielo">Atlas del Cielo</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-content" id="atlas-cielo-content">
+                            <!-- Contenido dinámico aquí -->
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item mega-menu-container">
+                    <a href="#archivo-sonoro-visual">Archivo Sonoro y Visual</a>
+                    <div class="mega-menu">
+                        <div class="archive-links">
+                            <a href="videoteca.html" class="archive-link">
+                                <svg class="archive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <span>Videoteca</span>
+                            </a>
+                            <a href="audioteca.html" class="archive-link">
+                                <svg class="archive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15.25a8 8 0 1 0 12 0C18 22 12 22 12 22s-6 0-6-6.75z"></path><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path></svg>
+                                <span>Audioteca</span>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </nav>
     </header>
 
-    <main>
-        <!-- (Aquí irá el resto del contenido de tu página en el futuro) -->
+    <main class="main-layout">
+        <!-- Columna Izquierda -->
+        <div class="main-column">
+            <div id="ecos-ruinas" class="content-block"><h2 class="seccion-title">Ecos en las Ruinas</h2></div>
+            <div id="loteria-tapatia" class="content-block">
+                <div class="loteria-preview" id="loteria-launcher" data-iframe-src="https://alter-ias.github.io/arg/loteriatapatiax.html">
+                    <div class="loteria-launcher-content">
+                        <h2 class="seccion-title">Lotería Tapatía</h2>
+                        <img src="assets/img/logoloteria.png" alt="Logo Lotería Tapatía">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Columna Derecha -->
+        <div class="main-column">
+            <div id="ironias-volterianas" class="content-block"><h2 class="seccion-title">Ironías Volterianas</h2></div>
+            <div id="archivo-sonoro-visual" class="content-block"><h2 class="seccion-title">Archivo Sonoro y Visual</h2></div>
+            <div id="atlas-cielo" class="content-block"><h2 class="seccion-title">Atlas del Cielo</h2></div>
+        </div>
     </main>
+    
+    <footer class="content-block"><p>&copy; 2025 - ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p></footer>
 
     <div id="text-modal-container" class="modal-container">
         <div class="modal-content">
@@ -33,21 +158,29 @@
             <div id="modal-body"></div>
         </div>
     </div>
-    
+    <div id="loteria-modal-container" class="loteria-modal-container">
+        <span id="loteria-close-btn" class="loteria-close-btn">&times;</span>
+        <div id="loteria-iframe-wrapper"></div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const textModal = {
                 container: document.getElementById('text-modal-container'),
                 title: document.getElementById('modal-title'),
                 body: document.getElementById('modal-body'),
-                open(title, content) { /* ... */ },
-                close() { /* ... */ }
+                open(title, content) {
+                    if(!this.container) return;
+                    this.title.textContent = title;
+                    this.body.innerHTML = content;
+                    this.container.classList.add('is-active');
+                },
+                close() {
+                    if(!this.container) return;
+                    this.container.classList.remove('is-active');
+                }
             };
-            
-            const closeModalButton = document.querySelector('.modal-close');
-            if(closeModalButton) closeModalButton.addEventListener('click', () => textModal.close());
-            
-            // Función para añadir listeners a los botones del modal
+
             function attachModalListeners() {
                 document.querySelectorAll('.btn-modal').forEach(button => {
                     button.addEventListener('click', (e) => {
@@ -57,17 +190,24 @@
                 });
             }
 
-            // --- NUEVO: Cargar y mostrar las entradas dinámicamente ---
+            const closeModalButton = document.querySelector('.modal-close');
+            if(closeModalButton) closeModalButton.addEventListener('click', () => textModal.close());
+            
+            if(textModal.container) {
+                textModal.container.addEventListener('click', (e) => { 
+                    if (e.target === textModal.container) textModal.close(); 
+                });
+            }
+
             async function loadEntries() {
                 try {
-                    const response = await fetch('./data/datosarg.json');
+                    const response = await fetch('data/datosarg.json?cache_bust=' + new Date().getTime());
                     const data = await response.json();
                     
-                    const ecosRuinasContainer = document.getElementById('ecos-ruinas-content');
-                    if (ecosRuinasContainer && data['ecos-ruinas']) {
-                        let contentHTML = '';
-                        data['ecos-ruinas'].forEach(post => {
-                            contentHTML += `
+                    function buildMenuContent(sectionKey, containerId) {
+                        const container = document.getElementById(containerId);
+                        if (container && data[sectionKey]) {
+                            container.innerHTML = data[sectionKey].map(post => `
                                 <div class="menu-item">
                                     <img src="${post.imagenUrl}" alt="">
                                     <h3>${post.titulo}</h3>
@@ -77,13 +217,15 @@
                                         Ver Entrada
                                     </button>
                                 </div>
-                            `;
-                        });
-                        ecosRuinasContainer.innerHTML = contentHTML;
-                        
-                        // Una vez que el contenido está en la página, activamos los botones
-                        attachModalListeners();
+                            `).join('');
+                        }
                     }
+
+                    buildMenuContent('ecos-ruinas', 'ecos-ruinas-content');
+                    buildMenuContent('ironias-volterianas', 'ironias-volterianas-content');
+                    buildMenuContent('atlas-cielo', 'atlas-cielo-content');
+
+                    attachModalListeners();
 
                 } catch (error) {
                     console.error("Error al cargar las entradas del blog:", error);
@@ -91,7 +233,26 @@
             }
 
             loadEntries();
-            // ... (resto del script para otros modales como la Lotería, si lo tienes)
+
+            const loteriaModal = {
+                container: document.getElementById('loteria-modal-container'),
+                launcher: document.getElementById('loteria-launcher'),
+                wrapper: document.getElementById('loteria-iframe-wrapper'),
+                closeButton: document.getElementById('loteria-close-btn'),
+                open() { /* ... */ },
+                close() { /* ... */ }
+            };
+
+            if(loteriaModal.launcher) loteriaModal.launcher.addEventListener('click', () => loteriaModal.open());
+            if(loteriaModal.closeButton) loteriaModal.closeButton.addEventListener('click', () => history.back());
+            
+            window.addEventListener('popstate', () => { if (loteriaModal.container && loteriaModal.container.classList.contains('is-active')) loteriaModal.close(); });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (loteriaModal.container && loteriaModal.container.classList.contains('is-active')) { history.back(); }
+                    else if (textModal.container && textModal.container.classList.contains('is-active')) { textModal.close(); }
+                }
+            });
         });
     </script>
 </body>
