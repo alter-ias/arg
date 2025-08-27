@@ -20,25 +20,52 @@ collections:
             widget: "list"
             summary: "{{fields.titulo}}"
             fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
-              - {label: "Título", name: "titulo", widget: "string"}
-              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
-              - {label: "Contenido", name: "contenido", widget: "markdown"}
+              - label: "ID"
+                name: "id"
+                widget: "number"
+                value_type: "int"
+              - label: "Título"
+                name: "titulo"
+                widget: "string"
+              - label: "URL de Imagen"
+                name: "imagenUrl"
+                widget: "image"
+              - label: "Contenido"
+                name: "contenido"
+                widget: "markdown"
           - label: "Ironías Volterianas"
             name: "ironias-volterianas"
             widget: "list"
             summary: "{{fields.titulo}}"
             fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
-              - {label: "Título", name: "titulo", widget: "string"}
-              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
-              - {label: "Contenido", name: "contenido", widget: "markdown"}
+              - label: "ID"
+                name: "id"
+                widget: "number"
+                value_type: "int"
+              - label: "Título"
+                name: "titulo"
+                widget: "string"
+              - label: "URL de Imagen"
+                name: "imagenUrl"
+                widget: "image"
+              - label: "Contenido"
+                name: "contenido"
+                widget: "markdown"
           - label: "Atlas del Cielo"
             name: "atlas-cielo"
             widget: "list"
             summary: "{{fields.titulo}}"
             fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
-              - {label: "Título", name: "titulo", widget: "string"}
-              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
-              - {label: "Contenido", name: "contenido", widget: "markdown"}
+              - label: "ID"
+                name: "id"
+                widget: "number"
+                value_type: "int"
+              - label: "Título"
+                name: "titulo"
+                widget: "string"
+              - label: "URL de Imagen"
+                name: "imagenUrl"
+                widget: "image"
+              - label: "Contenido"
+                name: "contenido"
+                widget: "markdown"
