@@ -1,6 +1,12 @@
-# Backend: Le decimos que use el puente de Netlify (Git Gateway)
+# Backend: Volvemos al método de autenticación directa con GitHub
 backend:
-  name: git-gateway
+  name: github
+  repo: alter-ias/arg # Tu usuario/repositorio
+  branch: main # Tu rama principal
+  auth_type: pkce
+  
+  # ¡ACCIÓN REQUERIDA! Pega tu Client ID de la app OAuth de GitHub aquí.
+  app_id: TU_CLIENT_ID_DE_GITHUB_VA_AQUI
 
 # Dónde subir las imágenes
 media_folder: "assets/img/uploads"
@@ -15,30 +21,21 @@ collections:
         name: "datos_principales"
         file: "data/datosarg.json"
         fields:
-          - label: "Ecos en las Ruinas"
-            name: "ecos-ruinas"
-            widget: "list"
-            summary: "{{fields.titulo}}"
-            fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
-              - {label: "Título", name: "titulo", widget: "string"}
-              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
-              - {label: "Contenido", name: "contenido", widget: "markdown"}
-          - label: "Ironías Volterianas"
-            name: "ironias-volterianas"
-            widget: "list"
-            summary: "{{fields.titulo}}"
-            fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
-              - {label: "Título", name: "titulo", widget: "string"}
-              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
-              - {label: "Contenido", name: "contenido", widget: "markdown"}
-          - label: "Atlas del Cielo"
-            name: "atlas-cielo"
-            widget: "list"
-            summary: "{{fields.titulo}}"
-            fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
-              - {label: "Título", name: "titulo", widget: "string"}
-              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
-              - {label: "Contenido", name: "contenido", widget: "markdown"}
+          - {label: "Ecos en las Ruinas", name: "ecos-ruinas", widget: "list", summary: "{{fields.titulo}}", fields: [
+              {label: "ID", name: "id", widget: "number", value_type: "int"},
+              {label: "Título", name: "titulo", widget: "string"},
+              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
+              {label: "Contenido", name: "contenido", widget: "markdown"}
+            ]}
+          - {label: "Ironías Volterianas", name: "ironias-volterianas", widget: "list", summary: "{{fields.titulo}}", fields: [
+              {label: "ID", name: "id", widget: "number", value_type: "int"},
+              {label: "Título", name: "titulo", widget: "string"},
+              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
+              {label: "Contenido", name: "contenido", widget: "markdown"}
+            ]}
+          - {label: "Atlas del Cielo", name: "atlas-cielo", widget: "list", summary: "{{fields.titulo}}", fields: [
+              {label: "ID", name: "id", widget: "number", value_type: "int"},
+              {label: "Título", name: "titulo", widget: "string"},
+              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
+              {label: "Contenido", name: "contenido", widget: "markdown"}
+            ]}
