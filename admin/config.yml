@@ -1,20 +1,18 @@
-  # Backend: Le decimos que use el servicio de Netlify para la autenticación con GitHub
+# Backend: Configuración final y robusta
 backend:
   name: github
-  repo: alter-ias/arg # Tu usuario/repositorio (esto está bien)
-  branch: main # Tu rama principal (esto está bien)
-  auth_type: "pkce"
+  repo: alter-ias/arg # TU REPOSITORIO: usuario/nombre
+  branch: main # TU RAMA PRINCIPAL: main o master
+  auth_type: pkce
   
-  # --- ¡ACCIÓN REQUERIDA! ---
-  # Pega aquí tu "Client ID" de la aplicación OAuth de GitHub.
-  # Reemplaza TODO lo que está después de "app_id:".
+  # ACCIÓN: Pega tu Client ID aquí debajo
   app_id: Ov23liIaLFK6sR9PSY9p
-  
+
 # Dónde subir las imágenes
 media_folder: "assets/img/uploads"
 public_folder: "/arg/assets/img/uploads"
 
-# Colecciones: Editaremos un solo archivo
+# Colecciones
 collections:
   - name: "contenido_web"
     label: "Contenido del Sitio"
@@ -23,30 +21,21 @@ collections:
         name: "datos_principales"
         file: "data/datosarg.json"
         fields:
-          - label: "Ecos en las Ruinas"
-            name: "ecos-ruinas"
-            widget: "list"
-            summary: "{{fields.titulo}}"
-            fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
-              - {label: "Título", name: "titulo", widget: "string"}
-              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
-              - {label: "Contenido", name: "contenido", widget: "markdown"}
-          - label: "Ironías Volterianas"
-            name: "ironias-volterianas"
-            widget: "list"
-            summary: "{{fields.titulo}}"
-            fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
-              - {label: "Título", name: "titulo", widget: "string"}
-              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
-              - {label: "Contenido", name: "contenido", widget: "markdown"}
-          - label: "Atlas del Cielo"
-            name: "atlas-cielo"
-            widget: "list"
-            summary: "{{fields.titulo}}"
-            fields:
-              - {label: "ID", name: "id", widget: "number", value_type: "int"}
-              - {label: "Título", name: "titulo", widget: "string"}
-              - {label: "URL de Imagen", name: "imagenUrl", widget: "image"}
-              - {label: "Contenido", name: "contenido", widget: "markdown"}
+          - {label: "Ecos en las Ruinas", name: "ecos-ruinas", widget: "list", summary: "{{fields.titulo}}", fields: [
+              {label: "ID", name: "id", widget: "number", value_type: "int"},
+              {label: "Título", name: "titulo", widget: "string"},
+              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
+              {label: "Contenido", name: "contenido", widget: "markdown"}
+            ]}
+          - {label: "Ironías Volterianas", name: "ironias-volterianas", widget: "list", summary: "{{fields.titulo}}", fields: [
+              {label: "ID", name: "id", widget: "number", value_type: "int"},
+              {label: "Título", name: "titulo", widget: "string"},
+              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
+              {label: "Contenido", name: "contenido", widget: "markdown"}
+            ]}
+          - {label: "Atlas del Cielo", name: "atlas-cielo", widget: "list", summary: "{{fields.titulo}}", fields: [
+              {label: "ID", name: "id", widget: "number", value_type: "int"},
+              {label: "Título", name: "titulo", widget: "string"},
+              {label: "URL de Imagen", name: "imagenUrl", widget: "image"},
+              {label: "Contenido", name: "contenido", widget: "markdown"}
+            ]}
