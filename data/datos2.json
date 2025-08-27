@@ -1,0 +1,24 @@
+{
+  "ecos-ruinas": [
+    {
+      "id": 1,
+      "titulo": "El Baile Cósmico de Mercurio Retrógrado",
+      "imagenUrl": "assets/img/img01.png",
+      "contenido": "<p>Este es el texto completo del ensayo sobre Mercurio Retrógrado. Puedes usar <strong>etiquetas HTML</strong> para darle formato, como negritas, itálicas o incluso párrafos adicionales.</p><p>Esto permite una gran flexibilidad en la presentación del contenido final.</p>"
+    },
+    {
+      "id": 2,
+      "titulo": "Urano en Géminis",
+      "imagenUrl": "assets/img/img02.png",
+      "contenido": "<p>Contenido completo del ensayo sobre Urano en Géminis.</p>"
+    },
+    {
+      "id": 3,
+      "titulo": "Solsticio de Verano",
+      "imagenUrl": "assets/img/img03.png",
+      "contenido": "<p>Contenido completo del ensayo sobre el Solsticio de Verano.</p>"
+    }
+  ],
+  "ironias-volterianas": [],
+  "atlas-cielo": []
+}
