@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración - Blog Argentino</title>
+    <style>
+        /* Estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo img {
+            height: 50px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        /* Panel de administración */
+        .admin-panel {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .panel-title {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary);
+        }
+        
+        /* Formulario */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-delete {
+            background-color: var(--accent);
+        }
+        
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Lista de entradas */
+        .posts-list {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        
+        .post-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .post-item:last-child {
+            border-bottom: none;
+        }
+        
+        .post-title {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .post-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .post-actions {
+                align-self: flex-end;
+            }
+        }
+        
+        /* Botón de volver */
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .back-btn:hover {
+            background-color: #1a252f;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="assets/img/logo01.png" alt="Logo Blog">
+                <h1>Administración Blog Argentino</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Panel de administración -->
+    <main class="container">
+        <div class="admin-panel">
+            <h2 class="panel-title">Crear/Editar Entrada</h2>
+            <form id="postForm">
+                <input type="hidden" id="postId">
+                <div class="form-group">
+                    <label for="postTitle">Título:</label>
+                    <input type="text" id="postTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="postDate">Fecha (opcional):</label>
+                    <input type="text" id="postDate" placeholder="Ej: 15 de Octubre, 2023">
+                </div>
+                
+                <div class="form-group">
+                    <label for="postImage">URL de imagen:</label>
+                    <input type="text" id="postImage" placeholder="https://ejemplo.com/imagen.jpg">
+                </div>
+                
+                <div class="form-group">
+                    <label for="postVideo">URL de video (opcional):</label>
+                    <input type="text" id="postVideo" placeholder="https://ejemplo.com/video.mp4">
+                </div>
+                
+                <div class="form-group">
+                    <label for="postExcerpt">Extracto:</label>
+                    <textarea id="postExcerpt" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="postContent">Contenido:</label>
+                    <textarea id="postContent" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn">Guardar Entrada</button>
+                <button type="button" class="btn btn-delete" id="cancelBtn">Cancelar</button>
+            </form>
+        </div>
+        
+        <!-- Lista de entradas existentes -->
+        <div class="posts-list">
+            <h2 class="panel-title">Entradas Existentes</h2>
+            <div id="postsList">
+                <!-- Las entradas se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Botón de volver -->
+    <button class="back-btn" onclick="window.location.href='argblog.html'">🏠</button>
+
+    <script>
+        // Datos de ejemplo para el blog (en una implementación real, esto se guardaría en localStorage o en un archivo)
+        let blogPosts = [
+            {
+                id: 1,
+                title: "La cultura argentina en el siglo XXI",
+                date: "15 de Octubre, 2023",
+                excerpt: "Exploramos cómo la cultura argentina ha evolucionado en las últimas décadas...",
+                image: "assets/img/img01.png",
+                video: "",
+                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl."
+            },
+            {
+                id: 2,
+                title: "Tendencias tecnológicas en Buenos Aires",
+                date: "10 de Octubre, 2023",
+                excerpt: "Descubre las últimas innovaciones tecnológicas que están surgiendo en la capital argentina...",
+                image: "assets/img/img02.png",
+                video: "",
+                content: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+            },
+            {
+                id: 3,
+                title: "Gastronomía argentina: más allá del asado",
+                date: "5 de Octubre, 2023",
+                excerpt: "Exploramos la riqueza culinaria argentina que va más allá de los clásicos emblemas gastronómicos...",
+                image: "assets/img/img03.png",
+                video: "",
+                content: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            }
+        ];
+
+        // Función para guardar datos en localStorage
+        function savePosts() {
+            localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
+        }
+
+        // Función para cargar datos de localStorage
+        function loadPosts() {
+            const storedPosts = localStorage.getItem('blogPosts');
+            if (storedPosts) {
+                blogPosts = JSON.parse(storedPosts);
+            }
+        }
+
+        // Función para renderizar la lista de entradas
+        function renderPostsList() {
+            const listContainer = document.getElementById('postsList');
+            listContainer.innerHTML = '';
+            
+            blogPosts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post-item';
+                postElement.innerHTML = `
+                    <div>
+                        <div class="post-title">${post.title}</div>
+                        <div class="post-date">${post.date || 'Sin fecha'}</div>
+                    </div>
+                    <div class="post-actions">
+                        <button class="btn btn-small" onclick="editPost(${post.id})">Editar</button>
+                        <button class="btn btn-small btn-delete" onclick="deletePost(${post.id})">Eliminar</button>
+                    </div>
+                `;
+                listContainer.appendChild(postElement);
+            });
+        }
+
+        // Función para editar una entrada
+        function editPost(id) {
+            const post = blogPosts.find(p => p.id === id);
+            if (post) {
+                document.getElementById('postId').value = post.id;
+                document.getElementById('postTitle').value = post.title;
+                document.getElementById('postDate').value = post.date || '';
+                document.getElementById('postImage').value = post.image;
+                document.getElementById('postVideo').value = post.video || '';
+                document.getElementById('postExcerpt').value = post.excerpt;
+                document.getElementById('postContent').value = post.content;
+                
+                // Scroll al formulario
+                document.getElementById('postForm').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Función para eliminar una entrada
+        function deletePost(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta entrada?')) {
+                blogPosts = blogPosts.filter(post => post.id !== id);
+                savePosts();
+                renderPostsList();
+            }
+        }
+
+        // Función para limpiar el formulario
+        function clearForm() {
+            document.getElementById('postId').value = '';
+            document.getElementById('postForm').reset();
+        }
+
+        // Manejar el envío del formulario
+        document.getElementById('postForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('postId').value;
+            const title = document.getElementById('postTitle').value;
+            const date = document.getElementById('postDate').value || new Date().toLocaleDateString('es-ES', { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+            });
+            const image = document.getElementById('postImage').value;
+            const video = document.getElementById('postVideo').value;
+            const excerpt = document.getElementById('postExcerpt').value;
+            const content = document.getElementById('postContent').value;
+            
+            if (id) {
+                // Editar entrada existente
+                const index = blogPosts.findIndex(post => post.id == id);
+                if (index !== -1) {
+                    blogPosts[index] = { id: parseInt(id), title, date, image, video, excerpt, content };
+                }
+            } else {
+                // Crear nueva entrada
+                const newId = blogPosts.length > 0 ? Math.max(...blogPosts.map(p => p.id)) + 1 : 1;
+                blogPosts.push({ id: newId, title, date, image, video, excerpt, content });
+            }
+            
+            savePosts();
+            renderPostsList();
+            clearForm();
+        });
+
+        // Cancelar edición
+        document.getElementById('cancelBtn').addEventListener('click', clearForm);
+
+        // Cargar datos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPosts();
+            renderPostsList();
+        });
+    </script>
+</body>
+</html>
