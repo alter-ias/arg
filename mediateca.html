@@ -44,72 +44,51 @@
         .hero-content h1 { font-family: var(--font-serif); font-size: 5rem; margin-bottom: 0.5rem; }
         .hero-content p { font-size: 1.2rem; max-width: 600px; margin-top: 0; }
 
-        .dual-archive-block {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            height: 100vh;
-            align-items: center;
-            padding: 2rem 4rem; /* Añadimos más padding horizontal */
-        }
+        .dual-archive-block { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; height: 100vh; align-items: center; padding: 2rem 4rem; }
 
-        .archive-pane {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+        .archive-pane { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
         .block-title { font-family: var(--font-serif); font-size: 2.5rem; margin-bottom: 2rem; text-align: center; }
         
         .player-container { width: 100%; margin-bottom: 1rem; }
-        .video-wrapper {
-            position: relative;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            height: 0;
-            overflow: hidden;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
+        .video-wrapper { position: relative; padding-top: 56.25%; height: 0; overflow: hidden; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        /* --- CORRECCIÓN CLAVE 1: Altura del embed de Spotify en PC --- */
-        #podcast-archive .player-container {
-            height: 550px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
+        #podcast-archive .player-container { height: 352px; border-radius: 12px; overflow: hidden; }
         #podcast-archive .player-container iframe { width: 100%; height: 100%; border: none; }
         
         .media-description { font-size: 0.9rem; font-style: italic; opacity: 0.8; max-width: 90%; text-align: center; margin-bottom: 1.5rem; }
 
-        .media-list { display: flex; flex-direction: column; overflow-y: auto; text-align: left; width: 100%; }
-        .media-list ul { list-style: none; padding: 0; margin: 0; }
-        .media-link { display: block; padding: 0.75rem; text-decoration: none; color: var(--color-light); border-radius: 5px; margin-bottom: 0.5rem; transition: background-color 0.3s; cursor: pointer; border: 1px solid transparent; }
+        /* ======================================================= */
+        /* NUEVA CAJA DE LISTA CON SCROLL                          */
+        /* ======================================================= */
+        .media-list-box {
+            width: 100%;
+            height: 160px; /* Altura fija para mostrar aprox. 3 items */
+            overflow-y: auto; /* Scroll vertical si el contenido excede la altura */
+            padding: 0.5rem;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        
+        /* Estilo de la barra de scroll */
+        .media-list-box::-webkit-scrollbar { width: 8px; }
+        .media-list-box::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+        .media-list-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+        .media-list-box::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
+
+        .media-list-box ul { list-style: none; padding: 0; margin: 0; }
+        .media-link { display: block; padding: 0.75rem; text-decoration: none; color: var(--color-light); border-radius: 5px; margin-bottom: 0.25rem; transition: background-color 0.3s; cursor: pointer; border: 1px solid transparent; }
         .media-link:hover { background-color: rgba(255, 255, 255, 0.1); }
         .media-link.is-active { background-color: rgba(255, 255, 255, 0.15); border-color: var(--color-light); font-weight: bold; }
 
         @media (max-width: 900px) {
             .hero-content h1 { font-size: 3rem; }
             .hero-content p, .media-link { font-size: 1rem; }
-            
-            .dual-archive-block {
-                grid-template-columns: 1fr;
-                height: auto;
-                gap: 3rem; /* Espacio vertical entre bloques en móvil */
-                padding: 2rem;
-            }
-            
-            /* --- CORRECCIÓN CLAVE 2: Compactación en Móvil --- */
-            .archive-pane {
-                min-height: auto; /* Se elimina la altura de 100vh */
-                height: auto;
-                padding: 2rem 0; /* Espacio vertical para respirar */
-            }
-            #podcast-archive .player-container { height: 352px; } /* Se devuelve a la altura estándar en móvil */
+            .dual-archive-block { grid-template-columns: 1fr; height: auto; gap: 3rem; padding: 2rem; }
+            .archive-pane { min-height: auto; height: auto; padding: 2rem 0; }
+            #podcast-archive .player-container { height: 352px; }
             .block-title { font-size: 2rem; }
         }
     </style>
@@ -130,11 +109,19 @@
                 <iframe id="youtube-player" src="" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
             <p class="media-description">Breve pieza que explora la identidad y el concepto del "Jardín Digital".</p>
-            <div class="media-list">
+            <div class="media-list-box">
                 <ul id="video-list-ul"></ul>
                 <div id="video-sources" style="display: none;">
                     <a data-src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk">¿Quién es Alan Ruíz?</a>
                     <a data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Manifiesto</a>
+                    <a data-src="https://www.youtube-nocookie.com/embed/VIDEO_ID_3">Entrada de Video 3</a>
+                    <a data-src="https://www.youtube-nocookie.com/embed/VIDEO_ID_4">Entrada de Video 4</a>
+                    <a data-src="https://www.youtube-nocookie.com/embed/VIDEO_ID_5">Entrada de Video 5</a>
+                    <a data-src="https://www.youtube-nocookie.com/embed/VIDEO_ID_6">Entrada de Video 6</a>
+                    <a data-src="https://www.youtube-nocookie.com/embed/VIDEO_ID_7">Entrada de Video 7</a>
+                    <a data-src="https://www.youtube-nocookie.com/embed/VIDEO_ID_8">Entrada de Video 8</a>
+                    <a data-src="https://www.youtube-nocookie.com/embed/VIDEO_ID_9">Entrada de Video 9</a>
+                    <a data-src="https://www.youtube-nocookie.com/embed/VIDEO_ID_10">Entrada de Video 10</a>
                 </div>
             </div>
         </div>
@@ -142,21 +129,28 @@
         <div class="archive-pane" id="podcast-archive">
             <h2 class="block-title">Archivo Sonoro</h2>
             <div class="player-container">
-                <iframe id="spotify-player" src="" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                <iframe id="spotify-player" src="" style="border-radius:12px" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
             <p class="media-description">Conversaciones y exploraciones sonoras sobre arte, cultura y pensamiento contemporáneo.</p>
-            <div class="media-list">
+            <div class="media-list-box">
                 <ul id="podcast-list-ul"></ul>
                 <div id="podcast-sources" style="display: none;">
-                    <a data-src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0">Episodio sobre Creatividad</a>
+                    <a data-src="https://open.spotify.com/embed/episode/1UNPu6kLKZJ3fHrCWB4yJg?utm_source=generator&theme=0">Episodio sobre Creatividad</a>
                     <a data-src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0">Diálogos sobre el Futuro</a>
+                    <a data-src="https://open.spotify.com/embed/episode/PODCAST_ID_3">Episodio de Podcast 3</a>
+                    <a data-src="https://open.spotify.com/embed/episode/PODCAST_ID_4">Episodio de Podcast 4</a>
+                    <a data-src="https://open.spotify.com/embed/episode/PODCAST_ID_5">Episodio de Podcast 5</a>
+                    <a data-src="https://open.spotify.com/embed/episode/PODCAST_ID_6">Episodio de Podcast 6</a>
+                    <a data-src="https://open.spotify.com/embed/episode/PODCAST_ID_7">Episodio de Podcast 7</a>
+                    <a data-src="https://open.spotify.com/embed/episode/PODCAST_ID_8">Episodio de Podcast 8</a>
+                    <a data-src="https://open.spotify.com/embed/episode/PODCAST_ID_9">Episodio de Podcast 9</a>
+                    <a data-src="https://open.spotify.com/embed/episode/PODCAST_ID_10">Episodio de Podcast 10</a>
                 </div>
             </div>
         </div>
     </section>
 
     <script>
-        // El JavaScript no necesita cambios.
         document.addEventListener('DOMContentLoaded', () => {
             function setupArchiveSection(sectionId, playerIframeId, sourcesDivId, listUlId) {
                 const section = document.getElementById(sectionId);
