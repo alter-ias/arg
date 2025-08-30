@@ -15,12 +15,15 @@
             --font-serif: 'Cormorant Garamond', serif;
             --font-sans: 'Poppins', sans-serif;
             --color-light: #f8f9fa;
+            
+            /* Paletas de colores como variables para el control dinámico */
+            --gradient-warm: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            --gradient-cool: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
         }
 
         * { box-sizing: border-box; }
         body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
         
-        /* --- CORRECCIÓN 1: Centrar el logo ARG --- */
         header { 
             padding: 1.5rem var(--main-gap); 
             position: fixed; 
@@ -29,25 +32,61 @@
             width: 100%; 
             z-index: 1000; 
             mix-blend-mode: exclusion;
+            /* --- CORRECCIÓN 1: Centrar el logo y los controles --- */
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 1rem;
         }
 
         .header-logo a { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light); }
+        
+        /* --- NUEVO: Controles de Filtro --- */
+        .filter-controls {
+            display: flex;
+            gap: 0.5rem;
+            background-color: rgba(0,0,0,0.3);
+            padding: 0.5rem;
+            border-radius: 20px;
+        }
+        .filter-btn {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--color-light);
+            cursor: pointer;
+            transition: transform 0.2s;
+            background-color: transparent;
+        }
+        .filter-btn:hover { transform: scale(1.1); }
+        .filter-btn.is-active { border-width: 4px; }
+        #filter-off { background-color: #1a1a1a; }
+        #filter-warm { background: var(--gradient-warm); }
+        #filter-cool { background: var(--gradient-cool); }
+
         .media-block { position: relative; width: 100%; height: 80vh; overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; }
         #block-1 { height: 100vh; }
         .background-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; }
         .background-media img, .background-media video { width: 100%; height: 130%; object-fit: cover; will-change: transform; }
         .media-block::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 2; }
         
-        .color-overlay { position: absolute; z-index: 3; }
-        .overlay-full { width: 100%; height: 100%; opacity: 0.6; }
-        .overlay-window { width: 100%; height: 100%; padding: 3rem; opacity: 0.8; }
-        @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .iridescent-base { background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; }
-        .iridescent-slow-h { animation: gradient-horizontal 25s ease infinite; }
-        .iridescent-fast-v { animation: gradient-vertical 8s ease infinite; }
+        .color-overlay { 
+            position: absolute; z-index: 3;
+            width: 100%; height: 100%;
+            /* Por defecto es invisible */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            /* El JS le dará el color de fondo */
+            background: var(--active-gradient);
+            background-size: 400% 400%;
+            animation: gradient-horizontal 25s ease infinite;
+        }
+        
+        /* Cuando el body tenga el atributo, el filtro se hace visible */
+        body[data-filter-active] .color-overlay {
+            opacity: 0.4;
+        }
 
         .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
         .media-block.is-visible .content-overlay { opacity: 1; transform: translateY(0); }
@@ -62,35 +101,36 @@
         .iframe-container { width: 100%; height: 100%; }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
 
-        /* --- CORRECCIÓN 2: Footer con fondo tornasolado --- */
         footer { 
-            position: relative;
-            text-align: center; 
-            font-size: 0.9rem; 
-            padding: 4rem var(--main-gap); 
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient-horizontal 25s ease infinite;
+            position: relative; text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); 
+            background: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
+            background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite;
         }
-        footer p {
-            position: relative;
-            z-index: 2;
-        }
+        footer p { position: relative; z-index: 2; }
     </style>
 </head>
 <body>
 
-    <header><div class="header-logo"><a href="#">ARG</a></div></header>
+    <header>
+        <div class="header-logo"><a href="#">ARG</a></div>
+        <!-- Controles del filtro -->
+        <div class="filter-controls">
+            <button class="filter-btn is-active" id="filter-off" data-palette="off" title="Sin filtro"></button>
+            <button class="filter-btn" id="filter-warm" data-palette="warm" title="Filtro cálido"></button>
+            <button class="filter-btn" id="filter-cool" data-palette="cool" title="Filtro frío"></button>
+        </div>
+    </header>
 
     <main>
         <section class="media-block" id="block-1">
-             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530594/u4597281485_A_vast_minimalist_landscape._The_sea_is_an_almost_03674990-b688-4c55-8480-a7d71d9437c4_3_xooqz9.png" alt="Jardín Digital"></div>
+            <div class="color-overlay"></div>
+            <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530594/u4597281485_A_vast_minimalist_landscape._The_sea_is_an_almost_03674990-b688-4c55-8480-a7d71d9437c4_3_xooqz9.png" alt="Jardín Digital"></div>
             <div class="content-overlay"><h1>ALAN RUÍZ GALICIA</h1><p>Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana</p></div>
         </section>
 
         <section class="media-block" id="block-2">
+            <div class="color-overlay"></div>
             <div class="background-media"><video src="https://res.cloudinary.com/dahrwkdzd/video/upload/v1756531260/godar01_glnxkl.webm" autoplay loop muted playsinline></video></div>
-            <div class="color-overlay overlay-full iridescent-base iridescent-slow-h"></div>
             <div class="content-overlay">
                 <h2>Pergamino</h2>
                 <p>Textos periodísticos, ensayos, poemas y demás experimentos literarios</p>
@@ -99,6 +139,7 @@
         </section>
 
         <section class="media-block" id="block-3">
+            <div class="color-overlay"></div>
             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530311/u4597281485_A_tight_cinematic_shot_of_a_womans_mouth._Her_lip_6c85d667-7b45-497b-b310-0b861adb7735_1_urjioq.png" alt="Archivo Sonoro"></div>
             <div class="content-overlay">
                 <h2>Mediateca</h2>
@@ -108,8 +149,8 @@
         </section>
         
         <section class="media-block" id="block-4">
+            <div class="color-overlay"></div>
             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530574/u4597281485_A_chaotic_still_life_on_a_wooden_floor_lit_by_a_h_a157247e-085a-457b-a207-f43933663674_3_or5v4i.png" alt="Lotería"></div>
-            <div class="color-overlay overlay-window iridescent-base iridescent-fast-v"></div>
             <div class="content-overlay"><h2>Lotería Tapatía</h2><p>Una reinterpretación digital del clásico juego de mesa.</p>
                 <button class="btn" id="open-loteria-btn">Jugar Ahora</button>
             </div>
@@ -118,20 +159,9 @@
     
     <footer><p>&copy; 2025 - ARG. Todos los derechos reservados.</p></footer>
     
-    <div id="loteria-modal" class="modal-container">
-        <span id="close-loteria-btn" class="modal-close-btn">&times;</span>
-        <div id="loteria-iframe-container" class="iframe-container"></div>
-    </div>
-    
-    <div id="blog-modal" class="modal-container">
-        <span id="close-blog-btn" class="modal-close-btn">&times;</span>
-        <div id="blog-iframe-container" class="iframe-container"></div>
-    </div>
-    
-    <div id="mediateca-modal" class="modal-container">
-        <span id="close-mediateca-btn" class="modal-close-btn">&times;</span>
-        <div id="mediateca-iframe-container" class="iframe-container"></div>
-    </div>
+    <div id="loteria-modal" class="modal-container"><span id="close-loteria-btn" class="modal-close-btn">&times;</span><div id="loteria-iframe-container" class="iframe-container"></div></div>
+    <div id="blog-modal" class="modal-container"><span id="close-blog-btn" class="modal-close-btn">&times;</span><div id="blog-iframe-container" class="iframe-container"></div></div>
+    <div id="mediateca-modal" class="modal-container"><span id="close-mediateca-btn" class="modal-close-btn">&times;</span><div id="mediateca-iframe-container" class="iframe-container"></div></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -158,13 +188,38 @@
                 });
                 ticking = false;
             }
-            window.addEventListener('scroll', () => {
-                if (!ticking) { window.requestAnimationFrame(updateScrollEffects); ticking = true; }
-            });
+            window.addEventListener('scroll', () => { if (!ticking) { window.requestAnimationFrame(updateScrollEffects); ticking = true; } });
             updateScrollEffects();
 
-            // --- GESTIÓN DE MODALES CON HISTORIAL ---
-            
+            // --- LÓGICA DEL NUEVO FILTRO TORNASOLADO ---
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const body = document.body;
+            const root = document.documentElement;
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Actualizar el botón activo
+                    filterButtons.forEach(btn => btn.classList.remove('is-active'));
+                    button.classList.add('is-active');
+
+                    const palette = button.dataset.palette;
+
+                    if (palette === 'off') {
+                        body.removeAttribute('data-filter-active');
+                    } else {
+                        // Activar el filtro y establecer la paleta de colores correcta
+                        body.setAttribute('data-filter-active', palette);
+                        const gradient = getComputedStyle(root).getPropertyValue(`--gradient-${palette}`);
+                        document.querySelectorAll('.color-overlay').forEach(overlay => {
+                            overlay.style.background = gradient;
+                            overlay.style.backgroundSize = '400% 400%';
+                            overlay.style.animation = 'gradient-horizontal 25s ease infinite';
+                        });
+                    }
+                });
+            });
+
+            // --- GESTIÓN DE MODALES (SIN CAMBIOS) ---
             function openModal(modal, iframeContainer, url, historyState, historyHash) {
                 if (modal.classList.contains('is-active')) return;
                 const iframe = document.createElement('iframe');
@@ -174,32 +229,26 @@
                 document.body.style.overflow = 'hidden';
                 history.pushState({ modal: historyState }, '', historyHash);
             }
-
             function closeModal(modal, iframeContainer) {
                 if (!modal.classList.contains('is-active')) return;
                 modal.classList.remove('is-active');
                 document.body.style.overflow = '';
                 iframeContainer.innerHTML = '';
             }
-
             const loteriaModal = document.getElementById('loteria-modal');
             document.getElementById('open-loteria-btn').addEventListener('click', () => openModal(loteriaModal, document.getElementById('loteria-iframe-container'), 'https://alter-ias.github.io/arg/loteriatapatiax.html', 'loteria', '#loteria'));
             document.getElementById('close-loteria-btn').addEventListener('click', () => history.back());
-
             const blogModal = document.getElementById('blog-modal');
             document.getElementById('open-blog-btn').addEventListener('click', () => openModal(blogModal, document.getElementById('blog-iframe-container'), 'https://alter-ias.github.io/arg/argblog.html', 'blog', '#blog'));
             document.getElementById('close-blog-btn').addEventListener('click', () => history.back());
-
             const mediatecaModal = document.getElementById('mediateca-modal');
             document.getElementById('open-mediateca-btn').addEventListener('click', () => openModal(mediatecaModal, document.getElementById('mediateca-iframe-container'), 'https://alter-ias.github.io/arg/mediateca.html', 'mediateca', '#mediateca'));
             document.getElementById('close-mediateca-btn').addEventListener('click', () => history.back());
-            
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && (loteriaModal.classList.contains('is-active') || blogModal.classList.contains('is-active') || mediatecaModal.classList.contains('is-active'))) {
                     history.back();
                 }
             });
-
             window.addEventListener('popstate', () => {
                 closeModal(loteriaModal, document.getElementById('loteria-iframe-container'));
                 closeModal(blogModal, document.getElementById('blog-iframe-container'));
