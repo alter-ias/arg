@@ -3,134 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARG - Prueba de Fondo Parallax</title>
+    <title>ARG - Jardín Digital</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     
     <style>
-        * { box-sizing: border-box; }
+        :root {
+            --main-gap: 2rem;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Poppins', sans-serif;
+            --color-light: #f8f9fa;
+        }
 
+        /* ======================================================= */
+        /* BASE Y RESET                                            */
+        /* ======================================================= */
+        * { box-sizing: border-box; }
         body {
             margin: 0;
-            /* Le damos una altura muy grande para poder hacer scroll y ver el efecto */
-            height: 500vh; 
+            font-family: var(--font-sans);
+            color: var(--color-light);
             background-color: #1a1a1a;
             overflow-x: hidden;
         }
 
-        /* 
-         El contenedor principal del fondo.
-         Es fijo, así que se queda quieto mientras el body se desplaza.
-        */
-        .parallax-background {
+        /* ======================================================= */
+        /* ENCABEZADO FIJO                                         */
+        /* ======================================================= */
+        header {
+            padding: 1.5rem var(--main-gap);
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100vh; /* Ocupa toda la pantalla */
-            overflow: hidden; /* Evita que los elementos al moverse generen barras de scroll */
-            z-index: -1; /* Se asegura de que esté detrás de todo */
+            z-index: 1000;
+            mix-blend-mode: exclusion;
+        }
+        
+        .header-logo a {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--color-light);
         }
 
-        /* 
-         Cada imagen o video individual en el fondo.
-         Se posicionan de forma absoluta para crear el collage.
-        */
-        .parallax-element {
+        /* ======================================================= */
+        /* ESTRUCTURA DE BLOQUES DE SCROLL                         */
+        /* ======================================================= */
+        .media-block {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* Cada bloque ocupa la pantalla completa */
+            overflow: hidden; /* CRUCIAL: Esconde las partes de la imagen que se salen */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .media-background {
             position: absolute;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            border-radius: 8px;
-            overflow: hidden;
-            /* La magia del movimiento la controla el JavaScript con 'transform' */
-            will-change: transform;
-        }
-
-        .parallax-element img,
-        .parallax-element video {
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Asegura que el medio llene el contenedor sin deformarse */
-            display: block;
+            
+            /* Clave para el efecto de "scroll interno" */
+            background-size: cover;
+            background-position: center 0%; /* Inicia mostrando la parte de arriba */
+            background-repeat: no-repeat;
+            
+            z-index: 1;
+            will-change: background-position; /* Optimizamos la propiedad que vamos a animar */
         }
 
+        /* Superposición oscura para legibilidad del texto */
+        .media-block::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        .content-overlay {
+            position: relative;
+            z-index: 3;
+            padding: var(--main-gap);
+            max-width: 800px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            /* Animación sutil de aparición */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        /* El JS añadirá la clase 'is-visible' al hacer scroll */
+        .media-block.is-visible .content-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ======================================================= */
+        /* ESTILOS DE CONTENIDO SUPERPUESTO                        */
+        /* ======================================================= */
+        .content-overlay h1, .content-overlay h2 {
+            font-family: var(--font-serif);
+            font-weight: 600;
+            line-height: 1.1;
+            margin: 0 0 1rem 0;
+        }
+        .content-overlay h1 { font-size: 5rem; }
+        .content-overlay h2 { font-size: 4rem; }
+        .content-overlay p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 1.5rem auto; }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.8rem;
+            border: 2px solid var(--color-light);
+            color: var(--color-light);
+            background-color: transparent;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 50px;
+        }
+        .btn:hover { background-color: var(--color-light); color: #1a1a1a; }
+        
+        /* ======================================================= */
+        /* ASIGNACIÓN DE IMÁGENES DE FONDO                         */
+        /* ======================================================= */
+        #block-1 .media-background { background-image: url('https://static.wixstatic.com/media/45d10e_5f001b282712449b808f44d927af9fc6~mv2.jpg/v1/fill/w_3806,h_3756,al_b,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/45d10e_5f001b282712449b808f44d927af9fc6~mv2.jpg'); }
+        #block-2 .media-background { background-image: url('https://static.wixstatic.com/media/45d10e_88ed9eeed26244fcb4bb74e74c3c8997~mv2.jpg/v1/fill/w_3818,h_1096,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/45d10e_88ed9eeed26244fcb4bb74e74c3c8997~mv2.jpg'); }
+        #block-3 .media-background { background-image: url('https://static.wixstatic.com/media/c837a6_4a4f895c121848afad327ce95285005c~mv2.jpg/v1/fill/w_2500,h_1232,al_c,q_90,enc_avif,quality_auto/c837a6_4a4f895c121848afad327ce95285005c~mv2.jpg'); }
+        #block-4 .media-background { background-image: url('https://static.wixstatic.com/media/11062b_540eb79aa87a4e09b665e6daf5843bfa~mv2.jpg/v1/fill/w_5000,h_868,al_t,q_90,enc_avif,quality_auto/11062b_540eb79aa87a4e09b665e6daf5843bfa~mv2.jpg'); }
+        
+        footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background-color: #111; }
+
+        @media (max-width: 768px) {
+            .content-overlay h1 { font-size: 3rem; }
+            .content-overlay h2 { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 
-      Este es nuestro lienzo. Contiene todos los elementos multimedia
-      que se moverán a diferentes velocidades.
-    -->
-    <div class="parallax-background">
+    <header>
+        <div class="header-logo"><a href="#">ARG</a></div>
+    </header>
 
-        <!-- Fila 1: img01.png -->
-        <div class="parallax-element" 
-             data-speed="-0.3" 
-             style="top: 5%; left: 10%; width: 80vw; height: 35vh;">
-            <img src="assets/img/img01.png" alt="Fondo 1">
-        </div>
+    <main>
+        <section class="media-block" id="block-1">
+            <div class="media-background"></div>
+            <div class="content-overlay">
+                <h1>Jardín Digital</h1>
+                <p>Una colección de Alan Ruíz Galicia</p>
+            </div>
+        </section>
 
-        <!-- Fila 2: skin02.webm -->
-        <div class="parallax-element" 
-             data-speed="-0.5" 
-             style="top: 45%; left: 5%; width: 90vw; height: 30vh;">
-            <video src="assets/vid/skin02.webm" autoplay loop muted playsinline></video>
-        </div>
+        <section class="media-block" id="block-2">
+            <div class="media-background"></div>
+            <div class="content-overlay">
+                <h2>Ecos en las Ruinas</h2>
+                <p>Las estrellas susurran historias antiguas, tejiendo destinos en el tapiz del cosmos.</p>
+                <button class="btn">Explorar</button>
+            </div>
+        </section>
+
+        <section class="media-block" id="block-3">
+            <div class="media-background"></div>
+            <div class="content-overlay">
+                <h2>Archivo Sonoro</h2>
+                <p>Fragmentos que exploran la intersección del arte, la tecnología y el espíritu.</p>
+                 <button class="btn">Escuchar</button>
+            </div>
+        </section>
         
-        <!-- Fila 3, Izquierda: img02.png -->
-        <div class="parallax-element" 
-             data-speed="-0.2" 
-             style="top: 80%; left: 2%; width: 45vw; height: 40vh;">
-            <img src="assets/img/img02.png" alt="Fondo 2">
-        </div>
-        
-        <!-- Fila 3, Derecha: skin03.webm (usé el 03 que tenías, si es 04 lo cambias) -->
-        <div class="parallax-element" 
-             data-speed="-0.6" 
-             style="top: 85%; left: 50%; width: 48vw; height: 30vh;">
-            <video src="assets/vid/skin03.webm" autoplay loop muted playsinline></video>
-        </div>
-
-        <!-- Fila 4: fondo01.webm -->
-        <div class="parallax-element" 
-             data-speed="-0.35" 
-             style="top: 120%; left: 15%; width: 70vw; height: 40vh;">
-            <video src="assets/vid/fondo01.webm" autoplay loop muted playsinline></video>
-        </div>
-
-    </div>
+        <section class="media-block" id="block-4">
+            <div class="media-background"></div>
+            <div class="content-overlay">
+                <h2>Lotería Tapatía</h2>
+                <p>Una reinterpretación digital del clásico juego de mesa.</p>
+                <button class="btn">Jugar Ahora</button>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 - ARG. Todos los derechos reservados.</p>
+    </footer>
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const parallaxElements = document.querySelectorAll('.parallax-element');
+            const mediaBlocks = document.querySelectorAll('.media-block');
+            const windowHeight = window.innerHeight;
             let ticking = false;
 
-            function updateParallax() {
-                const scrollY = window.pageYOffset;
+            function updateScrollEffects() {
+                mediaBlocks.forEach(block => {
+                    const rect = block.getBoundingClientRect();
+                    const background = block.querySelector('.media-background');
 
-                parallaxElements.forEach(element => {
-                    // La velocidad es negativa para el efecto INVERSO (al bajar, el fondo sube)
-                    const speed = parseFloat(element.dataset.speed);
-                    const yPos = scrollY * speed;
+                    // Lógica para el efecto de "Scroll Interno" de la imagen
+                    if (rect.top <= 0 && rect.bottom >= 0) {
+                        // El bloque está visible en la pantalla
+                        const progress = -rect.top / (block.offsetHeight - windowHeight);
+                        const clampedProgress = Math.max(0, Math.min(1, progress));
+                        
+                        // Mueve la posición Y del fondo de 0% a 100%
+                        background.style.backgroundPositionY = `${clampedProgress * 100}%`;
+                    }
                     
-                    element.style.transform = `translateY(${yPos}px)`;
+                    // Lógica para la aparición del contenido
+                    if (rect.top < windowHeight * 0.75 && rect.bottom > 0) {
+                         block.classList.add('is-visible');
+                    } else {
+                        // Opcional: quitar la clase si se sale de la vista para re-animar
+                        // block.classList.remove('is-visible');
+                    }
                 });
-
                 ticking = false;
             }
 
             window.addEventListener('scroll', () => {
-                // Usamos requestAnimationFrame para optimizar el rendimiento y evitar lag
                 if (!ticking) {
-                    window.requestAnimationFrame(updateParallax);
+                    window.requestAnimationFrame(updateScrollEffects);
                     ticking = true;
                 }
             });
             
-            // Llamamos a la función una vez al inicio para posicionar todo correctamente
-            updateParallax();
+            // Ejecutar una vez al cargar la página
+            updateScrollEffects();
         });
     </script>
 </body>
