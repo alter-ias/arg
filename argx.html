@@ -19,7 +19,21 @@
 
         * { box-sizing: border-box; }
         body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
-        header { padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; mix-blend-mode: exclusion; }
+        
+        /* --- CORRECCIÓN 1: Centrar el logo ARG --- */
+        header { 
+            padding: 1.5rem var(--main-gap); 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 1000; 
+            mix-blend-mode: exclusion;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .header-logo a { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light); }
         .media-block { position: relative; width: 100%; height: 80vh; overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; }
         #block-1 { height: 100vh; }
@@ -48,7 +62,20 @@
         .iframe-container { width: 100%; height: 100%; }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
 
-        footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background-color: #111; }
+        /* --- CORRECCIÓN 2: Footer con fondo tornasolado --- */
+        footer { 
+            position: relative;
+            text-align: center; 
+            font-size: 0.9rem; 
+            padding: 4rem var(--main-gap); 
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient-horizontal 25s ease infinite;
+        }
+        footer p {
+            position: relative;
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
@@ -138,7 +165,6 @@
 
             // --- GESTIÓN DE MODALES CON HISTORIAL ---
             
-            // Función genérica para abrir un modal
             function openModal(modal, iframeContainer, url, historyState, historyHash) {
                 if (modal.classList.contains('is-active')) return;
                 const iframe = document.createElement('iframe');
@@ -149,7 +175,6 @@
                 history.pushState({ modal: historyState }, '', historyHash);
             }
 
-            // Función genérica para cerrar un modal
             function closeModal(modal, iframeContainer) {
                 if (!modal.classList.contains('is-active')) return;
                 modal.classList.remove('is-active');
@@ -157,22 +182,18 @@
                 iframeContainer.innerHTML = '';
             }
 
-            // Lotería
             const loteriaModal = document.getElementById('loteria-modal');
             document.getElementById('open-loteria-btn').addEventListener('click', () => openModal(loteriaModal, document.getElementById('loteria-iframe-container'), 'https://alter-ias.github.io/arg/loteriatapatiax.html', 'loteria', '#loteria'));
             document.getElementById('close-loteria-btn').addEventListener('click', () => history.back());
 
-            // Blog
             const blogModal = document.getElementById('blog-modal');
             document.getElementById('open-blog-btn').addEventListener('click', () => openModal(blogModal, document.getElementById('blog-iframe-container'), 'https://alter-ias.github.io/arg/argblog.html', 'blog', '#blog'));
             document.getElementById('close-blog-btn').addEventListener('click', () => history.back());
 
-            // Mediateca
             const mediatecaModal = document.getElementById('mediateca-modal');
             document.getElementById('open-mediateca-btn').addEventListener('click', () => openModal(mediatecaModal, document.getElementById('mediateca-iframe-container'), 'https://alter-ias.github.io/arg/mediateca.html', 'mediateca', '#mediateca'));
             document.getElementById('close-mediateca-btn').addEventListener('click', () => history.back());
             
-            // Gestión global de historial y tecla Escape
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && (loteriaModal.classList.contains('is-active') || blogModal.classList.contains('is-active') || mediatecaModal.classList.contains('is-active'))) {
                     history.back();
