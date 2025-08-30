@@ -47,14 +47,15 @@
         .dual-archive-block {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 4rem; /* Aumentamos el espacio entre paneles */
+            gap: 4rem;
             height: 100vh;
             align-items: center;
+            padding: 2rem 4rem; /* Añadimos más padding horizontal */
         }
 
         .archive-pane {
             width: 100%;
-            height: auto;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -63,13 +64,7 @@
 
         .block-title { font-family: var(--font-serif); font-size: 2.5rem; margin-bottom: 2rem; text-align: center; }
         
-        /* ======================================================= */
-        /* SOLUCIÓN RESPONSIVA PARA VIDEO (SIN BARRAS NEGRAS)      */
-        /* ======================================================= */
-        .player-container {
-            width: 100%;
-            margin-bottom: 1rem;
-        }
+        .player-container { width: 100%; margin-bottom: 1rem; }
         .video-wrapper {
             position: relative;
             padding-top: 56.25%; /* 16:9 Aspect Ratio */
@@ -78,29 +73,18 @@
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            border: none;
-        }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        /* Contenedor de Spotify mantiene su lógica */
+        /* --- CORRECCIÓN CLAVE 1: Altura del embed de Spotify en PC --- */
         #podcast-archive .player-container {
-            height: 352px;
+            height: 550px;
             border-radius: 8px;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         #podcast-archive .player-container iframe { width: 100%; height: 100%; border: none; }
         
-        .media-description {
-            font-size: 0.9rem;
-            font-style: italic;
-            opacity: 0.8;
-            max-width: 90%;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
+        .media-description { font-size: 0.9rem; font-style: italic; opacity: 0.8; max-width: 90%; text-align: center; margin-bottom: 1.5rem; }
 
         .media-list { display: flex; flex-direction: column; overflow-y: auto; text-align: left; width: 100%; }
         .media-list ul { list-style: none; padding: 0; margin: 0; }
@@ -111,8 +95,21 @@
         @media (max-width: 900px) {
             .hero-content h1 { font-size: 3rem; }
             .hero-content p, .media-link { font-size: 1rem; }
-            .dual-archive-block { grid-template-columns: 1fr; height: auto; }
-            .archive-pane { min-height: 100vh; padding: 2rem 0; }
+            
+            .dual-archive-block {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 3rem; /* Espacio vertical entre bloques en móvil */
+                padding: 2rem;
+            }
+            
+            /* --- CORRECCIÓN CLAVE 2: Compactación en Móvil --- */
+            .archive-pane {
+                min-height: auto; /* Se elimina la altura de 100vh */
+                height: auto;
+                padding: 2rem 0; /* Espacio vertical para respirar */
+            }
+            #podcast-archive .player-container { height: 352px; } /* Se devuelve a la altura estándar en móvil */
             .block-title { font-size: 2rem; }
         }
     </style>
@@ -159,18 +156,16 @@
     </section>
 
     <script>
+        // El JavaScript no necesita cambios.
         document.addEventListener('DOMContentLoaded', () => {
             function setupArchiveSection(sectionId, playerIframeId, sourcesDivId, listUlId) {
                 const section = document.getElementById(sectionId);
                 if (!section) return;
-
                 const player = document.getElementById(playerIframeId);
                 const sourcesContainer = document.getElementById(sourcesDivId);
                 const listUl = document.getElementById(listUlId);
                 const sourceLinks = sourcesContainer.querySelectorAll('a');
-
                 if (sourceLinks.length === 0) return;
-
                 sourceLinks.forEach((link, index) => {
                     const li = document.createElement('li');
                     const newLink = document.createElement('a');
@@ -182,9 +177,7 @@
                     li.appendChild(newLink);
                     listUl.appendChild(li);
                 });
-
                 player.src = sourceLinks[0].dataset.src;
-
                 const renderedLinks = listUl.querySelectorAll('.media-link');
                 renderedLinks.forEach(link => {
                     link.addEventListener('click', function(event) {
@@ -195,7 +188,6 @@
                     });
                 });
             }
-
             setupArchiveSection('video-archive', 'youtube-player', 'video-sources', 'video-list-ul');
             setupArchiveSection('podcast-archive', 'spotify-player', 'podcast-sources', 'podcast-list-ul');
         });
