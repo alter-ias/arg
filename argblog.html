@@ -44,9 +44,19 @@
         footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background-color: #111; }
         
         #filter-container { margin-top: 2rem; }
-        .filter-btn, .tag-btn { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--color-light); padding: 0.5rem 1rem; margin: 0.25rem; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
-        .filter-btn:hover, .tag-btn:hover { background-color: var(--color-light); color: #1a1a1a; }
-        .filter-btn.is-active { background-color: var(--color-light); color: #1a1a1a; font-weight: bold; }
+        .filter-btn, .tag-btn { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--color-light); padding: 0.5rem 1rem; margin: 0.25rem; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease; }
+        
+        /* --- ESTILO DE BOTONES MEJORADO --- */
+        .filter-btn:hover, .tag-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .filter-btn.is-active {
+            background-color: rgba(255, 255, 255, 0.25);
+            border-color: var(--color-light);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
         .post-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
 
         .post-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
@@ -65,7 +75,6 @@
         .spinner { border: 4px solid rgba(255,255,255, 0.2); border-left-color: var(--color-light); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Botón "Subir" */
         .scroll-top-btn { position: fixed; bottom: 20px; right: 20px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem; cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; }
         .scroll-top-btn.is-visible { opacity: 1; pointer-events: auto; }
         .scroll-top-btn:hover { transform: scale(1.1); background-color: rgba(255,255,255,0.2); }
@@ -78,7 +87,6 @@
             <div class="content-overlay">
                 <h1>El Archivo</h1>
                 <p>Textos del Jardín Digital</p>
-                <!-- BARRA DE FILTROS MOVIDA AQUÍ -->
                 <div id="filter-container"></div>
             </div>
         </section>
@@ -106,7 +114,6 @@
         </div>
     </div>
     
-    <!-- BOTÓN "SUBIR" AÑADIDO -->
     <button id="scrollTopBtn" class="scroll-top-btn">↑</button>
 
     <script>
@@ -115,7 +122,7 @@
             const postsContainer = document.getElementById('postsContainer');
             const filterContainer = document.getElementById('filter-container');
             const loadingElement = document.getElementById('loading');
-            const scrollTopBtn = document.getElementById('scrollTopBtn'); // Referencia al nuevo botón
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
             let allPosts = [];
             let activeFilter = 'all';
 
@@ -189,7 +196,19 @@
                 document.getElementById('post-modal-title').textContent = post.title;
                 document.getElementById('post-modal-date').textContent = post.date || new Date(post.createdAt).toLocaleDateString('es-ES');
                 document.getElementById('post-modal-image').src = post.image || '';
-                document.getElementById('post-modal-body').innerHTML = post.content;
+
+                // --- CORRECCIÓN PARA PÁRRAFOS ---
+                const contentBody = document.getElementById('post-modal-body');
+                // Limpiar contenido anterior
+                contentBody.innerHTML = ''; 
+                // Dividir el contenido por saltos de línea y crear un <p> para cada uno
+                const paragraphs = post.content.split('\n').filter(p => p.trim() !== '');
+                paragraphs.forEach(pText => {
+                    const p = document.createElement('p');
+                    p.textContent = pText;
+                    contentBody.appendChild(p);
+                });
+
                 const tagsContainer = document.getElementById('post-modal-tags');
                 tagsContainer.innerHTML = '';
                 if (post.tags && Array.isArray(post.tags)) {
@@ -197,7 +216,6 @@
                 }
                 modalContainer.classList.add('is-active');
                 document.body.style.overflow = 'hidden';
-                // Añadir entrada al historial
                 history.pushState({ modal: 'post' }, '', '#post');
             }
             function closePostModal() {
@@ -223,7 +241,6 @@
                             media.style.transform = `translateY(${translateY}px)`;
                         }
                     });
-                    // Lógica para mostrar/ocultar el botón de subir
                     if (window.scrollY > windowHeight) {
                         scrollTopBtn.classList.add('is-visible');
                     } else {
@@ -237,19 +254,16 @@
 
             initializeBlog();
             
-            // Listeners del modal actualizados para usar el historial
             document.querySelector('.post-modal-close').addEventListener('click', () => history.back());
             modalContainer.addEventListener('click', e => { if (e.target === e.currentTarget) history.back(); });
             document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalContainer.classList.contains('is-active')) history.back(); });
 
-            // Listener para el historial (botón atrás)
             window.addEventListener('popstate', () => {
                 if (modalContainer.classList.contains('is-active')) {
                     closePostModal();
                 }
             });
 
-            // Listener para el botón de subir
             scrollTopBtn.addEventListener('click', () => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
