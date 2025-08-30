@@ -261,6 +261,13 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        /* Mensajes de error */
+        .no-posts, .error {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
     </style>
 </head>
 <body>
@@ -318,21 +325,27 @@
     <button class="admin-btn" onclick="window.location.href='adminargblog.html'">✏️</button>
 
     <script>
-        // Configuración de GitHub (debe coincidir con la del panel de administración)
+        // Configuración de GitHub (sin token para repositorio público)
         const config = {
-            githubToken: localStorage.getItem('githubToken') || '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',
-            repoOwner: localStorage.getItem('repoOwner') || 'alter-ias', // Cambia esto por tu usuario
-            repoName: localStorage.getItem('repoName') || 'mi-blog-datos' // Cambia esto por tu repositorio
+            githubToken: '', // No se necesita token para repositorio público
+            repoOwner: 'alter-ias', // Tu nombre de usuario de GitHub
+            repoName: 'argblog-datos' // Nombre exacto de tu repositorio público
         };
 
         // Función para obtener entradas desde GitHub
         async function fetchBlogPosts() {
             try {
+                let headers = {
+                    'Accept': 'application/vnd.github.v3+json'
+                };
+                
+                // Solo agregar token si existe (para repositorio privado)
+                if (config.githubToken) {
+                    headers['Authorization'] = `token ${config.githubToken}`;
+                }
+                
                 const response = await fetch(`https://api.github.com/repos/${config.repoOwner}/${config.repoName}/issues?labels=blog-post&state=open`, {
-                    headers: {
-                        'Authorization': `token ${config.githubToken}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
+                    headers: headers
                 });
                 
                 if (!response.ok) {
