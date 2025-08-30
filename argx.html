@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARG - Jardín Digital (Control Individual)</title>
+    <title>ARG - Jardín Digital (Sistema Modular Final)</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
@@ -17,6 +17,7 @@
             --color-light: #f8f9fa;
         }
 
+        /* Estilos base (tu estética) */
         * { box-sizing: border-box; }
         body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
         header { padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; mix-blend-mode: exclusion; }
@@ -28,30 +29,26 @@
         .media-block::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 2; }
         
         /* ======================================================= */
-        /* SISTEMA DE GRADIENTES MODULARES                         */
+        /* SISTEMA DE OVERLAYS MODULAR (REESTRUCTURADO)            */
         /* ======================================================= */
         .color-overlay { position: absolute; z-index: 3; }
+
+        /* --- VARIABLE 1: Clases de FORMA y POSICIÓN --- */
+        .overlay-full { width: 100%; height: 100%; opacity: 0.6; }
+        .overlay-half-right { top: 0; right: 0; width: 50%; height: 100%; }
+        .overlay-window { width: 100%; height: 100%; padding: 3rem; opacity: 0.8; }
         
-        /* --- Definición de las "Recetas" de Movimiento --- */
+        /* --- VARIABLE 2: Clases de RITMO y COLOR --- */
         @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes gradient-vertical { 0% { background-position: 50% 0%; } 50% { background-position: 50% 100%; } 100% { background-position: 50% 0%; } }
-
-        /* --- Clase Base para los Colores --- */
-        .iridescent-base {
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-        }
         
-        /* --- Clases de Variación (Ritmo y Dirección) --- */
-        .iridescent-slow-h { animation: gradient-horizontal 25s ease infinite; } /* LENTO */
-        .iridescent-fast-v { animation: gradient-vertical 8s ease infinite; } /* RÁPIDO Y VERTICAL */
-        .iridescent-medium-h { animation: gradient-horizontal 15s ease infinite; } /* VELOCIDAD MEDIA */
+        .iridescent-base { background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; }
+        
+        .iridescent-slow-h { animation: gradient-horizontal 25s ease infinite; }
+        .iridescent-medium-h { animation: gradient-horizontal 15s ease infinite; }
+        .iridescent-fast-v { animation: gradient-vertical 8s ease infinite; }
 
-        #block-1 .color-overlay { width: 100%; height: 100%; padding: 3rem; opacity: 0.5; }
-        #block-2 .color-overlay { width: 100%; height: 100%; padding: 3rem; opacity: 0.5; }
-        #block-3 .color-overlay { top: 0; right: 0; width: 50%; height: 100%; }
-        #block-4 .color-overlay { width: 100%; height: 100%; padding: 3rem; opacity: 0.5; }
-
+        /* Estilos de contenido y responsive (tu estética) */
         .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
         .media-block.is-visible .content-overlay { opacity: 1; transform: translateY(0); }
         .content-overlay h1, .content-overlay h2 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 1rem 0; }
@@ -68,26 +65,29 @@
     <header><div class="header-logo"><a href="#">ARG</a></div></header>
 
     <main>
+        <!-- Bloque 1: Sin overlay de color -->
         <section class="media-block" id="block-1">
              <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530594/u4597281485_A_vast_minimalist_landscape._The_sea_is_an_almost_03674990-b688-4c55-8480-a7d71d9437c4_3_xooqz9.png" alt="Jardín Digital"></div>
             <div class="content-overlay"><h1>Jardín Digital</h1><p>Una colección de Alan Ruíz Galicia</p></div>
         </section>
 
+        <!-- Bloque 2: Con overlay COMPLETO y ritmo LENTO -->
         <section class="media-block" id="block-2">
             <div class="background-media"><video src="https://res.cloudinary.com/dahrwkdzd/video/upload/v1756531260/godar01_glnxkl.webm" autoplay loop muted playsinline></video></div>
-            <div class="color-overlay iridescent-base iridescent-slow-h"></div>
+            <div class="color-overlay overlay-full iridescent-base iridescent-slow-h"></div>
             <div class="content-overlay"><h2>Ecos en las Ruinas</h2><p>Las estrellas susurran historias antiguas, tejiendo destinos en el tapiz del cosmos.</p><button class="btn">Explorar</button></div>
         </section>
 
+        <!-- Bloque 3: SIN overlay de color -->
         <section class="media-block" id="block-3">
             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530311/u4597281485_A_tight_cinematic_shot_of_a_womans_mouth._Her_lip_6c85d667-7b45-497b-b310-0b861adb7735_1_urjioq.png" alt="Archivo Sonoro"></div>
             <div class="content-overlay"><h2>Archivo Sonoro</h2><p>Fragmentos que exploran la intersección del arte, la tecnología y el espíritu.</p><button class="btn">Escuchar</button></div>
         </section>
         
+        <!-- Bloque 4: Con overlay de VENTANA y ritmo RÁPIDO -->
         <section class="media-block" id="block-4">
             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530574/u4597281485_A_chaotic_still_life_on_a_wooden_floor_lit_by_a_h_a157247e-085a-457b-a207-f43933663674_3_or5v4i.png" alt="Lotería"></div>
-            <!-- Aplicando la nueva clase de ritmo RÁPIDO y VERTICAL -->
-            <div class="color-overlay iridescent-base iridescent-fast-v"></div>
+            <div class="color-overlay overlay-window iridescent-base iridescent-fast-v"></div>
             <div class="content-overlay"><h2>Lotería Tapatía</h2><p>Una reinterpretación digital del clásico juego de mesa.</p><button class="btn">Jugar Ahora</button></div>
         </section>
     </main>
@@ -95,18 +95,16 @@
     <footer><p>&copy; 2025 - ARG. Todos los derechos reservados.</p></footer>
     
     <script>
-        // El JavaScript no necesita cambios, funciona con la nueva estructura.
+        // SCRIPT CORRECTO DEL PARALLAX DE REVELACIÓN
         document.addEventListener('DOMContentLoaded', () => {
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
             let ticking = false;
-
             function updateScrollEffects() {
                 mediaBlocks.forEach(block => {
                     const rect = block.getBoundingClientRect();
                     const media = block.querySelector('.background-media > *');
                     if (!media) return;
-
                     if (rect.top < windowHeight && rect.bottom > 0) {
                         const progress = (rect.top + block.offsetHeight) / (windowHeight + block.offsetHeight);
                         const clampedProgress = 1 - Math.max(0, Math.min(1, progress));
@@ -114,7 +112,6 @@
                         const translateY = -travelRange * clampedProgress;
                         media.style.transform = `translateY(${translateY}px)`;
                     }
-                    
                     if (rect.top < windowHeight * 0.75 && rect.bottom > windowHeight * 0.25) {
                          block.classList.add('is-visible');
                     } else {
@@ -123,14 +120,12 @@
                 });
                 ticking = false;
             }
-
             window.addEventListener('scroll', () => {
                 if (!ticking) {
                     window.requestAnimationFrame(updateScrollEffects);
                     ticking = true;
                 }
             });
-            
             updateScrollEffects();
         });
     </script>
