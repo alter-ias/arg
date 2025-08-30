@@ -3,377 +3,615 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Semanal de ARG - Edición Especial</title>
+    <title>ARG - Edición Especial</title>
     
-    <!-- Google Fonts (Tipografías Originales) -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display+SC:wght@400;700;900&family=Special+Elite&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     
     <style>
-        /* INICIO: Estilos para el video de fondo */
-        #background-video {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: -100;
-            object-fit: cover;
+        :root {
+            --main-gap: 2rem;
+            --border-radius: 8px;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Poppins', sans-serif;
+            --color-text: #2c3e50;
+            --color-primary: #3498db;
+            --color-light-bg: #f8f9fa;
         }
-        /* FIN: Estilos para el video de fondo */
 
-        /* BASE */
+        /* ======================================================= */
+        /* BASE Y LAYOUT                                           */
+        /* ======================================================= */
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Libre Baskerville', serif;
-            color: white;
-            background-color: #1a1a1a; /* Color de fondo si el video no carga */
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            font-family: var(--font-sans);
+            color: var(--color-text);
+            background-color: #ffffff;
+            font-size: 18px;
+            line-height: 1.7;
+            overflow-x: hidden;
         }
 
-        /* Capa superpuesta para oscurecer el video con opacidad ajustada */
-        body::before {
-            content: '';
+        .animated-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
-            z-index: -99;
+            z-index: -1;
+            background: linear-gradient(45deg, #e0eafc, #cfdef3, #e6dada, #f0e4d7);
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
         }
 
-        /* Encabezado */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ======================================================= */
+        /* ENCABEZADO Y NAVEGACIÓN                                 */
+        /* ======================================================= */
         header {
-            height: 70vh;
-            min-height: 400px;
+            padding: 2rem var(--main-gap);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            mix-blend-mode: difference;
+        }
+        
+        .header-logo a {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .main-nav ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .main-nav a {
+            font-family: var(--font-sans);
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 400;
+            font-size: 1rem;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .main-nav a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: #ffffff;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+
+        .main-nav a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        .hero-section {
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: white;
             position: relative;
-            background-image: url('assets/img/header-background.png');
-            background-size: cover;
-            background-position: center center;
-            box-shadow: inset 0 -50px 50px -20px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('assets/img/fondopaper.png') no-repeat center center/cover;
+            opacity: 0.1;
+            z-index: -1;
         }
 
-        .header-content h1 {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 7rem;
+        .hero-content h1 {
+            font-family: var(--font-serif);
+            font-size: 6rem;
+            font-weight: 600;
+            line-height: 1.1;
             margin: 0;
-            font-weight: 700;
-            letter-spacing: -4px;
-            text-transform: uppercase;
-            line-height: 0.9;
-            text-shadow: 2px 3px 6px rgba(0, 0, 0, 0.6);
-            filter: blur(0.2px);
+            color: var(--color-text);
         }
 
-        .header-content p {
-            font-family: 'Libre Baskerville', serif;
-            font-size: 1rem;
-            margin-top: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            padding: 0.6rem 1.2rem;
-            border: none;
-            display: inline-block;
-            background-color: #5a554a;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        .hero-content p {
+            font-family: var(--font-sans);
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            letter-spacing: 1px;
+            color: var(--color-text);
         }
 
-        /* Contenido Principal */
+        /* ======================================================= */
+        /* SECCIONES Y CONTENIDO                                   */
+        /* ======================================================= */
+        main {
+            background-color: #fff;
+            position: relative;
+            z-index: 5;
+        }
+        
         .content-block {
-            max-width: 1100px;
-            margin: 4rem auto;
-            padding: 3rem;
-            background-color: transparent; 
-            border: 1px solid rgba(0,0,0,0.1);
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            padding: 6rem var(--main-gap);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .seccion {
+            opacity: 0;
+            transition: opacity 1.2s ease-out;
+        }
+
+        .seccion.is-visible {
+            opacity: 1;
         }
 
         .seccion h2 {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 2.8rem;
-            margin-top: 0;
-            margin-bottom: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid white;
-            display: inline-block;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-        }
-
-        .seccion .center-title {
-             text-align: center;
-             margin-bottom: 2.5rem;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2.5rem;
-            align-items: stretch;
-        }
-
-        .grid-item {
-            background-color: transparent; 
-            border: 1px dashed rgba(255, 255, 255, 0.7);
-            display: flex;
-            flex-direction: column;
-            padding: 1.5rem;
+            font-family: var(--font-serif);
+            font-size: 3.5rem;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 4rem;
         }
         
-        .grid-item h3 {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 1.8rem;
-            margin: 0 0 0.8rem 0;
-            line-height: 1.2;
-            font-weight: 700;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        /* --- ANIMACIONES DE SCROLL --- */
+        .scroll-reveal-item {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
+        .seccion.is-visible .scroll-reveal-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .seccion.is-visible .scroll-reveal-item:nth-child(1) { transition-delay: 0.1s; }
+        .seccion.is-visible .scroll-reveal-item:nth-child(2) { transition-delay: 0.2s; }
+        .seccion.is-visible .scroll-reveal-item:nth-child(3) { transition-delay: 0.3s; }
+        .seccion.is-visible .scroll-reveal-item:nth-child(4) { transition-delay: 0.4s; }
 
-        .grid-item p {
-            font-family: 'Special Elite', monospace;
-            font-size: 1rem;
-            line-height: 1.7;
-            text-align: justify;
-            margin-top: 0.5rem;
-            flex-grow: 1;
-            color: white;
-        }
-        
-        .image-parallax-container {
+
+        /* --- LAYOUTS ESPECÍFICOS --- */
+        .image-container {
             overflow: hidden;
-            height: 250px;
-            margin-bottom: 1.2rem;
-            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
         }
-        
+
         .parallax-image {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.1s linear;
+            height: auto;
+            display: block;
+            border-radius: var(--border-radius);
+            transition: transform 0.6s ease-out;
+        }
+        
+        .image-container:hover .parallax-image {
+            transform: scale(1.05);
+        }
+
+        .alternating-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 6rem;
+        }
+
+        .alternating-item {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .alternating-item {
+                grid-template-columns: 1fr 1fr;
+            }
+            .alternating-item:nth-child(even) .image-container {
+                order: 2;
+            }
+        }
+
+        .text-content {
+            text-align: left;
+        }
+
+        .text-content h3 {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            margin: 0 0 1rem 0;
+            font-weight: 600;
         }
 
         .btn {
             display: inline-block;
-            padding: 0.7rem 1.4rem;
-            border: 1px solid white;
-            color: white;
+            padding: 0.8rem 1.8rem;
+            border: 1px solid var(--color-text);
+            color: var(--color-text);
+            background-color: transparent;
             text-decoration: none;
-            transition: background-color 0.2s, color 0.2s, transform 0.2s;
-            margin: 1.5rem 0 0 auto;
-            align-self: flex-end;
-            font-family: 'Libre Baskerville', serif;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 1.5rem;
+            font-family: var(--font-sans);
             font-size: 0.9rem;
             text-transform: uppercase;
-            background-color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 50px;
         }
 
         .btn:hover {
-            background-color: white;
-            color: #1a1a1a;
-            transform: translateY(-2px);
-            text-shadow: none;
+            background-color: var(--color-text);
+            color: #fff;
         }
 
-        .video-container {
-             width: 100%;
-             position: relative;
-             padding-bottom: 56.25%;
-             height: 0;
-             overflow: hidden;
-             border: 2px solid #333;
-             background-color: black;
-             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-             margin-bottom: 2rem;
-        }
-        .video-container iframe {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        /* --- LOTERÍA & ARCHIVO --- */
+        .centered-content {
+            text-align: center;
         }
 
-        .grid-item iframe {
-            border: 1px solid #777;
-            margin-bottom: 1rem;
+        .loteria-preview {
+            display: inline-block;
+            width: 100%;
+            max-width: 600px;
+            aspect-ratio: 16 / 9;
+            border-radius: var(--border-radius);
+            background-color: #1a1a1a;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .loteria-preview:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .loteria-preview img {
+            max-width: 40%;
+            max-height: 40%;
+            height: auto;
+            filter: invert(1);
         }
         
+        .media-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 992px) {
+            .media-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .video-container, .spotify-container {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        .video-container { width: 100%; position: relative; padding-bottom: 56.25%; height: 0; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .spotify-container iframe { display: block; width: 100%; border: none; }
+        
+        /* --- MODALS --- */
+        .modal-container, .loteria-modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .modal-container { background-color: rgba(44, 62, 80, 0.85); }
+        .loteria-modal-container { background-color: #0A0A0A; }
+        
+        .modal-container.is-active, .loteria-modal-container.is-active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            padding: 3rem;
+            max-width: 800px;
+            width: 90%;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border-radius: var(--border-radius);
+        }
+        
+        .modal-container.is-active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-close, .loteria-close-btn {
+            position: absolute;
+            cursor: pointer;
+            z-index: 3010;
+        }
+
+        .modal-close {
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2.5rem;
+            font-family: sans-serif;
+            line-height: 1;
+            color: var(--color-text);
+        }
+
+        .loteria-close-btn {
+            top: 20px;
+            left: 20px;
+            font-size: 2rem;
+            color: white;
+            background-color: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        
+        #modal-title { font-family: var(--font-serif); font-size: 2rem; margin-top: 0; }
+        #modal-body p { font-size: 1.1rem; line-height: 1.8; }
+        
+        #loteria-iframe-wrapper { width: 100%; height: 100%; }
+        #loteria-iframe-wrapper iframe { width: 100%; height: 100%; border: none; }
+        
+        /* --- FOOTER --- */
         footer {
             text-align: center;
             font-size: 0.9rem;
-            border-top: 2px dashed rgba(255, 255, 255, 0.7);
-            padding-top: 2rem;
+            padding: 4rem var(--main-gap);
+            background-color: var(--color-light-bg);
         }
-        
-        /* ======================================================= */
-        /* ESTILOS PARA MÓVILES (TABLETS Y TELÉFONOS)              */
-        /* ======================================================= */
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
         @media (max-width: 768px) {
-            
-            #background-video {
-                display: none;
-            }
-
-            body {
-                /* Fondo estático para móvil con opacidad ajustada */
-                background-image: 
-                    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)),
-                    url('assets/img/fondopaper.png');
-                background-size: cover;
-                background-attachment: fixed;
-                background-position: center;
-                padding: 0;
-            }
-
-            body::before {
-                display: none;
-            }
-            
-            header {
-                height: 50vh;
-                min-height: 280px;
-            }
-
-            .header-content h1 {
-                font-size: 3.5rem; 
-                letter-spacing: -2px;
-            }
-
-            .header-content p {
-                font-size: 0.8rem;
-                margin-top: 1rem;
-                letter-spacing: 1px;
-                padding: 0.5rem 1rem;
-            }
-            
-            .seccion h2 {
-                font-size: 2rem;
-            }
-            
-            .grid-item h3 {
-                font-size: 1.5rem;
-            }
-
-            .content-block {
-                margin: 0;
-                padding: 3rem 1.5rem;
-            }
-
-            .grid-container {
-                gap: 1.5rem;
-            }
-
-            .grid-item {
-                padding: 1.2rem;
-            }
+            body { font-size: 16px; }
+            header { display: none; } /* Hide fixed header on mobile for more space */
+            .hero-content h1 { font-size: 3rem; }
+            .hero-content p { font-size: 1rem; }
+            .content-block { padding: 4rem 1.5rem; }
+            .seccion h2 { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- VIDEO DE FONDO -->
-    <video autoplay loop muted playsinline id="background-video">
-        <source src="assets/vid/fondoarg01.webm" type="video/webm">
-        Tu navegador no soporta videos HTML5.
-    </video>
+    <div class="animated-background"></div>
 
     <header>
-        <div class="header-content">
-            <h1>ARG</h1>
-            <p>El Diario de Alan Ruíz Galicia</p>
-        </div>
+        <div class="header-logo"><a href="#">ARG</a></div>
+        <nav class="main-nav">
+            <!-- Navigation can be added here if needed -->
+        </nav>
     </header>
 
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1>Jardín Digital</h1>
+            <p>Una colección de Alan Ruíz Galicia</p>
+        </div>
+    </div>
+
     <main>
-        <section class="seccion content-block">
-            <div class="center-title">
-                <h2>Crónicas Recientes</h2>
-            </div>
-            <div class="grid-container">
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img01.png" alt="Imagen 1" class="parallax-image">
+        <section id="ecos-ruinas" class="seccion content-block">
+            <h2>Ecos en las Ruinas</h2>
+            <div class="alternating-layout">
+                <div class="alternating-item scroll-reveal-item">
+                    <div class="image-container">
+                        <img src="assets/img/img01.png" alt="Mercurio retrógrado" class="parallax-image">
                     </div>
-                    <h3>El Baile Cósmico de Mercurio Retrógrado</h3>
-                    <p>Las estrellas susurran historias antiguas mientras Mercurio danza en su retroceso. Exploramos no solo los desafíos, sino la poesía oculta en este ciclo, invitándote a la reflexión profunda y al redescubrimiento interior.</p>
-                    <a href="#" class="btn">Desentrañar</a>
+                    <div class="text-content">
+                        <h3>El Baile Cósmico de Mercurio</h3>
+                        <p>Las estrellas susurran historias antiguas, tejiendo destinos en el tapiz del cosmos. Un viaje a través de los ciclos celestes.</p>
+                        <button class="btn btn-modal" data-title="El Baile Cósmico de Mercurio Retrógrado" data-content="<p>Este es el contenido completo sobre el fascinante fenómeno de Mercurio retrógrado y su influencia en nuestra comunicación y tecnología diaria.</p>">Leer Más</button>
+                    </div>
                 </div>
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img02.png" alt="Imagen 2" class="parallax-image">
+                <div class="alternating-item scroll-reveal-item">
+                    <div class="image-container">
+                        <img src="assets/img/img02.png" alt="Urano en Géminis" class="parallax-image">
                     </div>
-                    <h3>Urano en Géminis: Un Canto a la Nueva Era</h3>
-                    <p>Los vientos del cambio traen la energía de Urano a Géminis, abriendo portales de comunicación y pensamiento libre. Un ensayo sobre la revolución silenciosa que teje los hilos invisibles de nuestra consciencia colectiva.</p>
-                    <a href="https://alter-ias.github.io/heptaglota/loteriatapatia.html" class="btn">Leer Prosa</a>
+                    <div class="text-content">
+                        <h3>Urano en Géminis</h3>
+                        <p>Los vientos del cambio traen la energía de la innovación. La mente se expande, las ideas fluyen como ríos de luz.</p>
+                        <button class="btn btn-modal" data-title="Urano en Géminis: Un Canto a la Nueva Era" data-content="<p>Aquí se despliega el texto íntegro sobre cómo la posición de Urano en Géminis anuncia una era de revoluciones intelectuales y despertares colectivos.</p>">Leer Más</button>
+                    </div>
                 </div>
-                <div class="grid-item">
-                    <div class="image-parallax-container">
-                        <img src="assets/img/img03.png" alt="Imagen 3" class="parallax-image">
+                <div class="alternating-item scroll-reveal-item">
+                    <div class="image-container">
+                        <img src="assets/img/img03.png" alt="Solsticio de verano" class="parallax-image">
                     </div>
-                    <h3>El Solsticio de Verano: La Llama Perpetua del Alma</h3>
-                    <p>En el cenit del sol, el espíritu se enciende. Esta crónica poética explora el significado ancestral del Solsticio de Verano, un recordatorio de la luz inquebrantable que reside en cada uno de nosotros.</p>
-                    <a href="#" class="btn">Meditar Aquí</a>
+                    <div class="text-content">
+                        <h3>El Solsticio de Verano</h3>
+                        <p>En el cenit del sol, el espíritu se enciende. Una celebración de la luz, la vida y la abundancia que nos rodea.</p>
+                        <button class="btn btn-modal" data-title="El Solsticio de Verano: La Llama Perpetua del Alma" data-content="<p>El ensayo completo sobre el Solsticio, explorando sus significados culturales, espirituales y astronómicos a lo largo de la historia.</p>">Leer Más</button>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="seccion content-block">
-            <div class="center-title">
-                <h2>Voces Grabadas: Archivo Sonoro y Visual</h2>
-            </div>
-            <div class="video-container">
-                <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            </div>
-            <div class="video-container">
-                <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <section id="archivo-sonoro-visual" class="seccion content-block">
+            <h2 class="scroll-reveal-item">Archivo Sonoro y Visual</h2>
+            <div class="media-grid">
+                <div class="video-container scroll-reveal-item">
+                    <iframe src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <div class="video-container scroll-reveal-item">
+                    <iframe src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <div class="spotify-container scroll-reveal-item">
+                    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen></iframe>
+                </div>
+                <div class="spotify-container scroll-reveal-item">
+                    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen></iframe>
+                </div>
             </div>
         </section>
 
-        <section class="seccion content-block">
-            <div class="center-title">
-                <h2>La Audioteca del Pensamiento</h2>
-            </div>
-            <div class="grid-container">
-                <div class="grid-item">
-<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>                    <h3>El Secreto de la Felicidad en el Caos Moderno</h3>
-                    <p>Un diálogo íntimo sobre la búsqueda de la serenidad en la vorágine de hoy. Escucha las claves para encontrar tu centro, incluso cuando el mundo parece girar sin rumbo fijo.</p>
-                </div>
-                <div class="grid-item">
-<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>                    <h3>Desbloqueando tu Potencial Creador</h3>
-                    <p>Embárcate en un viaje sonoro para despertar al artista que llevas dentro. Descubre cómo la inspiración fluye cuando te atreves a romper los moldes y liberar tu verdadera esencia creativa.</p>
-                </div>
+        <section id="loteria-tapatia" class="seccion content-block centered-content">
+            <h2 class="scroll-reveal-item">Lotería Tapatía</h2>
+            <p class="scroll-reveal-item" style="max-width: 600px; margin: 0 auto 2rem auto;">Una reinterpretación digital del clásico juego de mesa. Haz clic abajo para jugar.</p>
+            <div class="loteria-preview scroll-reveal-item" id="loteria-launcher" data-iframe-src="https://alter-ias.github.io/arg/loteriatapatiax.html">
+                <img src="assets/img/logo01.png" alt="Logo Lotería Tapatía">
             </div>
         </section>
     </main>
     
-    <footer class="content-block">
-        <p>&copy; 2025 - El Semanal de ARG. Todos los derechos reservados.<br>Impreso con pasión en la imprenta del Alma.</p>
+    <footer>
+        <p>&copy; 2025 - ARG. Todos los derechos reservados.<br>Diseñado con pasión en el jardín digital.</p>
     </footer>
 
+    <div id="text-modal-container" class="modal-container">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 id="modal-title"></h2>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+    <div id="loteria-modal-container" class="loteria-modal-container">
+        <span id="loteria-close-btn" class="loteria-close-btn">&times;</span>
+        <div id="loteria-iframe-wrapper"></div>
+    </div>
+
     <script>
-        // Script para parallax en imágenes (opcional pero añade un toque dinámico)
-        document.addEventListener('scroll', function() {
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animación de Scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.15 });
+            document.querySelectorAll('.seccion').forEach(section => observer.observe(section));
+
+            // Efecto Parallax Sutil en Imágenes
             const parallaxImages = document.querySelectorAll('.parallax-image');
-            for (let img of parallaxImages) {
-                const container = img.parentElement;
-                const rect = container.getBoundingClientRect();
-                
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    const percentVisible = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-                    const moveAmount = (percentVisible - 0.5) * 8;
-                    img.style.transform = `translateY(${moveAmount * -1}%) scale(1.05)`;
+            window.addEventListener('scroll', () => {
+                const scrollY = window.pageYOffset;
+                parallaxImages.forEach(img => {
+                    const speed = -0.1;
+                    const y = (scrollY - img.parentElement.offsetTop) * speed;
+                    img.style.transform = `translateY(${y}px) scale(1.05)`;
+                });
+            });
+
+            // Lógica del Modal de Texto
+            const textModal = {
+                container: document.getElementById('text-modal-container'),
+                title: document.getElementById('modal-title'),
+                body: document.getElementById('modal-body'),
+                open(title, content) {
+                    this.title.textContent = title;
+                    this.body.innerHTML = content;
+                    this.container.classList.add('is-active');
+                    document.body.style.overflow = 'hidden';
+                },
+                close() {
+                    this.container.classList.remove('is-active');
+                    document.body.style.overflow = '';
                 }
-            }
+            };
+            document.querySelectorAll('.btn-modal').forEach(button => {
+                button.addEventListener('click', () => {
+                    textModal.open(button.dataset.title, button.dataset.content);
+                });
+            });
+            document.querySelector('.modal-close').addEventListener('click', () => textModal.close());
+            textModal.container.addEventListener('click', (e) => {
+                if (e.target === textModal.container) {
+                    textModal.close();
+                }
+            });
+
+            // Lógica del Modal de Lotería con History API
+            const loteriaModal = {
+                container: document.getElementById('loteria-modal-container'),
+                launcher: document.getElementById('loteria-launcher'),
+                wrapper: document.getElementById('loteria-iframe-wrapper'),
+                closeButton: document.getElementById('loteria-close-btn'),
+                open() {
+                    const iframeSrc = this.launcher.dataset.iframeSrc;
+                    if (!iframeSrc || this.container.classList.contains('is-active')) return;
+                    
+                    const iframe = document.createElement('iframe');
+                    iframe.src = iframeSrc;
+                    this.wrapper.innerHTML = '';
+                    this.wrapper.appendChild(iframe);
+                    this.container.classList.add('is-active');
+                    document.body.style.overflow = 'hidden';
+                    history.pushState({ modal: 'loteria' }, '', '#loteria');
+                },
+                close() {
+                    if (!this.container.classList.contains('is-active')) return;
+                    this.container.classList.remove('is-active');
+                    this.wrapper.innerHTML = '';
+                    document.body.style.overflow = '';
+                }
+            };
+            loteriaModal.launcher.addEventListener('click', () => loteriaModal.open());
+            loteriaModal.closeButton.addEventListener('click', () => history.back());
+            
+            window.addEventListener('popstate', (e) => {
+                if (loteriaModal.container.classList.contains('is-active')) {
+                    loteriaModal.close();
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (loteriaModal.container.classList.contains('is-active')) {
+                        history.back();
+                    } else if (textModal.container.classList.contains('is-active')) {
+                        textModal.close();
+                    }
+                }
+            });
         });
     </script>
-
 </body>
 </html>
