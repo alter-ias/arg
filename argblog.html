@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecos en las Ruinas</title>
+    <title>El Archivo - Jardín Digital</title>
     
-    <!-- Google Fonts (Actualizadas) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
@@ -18,96 +17,84 @@
             --color-light: #f8f9fa;
         }
 
-        /* ======================================================= */
-        /* BASE Y LAYOUT (ADAPTADOS)                               */
-        /* ======================================================= */
         * { box-sizing: border-box; }
         body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
 
-        /* ======================================================= */
-        /* ESTRUCTURA DE BLOQUES                                   */
-        /* ======================================================= */
-        .media-block {
-            position: relative;
-            width: 100%;
-            height: 80vh; 
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        #blog-hero {
-            height: 100vh;
-        }
-
+        .media-block { position: relative; width: 100%; height: 80vh; overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; }
+        #blog-hero { height: 100vh; }
         .background-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; }
         .background-media img { width: 100%; height: 130%; object-fit: cover; will-change: transform; }
         .media-block::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 2; }
         
-        /* ======================================================= */
-        /* SISTEMA DE GRADIENTES                                   */
-        /* ======================================================= */
-        .color-overlay { position: absolute; z-index: 3; }
-        .overlay-full { width: 100%; height: 100%; opacity: 0.6; }
         @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .iridescent-base { background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; }
         .iridescent-slow-h { animation: gradient-horizontal 25s ease infinite; }
         
-        /* ======================================================= */
-        /* CONTENIDO SUPERPUESTO                                   */
-        /* ======================================================= */
         .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .content-overlay h1, .content-overlay h2 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 1rem 0; }
         .content-overlay h1 { font-size: 5rem; } .content-overlay h2 { font-size: 3rem; }
         .content-overlay p { font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.5rem auto; }
-        .post-date { font-size: 0.9rem; margin-bottom: 1rem; opacity: 0.8; }
-
+        .post-date { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
         .btn { display: inline-block; padding: 0.8rem 1.8rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: background-color 0.3s, color 0.3s; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
         .btn:hover { background-color: var(--color-light); color: #1a1a1a; }
         
         footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background-color: #111; }
         
         /* ======================================================= */
-        /* MODAL DE ENTRADA (REESTILIZADO)                         */
+        /* SISTEMA DE HASHTAGS                                     */
+        /* ======================================================= */
+        .post-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .tag { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* ======================================================= */
+        /* MODAL DE ENTRADA (CON FONDO TORNASOLADO)                */
         /* ======================================================= */
         .post-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
         .post-modal-container.is-active { opacity: 1; pointer-events: auto; }
-        .post-modal-content-wrapper { background-color: #1a1a1a; max-width: 90%; width: 800px; max-height: 90vh; position: relative; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; }
+        .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; isolation: isolate; /* Para que el ::before funcione bien */ }
         .post-modal-container.is-active .post-modal-content-wrapper { transform: scale(1); }
+
+        /* Aplicamos el fondo tornasolado al modal */
+        .post-modal-content-wrapper.iridescent-base {
+             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+             background-size: 400% 400%;
+             animation: gradient-horizontal 25s ease infinite;
+        }
+        /* Y una capa oscura para legibilidad */
+        .post-modal-content-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: -1;
+            border-radius: 8px;
+        }
+
         .post-modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; font-family: sans-serif; cursor: pointer; line-height: 1; color: var(--color-light); z-index: 10; }
-        
         #post-modal-image { width: 100%; height: 300px; object-fit: cover; display: block; }
-        .post-modal-text { padding: 3rem; }
+        .post-modal-text { padding: 3rem; position: relative; z-index: 5; }
         #post-modal-title { font-family: var(--font-serif); font-size: 2.5rem; margin-top: 0; margin-bottom: 1rem; text-align: left; }
-        #post-modal-date { font-size: 0.9rem; opacity: 0.7; margin-bottom: 2rem; display: block; text-align: left; }
+        #post-modal-date { font-size: 0.9rem; opacity: 0.7; margin-bottom: 1rem; display: block; text-align: left; }
+        #post-modal-tags { text-align: left; margin-bottom: 2rem; }
         #post-modal-body { font-size: 1.1rem; line-height: 1.8; text-align: left; }
         #post-modal-body p { margin-bottom: 1.5rem; }
 
-        /* Estilos de Loading, Admin, etc. */
-        .admin-btn { position: fixed; bottom: 20px; right: 20px; background-color: var(--color-light); color: #1a1a1a; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.3s; z-index: 1000; display: flex; align-items: center; justify-content: center; }
-        .admin-btn:hover { transform: scale(1.1); }
         .loading, .error { text-align: center; padding: 40px; height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { border: 4px solid rgba(255,255,255, 0.2); border-left-color: var(--color-light); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <header>
-        <!-- Header simplificado, puedes añadir un logo o enlace al index aquí -->
-    </header>
-
     <main>
-        <!-- Bloque "Hero" con fondo tornasolado -->
         <section class="media-block" id="blog-hero">
             <div class="color-overlay overlay-full iridescent-base iridescent-slow-h"></div>
             <div class="content-overlay">
-                <h1>Ecos en las Ruinas</h1>
-                <p>Jardín Digital de Alan Ruíz Galicia</p>
+                <h1>El Archivo</h1>
+                <p>Textos del Jardín Digital</p>
             </div>
         </section>
 
-        <!-- Contenedor para las entradas del blog que se cargarán dinámicamente -->
         <div id="postsContainer">
             <div class="loading" id="loading">
                 <div class="spinner"></div>
@@ -116,29 +103,26 @@
         </div>
     </main>
     
-    <footer>
-        <p>&copy; 2025 Ecos en las Ruinas. Todos los derechos reservados.</p>
-    </footer>
+    <footer><p>&copy; 2025 El Archivo. Todos los derechos reservados.</p></footer>
 
-    <!-- Modal de entrada (reestructurado) -->
     <div id="post-modal-container" class="post-modal-container">
-        <div class="post-modal-content-wrapper">
+        <div class="post-modal-content-wrapper iridescent-base"> <!-- Clase base para el fondo -->
             <span class="post-modal-close">&times;</span>
             <img id="post-modal-image" src="" alt="">
             <div class="post-modal-text">
                 <h2 id="post-modal-title"></h2>
                 <span id="post-modal-date"></span>
+                <div id="post-modal-tags" class="post-tags"></div> <!-- Contenedor para tags en el modal -->
                 <div id="post-modal-body"></div>
             </div>
         </div>
     </div>
 
-    <button class="admin-btn" onclick="window.location.href='adminargblog.html'">✏️</button>
+    <!-- Botón de admin eliminado -->
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const config = {
-                githubToken: '',
                 repoOwner: 'alter-ias',
                 repoName: 'argblog-datos'
             };
@@ -165,28 +149,31 @@
                 try {
                     const posts = await fetchBlogPosts();
                     loadingElement.style.display = 'none';
-
                     if (posts.length === 0) {
                         container.innerHTML = '<p class="error">No hay entradas disponibles aún.</p>';
                         return;
                     }
-                    
                     posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     
                     posts.forEach(post => {
                         const postElement = document.createElement('section');
-                        // Cada post es ahora un media-block
                         postElement.className = 'media-block'; 
                         
-                        // ESTRUCTURA ADAPTADA AL PARALLAX DE REVELACIÓN
+                        // Generar HTML para los tags
+                        let tagsHTML = '';
+                        if (post.tags && Array.isArray(post.tags)) {
+                            tagsHTML = `<div class="post-tags">${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`;
+                        }
+
                         postElement.innerHTML = `
                             <div class="background-media">
-                                <img src="${post.image || 'https://via.placeholder.com/1200x800'}" alt="${post.title}" onerror="this.src='https://via.placeholder.com/1200x800'">
+                                <img src="${post.image || 'https://via.placeholder.com/1200x800'}" alt="${post.title}">
                             </div>
                             <div class="content-overlay">
                                 <h2>${post.title}</h2>
                                 <div class="post-date">${post.date || new Date(post.createdAt).toLocaleDateString('es-ES')}</div>
                                 <p>${post.excerpt || ''}</p>
+                                ${tagsHTML}
                                 <button class="btn read-more-btn" data-post='${JSON.stringify(post)}'>Leer más</button>
                             </div>
                         `;
@@ -199,7 +186,6 @@
                         });
                     });
                     
-                    // Iniciar el efecto de scroll en los nuevos elementos
                     initializeScrollEffects();
 
                 } catch (error) {
@@ -213,6 +199,14 @@
                 document.getElementById('post-modal-date').textContent = post.date || new Date(post.createdAt).toLocaleDateString('es-ES');
                 document.getElementById('post-modal-image').src = post.image || '';
                 document.getElementById('post-modal-body').innerHTML = post.content;
+
+                // Renderizar tags en el modal
+                const tagsContainer = document.getElementById('post-modal-tags');
+                tagsContainer.innerHTML = '';
+                if (post.tags && Array.isArray(post.tags)) {
+                    tagsContainer.innerHTML = post.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                }
+
                 document.getElementById('post-modal-container').classList.add('is-active');
                 document.body.style.overflow = 'hidden';
             }
@@ -222,18 +216,15 @@
                 document.body.style.overflow = '';
             }
 
-            // SCRIPT DE PARALLAX DE REVELACIÓN (INTEGRADO)
             function initializeScrollEffects() {
                 const mediaBlocks = document.querySelectorAll('.media-block');
                 const windowHeight = window.innerHeight;
                 let ticking = false;
-
                 function updateScrollEffects() {
                     mediaBlocks.forEach(block => {
                         const rect = block.getBoundingClientRect();
                         const media = block.querySelector('.background-media > img');
                         if (!media) return;
-
                         if (rect.top < windowHeight && rect.bottom > 0) {
                             const progress = (rect.top + block.offsetHeight) / (windowHeight + block.offsetHeight);
                             const clampedProgress = 1 - Math.max(0, Math.min(1, progress));
@@ -244,14 +235,13 @@
                     });
                     ticking = false;
                 }
-
                 window.addEventListener('scroll', () => {
                     if (!ticking) {
                         window.requestAnimationFrame(updateScrollEffects);
                         ticking = true;
                     }
                 });
-                updateScrollEffects(); // Llamada inicial
+                updateScrollEffects();
             }
 
             renderBlogPosts();
