@@ -149,7 +149,7 @@
                 loteriaModal.classList.add('is-active');
                 document.body.style.overflow = 'hidden';
 
-                // Añadimos una entrada "falsa" al historial para capturar el botón "atrás"
+                // 1. Añadimos una entrada "falsa" al historial para capturar el botón "atrás"
                 history.pushState({ modal: 'loteria' }, '', '#loteria');
             }
 
@@ -163,21 +163,20 @@
 
             openLoteriaBtn.addEventListener('click', openLoteria);
             
-            // El botón de cierre ahora utiliza history.back() para activar el popstate
+            // 2. El botón de cierre ahora utiliza history.back() para que sea consistente
             closeLoteriaBtn.addEventListener('click', () => {
                 history.back();
             });
 
-            // Cerrar con la tecla Escape también usa history.back()
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && loteriaModal.classList.contains('is-active')) {
                     history.back();
                 }
             });
 
-            // Listener principal que gestiona el botón "atrás" del navegador
+            // 3. Este listener se activa con history.back() o el botón del navegador
             window.addEventListener('popstate', () => {
-                // Si el modal está activo, significa que el popstate es para cerrarlo.
+                // Si el modal está activo, el evento popstate es la señal para cerrarlo.
                 if (loteriaModal.classList.contains('is-active')) {
                     closeLoteria();
                 }
