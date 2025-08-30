@@ -241,6 +241,26 @@
             background-color: #c0392b;
             transform: scale(1.1);
         }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--secondary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -272,6 +292,10 @@
 
     <!-- Contenido del Blog -->
     <main class="container">
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Cargando entradas...</p>
+        </div>
         <div class="posts-container" id="postsContainer">
             <!-- Las entradas se cargarán aquí dinámicamente -->
         </div>
@@ -294,53 +318,96 @@
     <button class="admin-btn" onclick="window.location.href='adminargblog.html'">✏️</button>
 
     <script>
-        // Datos de ejemplo para el blog
-        const blogPosts = [
-            {
-                id: 1,
-                title: "La cultura argentina en el siglo XXI",
-                date: "15 de Octubre, 2023",
-                excerpt: "Exploramos cómo la cultura argentina ha evolucionado en las últimas décadas...",
-                image: "assets/img/img01.png",
-                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl."
-            },
-            {
-                id: 2,
-                title: "Tendencias tecnológicas en Buenos Aires",
-                date: "10 de Octubre, 2023",
-                excerpt: "Descubre las últimas innovaciones tecnológicas que están surgiendo en la capital argentina...",
-                image: "assets/img/img02.png",
-                content: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-            },
-            {
-                id: 3,
-                title: "Gastronomía argentina: más allá del asado",
-                date: "5 de Octubre, 2023",
-                excerpt: "Exploramos la riqueza culinaria argentina que va más allá de los clásicos emblemas gastronómicos...",
-                image: "assets/img/img03.png",
-                content: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        // Configuración de GitHub (debe coincidir con la del panel de administración)
+        const config = {
+            githubToken: localStorage.getItem('githubToken') || '',
+            repoOwner: localStorage.getItem('repoOwner') || 'alter-ias', // Cambia esto por tu usuario
+            repoName: localStorage.getItem('repoName') || 'mi-blog-datos' // Cambia esto por tu repositorio
+        };
+
+        // Función para obtener entradas desde GitHub
+        async function fetchBlogPosts() {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${config.repoOwner}/${config.repoName}/issues?labels=blog-post&state=open`, {
+                    headers: {
+                        'Authorization': `token ${config.githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} ${response.statusText}`);
+                }
+                
+                const issues = await response.json();
+                
+                // Convertir issues a formato de entradas de blog
+                return issues.map(issue => {
+                    try {
+                        const postData = JSON.parse(issue.body);
+                        postData.issueNumber = issue.number;
+                        postData.createdAt = issue.created_at;
+                        postData.updatedAt = issue.updated_at;
+                        return postData;
+                    } catch (e) {
+                        return {
+                            id: issue.id,
+                            issueNumber: issue.number,
+                            title: issue.title,
+                            content: issue.body,
+                            createdAt: issue.created_at,
+                            updatedAt: issue.updated_at
+                        };
+                    }
+                });
+            } catch (error) {
+                console.error('Error al obtener entradas:', error);
+                return [];
             }
-        ];
+        }
 
         // Función para renderizar las entradas del blog
-        function renderBlogPosts() {
+        async function renderBlogPosts() {
+            const loadingElement = document.getElementById('loading');
             const container = document.getElementById('postsContainer');
+            
+            // Mostrar loading
+            loadingElement.style.display = 'block';
             container.innerHTML = '';
             
-            blogPosts.forEach(post => {
-                const postElement = document.createElement('div');
-                postElement.className = 'post-card';
-                postElement.innerHTML = `
-                    <img src="${post.image}" alt="${post.title}" class="post-image">
-                    <div class="post-content">
-                        <div class="post-date">${post.date}</div>
-                        <h3 class="post-title">${post.title}</h3>
-                        <p class="post-excerpt">${post.excerpt}</p>
-                        <a href="#" class="read-more">Leer más →</a>
-                    </div>
-                `;
-                container.appendChild(postElement);
-            });
+            try {
+                const posts = await fetchBlogPosts();
+                
+                // Ocultar loading
+                loadingElement.style.display = 'none';
+                
+                if (posts.length === 0) {
+                    container.innerHTML = '<p class="no-posts">No hay entradas disponibles aún. ¡Pronto habrá contenido!</p>';
+                    return;
+                }
+                
+                // Ordenar por fecha de creación (más recientes primero)
+                posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                posts.forEach(post => {
+                    const postElement = document.createElement('div');
+                    postElement.className = 'post-card';
+                    postElement.innerHTML = `
+                        <img src="${post.image || 'assets/img/img01.png'}" alt="${post.title}" class="post-image" onerror="this.src='assets/img/img01.png'">
+                        <div class="post-content">
+                            <div class="post-date">${post.date || new Date(post.createdAt).toLocaleDateString('es-ES')}</div>
+                            <h3 class="post-title">${post.title}</h3>
+                            <p class="post-excerpt">${post.excerpt || post.content.substring(0, 150) + '...'}</p>
+                            <a href="#" class="read-more">Leer más →</a>
+                        </div>
+                    `;
+                    container.appendChild(postElement);
+                });
+            } catch (error) {
+                loadingElement.style.display = 'none';
+                container.innerHTML = '<p class="error">Error al cargar las entradas. Por favor, inténtelo más tarde.</p>';
+                console.error('Error al renderizar entradas:', error);
+            }
         }
 
         // Cargar las entradas al iniciar
