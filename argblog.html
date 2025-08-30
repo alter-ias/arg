@@ -23,26 +23,15 @@
 
         @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
-        /* Fondo tornasolado continuo para toda la página */
         body::before {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1;
             background: linear-gradient(-45deg, #2c3e50, #4a6da7, #8c2a5c, #4c0e2f);
             background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite;
         }
         
-        #blog-hero {
-            position: relative;
-            width: 100%;
-            height: 40vh; /* Header más compacto */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        
-        .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .content-overlay h1, .content-overlay h2 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 1rem 0; }
-        .content-overlay h1 { font-size: 5rem; }
+        #blog-hero { position: relative; width: 100%; height: 40vh; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .content-overlay { position: relative; z-index: 2; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .content-overlay h1 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 1rem 0; font-size: 5rem; }
         .content-overlay p { font-size: 1.1rem; margin: 0 auto 1.5rem auto; }
         
         #filter-container { margin-top: 2rem; }
@@ -50,47 +39,52 @@
         .filter-btn:hover, .tag-btn:hover { background-color: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
         .filter-btn.is-active { background-color: rgba(255, 255, 255, 0.25); border-color: var(--color-light); box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
 
-        /* Contenedor principal de los posts */
-        #postsContainer {
-            padding: 2rem;
-            max-width: 900px;
-            margin: 0 auto;
-        }
+        #postsContainer { padding: 2rem; max-width: 800px; margin: 0 auto; }
         
-        /* Nuevo estilo de "Tarjeta Flotante" para cada post */
-        .post-card {
-            background: rgba(26, 26, 26, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            text-align: center;
+        /* Contenedor flotante para cada post, sin fondo */
+        .post-entry { text-align: center; margin-bottom: 4rem; }
+        
+        .post-entry h2 { font-family: var(--font-serif); font-size: 2.5rem; }
+        .post-date { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
+        
+        /* --- NUEVA "VENTANA DE IMAGEN" CON PARALLAX --- */
+        .post-image-window {
+            width: 100%;
+            height: 250px; /* Altura fija de la ventana */
+            overflow: hidden;
+            position: relative;
+            border-radius: 8px;
+            margin: 1rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .post-card h2 { font-family: var(--font-serif); font-size: 2.5rem; }
-        .post-date { font-size: 0.9rem; margin-bottom: 1rem; opacity: 0.8; }
+        .post-image-window img {
+            width: 100%;
+            height: 140%; /* Imagen más alta que la ventana para permitir el scroll */
+            object-fit: cover;
+            position: absolute;
+            top: 0; left: 0;
+            will-change: transform;
+        }
+
         .post-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
         .tag { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; }
         
         .post-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
         .post-modal-container.is-active { opacity: 1; pointer-events: auto; }
-        .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; isolation: isolate; /* Para que el ::before funcione bien */ background-size: cover; background-position: center; }
+        .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; isolation: isolate; background-size: cover; background-position: center; }
         .post-modal-container.is-active .post-modal-content-wrapper { transform: scale(1); }
-
-        /* --- CORRECCIÓN CLAVE: Filtro tornasolado sobre la imagen de fondo del modal --- */
+        
+        /* --- CORRECCIONES CLAVE DEL MODAL --- */
         .post-modal-content-wrapper::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(-45deg, rgba(238,119,82,0.85), rgba(231,60,126,0.85), rgba(35,166,213,0.85), rgba(35,213,171,0.85));
-            background-size: 400% 400%;
-            animation: gradient-horizontal 25s ease infinite;
-            z-index: 1;
-            border-radius: 8px;
+            background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite;
+            background-attachment: local; /* <--- Esto hace que el fondo se desplace con el texto */
+            z-index: 1; border-radius: 8px;
         }
+        /* Ocultar barra de scroll */
+        .post-modal-content-wrapper { -ms-overflow-style: none; scrollbar-width: none; }
+        .post-modal-content-wrapper::-webkit-scrollbar { display: none; }
         
         .post-modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; cursor: pointer; color: var(--color-light); z-index: 10; }
         .post-modal-text { padding: 3rem; position: relative; z-index: 2; }
@@ -169,13 +163,16 @@
                 }
                 postsToRender.forEach(post => {
                     const postElement = document.createElement('div');
-                    postElement.className = 'post-card'; 
+                    postElement.className = 'post-entry'; 
                     let tagsHTML = '';
                     if (post.tags && Array.isArray(post.tags)) {
                         tagsHTML = `<div class="post-tags">${post.tags.map(tag => `<button class="tag-btn" data-tag="${tag}">${tag}</button>`).join('')}</div>`;
                     }
                     postElement.innerHTML = `
                         <h2>${post.title}</h2>
+                        <div class="post-image-window">
+                           <img src="${post.image || 'https://via.placeholder.com/1200x800'}" alt="${post.title}">
+                        </div>
                         <div class="post-date">${post.date || new Date(post.createdAt).toLocaleDateString('es-ES')}</div>
                         <p>${post.excerpt || ''}</p>
                         ${tagsHTML}
@@ -185,6 +182,7 @@
                 });
                 document.querySelectorAll('.read-more-btn').forEach(button => button.addEventListener('click', () => openPostModal(JSON.parse(button.dataset.post))));
                 document.querySelectorAll('.tag-btn').forEach(button => button.addEventListener('click', () => filterByTag(button.dataset.tag)));
+                initializeScrollEffects();
             }
 
             function renderFilterButtons() {
@@ -217,13 +215,9 @@
 
             function openPostModal(post) {
                 if (modalContainer.classList.contains('is-active')) return;
-                
-                // --- CORRECCIÓN CLAVE: Aplicar la imagen de fondo dinámicamente ---
                 modalWrapper.style.backgroundImage = `url('${post.image || ''}')`;
-
                 document.getElementById('post-modal-title').textContent = post.title;
                 document.getElementById('post-modal-date').textContent = post.date || new Date(post.createdAt).toLocaleDateString('es-ES');
-                
                 const contentBody = document.getElementById('post-modal-body');
                 contentBody.innerHTML = ''; 
                 const paragraphs = post.content.split('\n').filter(p => p.trim() !== '');
@@ -232,7 +226,6 @@
                     p.textContent = pText;
                     contentBody.appendChild(p);
                 });
-
                 const tagsContainer = document.getElementById('post-modal-tags');
                 tagsContainer.innerHTML = '';
                 if (post.tags && Array.isArray(post.tags)) {
@@ -246,34 +239,44 @@
                 if (!modalContainer.classList.contains('is-active')) return;
                 modalContainer.classList.remove('is-active');
                 document.body.style.overflow = '';
-                // Limpiar la imagen de fondo al cerrar
                 modalWrapper.style.backgroundImage = 'none';
             }
 
-            // Lógica de Scroll-to-Top
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > window.innerHeight) {
-                    scrollTopBtn.classList.add('is-visible');
-                } else {
-                    scrollTopBtn.classList.remove('is-visible');
+            function initializeScrollEffects() {
+                const postEntries = document.querySelectorAll('.post-entry');
+                const windowHeight = window.innerHeight;
+                let ticking = false;
+                function updateScrollEffects() {
+                    postEntries.forEach(entry => {
+                        const rect = entry.getBoundingClientRect();
+                        const media = entry.querySelector('.post-image-window img');
+                        if (!media) return;
+                        if (rect.top < windowHeight && rect.bottom > 0) {
+                            const progress = (rect.top + entry.offsetHeight) / (windowHeight + entry.offsetHeight);
+                            const clampedProgress = 1 - Math.max(0, Math.min(1, progress));
+                            const travelRange = media.offsetHeight - entry.querySelector('.post-image-window').offsetHeight;
+                            const translateY = -travelRange * clampedProgress;
+                            media.style.transform = `translateY(${translateY}px)`;
+                        }
+                    });
+                    if (window.scrollY > windowHeight / 2) {
+                        scrollTopBtn.classList.add('is-visible');
+                    } else {
+                        scrollTopBtn.classList.remove('is-visible');
+                    }
+                    ticking = false;
                 }
-            });
+                window.addEventListener('scroll', () => { if (!ticking) { window.requestAnimationFrame(updateScrollEffects); ticking = true; } });
+                updateScrollEffects();
+            }
 
             initializeBlog();
             
             document.querySelector('.post-modal-close').addEventListener('click', () => history.back());
             modalContainer.addEventListener('click', e => { if (e.target === e.currentTarget) history.back(); });
             document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalContainer.classList.contains('is-active')) history.back(); });
-
-            window.addEventListener('popstate', () => {
-                if (modalContainer.classList.contains('is-active')) {
-                    closePostModal();
-                }
-            });
-
-            scrollTopBtn.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
+            window.addEventListener('popstate', () => { if (modalContainer.classList.contains('is-active')) { closePostModal(); } });
+            scrollTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
         });
     </script>
 </body>
