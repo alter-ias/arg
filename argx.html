@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARG - Jardín Digital (Efecto Corregido)</title>
+    <title>ARG - Jardín Digital (Control Individual)</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     
     <style>
@@ -21,42 +21,18 @@
         /* BASE Y RESET                                            */
         /* ======================================================= */
         * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: var(--font-sans);
-            color: var(--color-light);
-            background-color: #1a1a1a;
-            overflow-x: hidden;
-        }
-
-        /* ======================================================= */
-        /* ENCABEZADO FIJO                                         */
-        /* ======================================================= */
-        header {
-            padding: 1.5rem var(--main-gap);
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            mix-blend-mode: exclusion;
-        }
+        body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
+        header { padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; mix-blend-mode: exclusion; }
+        .header-logo a { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light); }
         
-        .header-logo a {
-            font-family: var(--font-serif);
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-decoration: none;
-            color: var(--color-light);
-        }
-
         /* ======================================================= */
-        /* ESTRUCTURA DE BLOQUES DE SCROLL                         */
+        /* ESTRUCTURA DE BLOQUES (CON CONTROL INDIVIDUAL)          */
         /* ======================================================= */
         .media-block {
             position: relative;
             width: 100%;
-            height: 50vh;
+            /* Altura base para los bloques, se puede sobreescribir por ID */
+            height: 80vh; 
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -64,136 +40,124 @@
             text-align: center;
         }
 
-        .media-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center 50%; /* Iniciamos en el centro para tener margen de movimiento */
-            background-repeat: no-repeat;
-            z-index: 1;
-            will-change: background-position;
+        /* EJEMPLO DE CONTROL INDIVIDUAL DE ALTURA */
+        #block-1 {
+            height: 100vh;
         }
 
-        /* Superposición oscura para legibilidad del texto */
-        .media-block::before {
-            content: '';
+        .background-media {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 2;
+            z-index: 1;
+            overflow: hidden;
         }
 
-        .content-overlay {
-            position: relative;
+        .background-media img,
+        .background-media video {
+            width: 100%;
+            /* La imagen/video es más alta que el contenedor para tener espacio para moverse */
+            height: 130%; 
+            object-fit: cover;
+            /* El JS controlará esto */
+            will-change: transform; 
+        }
+
+        /* Superposición oscura general para legibilidad */
+        .media-block::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 2; }
+        
+        /* ======================================================= */
+        /* OVERLAYS DE COLOR SÓLIDO Y GRADIENTES                   */
+        /* ======================================================= */
+        .color-overlay {
+            position: absolute;
             z-index: 3;
-            padding: var(--main-gap);
-            max-width: 800px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
         }
         
-        .media-block.is-visible .content-overlay {
-            opacity: 1;
-            transform: translateY(0);
+        .iridescent-gradient {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* EJEMPLO 1: OVERLAY DE MEDIA PÁGINA */
+        #block-3 .color-overlay {
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+        }
+
+        /* EJEMPLO 2: OVERLAY DE VENTANA/MARCO */
+        #block-4 .color-overlay {
+            width: 100%;
+            height: 100%;
+            padding: 3rem; /* El padding crea el efecto de ventana */
+            opacity: 0.8;
         }
 
         /* ======================================================= */
-        /* ESTILOS DE CONTENIDO SUPERPUESTO                        */
+        /* CONTENIDO DE TEXTO                                      */
         /* ======================================================= */
-        .content-overlay h1, .content-overlay h2 {
-            font-family: var(--font-serif);
-            font-weight: 600;
-            line-height: 1.1;
-            margin: 0 0 1rem 0;
-        }
-        .content-overlay h1 { font-size: 5rem; }
-        .content-overlay h2 { font-size: 4rem; }
+        .content-overlay { position: relative; z-index: 4; /* Por encima de todo */ padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .media-block.is-visible .content-overlay { opacity: 1; transform: translateY(0); }
+        .content-overlay h1, .content-overlay h2 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 1rem 0; }
+        .content-overlay h1 { font-size: 5rem; } .content-overlay h2 { font-size: 4rem; }
         .content-overlay p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 1.5rem auto; }
-        
-        .btn {
-            display: inline-block;
-            padding: 0.8rem 1.8rem;
-            border: 2px solid var(--color-light);
-            color: var(--color-light);
-            background-color: transparent;
-            text-decoration: none;
-            transition: background-color 0.3s, color 0.3s;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            border-radius: 50px;
-        }
+        .btn { display: inline-block; padding: 0.8rem 1.8rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: background-color 0.3s, color 0.3s; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
         .btn:hover { background-color: var(--color-light); color: #1a1a1a; }
-        
-        /* ======================================================= */
-        /* ASIGNACIÓN DE IMÁGENES DE FONDO                         */
-        /* ======================================================= */
-        #block-1 .media-background { background-image: url('https://res.cloudinary.com/dahrwkdzd/image/upload/v1754182661/El_rancho_jtoxk1.png'); }
-        #block-2 .media-background { background-image: url('https://res.cloudinary.com/dahrwkdzd/image/upload/v1754182716/La_torta_ahogada_dp5hgm.png'); }
-        #block-3 .media-background { background-image: url('https://res.cloudinary.com/dahrwkdzd/image/upload/v1754182671/El_rapero_ob5leh.png'); }
-        #block-4 .media-background { background-image: url('https://res.cloudinary.com/dahrwkdzd/image/upload/v1754182697/La_gentrificaci%C3%B3n_gjd749.png'); }
-        
         footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background-color: #111; }
-
-        @media (max-width: 768px) {
-            .content-overlay h1 { font-size: 3rem; }
-            .content-overlay h2 { font-size: 2.5rem; }
-        }
+        @media (max-width: 768px) { .content-overlay h1 { font-size: 3rem; } .content-overlay h2 { font-size: 2.5rem; } }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-logo"><a href="#">ARG</a></div>
-    </header>
+    <header><div class="header-logo"><a href="#">ARG</a></div></header>
 
     <main>
+        <!-- Bloque 1: Imagen, Altura Completa -->
         <section class="media-block" id="block-1">
-            <div class="media-background"></div>
-            <div class="content-overlay">
-                <h1>Jardín Digital</h1>
-                <p>Una colección de Alan Ruíz Galicia</p>
+            <div class="background-media">
+                <img src="https://static.wixstatic.com/media/45d10e_5f001b282712449b808f44d927af9fc6~mv2.jpg/v1/fill/w_3806,h_3756,al_b,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/45d10e_5f001b282712449b808f44d927af9fc6~mv2.jpg" alt="Jardín Digital">
             </div>
+            <div class="content-overlay"><h1>Jardín Digital</h1><p>Una colección de Alan Ruíz Galicia</p></div>
         </section>
 
+        <!-- Bloque 2: Video, Altura Base -->
         <section class="media-block" id="block-2">
-            <div class="media-background"></div>
-            <div class="content-overlay">
-                <h2>Ecos en las Ruinas</h2>
-                <p>Las estrellas susurran historias antiguas, tejiendo destinos en el tapiz del cosmos.</p>
-                <button class="btn">Explorar</button>
+            <div class="background-media">
+                <!-- Video de ejemplo, reemplaza con tu URL de video -->
+                <video src="https://static.wixstatic.com/media/45d10e_5f001b282712449b808f44d927af9fc6~mv2.mp4" autoplay loop muted playsinline></video>
             </div>
+            <div class="content-overlay"><h2>Ecos en las Ruinas</h2><p>Las estrellas susurran historias antiguas, tejiendo destinos en el tapiz del cosmos.</p><button class="btn">Explorar</button></div>
         </section>
 
+        <!-- Bloque 3: Imagen con Overlay de Media Página -->
         <section class="media-block" id="block-3">
-            <div class="media-background"></div>
-            <div class="content-overlay">
-                <h2>Archivo Sonoro</h2>
-                <p>Fragmentos que exploran la intersección del arte, la tecnología y el espíritu.</p>
-                 <button class="btn">Escuchar</button>
+            <div class="background-media">
+                <img src="https://static.wixstatic.com/media/c837a6_4a4f895c121848afad327ce95285005c~mv2.jpg/v1/fill/w_2500,h_1232,al_c,q_90,enc_avif,quality_auto/c837a6_4a4f895c121848afad327ce95285005c~mv2.jpg" alt="Archivo Sonoro">
             </div>
+            <div class="color-overlay iridescent-gradient"></div>
+            <div class="content-overlay"><h2>Archivo Sonoro</h2><p>Fragmentos que exploran la intersección del arte, la tecnología y el espíritu.</p><button class="btn">Escuchar</button></div>
         </section>
         
+        <!-- Bloque 4: Imagen con Overlay de Ventana -->
         <section class="media-block" id="block-4">
-            <div class="media-background"></div>
-            <div class="content-overlay">
-                <h2>Lotería Tapatía</h2>
-                <p>Una reinterpretación digital del clásico juego de mesa.</p>
-                <button class="btn">Jugar Ahora</button>
+            <div class="background-media">
+                <img src="https://static.wixstatic.com/media/11062b_540eb79aa87a4e09b665e6daf5843bfa~mv2.jpg/v1/fill/w_5000,h_868,al_t,q_90,enc_avif,quality_auto/11062b_540eb79aa87a4e09b665e6daf5843bfa~mv2.jpg" alt="Lotería">
             </div>
+            <div class="color-overlay iridescent-gradient"></div>
+            <div class="content-overlay"><h2>Lotería Tapatía</h2><p>Una reinterpretación digital del clásico juego de mesa.</p><button class="btn">Jugar Ahora</button></div>
         </section>
     </main>
     
-    <footer>
-        <p>&copy; 2025 - ARG. Todos los derechos reservados.</p>
-    </footer>
+    <footer><p>&copy; 2025 - ARG. Todos los derechos reservados.</p></footer>
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -204,30 +168,22 @@
             function updateScrollEffects() {
                 mediaBlocks.forEach(block => {
                     const rect = block.getBoundingClientRect();
-                    const background = block.querySelector('.media-background');
+                    const media = block.querySelector('.background-media > *');
+                    if (!media) return;
 
-                    // ==========================================================
-                    // NUEVA LÓGICA PARA EL "SCROLL INTERNO"
-                    // ==========================================================
+                    // Lógica del Parallax de Revelación (ahora sobre el elemento <img> o <video>)
                     if (rect.top < windowHeight && rect.bottom > 0) {
-                        // Calcula el progreso del scroll DENTRO del bloque (de 0 a 1)
-                        // rect.top va de windowHeight (cuando aparece abajo) a -block.offsetHeight (cuando desaparece arriba)
-                        const progress = (-rect.top) / block.offsetHeight;
+                        const progress = (rect.top + block.offsetHeight) / (windowHeight + block.offsetHeight);
+                        const clampedProgress = 1 - Math.max(0, Math.min(1, progress));
                         
-                        // Mapeamos el progreso a un rango de movimiento para el fondo (ej. de 20% a 80%)
-                        // Esto evita que veamos los bordes duros de la imagen al inicio y al final.
-                        const startY = 20; // 20%
-                        const endY = 80;   // 80%
-                        const range = endY - startY;
-                        const backgroundY = startY + (progress * range);
+                        // Calculamos el rango de movimiento. Si el media es 130% de alto, puede moverse un -30%.
+                        const travelRange = media.offsetHeight - block.offsetHeight;
+                        const translateY = -travelRange * clampedProgress;
                         
-                        // Aplicamos la posición, asegurándonos de que no se salga del rango 0-100
-                        const finalBackgroundY = Math.max(0, Math.min(100, backgroundY));
-
-                        background.style.backgroundPositionY = `${finalBackgroundY}%`;
+                        media.style.transform = `translateY(${translateY}px)`;
                     }
                     
-                    // Lógica para la aparición del contenido (sin cambios)
+                    // Lógica para la aparición del contenido
                     if (rect.top < windowHeight * 0.75 && rect.bottom > windowHeight * 0.25) {
                          block.classList.add('is-visible');
                     } else {
