@@ -18,6 +18,13 @@
             --text-color: #EAEAEA;
             --secondary-text-color: #b3b3b3;
             --text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.9);
+
+            --gradient-dark: linear-gradient(-45deg, #2c3e50, #95a5a6, #1c1c1c, #34495e);
+            --gradient-sunset: linear-gradient(-45deg, #ee7752, #e73c7e, #8c2a5c, #4c0e2f);
+            --gradient-cool: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
+
+            --active-gradient: var(--gradient-dark);
+            --filter-opacity: 1.0;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { height: 100%; }
@@ -29,29 +36,42 @@
             overflow-y: auto; 
         }
         
-        @keyframes gradient-horizontal { 
-            0% { background-position: 0% 50%; } 
-            50% { background-position: 100% 50%; } 
-            100% { background-position: 0% 50%; } 
-        }
+        @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
         .iridescent-background {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            background: linear-gradient(-45deg, #2c3e50, #95a5a6, #1c1c1c, #34495e);
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; z-index: -1;
+            background: var(--active-gradient);
+            opacity: var(--filter-opacity);
             background-size: 400% 400%;
             animation: gradient-horizontal 15s ease infinite;
+            transition: opacity 0.5s ease;
         }
+
+        /* --- NUEVO: Controles de Estilo --- */
+        .controls-container {
+            background-color: rgba(0,0,0,0.3); padding: 0.5rem 1rem; border-radius: 20px;
+            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .filter-controls { display: flex; gap: 0.5rem; }
+        .filter-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--text-color); cursor: pointer; transition: transform 0.2s; }
+        .filter-btn:hover { transform: scale(1.1); }
+        .filter-btn.is-active { border-width: 4px; }
+        #filter-dark { background: var(--gradient-dark); }
+        #filter-sunset { background: var(--gradient-sunset); }
+        #filter-cool { background: var(--gradient-cool); }
+        .opacity-control { width: 150px; }
+        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 2px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; outline: none; cursor: pointer; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; background: var(--text-color); border-radius: 50%; border: 2px solid #1a1a1a; }
+        input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; background: var(--text-color); border-radius: 50%; border: 2px solid #1a1a1a; }
 
         .page-wrapper { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 2; }
         .view-container { width: 100%; min-height: 100vh; position: absolute; top: 0; left: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; opacity: 1; visibility: visible; transition: opacity 0.7s ease-in-out, visibility 0.7s ease-in-out; }
         #postal-selection-view { position: relative; justify-content: flex-start; padding-top: 40px; }
         .view-container.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         #postal-selection-view .header { text-align: center; margin-bottom: 20px; width: 100%; }
-        #postal-selection-view .logo { height: 200px; width: auto; margin-bottom: 15px; }
-        #postal-selection-view .title { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 700; letter-spacing: 3px; text-shadow: var(--text-shadow); }
+        #postal-selection-view .logo { height: 150px; width: auto; margin-bottom: 15px; } /* Logo más pequeño para dar espacio */
         #postal-selection-view .subtitle { font-size: 1rem; color: var(--secondary-text-color); font-weight: 400; margin-top: 10px; max-width: 500px; line-height: 1.5; margin-left: auto; margin-right: auto; }
         
         #navigation-controls { display: flex; justify-content: center; align-items: center; gap: 60px; margin: 20px 0; width: 100%; }
@@ -67,30 +87,12 @@
         .card-face { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
         .card-front img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* --- CORRECCIÓN CLAVE: Múltiples fondos para el reverso --- */
         .card-back {
-            background-image:
-                linear-gradient(-45deg, 
-                    rgba(44, 62, 80, 0.8), 
-                    rgba(149, 165, 166, 0.8),
-                    rgba(28, 28, 28, 0.8), 
-                    rgba(52, 73, 94, 0.8)
-                ),
-                var(--card-bg-image); /* La imagen se pone como segunda capa de fondo */
-            
-            background-size: 400% 400%, cover;
-            background-position: center, center;
-            background-repeat: no-repeat, no-repeat;
-            
+            background-image: linear-gradient(-45deg, rgba(44, 62, 80, 0.8), rgba(149, 165, 166, 0.8), rgba(28, 28, 28, 0.8), rgba(52, 73, 94, 0.8)), var(--card-bg-image);
+            background-size: 400% 400%, cover; background-position: center, center; background-repeat: no-repeat, no-repeat;
             animation: gradient-horizontal 10s ease infinite;
-            transform: rotateY(180deg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 15px;
+            transform: rotateY(180deg); display: flex; align-items: center; justify-content: center; text-align: center; padding: 15px;
         }
-
         .card-back p { font-weight: bold; font-size: 1.3rem; color: white; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
         
         #poem-display-view { justify-content: center; touch-action: none; position: fixed; background-size: cover; background-position: center center; transition: background-image 0.5s ease-in-out; }
@@ -121,6 +123,16 @@
         <div id="postal-selection-view" class="view-container">
             <header class="header">
                 <img src="./assets/img/logo00.png" alt="Lotería Tapatía Logo" class="logo">
+                <div class="controls-container">
+                    <div class="filter-controls">
+                        <button class="filter-btn" id="filter-dark" data-palette="dark" title="Filtro Oscuro"></button>
+                        <button class="filter-btn" id="filter-sunset" data-palette="sunset" title="Filtro Cálido"></button>
+                        <button class="filter-btn" id="filter-cool" data-palette="cool" title="Filtro Frío"></button>
+                    </div>
+                    <div class="opacity-control">
+                         <input type="range" id="opacity-slider" min="0" max="100" value="100" title="Opacidad del filtro">
+                    </div>
+                </div>
                 <p class="subtitle">La Lotería Tapatía es un proyecto literario que explora y celebra la identidad de Guadalajara a través de viñetas breves y evocadoras...</p>
             </header>
             
@@ -141,8 +153,49 @@
     </div>
 
 <script>
-// El JavaScript no necesita cambios, la lógica de la aplicación sigue siendo la misma.
 document.addEventListener('DOMContentLoaded', () => {
+    // --- LÓGICA DE CONTROL DE FILTROS ---
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const opacitySlider = document.getElementById('opacity-slider');
+    const root = document.documentElement;
+    let currentPalette = 'dark'; // Default palette for Loteria
+
+    function applySettings(palette, opacity) {
+        root.style.setProperty('--filter-opacity', opacity / 100);
+        const gradient = getComputedStyle(root).getPropertyValue(`--gradient-${palette}`);
+        root.style.setProperty('--active-gradient', gradient);
+        filterButtons.forEach(btn => {
+            btn.classList.toggle('is-active', btn.dataset.palette === palette);
+        });
+        opacitySlider.value = opacity;
+        currentPalette = palette;
+    }
+    function saveSettings(palette, opacity) {
+        localStorage.setItem('argLoteriaPalette', palette);
+        localStorage.setItem('argLoteriaOpacity', opacity);
+    }
+
+    const savedPalette = localStorage.getItem('argLoteriaPalette') || 'dark';
+    const savedOpacity = localStorage.getItem('argLoteriaOpacity') || '100';
+    applySettings(savedPalette, savedOpacity);
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const newPalette = button.dataset.palette;
+            const currentOpacity = opacitySlider.value;
+            applySettings(newPalette, currentOpacity);
+            saveSettings(newPalette, currentOpacity);
+        });
+    });
+
+    opacitySlider.addEventListener('input', () => {
+        const newOpacity = opacitySlider.value;
+        applySettings(currentPalette, newOpacity);
+        saveSettings(currentPalette, newOpacity);
+    });
+
+
+    // --- LÓGICA DE LA LOTERÍA (SIN CAMBIOS) ---
     const postalSelectionView = document.getElementById('postal-selection-view');
     const poemDisplayView = document.getElementById('poem-display-view');
     const postalContainer = document.getElementById('postal-container');
@@ -194,7 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
             card.dataset.poemIndex = poem.originalIndex;
             if (flippedCardIndices.has(poem.originalIndex)) card.classList.add('is-flipping');
             const postalImageUrl = poem.imageUrl;
-            // Aquí es donde se pasa la URL de la imagen al CSS
             card.style.setProperty('--card-bg-image', `url('${postalImageUrl}')`);
             card.innerHTML = `<div class="card-inner"><div class="card-face card-front"><img src="${postalImageUrl}" alt="Postal para '${poem.title}'" loading="lazy"></div><div class="card-face card-back"><p>${poem.title}</p></div></div>`;
             postalContainer.appendChild(card);
@@ -278,4 +330,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </body>
-</html>```
+</html>
