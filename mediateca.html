@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archivo Sonoro y Visual - Jardín Digital</title>
+    <title>Mediateca - Jardín Digital</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
@@ -21,33 +21,26 @@
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: var(--color-dark); overflow-x: hidden; }
 
-        /* Bloque principal que ocupa toda la pantalla */
-        .archive-block {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        
-        /* Fondo tornasolado para los bloques */
         @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .archive-block::before {
+
+        .archive-block { position: relative; width: 100%; height: 100vh; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+        
+        #archive-hero::before, #video-archive::before, #podcast-archive::before {
             content: '';
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 1;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            z-index: -1;
+            background: linear-gradient(-45deg, #2c3e50, #4a6da7, #8c2a5c, #4c0e2f);
             background-size: 400% 400%;
             animation: gradient-horizontal 25s ease infinite;
-            filter: brightness(0.7);
+            filter: brightness(0.6);
         }
         
-        /* Contenedor del contenido (player + lista) */
+        .hero-content { text-align: center; }
+        .hero-content h1 { font-family: var(--font-serif); font-size: 5rem; margin-bottom: 0.5rem; }
+        .hero-content p { font-size: 1.2rem; max-width: 600px; margin-top: 0; }
+
         .archive-content {
             position: relative;
             z-index: 2;
@@ -64,150 +57,141 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
-        
-        .player-container {
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .player-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
 
-        .media-list {
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-        
-        .media-list h3 {
+        .block-title {
             font-family: var(--font-serif);
-            font-size: 1.8rem;
-            margin: 0 0 1rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
         }
         
-        .media-list ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .media-link {
-            display: block;
-            padding: 0.75rem;
-            text-decoration: none;
-            color: var(--color-light);
-            border-radius: 5px;
-            margin-bottom: 0.5rem;
-            transition: background-color 0.3s;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-        .media-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        .media-link.is-active {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-color: var(--color-light);
-            font-weight: bold;
-        }
+        .player-container { border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .player-container iframe { width: 100%; height: 100%; border: none; }
 
-        /* Botón de volver */
-        .back-btn { position: fixed; bottom: 20px; right: 20px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem; cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .media-list { display: flex; flex-direction: column; overflow-y: auto; }
+        .media-list ul { list-style: none; padding: 0; margin: 0; }
+        
+        .media-link { display: block; padding: 0.75rem; text-decoration: none; color: var(--color-light); border-radius: 5px; margin-bottom: 0.5rem; transition: background-color 0.3s; cursor: pointer; border: 1px solid transparent; }
+        .media-link:hover { background-color: rgba(255, 255, 255, 0.1); }
+        .media-link.is-active { background-color: rgba(255, 255, 255, 0.15); border-color: var(--color-light); font-weight: bold; }
+
+        .back-btn { position: fixed; bottom: 20px; right: 20px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem; cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; transition: all 0.3s; text-decoration: none; }
         .back-btn:hover { transform: scale(1.1); background-color: rgba(255,255,255,0.2); }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-            .archive-content {
-                grid-template-columns: 1fr;
-                height: 90%;
-            }
-            .player-container {
-                aspect-ratio: 16 / 9;
-                height: auto;
-            }
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 3rem; }
+            .hero-content p, .media-link { font-size: 1rem; }
+            
+            .archive-content { grid-template-columns: 1fr; height: 90%; }
+            .player-container { aspect-ratio: 16 / 9; height: auto; }
+            .block-title { font-size: 2rem; margin-bottom: 1rem; }
         }
     </style>
 </head>
 <body>
 
+    <section class="archive-block" id="archive-hero">
+        <div class="hero-content">
+            <h1>Mediateca</h1>
+            <p>Una colección de fragmentos audiovisuales</p>
+        </div>
+    </section>
+
     <!-- Bloque de Video -->
     <section class="archive-block" id="video-archive">
-        <div class="archive-content">
-            <div class="player-container">
-                <iframe id="youtube-player" src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </div>
-            <div class="media-list">
-                <h3>Más Videos</h3>
-                <ul>
-                    <li><a class="media-link is-active" data-src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk">Video Principal</a></li>
-                    <li><a class="media-link" data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Segundo Video</a></li>
-                    <!-- Añade más videos aquí -->
-                    <li><a class="media-link" data-src="https://www.youtube-nocookie.com/embed/VIDEO_ID_3">Tercer Video (Placeholder)</a></li>
-                </ul>
+        <div class="content-wrapper">
+            <h2 class="block-title">Archivo Visual</h2>
+            <div class="archive-content">
+                <div class="player-container">
+                    <iframe id="youtube-player" src="" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="media-list">
+                    <!-- El JS llenará esta lista dinámicamente -->
+                    <ul id="video-list-ul"></ul>
+                    <!-- Los enlaces ahora se definen en un div oculto para que el JS los procese -->
+                    <div id="video-sources" style="display: none;">
+                        <a data-src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk">Video Principal</a>
+                        <a data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Segundo Video</a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Bloque de Podcast -->
     <section class="archive-block" id="podcast-archive">
-         <div class="archive-content">
-            <div class="player-container">
-                <iframe id="spotify-player" style="border-radius:8px" src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0" width="100%" height="100%" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-            </div>
-            <div class="media-list">
-                <h3>Más Podcasts</h3>
-                <ul>
-                    <li><a class="media-link is-active" data-src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0">Podcast Principal</a></li>
-                    <li><a class="media-link" data-src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0">Segundo Podcast</a></li>
-                    <!-- Añade más podcasts aquí -->
-                    <li><a class="media-link" data-src="https://open.spotify.com/embed/episode/PODCAST_ID_3?utm_source=generator&theme=0">Tercer Podcast (Placeholder)</a></li>
-                </ul>
+        <div class="content-wrapper">
+            <h2 class="block-title">Archivo Sonoro</h2>
+            <div class="archive-content">
+                <div class="player-container">
+                    <iframe id="spotify-player" src="" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>
+                <div class="media-list">
+                    <ul id="podcast-list-ul"></ul>
+                    <div id="podcast-sources" style="display: none;">
+                        <a data-src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0">Podcast Principal</a>
+                        <a data-src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0">Segundo Podcast</a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <a href="index.html" class="back-btn">🏠</a>
+    <a href="index.html" class="back-btn">←</a>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             /**
-             * Función reutilizable para configurar una sección de archivo (video o podcast).
-             * @param {string} sectionId - El ID del <section> que contiene el archivo.
-             * @param {string} playerIframeId - El ID del <iframe> que actúa como reproductor.
+             * Función reutilizable para configurar una sección de archivo.
+             * Ahora construye la lista dinámicamente a partir de los enlaces en el HTML.
+             * @param {string} sectionId - El ID del <section>
+             * @param {string} playerIframeId - El ID del <iframe>
+             * @param {string} sourcesDivId - El ID del <div> que contiene los enlaces <a>
+             * @param {string} listUlId - El ID del <ul> donde se renderizará la lista
              */
-            function setupArchiveSection(sectionId, playerIframeId) {
-                const section = document.getElementById(sectionId);
+            function setupArchiveSection(sectionId, playerIframeId, sourcesDivId, listUlId) {
                 const player = document.getElementById(playerIframeId);
-                const links = section.querySelectorAll('.media-link');
+                const sourcesContainer = document.getElementById(sourcesDivId);
+                const listUl = document.getElementById(listUlId);
+                const sourceLinks = sourcesContainer.querySelectorAll('a');
 
-                links.forEach(link => {
+                if (sourceLinks.length === 0) return;
+
+                // 1. Construir la lista dinámicamente
+                sourceLinks.forEach((link, index) => {
+                    const li = document.createElement('li');
+                    const newLink = document.createElement('a');
+                    newLink.className = 'media-link';
+                    newLink.href = '#';
+                    newLink.dataset.src = link.dataset.src;
+                    newLink.textContent = link.textContent; // Extraer título
+                    
+                    if (index === 0) {
+                        newLink.classList.add('is-active'); // Activar el primero
+                    }
+
+                    li.appendChild(newLink);
+                    listUl.appendChild(li);
+                });
+
+                // 2. Cargar el primer elemento en el reproductor
+                player.src = sourceLinks[0].dataset.src;
+
+                // 3. Añadir listeners a los nuevos enlaces de la lista
+                const renderedLinks = listUl.querySelectorAll('.media-link');
+                renderedLinks.forEach(link => {
                     link.addEventListener('click', function(event) {
-                        event.preventDefault(); // Evita que el enlace navegue
-
-                        // Quitar la clase activa de todos los enlaces de esta sección
-                        links.forEach(l => l.classList.remove('is-active'));
-
-                        // Añadir la clase activa al enlace clickeado
+                        event.preventDefault();
+                        renderedLinks.forEach(l => l.classList.remove('is-active'));
                         this.classList.add('is-active');
-
-                        // Obtener la nueva URL del atributo data-src
-                        const newSrc = this.dataset.src;
-                        
-                        // Actualizar el src del iframe
-                        player.src = newSrc;
+                        player.src = this.dataset.src;
                     });
                 });
             }
 
-            // Configurar ambas secciones usando la función reutilizable
-            setupArchiveSection('video-archive', 'youtube-player');
-            setupArchiveSection('podcast-archive', 'spotify-player');
+            // Configurar ambas secciones
+            setupArchiveSection('video-archive', 'youtube-player', 'video-sources', 'video-list-ul');
+            setupArchiveSection('podcast-archive', 'spotify-player', 'podcast-sources', 'podcast-list-ul');
         });
     </script>
 </body>
