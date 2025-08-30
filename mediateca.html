@@ -32,9 +32,9 @@
             padding: 2rem;
         }
         
-        #archive-hero { height: 40vh; }
+        #archive-hero { height: 30vh; }
 
-        #archive-hero::before {
+        .archive-block::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: linear-gradient(-45deg, #2c3e50, #4a6da7, #8c2a5c, #4c0e2f);
             background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite; filter: brightness(0.6);
@@ -47,55 +47,62 @@
         .dual-archive-block {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            gap: 4rem; /* Aumentamos el espacio entre paneles */
             height: 100vh;
             align-items: center;
         }
 
-        .dual-archive-block::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite; filter: brightness(0.7);
-        }
-
         .archive-pane {
             width: 100%;
-            height: 90%; /* Ajustamos la altura del panel */
-        }
-        
-        /* ======================================================= */
-        /* NUEVO CONTENEDOR "TARJETA" PARA EL CONTENIDO            */
-        /* ======================================================= */
-        .pane-content {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 2rem;
-            width: 100%;
-            height: 100%;
+            height: auto;
             display: flex;
             flex-direction: column;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            justify-content: center;
+            align-items: center;
         }
 
         .block-title { font-family: var(--font-serif); font-size: 2.5rem; margin-bottom: 2rem; text-align: center; }
         
         /* ======================================================= */
-        /* REGLA UNIFICADA PARA SIMETRÍA                           */
+        /* SOLUCIÓN RESPONSIVA PARA VIDEO (SIN BARRAS NEGRAS)      */
         /* ======================================================= */
         .player-container {
             width: 100%;
-            height: 350px; /* Altura fija y simétrica para ambos reproductores */
+            margin-bottom: 1rem;
+        }
+        .video-wrapper {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+
+        /* Contenedor de Spotify mantiene su lógica */
+        #podcast-archive .player-container {
+            height: 352px;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        #podcast-archive .player-container iframe { width: 100%; height: 100%; border: none; }
+        
+        .media-description {
+            font-size: 0.9rem;
+            font-style: italic;
+            opacity: 0.8;
+            max-width: 90%;
+            text-align: center;
             margin-bottom: 1.5rem;
         }
 
-        .player-container iframe { width: 100%; height: 100%; border: none; }
-
-        .media-list { flex-grow: 1; overflow-y: auto; text-align: left; }
+        .media-list { display: flex; flex-direction: column; overflow-y: auto; text-align: left; width: 100%; }
         .media-list ul { list-style: none; padding: 0; margin: 0; }
         .media-link { display: block; padding: 0.75rem; text-decoration: none; color: var(--color-light); border-radius: 5px; margin-bottom: 0.5rem; transition: background-color 0.3s; cursor: pointer; border: 1px solid transparent; }
         .media-link:hover { background-color: rgba(255, 255, 255, 0.1); }
@@ -104,10 +111,8 @@
         @media (max-width: 900px) {
             .hero-content h1 { font-size: 3rem; }
             .hero-content p, .media-link { font-size: 1rem; }
-            
             .dual-archive-block { grid-template-columns: 1fr; height: auto; }
-            .archive-pane { min-height: 100vh; padding: 2rem 0; height: auto; }
-            .pane-content { height: auto; }
+            .archive-pane { min-height: 100vh; padding: 2rem 0; }
             .block-title { font-size: 2rem; }
         }
     </style>
@@ -123,33 +128,31 @@
 
     <section class="archive-block dual-archive-block">
         <div class="archive-pane" id="video-archive">
-            <div class="pane-content">
-                <h2 class="block-title">Archivo Visual</h2>
-                <div class="player-container">
-                    <iframe id="youtube-player" src="" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                </div>
-                <div class="media-list">
-                    <ul id="video-list-ul"></ul>
-                    <div id="video-sources" style="display: none;">
-                        <a data-src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk">Video Principal</a>
-                        <a data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Segundo Video</a>
-                    </div>
+            <h2 class="block-title">Archivo Visual</h2>
+            <div class="player-container video-wrapper">
+                <iframe id="youtube-player" src="" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <p class="media-description">Breve pieza que explora la identidad y el concepto del "Jardín Digital".</p>
+            <div class="media-list">
+                <ul id="video-list-ul"></ul>
+                <div id="video-sources" style="display: none;">
+                    <a data-src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk">¿Quién es Alan Ruíz?</a>
+                    <a data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Manifiesto</a>
                 </div>
             </div>
         </div>
 
         <div class="archive-pane" id="podcast-archive">
-            <div class="pane-content">
-                <h2 class="block-title">Archivo Sonoro</h2>
-                <div class="player-container">
-                    <iframe id="spotify-player" src="" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                </div>
-                <div class="media-list">
-                    <ul id="podcast-list-ul"></ul>
-                    <div id="podcast-sources" style="display: none;">
-                        <a data-src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0">Podcast Principal</a>
-                        <a data-src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0">Segundo Podcast</a>
-                    </div>
+            <h2 class="block-title">Archivo Sonoro</h2>
+            <div class="player-container">
+                <iframe id="spotify-player" src="" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+            <p class="media-description">Conversaciones y exploraciones sonoras sobre arte, cultura y pensamiento contemporáneo.</p>
+            <div class="media-list">
+                <ul id="podcast-list-ul"></ul>
+                <div id="podcast-sources" style="display: none;">
+                    <a data-src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0">Episodio sobre Creatividad</a>
+                    <a data-src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0">Diálogos sobre el Futuro</a>
                 </div>
             </div>
         </div>
