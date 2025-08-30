@@ -35,15 +35,15 @@
             100% { background-position: 0% 50%; } 
         }
 
-        /* --- CORRECCIÓN CLAVE 1: Nueva paleta de grises y negros para el fondo --- */
+        /* --- CORRECCIÓN CLAVE 1: Nueva paleta con "luz" y ritmo más rápido --- */
         .iridescent-background {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
-            background: linear-gradient(-45deg, #1c1c1c, #3a3a3a, #2c3e50, #1f2833);
+            background: linear-gradient(-45deg, #2c3e50, #95a5a6, #1c1c1c, #34495e);
             background-size: 400% 400%;
-            animation: gradient-horizontal 25s ease infinite;
+            animation: gradient-horizontal 15s ease infinite; /* Ritmo más rápido */
         }
 
         .page-wrapper { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 2; }
@@ -68,16 +68,16 @@
         .card-face { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
         .card-front img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* --- CORRECCIÓN CLAVE 2: Nueva paleta de grises y negros para el reverso de la carta --- */
+        /* --- CORRECCIÓN CLAVE 2: Paleta del reverso con "luz" y ritmo más rápido --- */
         .card-back {
             background: linear-gradient(-45deg, 
-                rgba(28, 28, 28, 0.8), 
-                rgba(58, 58, 58, 0.8), 
                 rgba(44, 62, 80, 0.8), 
-                rgba(31, 40, 51, 0.8)
+                rgba(149, 165, 166, 0.8), /* Punto de luz */
+                rgba(28, 28, 28, 0.8), 
+                rgba(52, 73, 94, 0.8)
             );
             background-size: 400% 400%;
-            animation: gradient-horizontal 15s ease infinite;
+            animation: gradient-horizontal 10s ease infinite; /* Ritmo más rápido */
             transform: rotateY(180deg);
             display: flex;
             align-items: center;
@@ -136,8 +136,8 @@
     </div>
 
 <script>
+// El JavaScript no necesita cambios, la lógica de la aplicación sigue siendo la misma.
 document.addEventListener('DOMContentLoaded', () => {
-    // El JavaScript no necesita cambios, la lógica de la aplicación sigue siendo la misma.
     const postalSelectionView = document.getElementById('postal-selection-view');
     const poemDisplayView = document.getElementById('poem-display-view');
     const postalContainer = document.getElementById('postal-container');
@@ -155,39 +155,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let totalTablas = 0;
     let flippedCardIndices = new Set();
     const storageKey = 'loteriaTapatia_flippedCards';
-
-    const loadFlippedState = () => {
-        const savedState = localStorage.getItem(storageKey);
-        if (savedState) { flippedCardIndices = new Set(JSON.parse(savedState)); }
-    };
-    const saveFlippedState = () => {
-        localStorage.setItem(storageKey, JSON.stringify([...flippedCardIndices]));
-    };
-    const shuffleArray = (array) => {
-        for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; }
-    };
+    const loadFlippedState = () => { const savedState = localStorage.getItem(storageKey); if (savedState) { flippedCardIndices = new Set(JSON.parse(savedState)); } };
+    const saveFlippedState = () => { localStorage.setItem(storageKey, JSON.stringify([...flippedCardIndices])); };
+    const shuffleArray = (array) => { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } };
     function loadPoemsData() {
         postalContainer.innerHTML = `<div class="spinner"></div><p id="loading-message">Construyendo los universos...</p>`;
-        fetch(dataUrl)
-            .then(response => response.json())
-            .then(data => {
-                allPoems = data.map((row, originalIndex) => {
-                    if (!row) return null;
-                    const title = row.TITULO ? String(row.TITULO).trim() : '';
-                    const poemText = row.POEMA ? String(row.POEMA).trim() : '';
-                    const soundUrl = row.SONIDO_ID ? String(row.SONIDO_ID).trim() : '';
-                    const imageUrl = row.IMAGEN_POSTAL_ID ? String(row.IMAGEN_POSTAL_ID).trim() : '';
-                    if (!title || !poemText || !imageUrl) return null;
-                    return { title, poemText, soundUrl, imageUrl, originalIndex };
-                }).filter(p => p !== null);
-                shuffleArray(allPoems);
-                totalTablas = Math.ceil(allPoems.length / cardsPerTabla);
-                renderTabla();
-            })
-            .catch(error => {
-                console.error('Error al cargar la Lotería:', error);
-                postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80;"><b>Error:</b><br>${error.message}</p>`;
-            });
+        fetch(dataUrl).then(response => response.json()).then(data => {
+            allPoems = data.map((row, originalIndex) => {
+                if (!row) return null;
+                const title = row.TITULO ? String(row.TITULO).trim() : '';
+                const poemText = row.POEMA ? String(row.POEMA).trim() : '';
+                const soundUrl = row.SONIDO_ID ? String(row.SONIDO_ID).trim() : '';
+                const imageUrl = row.IMAGEN_POSTAL_ID ? String(row.IMAGEN_POSTAL_ID).trim() : '';
+                if (!title || !poemText || !imageUrl) return null;
+                return { title, poemText, soundUrl, imageUrl, originalIndex };
+            }).filter(p => p !== null);
+            shuffleArray(allPoems);
+            totalTablas = Math.ceil(allPoems.length / cardsPerTabla);
+            renderTabla();
+        }).catch(error => {
+            console.error('Error al cargar la Lotería:', error);
+            postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80;"><b>Error:</b><br>${error.message}</p>`;
+        });
     }
     function renderTabla() {
         postalContainer.innerHTML = '';
