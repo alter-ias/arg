@@ -16,74 +16,36 @@
             --color-light: #f8f9fa;
             --color-dark: #1a1a1a;
             --color-accent: #3498db;
+            --color-success: #27ae60;
+            --color-error: #e74c3c;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        body {
-            font-family: var(--font-sans);
-            color: var(--color-light);
-            background-color: var(--color-dark);
-            line-height: 1.6;
-            overflow-x: hidden;
-            position: relative;
-        }
+        body { font-family: var(--font-sans); color: var(--color-light); background-color: var(--color-dark); line-height: 1.6; overflow-x: hidden; position: relative; }
 
-        /* FONDO TORNASOLADO */
         @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient-horizontal 25s ease infinite;
-            filter: blur(10px) brightness(0.6);
-        }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite; filter: blur(10px) brightness(0.6); }
 
         .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 2; }
         
         header { text-align: center; padding: 2rem 0; }
         header h1 { font-family: var(--font-serif); font-size: 3rem; font-weight: 700; }
         
-        /* ESTILO "GLASSMORPHISM" PARA PANELES */
-        .panel {
-            background: rgba(26, 26, 26, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        
+        .panel { background: rgba(26, 26, 26, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); padding: 2rem; margin-bottom: 2rem; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .panel-title { font-family: var(--font-serif); font-size: 2rem; color: var(--color-light); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-accent); }
         
         .form-group { margin-bottom: 1.5rem; }
-        
         label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-light); }
-        
-        input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            font-size: 1rem;
-            background-color: rgba(0,0,0,0.3);
-            color: var(--color-light);
-        }
-        
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 5px; font-size: 1rem; background-color: rgba(0,0,0,0.3); color: var(--color-light); }
         input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.5); }
         textarea { min-height: 150px; resize: vertical; }
         
         .btn { background-color: var(--color-accent); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s; margin-right: 10px; margin-bottom: 10px; }
-        .btn:hover { background-color: #2980b9; transform: translateY(-2px); }
-        .btn-delete { background-color: #e74c3c; } .btn-delete:hover { background-color: #c0392b; }
-        .btn-success { background-color: #27ae60; } .btn-success:hover { background-color: #219653; }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-delete { background-color: var(--color-error); } .btn-delete:hover { background-color: #c0392b; }
+        .btn-success { background-color: var(--color-success); } .btn-success:hover { background-color: #219653; }
         
         .post-item { padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; }
         .post-item:last-child { border-bottom: none; }
@@ -91,8 +53,8 @@
         .post-actions { display: flex; gap: 10px; }
         
         .message { padding: 15px; border-radius: 5px; margin: 15px 0; display: none; }
-        .message.success { background-color: #27ae60; color: white; }
-        .message.error { background-color: #e74c3c; color: white; }
+        .message.success { background-color: var(--color-success); color: white; }
+        .message.error { background-color: var(--color-error); color: white; }
         
         .back-btn { position: fixed; bottom: 20px; left: 20px; background-color: var(--color-light); color: var(--color-dark); border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.3s; z-index: 1000; display: flex; align-items: center; justify-content: center; }
         .back-btn:hover { transform: scale(1.1); }
@@ -100,18 +62,17 @@
         .loading { display: none; text-align: center; padding: 20px; }
         .spinner { border: 4px solid rgba(255,255,255, 0.2); border-left-color: var(--color-accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Estilos para el panel de diagnóstico */
+        .diagnostic-result { margin: 10px 0; padding: 10px; border-radius: 5px; border: 1px solid transparent; }
+        .diagnostic-result.pass { background-color: rgba(39, 174, 96, 0.2); border-color: var(--color-success); }
+        .diagnostic-result.fail { background-color: rgba(231, 76, 60, 0.2); border-color: var(--color-error); }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Administración Blog ARG</h1>
-        </div>
-    </header>
+    <header><div class="container"><h1>Administración Blog ARG</h1></div></header>
 
-    <div class="container">
-        <div id="message" class="message"></div>
-    </div>
+    <div class="container"><div id="message" class="message"></div></div>
 
     <div class="container">
         <div class="panel">
@@ -120,6 +81,15 @@
             <div class="form-group"><label for="repoOwner">Usuario/Organización:</label><input type="text" id="repoOwner" value="alter-ias" placeholder="Tu nombre de usuario"></div>
             <div class="form-group"><label for="repoName">Nombre del Repositorio:</label><input type="text" id="repoName" value="argblog-datos" placeholder="Nombre del repositorio"></div>
             <button id="saveConfig" class="btn btn-success">Guardar Configuración</button>
+        </div>
+    </div>
+    
+    <!-- PANEL DE DIAGNÓSTICO RESTAURADO -->
+    <div class="container">
+        <div class="panel">
+            <h2 class="panel-title">Diagnóstico de Conexión</h2>
+            <button id="runDiagnostic" class="btn">Ejecutar Diagnóstico</button>
+            <div id="diagnosticResults" style="margin-top: 20px;"></div>
         </div>
     </div>
 
@@ -132,13 +102,7 @@
                 <div class="form-group"><label for="postImage">URL de Imagen:</label><input type="text" id="postImage" placeholder="https://ejemplo.com/imagen.jpg"></div>
                 <div class="form-group"><label for="postExcerpt">Extracto:</label><textarea id="postExcerpt" required></textarea></div>
                 <div class="form-group"><label for="postContent">Contenido:</label><textarea id="postContent" required></textarea></div>
-                
-                <!-- NUEVO CAMPO DE TAGS -->
-                <div class="form-group">
-                    <label for="postTags">Tags (separados por coma):</label>
-                    <input type="text" id="postTags" placeholder="Ecos en las ruinas, Atlas del Cielo...">
-                </div>
-                
+                <div class="form-group"><label for="postTags">Tags (separados por coma):</label><input type="text" id="postTags" placeholder="Ecos en las ruinas, Atlas del Cielo..."></div>
                 <button type="submit" class="btn">Guardar Entrada</button>
                 <button type="button" class="btn btn-delete" id="cancelBtn">Cancelar</button>
             </form>
@@ -161,14 +125,17 @@
                 repoName: localStorage.getItem('repoName') || 'argblog-datos'
             };
 
-            document.getElementById('githubToken').value = config.githubToken;
-            document.getElementById('repoOwner').value = config.repoOwner;
-            document.getElementById('repoName').value = config.repoName;
+            const githubTokenInput = document.getElementById('githubToken');
+            const repoOwnerInput = document.getElementById('repoOwner');
+            const repoNameInput = document.getElementById('repoName');
+            githubTokenInput.value = config.githubToken;
+            repoOwnerInput.value = config.repoOwner;
+            repoNameInput.value = config.repoName;
 
             document.getElementById('saveConfig').addEventListener('click', () => {
-                config.githubToken = document.getElementById('githubToken').value;
-                config.repoOwner = document.getElementById('repoOwner').value;
-                config.repoName = document.getElementById('repoName').value;
+                config.githubToken = githubTokenInput.value;
+                config.repoOwner = repoOwnerInput.value;
+                config.repoName = repoNameInput.value;
                 localStorage.setItem('githubToken', config.githubToken);
                 localStorage.setItem('repoOwner', config.repoOwner);
                 localStorage.setItem('repoName', config.repoName);
@@ -184,7 +151,7 @@
             const postImageInput = document.getElementById('postImage');
             const postExcerptInput = document.getElementById('postExcerpt');
             const postContentInput = document.getElementById('postContent');
-            const postTagsInput = document.getElementById('postTags'); // Referencia al nuevo campo
+            const postTagsInput = document.getElementById('postTags');
             const cancelBtn = document.getElementById('cancelBtn');
 
             function showMessage(text, type) {
@@ -198,33 +165,23 @@
 
             async function apiCall(endpoint, options = {}) {
                 if (!config.githubToken || !config.repoOwner || !config.repoName) {
-                    showMessage('Configuración de GitHub incompleta.', 'error');
-                    throw new Error('Configuración incompleta');
+                    throw new Error('Configuración de GitHub incompleta.');
                 }
                 const url = `https://api.github.com/repos/${config.repoOwner}/${config.repoName}/${endpoint}`;
-                const headers = {
-                    'Authorization': `token ${config.githubToken}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    ...options.headers,
-                };
+                const headers = { 'Authorization': `token ${config.githubToken}`, 'Accept': 'application/vnd.github.v3+json', ...options.headers, };
                 const response = await fetch(url, { ...options, headers });
                 if (!response.ok) {
                     throw new Error(`Error en la API de GitHub: ${response.status} ${response.statusText}`);
                 }
-                return response.json();
+                // Algunas respuestas (como un PATCH exitoso) pueden no tener cuerpo JSON
+                return response.status !== 204 ? response.json() : null;
             }
 
             async function getPosts() {
                 try {
                     const issues = await apiCall('issues?labels=blog-post&state=open');
-                    return issues.map(issue => ({
-                        ...JSON.parse(issue.body),
-                        issueNumber: issue.number,
-                    }));
-                } catch (error) {
-                    showMessage(error.message, 'error');
-                    return [];
-                }
+                    return issues.map(issue => ({ ...JSON.parse(issue.body), issueNumber: issue.number }));
+                } catch (error) { showMessage(error.message, 'error'); return []; }
             }
 
             async function renderPostsList() {
@@ -232,22 +189,11 @@
                 postsListContainer.innerHTML = '';
                 const posts = await getPosts();
                 showLoading(false);
-
-                if (posts.length === 0) {
-                    postsListContainer.innerHTML = '<p>No hay entradas disponibles.</p>';
-                    return;
-                }
-
+                if (posts.length === 0) { postsListContainer.innerHTML = '<p>No hay entradas disponibles.</p>'; return; }
                 posts.forEach(post => {
                     const postElement = document.createElement('div');
                     postElement.className = 'post-item';
-                    postElement.innerHTML = `
-                        <div class="post-title">${post.title}</div>
-                        <div class="post-actions">
-                            <button class="btn btn-small">Editar</button>
-                            <button class="btn btn-small btn-delete">Eliminar</button>
-                        </div>
-                    `;
+                    postElement.innerHTML = `<div class="post-title">${post.title}</div><div class="post-actions"><button class="btn btn-small">Editar</button><button class="btn btn-small btn-delete">Eliminar</button></div>`;
                     postElement.querySelector('.btn-small').addEventListener('click', () => editPost(post));
                     postElement.querySelector('.btn-delete').addEventListener('click', () => deletePostConfirm(post.issueNumber));
                     postsListContainer.appendChild(postElement);
@@ -260,7 +206,6 @@
                 postImageInput.value = post.image || '';
                 postExcerptInput.value = post.excerpt || '';
                 postContentInput.value = post.content || '';
-                // Cargar los tags en el campo de texto, unidos por coma
                 postTagsInput.value = post.tags ? post.tags.join(', ') : ''; 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
@@ -268,59 +213,71 @@
             async function deletePostConfirm(issueNumber) {
                 if (confirm('¿Seguro que quieres eliminar esta entrada?')) {
                     try {
-                        await apiCall(`issues/${issueNumber}`, {
-                            method: 'PATCH',
-                            body: JSON.stringify({ state: 'closed' })
-                        });
+                        await apiCall(`issues/${issueNumber}`, { method: 'PATCH', body: JSON.stringify({ state: 'closed' }) });
                         showMessage('Entrada eliminada.', 'success');
                         renderPostsList();
-                    } catch (error) {
-                        showMessage(error.message, 'error');
-                    }
+                    } catch (error) { showMessage(error.message, 'error'); }
                 }
             }
 
-            function clearForm() {
-                postIdInput.value = '';
-                postForm.reset();
-            }
+            function clearForm() { postIdInput.value = ''; postForm.reset(); }
 
             postForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const issueNumber = postIdInput.value;
-                // Convertir la cadena de tags en un array
                 const tags = postTagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag);
-                
-                const postData = {
-                    title: postTitleInput.value,
-                    image: postImageInput.value,
-                    excerpt: postExcerptInput.value,
-                    content: postContentInput.value,
-                    tags: tags // Guardar el array de tags
-                };
-
+                const postData = { title: postTitleInput.value, image: postImageInput.value, excerpt: postExcerptInput.value, content: postContentInput.value, tags: tags };
                 try {
                     if (issueNumber) {
-                        await apiCall(`issues/${issueNumber}`, {
-                            method: 'PATCH',
-                            body: JSON.stringify({ title: postData.title, body: JSON.stringify(postData) })
-                        });
+                        await apiCall(`issues/${issueNumber}`, { method: 'PATCH', body: JSON.stringify({ title: postData.title, body: JSON.stringify(postData) }) });
                         showMessage('Entrada actualizada.', 'success');
                     } else {
-                        await apiCall('issues', {
-                            method: 'POST',
-                            body: JSON.stringify({ title: postData.title, body: JSON.stringify(postData), labels: ['blog-post'] })
-                        });
+                        await apiCall('issues', { method: 'POST', body: JSON.stringify({ title: postData.title, body: JSON.stringify(postData), labels: ['blog-post'] }) });
                         showMessage('Entrada creada.', 'success');
                     }
                     clearForm();
                     renderPostsList();
-                } catch (error) {
-                    showMessage(error.message, 'error');
-                }
+                } catch (error) { showMessage(error.message, 'error'); }
             });
             
             cancelBtn.addEventListener('click', clearForm);
+
+            // --- LÓGICA DE DIAGNÓSTICO RESTAURADA ---
+            const runDiagnosticBtn = document.getElementById('runDiagnostic');
+            const diagnosticResultsContainer = document.getElementById('diagnosticResults');
+
+            function addDiagnosticResult(title, success, message) {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'diagnostic-result ' + (success ? 'pass' : 'fail');
+                resultDiv.innerHTML = `<strong>${title}:</strong> ${message}`;
+                diagnosticResultsContainer.appendChild(resultDiv);
+            }
+
+            runDiagnosticBtn.addEventListener('click', async () => {
+                diagnosticResultsContainer.innerHTML = 'Ejecutando pruebas...';
+                
+                // 1. Validar configuración
+                const isConfigValid = config.githubToken && config.repoOwner && config.repoName;
+                addDiagnosticResult('Configuración Local', isConfigValid, isConfigValid ? 'Token y repositorio configurados.' : 'Falta el token, usuario o nombre del repositorio.');
+                if (!isConfigValid) return;
+
+                // 2. Probar conexión y obtener info del repo
+                try {
+                    await apiCall('');
+                    addDiagnosticResult('Conexión a GitHub', true, 'Conexión exitosa con el repositorio.');
+                } catch (error) {
+                    addDiagnosticResult('Conexión a GitHub', false, `Falló la conexión. Error: ${error.message}`);
+                    return; // Detener si no hay conexión
+                }
+
+                // 3. Probar listado de issues (entradas)
+                try {
+                    const issues = await apiCall('issues?labels=blog-post&state=open&per_page=1');
+                    addDiagnosticResult('Permisos de Lectura', true, `Se pueden leer las entradas del blog. (Encontradas: ${issues.length})`);
+                } catch (error) {
+                    addDiagnosticResult('Permisos de Lectura', false, `Falló al leer las entradas. Error: ${error.message}`);
+                }
+            });
 
             renderPostsList();
         });
