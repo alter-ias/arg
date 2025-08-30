@@ -16,56 +16,57 @@
             --font-sans: 'Poppins', sans-serif;
             --color-light: #f8f9fa;
             
-            /* Paletas de colores como variables para el control dinámico */
             --gradient-warm: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             --gradient-cool: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
+            
+            /* Variables dinámicas que controlará el JS */
+            --active-gradient: var(--gradient-warm);
+            --filter-opacity: 0.4; 
         }
 
         * { box-sizing: border-box; }
         body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
         
         header { 
-            padding: 1.5rem var(--main-gap); 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            z-index: 1000; 
-            mix-blend-mode: exclusion;
-            /* --- CORRECCIÓN 1: Centrar el logo y los controles --- */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
+            padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; 
+            mix-blend-mode: exclusion; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem;
         }
 
         .header-logo a { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light); }
         
-        /* --- NUEVO: Controles de Filtro --- */
-        .filter-controls {
-            display: flex;
-            gap: 0.5rem;
-            background-color: rgba(0,0,0,0.3);
-            padding: 0.5rem;
-            border-radius: 20px;
-        }
-        .filter-btn {
-            width: 20px; height: 20px;
-            border-radius: 50%;
-            border: 2px solid var(--color-light);
-            cursor: pointer;
-            transition: transform 0.2s;
-            background-color: transparent;
-        }
+        .filter-controls { display: flex; gap: 0.5rem; background-color: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 20px; }
+        .filter-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--color-light); cursor: pointer; transition: transform 0.2s; background-color: transparent; }
         .filter-btn:hover { transform: scale(1.1); }
         .filter-btn.is-active { border-width: 4px; }
         #filter-off { background-color: #1a1a1a; }
         #filter-warm { background: var(--gradient-warm); }
         #filter-cool { background: var(--gradient-cool); }
 
-        .media-block { position: relative; width: 100%; height: 80vh; overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; }
-        #block-1 { height: 100vh; }
+        /* --- NUEVO: Estilos para el slider de opacidad --- */
+        .opacity-control { width: 150px; }
+        input[type="range"] {
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 16px; height: 16px;
+            background: var(--color-light);
+            border-radius: 50%;
+            border: 2px solid #1a1a1a;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 16px; height: 16px;
+            background: var(--color-light);
+            border-radius: 50%;
+            border: 2px solid #1a1a1a;
+        }
+
+        .media-block { position: relative; width: 100%; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; }
         .background-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; }
         .background-media img, .background-media video { width: 100%; height: 130%; object-fit: cover; will-change: transform; }
         .media-block::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 2; }
@@ -73,25 +74,18 @@
         .color-overlay { 
             position: absolute; z-index: 3;
             width: 100%; height: 100%;
-            /* Por defecto es invisible */
-            opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s ease;
-            /* El JS le dará el color de fondo */
             background: var(--active-gradient);
             background-size: 400% 400%;
             animation: gradient-horizontal 25s ease infinite;
+            opacity: var(--filter-opacity); /* La opacidad ahora es dinámica */
         }
         
-        /* Cuando el body tenga el atributo, el filtro se hace visible */
-        body[data-filter-active] .color-overlay {
-            opacity: 0.4;
-        }
-
         .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
         .media-block.is-visible .content-overlay { opacity: 1; transform: translateY(0); }
-        .content-overlay h1, .content-overlay h2 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 1rem 0; }
-        .content-overlay h1 { font-size: 5rem; } .content-overlay h2 { font-size: 4rem; }
+        .content-overlay h1 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 1rem 0; font-size: 5rem; }
+        .content-overlay h2 { font-size: 4rem; }
         .content-overlay p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 1.5rem auto; }
         .btn { display: inline-block; padding: 0.8rem 1.8rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: background-color 0.3s, color 0.3s; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
         
@@ -101,11 +95,7 @@
         .iframe-container { width: 100%; height: 100%; }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
 
-        footer { 
-            position: relative; text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); 
-            background: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
-            background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite;
-        }
+        footer { position: relative; text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a); background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite; }
         footer p { position: relative; z-index: 2; }
     </style>
 </head>
@@ -113,23 +103,25 @@
 
     <header>
         <div class="header-logo"><a href="#">ARG</a></div>
-        <!-- Controles del filtro -->
         <div class="filter-controls">
-            <button class="filter-btn is-active" id="filter-off" data-palette="off" title="Sin filtro"></button>
+            <button class="filter-btn" id="filter-off" data-palette="off" title="Sin filtro"></button>
             <button class="filter-btn" id="filter-warm" data-palette="warm" title="Filtro cálido"></button>
             <button class="filter-btn" id="filter-cool" data-palette="cool" title="Filtro frío"></button>
+        </div>
+        <div class="opacity-control">
+             <input type="range" id="opacity-slider" min="0" max="80" value="0" title="Opacidad del filtro">
         </div>
     </header>
 
     <main>
         <section class="media-block" id="block-1">
-            <div class="color-overlay"></div>
-            <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530594/u4597281485_A_vast_minimalist_landscape._The_sea_is_an_almost_03674990-b688-4c55-8480-a7d71d9437c4_3_xooqz9.png" alt="Jardín Digital"></div>
+             <div class="color-overlay"></div>
+             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530594/u4597281485_A_vast_minimalist_landscape._The_sea_is_an_almost_03674990-b688-4c55-8480-a7d71d9437c4_3_xooqz9.png" alt="Jardín Digital"></div>
             <div class="content-overlay"><h1>ALAN RUÍZ GALICIA</h1><p>Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana</p></div>
         </section>
 
         <section class="media-block" id="block-2">
-            <div class="color-overlay"></div>
+             <div class="color-overlay"></div>
             <div class="background-media"><video src="https://res.cloudinary.com/dahrwkdzd/video/upload/v1756531260/godar01_glnxkl.webm" autoplay loop muted playsinline></video></div>
             <div class="content-overlay">
                 <h2>Pergamino</h2>
@@ -139,7 +131,7 @@
         </section>
 
         <section class="media-block" id="block-3">
-            <div class="color-overlay"></div>
+             <div class="color-overlay"></div>
             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530311/u4597281485_A_tight_cinematic_shot_of_a_womans_mouth._Her_lip_6c85d667-7b45-497b-b310-0b861adb7735_1_urjioq.png" alt="Archivo Sonoro"></div>
             <div class="content-overlay">
                 <h2>Mediateca</h2>
@@ -149,7 +141,7 @@
         </section>
         
         <section class="media-block" id="block-4">
-            <div class="color-overlay"></div>
+             <div class="color-overlay"></div>
             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530574/u4597281485_A_chaotic_still_life_on_a_wooden_floor_lit_by_a_h_a157247e-085a-457b-a207-f43933663674_3_or5v4i.png" alt="Lotería"></div>
             <div class="content-overlay"><h2>Lotería Tapatía</h2><p>Una reinterpretación digital del clásico juego de mesa.</p>
                 <button class="btn" id="open-loteria-btn">Jugar Ahora</button>
@@ -191,32 +183,69 @@
             window.addEventListener('scroll', () => { if (!ticking) { window.requestAnimationFrame(updateScrollEffects); ticking = true; } });
             updateScrollEffects();
 
-            // --- LÓGICA DEL NUEVO FILTRO TORNASOLADO ---
+            // --- LÓGICA DEL NUEVO FILTRO CON OPACIDAD Y LOCALSTORAGE ---
             const filterButtons = document.querySelectorAll('.filter-btn');
-            const body = document.body;
+            const opacitySlider = document.getElementById('opacity-slider');
             const root = document.documentElement;
 
+            function applySettings(palette, opacity) {
+                // Actualizar botones
+                filterButtons.forEach(btn => btn.classList.remove('is-active'));
+                const activeBtn = document.querySelector(`.filter-btn[data-palette="${palette}"]`);
+                if (activeBtn) activeBtn.classList.add('is-active');
+
+                // Actualizar slider
+                opacitySlider.value = opacity;
+
+                // Aplicar estilos
+                if (palette === 'off') {
+                    root.style.setProperty('--filter-opacity', 0);
+                } else {
+                    const gradient = getComputedStyle(root).getPropertyValue(`--gradient-${palette}`);
+                    root.style.setProperty('--active-gradient', gradient);
+                    root.style.setProperty('--filter-opacity', opacity / 100);
+                }
+            }
+
+            function saveSettings(palette, opacity) {
+                localStorage.setItem('argSitePalette', palette);
+                localStorage.setItem('argSiteOpacity', opacity);
+            }
+
+            // Cargar configuración guardada al iniciar
+            const savedPalette = localStorage.getItem('argSitePalette') || 'off';
+            const savedOpacity = localStorage.getItem('argSiteOpacity') || '0';
+            applySettings(savedPalette, savedOpacity);
+
+            // Listeners para los botones de color
             filterButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    // Actualizar el botón activo
-                    filterButtons.forEach(btn => btn.classList.remove('is-active'));
-                    button.classList.add('is-active');
-
                     const palette = button.dataset.palette;
-
-                    if (palette === 'off') {
-                        body.removeAttribute('data-filter-active');
-                    } else {
-                        // Activar el filtro y establecer la paleta de colores correcta
-                        body.setAttribute('data-filter-active', palette);
-                        const gradient = getComputedStyle(root).getPropertyValue(`--gradient-${palette}`);
-                        document.querySelectorAll('.color-overlay').forEach(overlay => {
-                            overlay.style.background = gradient;
-                            overlay.style.backgroundSize = '400% 400%';
-                            overlay.style.animation = 'gradient-horizontal 25s ease infinite';
-                        });
+                    const currentOpacity = (palette === 'off') ? '0' : opacitySlider.value;
+                    if (palette !== 'off' && currentOpacity === '0') {
+                        // Si estaba apagado y se elige un color, poner una opacidad por defecto
+                        opacitySlider.value = '40';
                     }
+                    applySettings(palette, opacitySlider.value);
+                    saveSettings(palette, opacitySlider.value);
                 });
+            });
+
+            // Listener para el slider de opacidad
+            opacitySlider.addEventListener('input', () => {
+                const opacity = opacitySlider.value;
+                const currentPaletteBtn = document.querySelector('.filter-btn.is-active');
+                let palette = currentPaletteBtn ? currentPaletteBtn.dataset.palette : 'off';
+                
+                // Si movemos el slider y el filtro estaba apagado, encenderlo con la paleta cálida por defecto
+                if (palette === 'off' && opacity > 0) {
+                    palette = 'warm';
+                } else if (opacity == 0) {
+                    palette = 'off';
+                }
+
+                applySettings(palette, opacity);
+                saveSettings(palette, opacity);
             });
 
             // --- GESTIÓN DE MODALES (SIN CAMBIOS) ---
