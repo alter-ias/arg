@@ -29,12 +29,10 @@
         
         .color-overlay { position: absolute; z-index: 3; }
         .overlay-full { width: 100%; height: 100%; opacity: 0.6; }
-        .overlay-half-right { top: 0; right: 0; width: 50%; height: 100%; }
         .overlay-window { width: 100%; height: 100%; padding: 3rem; opacity: 0.8; }
         @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .iridescent-base { background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; }
         .iridescent-slow-h { animation: gradient-horizontal 25s ease infinite; }
-        .iridescent-medium-h { animation: gradient-horizontal 15s ease infinite; }
         .iridescent-fast-v { animation: gradient-vertical 8s ease infinite; }
 
         .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
@@ -43,9 +41,7 @@
         .content-overlay h1 { font-size: 5rem; } .content-overlay h2 { font-size: 4rem; }
         .content-overlay p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 1.5rem auto; }
         .btn { display: inline-block; padding: 0.8rem 1.8rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: background-color 0.3s, color 0.3s; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
-        .btn:hover { background-color: var(--color-light); color: #1a1a1a; }
         
-        /* Estilos para ambos modales */
         .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0A0A0A; z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
         .modal-container.is-active { opacity: 1; pointer-events: auto; }
         .modal-close-btn { position: absolute; top: 20px; right: 20px; font-size: 2rem; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2010; line-height: 1; }
@@ -62,7 +58,7 @@
     <main>
         <section class="media-block" id="block-1">
              <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530594/u4597281485_A_vast_minimalist_landscape._The_sea_is_an_almost_03674990-b688-4c55-8480-a7d71d9437c4_3_xooqz9.png" alt="Jardín Digital"></div>
-            <div class="content-overlay"><h1>Jardín Digital</h1><p>Una colección de Alan Ruíz Galicia</p></div>
+            <div class="content-overlay"><h1>ALAN RUÍZ GALICIA</h1><p>Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana</p></div>
         </section>
 
         <section class="media-block" id="block-2">
@@ -70,14 +66,18 @@
             <div class="color-overlay overlay-full iridescent-base iridescent-slow-h"></div>
             <div class="content-overlay">
                 <h2>Pergamino</h2>
-                <p>serie de textos publicados en diversos medios</p>
+                <p>Textos periodísticos, ensayos, poemas y demás experimentos literarios</p>
                 <button class="btn" id="open-blog-btn">Leer Pergamino</button>
             </div>
         </section>
 
         <section class="media-block" id="block-3">
             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530311/u4597281485_A_tight_cinematic_shot_of_a_womans_mouth._Her_lip_6c85d667-7b45-497b-b310-0b861adb7735_1_urjioq.png" alt="Archivo Sonoro"></div>
-            <div class="content-overlay"><h2>Archivo Sonoro</h2><p>Fragmentos que exploran la intersección del arte, la tecnología y el espíritu.</p><button class="btn">Escuchar</button></div>
+            <div class="content-overlay">
+                <h2>Mediateca</h2>
+                <p>Una colección de fragmentos audiovisuales</p>
+                <button class="btn" id="open-mediateca-btn">Explorar Mediateca</button>
+            </div>
         </section>
         
         <section class="media-block" id="block-4">
@@ -91,21 +91,23 @@
     
     <footer><p>&copy; 2025 - ARG. Todos los derechos reservados.</p></footer>
     
-    <!-- Modal para la Lotería -->
     <div id="loteria-modal" class="modal-container">
         <span id="close-loteria-btn" class="modal-close-btn">&times;</span>
         <div id="loteria-iframe-container" class="iframe-container"></div>
     </div>
     
-    <!-- Modal para el Blog -->
     <div id="blog-modal" class="modal-container">
         <span id="close-blog-btn" class="modal-close-btn">&times;</span>
         <div id="blog-iframe-container" class="iframe-container"></div>
     </div>
+    
+    <div id="mediateca-modal" class="modal-container">
+        <span id="close-mediateca-btn" class="modal-close-btn">&times;</span>
+        <div id="mediateca-iframe-container" class="iframe-container"></div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- CÓDIGO DEL PARALLAX (SIN CAMBIOS) ---
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
             let ticking = false;
@@ -134,77 +136,53 @@
             });
             updateScrollEffects();
 
-            // ======================================================= //
-            // --- GESTIÓN DE AMBOS MODALES CON HISTORIAL --- //
-            // ======================================================= //
+            // --- GESTIÓN DE MODALES CON HISTORIAL ---
             
-            // --- Lógica para el Modal de la Lotería ---
-            const openLoteriaBtn = document.getElementById('open-loteria-btn');
-            const closeLoteriaBtn = document.getElementById('close-loteria-btn');
+            // Función genérica para abrir un modal
+            function openModal(modal, iframeContainer, url, historyState, historyHash) {
+                if (modal.classList.contains('is-active')) return;
+                const iframe = document.createElement('iframe');
+                iframe.src = url;
+                iframeContainer.appendChild(iframe);
+                modal.classList.add('is-active');
+                document.body.style.overflow = 'hidden';
+                history.pushState({ modal: historyState }, '', historyHash);
+            }
+
+            // Función genérica para cerrar un modal
+            function closeModal(modal, iframeContainer) {
+                if (!modal.classList.contains('is-active')) return;
+                modal.classList.remove('is-active');
+                document.body.style.overflow = '';
+                iframeContainer.innerHTML = '';
+            }
+
+            // Lotería
             const loteriaModal = document.getElementById('loteria-modal');
-            const loteriaIframeContainer = document.getElementById('loteria-iframe-container');
-            const loteriaURL = 'https://alter-ias.github.io/arg/loteriatapatiax.html';
+            document.getElementById('open-loteria-btn').addEventListener('click', () => openModal(loteriaModal, document.getElementById('loteria-iframe-container'), 'https://alter-ias.github.io/arg/loteriatapatiax.html', 'loteria', '#loteria'));
+            document.getElementById('close-loteria-btn').addEventListener('click', () => history.back());
 
-            function openLoteria() {
-                if (loteriaModal.classList.contains('is-active')) return;
-                const iframe = document.createElement('iframe');
-                iframe.src = loteriaURL;
-                loteriaIframeContainer.appendChild(iframe);
-                loteriaModal.classList.add('is-active');
-                document.body.style.overflow = 'hidden';
-                history.pushState({ modal: 'loteria' }, '', '#loteria');
-            }
-            function closeLoteria() {
-                if (!loteriaModal.classList.contains('is-active')) return;
-                loteriaModal.classList.remove('is-active');
-                document.body.style.overflow = '';
-                loteriaIframeContainer.innerHTML = '';
-            }
-            openLoteriaBtn.addEventListener('click', openLoteria);
-            closeLoteriaBtn.addEventListener('click', () => history.back());
-
-            // --- Lógica para el Modal del Blog ---
-            const openBlogBtn = document.getElementById('open-blog-btn');
-            const closeBlogBtn = document.getElementById('close-blog-btn');
+            // Blog
             const blogModal = document.getElementById('blog-modal');
-            const blogIframeContainer = document.getElementById('blog-iframe-container');
-            const blogURL = 'https://alter-ias.github.io/arg/argblog.html';
+            document.getElementById('open-blog-btn').addEventListener('click', () => openModal(blogModal, document.getElementById('blog-iframe-container'), 'https://alter-ias.github.io/arg/argblog.html', 'blog', '#blog'));
+            document.getElementById('close-blog-btn').addEventListener('click', () => history.back());
 
-            function openBlog() {
-                if (blogModal.classList.contains('is-active')) return;
-                const iframe = document.createElement('iframe');
-                iframe.src = blogURL;
-                blogIframeContainer.appendChild(iframe);
-                blogModal.classList.add('is-active');
-                document.body.style.overflow = 'hidden';
-                history.pushState({ modal: 'blog' }, '', '#blog');
-            }
-            function closeBlog() {
-                if (!blogModal.classList.contains('is-active')) return;
-                blogModal.classList.remove('is-active');
-                document.body.style.overflow = '';
-                blogIframeContainer.innerHTML = '';
-            }
-            openBlogBtn.addEventListener('click', openBlog);
-            closeBlogBtn.addEventListener('click', () => history.back());
-
-            // --- GESTIÓN GLOBAL DE HISTORIAL Y TECLA ESCAPE ---
+            // Mediateca
+            const mediatecaModal = document.getElementById('mediateca-modal');
+            document.getElementById('open-mediateca-btn').addEventListener('click', () => openModal(mediatecaModal, document.getElementById('mediateca-iframe-container'), 'https://alter-ias.github.io/arg/mediateca.html', 'mediateca', '#mediateca'));
+            document.getElementById('close-mediateca-btn').addEventListener('click', () => history.back());
+            
+            // Gestión global de historial y tecla Escape
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    if (loteriaModal.classList.contains('is-active') || blogModal.classList.contains('is-active')) {
-                        history.back();
-                    }
+                if (e.key === 'Escape' && (loteriaModal.classList.contains('is-active') || blogModal.classList.contains('is-active') || mediatecaModal.classList.contains('is-active'))) {
+                    history.back();
                 }
             });
 
             window.addEventListener('popstate', () => {
-                // Este listener ahora cierra cualquier modal que esté activo
-                if (loteriaModal.classList.contains('is-active')) {
-                    closeLoteria();
-                }
-                if (blogModal.classList.contains('is-active')) {
-                    closeBlog();
-                }
+                closeModal(loteriaModal, document.getElementById('loteria-iframe-container'));
+                closeModal(blogModal, document.getElementById('blog-iframe-container'));
+                closeModal(mediatecaModal, document.getElementById('mediateca-iframe-container'));
             });
         });
     </script>
