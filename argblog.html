@@ -26,6 +26,8 @@
         .background-media img { width: 100%; height: 130%; object-fit: cover; will-change: transform; }
         .media-block::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 2; }
         
+        .color-overlay { position: absolute; z-index: 3; }
+        .overlay-full { width: 100%; height: 100%; }
         @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .iridescent-base { background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; }
         .iridescent-slow-h { animation: gradient-horizontal 25s ease infinite; }
@@ -40,40 +42,28 @@
         
         footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background-color: #111; }
         
-        /* ======================================================= */
-        /* SISTEMA DE HASHTAGS                                     */
-        /* ======================================================= */
         .post-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
         .tag { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
         
         /* ======================================================= */
-        /* MODAL DE ENTRADA (CON FONDO TORNASOLADO)                */
+        /* MODAL CORREGIDO                                         */
         /* ======================================================= */
         .post-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
         .post-modal-container.is-active { opacity: 1; pointer-events: auto; }
-        .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; isolation: isolate; /* Para que el ::before funcione bien */ }
+        .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; }
         .post-modal-container.is-active .post-modal-content-wrapper { transform: scale(1); }
 
-        /* Aplicamos el fondo tornasolado al modal */
         .post-modal-content-wrapper.iridescent-base {
-             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+             background: linear-gradient(-45deg, rgba(238,119,82,0.95), rgba(231,60,126,0.95), rgba(35,166,213,0.95), rgba(35,213,171,0.95));
              background-size: 400% 400%;
              animation: gradient-horizontal 25s ease infinite;
-        }
-        /* Y una capa oscura para legibilidad */
-        .post-modal-content-wrapper::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: -1;
-            border-radius: 8px;
+             /* CORRECCIÓN CLAVE: El fondo ahora se desplaza con el contenido */
+             background-attachment: local;
         }
 
         .post-modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; font-family: sans-serif; cursor: pointer; line-height: 1; color: var(--color-light); z-index: 10; }
         #post-modal-image { width: 100%; height: 300px; object-fit: cover; display: block; }
-        .post-modal-text { padding: 3rem; position: relative; z-index: 5; }
+        .post-modal-text { padding: 3rem; }
         #post-modal-title { font-family: var(--font-serif); font-size: 2.5rem; margin-top: 0; margin-bottom: 1rem; text-align: left; }
         #post-modal-date { font-size: 0.9rem; opacity: 0.7; margin-bottom: 1rem; display: block; text-align: left; }
         #post-modal-tags { text-align: left; margin-bottom: 2rem; }
@@ -88,6 +78,7 @@
 <body>
     <main>
         <section class="media-block" id="blog-hero">
+            <!-- CAPA TORNASOLADA RESTAURADA -->
             <div class="color-overlay overlay-full iridescent-base iridescent-slow-h"></div>
             <div class="content-overlay">
                 <h1>El Archivo</h1>
@@ -106,27 +97,25 @@
     <footer><p>&copy; 2025 El Archivo. Todos los derechos reservados.</p></footer>
 
     <div id="post-modal-container" class="post-modal-container">
-        <div class="post-modal-content-wrapper iridescent-base"> <!-- Clase base para el fondo -->
+        <div class="post-modal-content-wrapper iridescent-base">
             <span class="post-modal-close">&times;</span>
             <img id="post-modal-image" src="" alt="">
             <div class="post-modal-text">
                 <h2 id="post-modal-title"></h2>
                 <span id="post-modal-date"></span>
-                <div id="post-modal-tags" class="post-tags"></div> <!-- Contenedor para tags en el modal -->
+                <div id="post-modal-tags" class="post-tags"></div>
                 <div id="post-modal-body"></div>
             </div>
         </div>
     </div>
 
-    <!-- Botón de admin eliminado -->
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // El JavaScript no necesita cambios, los arreglos fueron en CSS y HTML.
             const config = {
                 repoOwner: 'alter-ias',
                 repoName: 'argblog-datos'
             };
-
             async function fetchBlogPosts() {
                 try {
                     const response = await fetch(`https://api.github.com/repos/${config.repoOwner}/${config.repoName}/issues?labels=blog-post&state=open`);
@@ -141,11 +130,9 @@
                     return [];
                 }
             }
-
             async function renderBlogPosts() {
                 const container = document.getElementById('postsContainer');
                 const loadingElement = document.getElementById('loading');
-                
                 try {
                     const posts = await fetchBlogPosts();
                     loadingElement.style.display = 'none';
@@ -154,17 +141,13 @@
                         return;
                     }
                     posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    
                     posts.forEach(post => {
                         const postElement = document.createElement('section');
                         postElement.className = 'media-block'; 
-                        
-                        // Generar HTML para los tags
                         let tagsHTML = '';
                         if (post.tags && Array.isArray(post.tags)) {
                             tagsHTML = `<div class="post-tags">${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`;
                         }
-
                         postElement.innerHTML = `
                             <div class="background-media">
                                 <img src="${post.image || 'https://via.placeholder.com/1200x800'}" alt="${post.title}">
@@ -179,43 +162,34 @@
                         `;
                         container.appendChild(postElement);
                     });
-                    
                     document.querySelectorAll('.read-more-btn').forEach(button => {
                         button.addEventListener('click', function() {
                             openPostModal(JSON.parse(this.getAttribute('data-post')));
                         });
                     });
-                    
                     initializeScrollEffects();
-
                 } catch (error) {
                     loadingElement.style.display = 'none';
                     container.innerHTML = '<p class="error">Error al cargar las entradas.</p>';
                 }
             }
-
             function openPostModal(post) {
                 document.getElementById('post-modal-title').textContent = post.title;
                 document.getElementById('post-modal-date').textContent = post.date || new Date(post.createdAt).toLocaleDateString('es-ES');
                 document.getElementById('post-modal-image').src = post.image || '';
                 document.getElementById('post-modal-body').innerHTML = post.content;
-
-                // Renderizar tags en el modal
                 const tagsContainer = document.getElementById('post-modal-tags');
                 tagsContainer.innerHTML = '';
                 if (post.tags && Array.isArray(post.tags)) {
                     tagsContainer.innerHTML = post.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
                 }
-
                 document.getElementById('post-modal-container').classList.add('is-active');
                 document.body.style.overflow = 'hidden';
             }
-
             function closePostModal() {
                 document.getElementById('post-modal-container').classList.remove('is-active');
                 document.body.style.overflow = '';
             }
-
             function initializeScrollEffects() {
                 const mediaBlocks = document.querySelectorAll('.media-block');
                 const windowHeight = window.innerHeight;
@@ -243,9 +217,7 @@
                 });
                 updateScrollEffects();
             }
-
             renderBlogPosts();
-            
             document.querySelector('.post-modal-close').addEventListener('click', closePostModal);
             document.getElementById('post-modal-container').addEventListener('click', e => {
                 if (e.target === e.currentTarget) closePostModal();
