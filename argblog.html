@@ -26,7 +26,7 @@
         /* --- CORRECCIÓN CLAVE 1: Paleta de colores fríos para el fondo --- */
         body::before {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1;
-            background: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #23a6d5);
+            background: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
             background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite;
         }
         
@@ -46,13 +46,8 @@
         .post-entry h2 { font-family: var(--font-serif); font-size: 2.5rem; }
         .post-date { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
         
-        .post-image-window {
-            width: 100%; height: 250px; overflow: hidden; position: relative;
-            border-radius: 8px; margin: 1rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .post-image-window img {
-            width: 100%; height: 200%; object-fit: cover; position: absolute; top: 0; left: 0; will-change: transform;
-        }
+        .post-image-window { width: 100%; height: 250px; overflow: hidden; position: relative; border-radius: 8px; margin: 1rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .post-image-window img { width: 100%; height: 200%; object-fit: cover; position: absolute; top: 0; left: 0; will-change: transform; }
 
         .post-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
         .tag { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; }
@@ -65,13 +60,7 @@
         .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; }
         .post-modal-container.is-active .post-modal-content-wrapper { transform: scale(1); }
         
-        .post-modal-content-wrapper {
-            background-repeat: no-repeat;
-            background-size: 400% 400%, cover;
-            background-position: 0% 50%, center;
-            background-attachment: local, scroll;
-            animation: gradient-horizontal 25s ease infinite;
-        }
+        .post-modal-content-wrapper { background-repeat: no-repeat; background-size: 400% 400%, cover; background-position: 0% 50%, center; background-attachment: local, scroll; animation: gradient-horizontal 25s ease infinite; }
         .post-modal-content-wrapper { -ms-overflow-style: none; scrollbar-width: none; }
         .post-modal-content-wrapper::-webkit-scrollbar { display: none; }
         
@@ -207,7 +196,7 @@
                 
                 // --- CORRECCIÓN CLAVE 2: Paleta de colores fríos para el filtro del modal ---
                 modalWrapper.style.backgroundImage = `
-                    linear-gradient(-45deg, rgba(44, 62, 80, 0.85), rgba(74, 109, 167, 0.85), rgba(35, 166, 213, 0.85), rgba(35, 213, 171, 0.85)),
+                    linear-gradient(-45deg, rgba(44, 62, 80, 0.85), rgba(74, 109, 167, 0.85), rgba(52, 73, 94, 0.85), rgba(34, 87, 122, 0.85)),
                     url('${post.image || ''}')
                 `;
 
