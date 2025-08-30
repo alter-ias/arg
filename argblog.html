@@ -15,22 +15,80 @@
             --font-serif: 'Cormorant Garamond', serif;
             --font-sans: 'Poppins', sans-serif;
             --color-light: #f8f9fa;
+
+            /* Paletas de colores como variables */
+            --gradient-cool: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
+            --gradient-sunset: linear-gradient(-45deg, #ee7752, #e73c7e, #8c2a5c, #4c0e2f);
+            --gradient-dark: linear-gradient(-45deg, #2c3e50, #95a5a6, #1c1c1c, #34495e);
+            
+            /* Variables dinámicas que controlará el JS */
+            --active-gradient: var(--gradient-cool);
+            --filter-opacity: 1.0;
         }
 
         * { box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
+        body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; padding-top: 150px; /* Espacio para el header fijo */ }
 
         @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
-        /* --- CORRECCIÓN CLAVE 1: Paleta de colores fríos para el fondo --- */
         body::before {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1;
-            background: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
+            background: var(--active-gradient);
+            opacity: var(--filter-opacity);
             background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite;
+            transition: opacity 0.5s ease;
         }
         
-        #blog-hero { position: relative; width: 100%; height: 40vh; display: flex; align-items: center; justify-content: center; text-align: center; }
+        header { 
+            padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; 
+            mix-blend-mode: exclusion; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem;
+        }
+
+        .header-logo a { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light); }
+        
+        .controls-container {
+            background-color: rgba(0,0,0,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-controls { display: flex; gap: 0.5rem; }
+        .filter-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--color-light); cursor: pointer; transition: transform 0.2s; }
+        .filter-btn:hover { transform: scale(1.1); }
+        .filter-btn.is-active { border-width: 4px; }
+        #filter-cool { background: var(--gradient-cool); }
+        #filter-sunset { background: var(--gradient-sunset); }
+        #filter-dark { background: var(--gradient-dark); }
+        
+        .opacity-control { width: 150px; }
+        input[type="range"] {
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 16px; height: 16px;
+            background: var(--color-light);
+            border-radius: 50%;
+            border: 2px solid #1a1a1a;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 16px; height: 16px;
+            background: var(--color-light);
+            border-radius: 50%;
+            border: 2px solid #1a1a1a;
+        }
+        
+        #blog-hero { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding-bottom: 2rem; }
         .content-overlay { position: relative; z-index: 2; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .content-overlay h1 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 1rem 0; font-size: 5rem; }
         .content-overlay p { font-size: 1.1rem; margin: 0 auto 1.5rem auto; }
@@ -41,17 +99,13 @@
         .filter-btn.is-active { background-color: rgba(255, 255, 255, 0.25); border-color: var(--color-light); box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
 
         #postsContainer { padding: 2rem; max-width: 800px; margin: 0 auto; }
-        
         .post-entry { text-align: center; margin-bottom: 4rem; }
         .post-entry h2 { font-family: var(--font-serif); font-size: 2.5rem; }
         .post-date { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
-        
         .post-image-window { width: 100%; height: 250px; overflow: hidden; position: relative; border-radius: 8px; margin: 1rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .post-image-window img { width: 100%; height: 200%; object-fit: cover; position: absolute; top: 0; left: 0; will-change: transform; }
-
         .post-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
         .tag { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; }
-        
         .btn { display: inline-block; padding: 0.8rem 1.8rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: all 0.3s; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
         .btn:hover { background-color: var(--color-light); color: #1a1a1a; }
         
@@ -59,8 +113,7 @@
         .post-modal-container.is-active { opacity: 1; pointer-events: auto; }
         .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; }
         .post-modal-container.is-active .post-modal-content-wrapper { transform: scale(1); }
-        
-        .post-modal-content-wrapper { background-repeat: no-repeat; background-size: 400% 400%, cover; background-position: 0% 50%, center; background-attachment: local, scroll; animation: gradient-horizontal 25s ease infinite; }
+        .post-modal-content-wrapper { background-repeat: no-repeat, no-repeat; background-size: 400% 400%, cover; background-position: 0% 50%, center; background-attachment: local, scroll; animation: gradient-horizontal 25s ease infinite; }
         .post-modal-content-wrapper { -ms-overflow-style: none; scrollbar-width: none; }
         .post-modal-content-wrapper::-webkit-scrollbar { display: none; }
         
@@ -81,11 +134,25 @@
     </style>
 </head>
 <body>
+    <header>
+        <div class="header-logo"><a href="index.html">ARG</a></div>
+        <div class="controls-container">
+            <div class="filter-controls">
+                <button class="filter-btn" id="filter-cool" data-palette="cool" title="Filtro Frío"></button>
+                <button class="filter-btn" id="filter-sunset" data-palette="sunset" title="Filtro Cálido"></button>
+                <button class="filter-btn" id="filter-dark" data-palette="dark" title="Filtro Oscuro"></button>
+            </div>
+            <div class="opacity-control">
+                 <input type="range" id="opacity-slider" min="0" max="100" value="100" title="Opacidad del filtro">
+            </div>
+        </div>
+    </header>
+
     <main>
         <section id="blog-hero">
             <div class="content-overlay">
-                <h1></h1>
-                <p>"La ilustración necesita encarnase para que la verdad sea otra vez una excitante insinuación"</p>
+                <h1>El Archivo</h1>
+                <p>Textos del Jardín Digital</p>
                 <div id="filter-container"></div>
             </div>
         </section>
@@ -98,6 +165,8 @@
         </div>
     </main>
     
+    <footer><p>&copy; 2025 El Archivo. Todos los derechos reservados.</p></footer>
+
     <div id="post-modal-container" class="post-modal-container">
         <div class="post-modal-content-wrapper">
             <span class="post-modal-close">&times;</span>
@@ -114,6 +183,49 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // --- LÓGICA DE CONTROL DE FILTROS ---
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const opacitySlider = document.getElementById('opacity-slider');
+            const root = document.documentElement;
+            let currentPalette = 'cool'; // Default palette
+
+            function applySettings(palette, opacity) {
+                root.style.setProperty('--filter-opacity', opacity / 100);
+                const gradient = getComputedStyle(root).getPropertyValue(`--gradient-${palette}`);
+                root.style.setProperty('--active-gradient', gradient);
+                filterButtons.forEach(btn => {
+                    btn.classList.toggle('is-active', btn.dataset.palette === palette);
+                });
+                opacitySlider.value = opacity;
+                currentPalette = palette;
+            }
+
+            function saveSettings(palette, opacity) {
+                localStorage.setItem('argBlogPalette', palette);
+                localStorage.setItem('argBlogOpacity', opacity);
+            }
+
+            // Cargar configuración guardada o usar el default
+            const savedPalette = localStorage.getItem('argBlogPalette') || 'cool';
+            const savedOpacity = localStorage.getItem('argBlogOpacity') || '100';
+            applySettings(savedPalette, savedOpacity);
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const newPalette = button.dataset.palette;
+                    const currentOpacity = opacitySlider.value;
+                    applySettings(newPalette, currentOpacity);
+                    saveSettings(newPalette, currentOpacity);
+                });
+            });
+
+            opacitySlider.addEventListener('input', () => {
+                const newOpacity = opacitySlider.value;
+                applySettings(currentPalette, newOpacity);
+                saveSettings(currentPalette, newOpacity);
+            });
+
+            // --- LÓGICA DEL BLOG ---
             const config = { repoOwner: 'alter-ias', repoName: 'argblog-datos' };
             const postsContainer = document.getElementById('postsContainer');
             const filterContainer = document.getElementById('filter-container');
@@ -191,16 +303,15 @@
 
             function openPostModal(post) {
                 if (modalContainer.classList.contains('is-active')) return;
+
+                const opacity = (localStorage.getItem('argBlogOpacity') || '100') / 100;
+                const gradientVar = getComputedStyle(root).getPropertyValue(`--active-gradient`);
+                const transparentGradient = gradientVar.replace(/rgb/g, 'rgba').replace(/\)/g, `, ${opacity * 0.85})`); // Opacidad base del 85%
                 
-                // --- CORRECCIÓN CLAVE 2: Paleta de colores fríos para el filtro del modal ---
-                modalWrapper.style.backgroundImage = `
-                    linear-gradient(-45deg, rgba(44, 62, 80, 0.85), rgba(74, 109, 167, 0.85), rgba(52, 73, 94, 0.85), rgba(34, 87, 122, 0.85)),
-                    url('${post.image || ''}')
-                `;
+                modalWrapper.style.backgroundImage = `${transparentGradient}, url('${post.image || ''}')`;
 
                 document.getElementById('post-modal-title').textContent = post.title;
                 document.getElementById('post-modal-date').textContent = post.date || new Date(post.createdAt).toLocaleDateString('es-ES');
-                
                 const contentBody = document.getElementById('post-modal-body');
                 contentBody.innerHTML = ''; 
                 const paragraphs = post.content.split('\n').filter(p => p.trim() !== '');
@@ -209,7 +320,6 @@
                     p.textContent = pText;
                     contentBody.appendChild(p);
                 });
-
                 const tagsContainer = document.getElementById('post-modal-tags');
                 tagsContainer.innerHTML = '';
                 if (post.tags && Array.isArray(post.tags)) {
