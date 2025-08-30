@@ -16,7 +16,7 @@
             --font-sans: 'Poppins', sans-serif;
             --color-light: #f8f9fa;
             
-            /* Paletas de colores como variables */
+            /* --- TRES PALETAS DE COLORES DEFINIDAS --- */
             --gradient-full: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             --gradient-cool: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
             --gradient-dark: linear-gradient(-45deg, #2c3e50, #95a5a6, #1c1c1c, #34495e);
@@ -47,10 +47,9 @@
         }
 
         .filter-controls { display: flex; gap: 0.5rem; }
-        .filter-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--color-light); cursor: pointer; transition: transform 0.2s; }
+        .filter-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--color-light); cursor: pointer; transition: transform 0.2s; background-color: transparent; }
         .filter-btn:hover { transform: scale(1.1); }
         .filter-btn.is-active { border-width: 4px; }
-        #filter-off { background-color: #1a1a1a; }
         #filter-full { background: var(--gradient-full); }
         #filter-cool { background: var(--gradient-cool); }
         #filter-dark { background: var(--gradient-dark); }
@@ -117,7 +116,7 @@
         <div class="header-logo"><a href="#">ARG</a></div>
         <div class="controls-container">
             <div class="filter-controls">
-                <button class="filter-btn" id="filter-off" data-palette="off" title="Sin filtro"></button>
+                <!-- Botón "off" eliminado -->
                 <button class="filter-btn" id="filter-full" data-palette="full" title="Filtro Espectro Completo"></button>
                 <button class="filter-btn" id="filter-cool" data-palette="cool" title="Filtro Frío"></button>
                 <button class="filter-btn" id="filter-dark" data-palette="dark" title="Filtro Oscuro"></button>
@@ -198,9 +197,11 @@
             window.addEventListener('scroll', () => { if (!ticking) { window.requestAnimationFrame(updateScrollEffects); ticking = true; } });
             updateScrollEffects();
 
+            // --- LÓGICA DE FILTRO CON OPACIDAD Y LOCALSTORAGE (SIMPLIFICADA) ---
             const filterButtons = document.querySelectorAll('.filter-btn');
             const opacitySlider = document.getElementById('opacity-slider');
             const root = document.documentElement;
+            let currentPalette = 'off';
 
             function applySettings(palette, opacity) {
                 root.style.setProperty('--filter-opacity', opacity / 100);
@@ -212,6 +213,7 @@
                     btn.classList.toggle('is-active', btn.dataset.palette === palette);
                 });
                 opacitySlider.value = opacity;
+                currentPalette = palette;
             }
 
             function saveSettings(palette, opacity) {
@@ -219,36 +221,37 @@
                 localStorage.setItem('argIndexOpacity', opacity);
             }
 
+            // Cargar configuración guardada
             const savedPalette = localStorage.getItem('argIndexPalette') || 'off';
             const savedOpacity = localStorage.getItem('argIndexOpacity') || '0';
             applySettings(savedPalette, savedOpacity);
 
+            // Listeners para los botones de color
             filterButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const newPalette = button.dataset.palette;
                     let newOpacity = opacitySlider.value;
-                    if (newPalette === 'off') {
-                        newOpacity = 0;
-                    } else if (newOpacity == 0) {
-                        newOpacity = 40;
+                    if (newOpacity == 0) {
+                        newOpacity = 40; // Opacidad por defecto si estaba apagado
                     }
                     applySettings(newPalette, newOpacity);
                     saveSettings(newPalette, newOpacity);
                 });
             });
 
+            // Listener para el slider de opacidad
             opacitySlider.addEventListener('input', () => {
                 const newOpacity = opacitySlider.value;
-                let currentPalette = document.querySelector('.filter-btn.is-active').dataset.palette;
-                if (newOpacity > 0 && currentPalette === 'off') {
-                    currentPalette = 'full'; // Default to 'full' if slider is moved from off
-                } else if (newOpacity == 0) {
-                    currentPalette = 'off';
+                if (currentPalette === 'off' && newOpacity > 0) {
+                    // Si no había color y se sube la opacidad, se activa el primer filtro
+                    currentPalette = 'full'; 
                 }
                 applySettings(currentPalette, newOpacity);
                 saveSettings(currentPalette, newOpacity);
             });
 
+
+            // --- GESTIÓN DE MODALES (SIN CAMBIOS) ---
             function openModal(modal, iframeContainer, url, historyState, historyHash) {
                 if (modal.classList.contains('is-active')) return;
                 const iframe = document.createElement('iframe');
