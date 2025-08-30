@@ -48,12 +48,15 @@
             transition: opacity 0.5s ease;
         }
 
-        /* --- NUEVO: Controles de Estilo --- */
+        /* --- CORRECCIÓN CLAVE: Se eliminó el fondo del contenedor --- */
         .controls-container {
-            background-color: rgba(0,0,0,0.3); padding: 0.5rem 1rem; border-radius: 20px;
-            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
             margin-top: 1rem;
         }
+
         .filter-controls { display: flex; gap: 0.5rem; }
         .filter-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--text-color); cursor: pointer; transition: transform 0.2s; }
         .filter-btn:hover { transform: scale(1.1); }
@@ -71,7 +74,7 @@
         #postal-selection-view { position: relative; justify-content: flex-start; padding-top: 40px; }
         .view-container.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         #postal-selection-view .header { text-align: center; margin-bottom: 20px; width: 100%; }
-        #postal-selection-view .logo { height: 150px; width: auto; margin-bottom: 15px; } /* Logo más pequeño para dar espacio */
+        #postal-selection-view .logo { height: 150px; width: auto; margin-bottom: 15px; }
         #postal-selection-view .subtitle { font-size: 1rem; color: var(--secondary-text-color); font-weight: 400; margin-top: 10px; max-width: 500px; line-height: 1.5; margin-left: auto; margin-right: auto; }
         
         #navigation-controls { display: flex; justify-content: center; align-items: center; gap: 60px; margin: 20px 0; width: 100%; }
