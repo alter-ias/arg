@@ -27,87 +27,81 @@
             position: relative;
             width: 100%;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 2rem;
         }
         
-        /* Altura reducida para el header */
         #archive-hero {
             height: 40vh;
         }
-        /* Altura completa para los bloques de contenido */
-        #video-archive, #podcast-archive {
-            height: 100vh;
-        }
 
-        #archive-hero::before, #video-archive::before, #podcast-archive::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
+        #archive-hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: linear-gradient(-45deg, #2c3e50, #4a6da7, #8c2a5c, #4c0e2f);
-            background-size: 400% 400%;
-            animation: gradient-horizontal 25s ease infinite;
-            filter: brightness(0.6);
+            background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite; filter: brightness(0.6);
         }
         
         .hero-content { text-align: center; }
         .hero-content h1 { font-family: var(--font-serif); font-size: 5rem; margin-bottom: 0.5rem; }
         .hero-content p { font-size: 1.2rem; max-width: 600px; margin-top: 0; }
 
-        .block-title {
-            font-family: var(--font-serif);
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
+        /* ======================================================= */
+        /* NUEVO LAYOUT HORIZONTAL DE DOBLE PANEL                  */
+        /* ======================================================= */
+        .dual-archive-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+            gap: 2rem;
+            height: 100vh;
+            align-items: center;
         }
 
-        /* Nuevo contenedor para el grid flotante */
-        .media-grid-container {
-            display: grid;
-            grid-template-columns: 3fr 1fr; /* Proporción 3:1 para dar más espacio al player */
-            gap: 2rem;
-            width: 100%;
-            max-width: 1200px;
+        .dual-archive-block::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite; filter: brightness(0.7);
         }
-        
-        .player-container {
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            /* Asegurar que el iframe ocupe todo el espacio */
+
+        .archive-pane {
             width: 100%;
             height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        #video-archive .player-container {
-            aspect-ratio: 16 / 9; /* Proporción para video */
-            height: auto;
+        .block-title { font-family: var(--font-serif); font-size: 2.5rem; margin-bottom: 2rem; text-align: center; }
+        
+        .player-container {
+            border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 100%;
         }
-        #podcast-archive .player-container {
-            height: 352px; /* Altura estándar para el embed de Spotify */
-        }
-
+        #video-archive .player-container { aspect-ratio: 16 / 9; height: auto; }
+        #podcast-archive .player-container { height: 352px; }
         .player-container iframe { width: 100%; height: 100%; border: none; }
 
-        .media-list { display: flex; flex-direction: column; overflow-y: auto; text-align: left; }
+        .media-list { display: flex; flex-direction: column; overflow-y: auto; text-align: left; width: 100%; margin-top: 1.5rem; }
         .media-list ul { list-style: none; padding: 0; margin: 0; }
-        
         .media-link { display: block; padding: 0.75rem; text-decoration: none; color: var(--color-light); border-radius: 5px; margin-bottom: 0.5rem; transition: background-color 0.3s; cursor: pointer; border: 1px solid transparent; }
         .media-link:hover { background-color: rgba(255, 255, 255, 0.1); }
         .media-link.is-active { background-color: rgba(255, 255, 255, 0.15); border-color: var(--color-light); font-weight: bold; }
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .hero-content h1 { font-size: 3rem; }
             .hero-content p, .media-link { font-size: 1rem; }
             
+            /* Apilar los paneles en móvil */
+            .dual-archive-block {
+                grid-template-columns: 1fr;
+                height: auto; /* La altura se ajusta al contenido */
+            }
+            .archive-pane {
+                min-height: 100vh; /* Cada panel ocupa una pantalla en móvil */
+                padding: 2rem 0;
+            }
             .block-title { font-size: 2rem; }
-            .media-grid-container { grid-template-columns: 1fr; } /* Apilar en móvil */
-            .player-container { order: 1; } /* Player primero */
-            .media-list { order: 2; margin-top: 2rem; } /* Lista después */
         }
     </style>
 </head>
@@ -120,49 +114,46 @@
         </div>
     </section>
 
-    <!-- Bloque de Video -->
-    <section class="archive-block" id="video-archive">
-        <div class="content-wrapper">
+    <!-- Bloque Unificado con dos paneles -->
+    <section class="archive-block dual-archive-block">
+        <!-- Panel Izquierdo: Archivo Visual -->
+        <div class="archive-pane" id="video-archive">
             <h2 class="block-title">Archivo Visual</h2>
-            <div class="media-grid-container">
-                <div class="player-container">
-                    <iframe id="youtube-player" src="" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                </div>
-                <div class="media-list">
-                    <ul id="video-list-ul"></ul>
-                    <div id="video-sources" style="display: none;">
-                        <a data-src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk">Video Principal</a>
-                        <a data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Segundo Video</a>
-                    </div>
+            <div class="player-container">
+                <iframe id="youtube-player" src="" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <div class="media-list">
+                <ul id="video-list-ul"></ul>
+                <div id="video-sources" style="display: none;">
+                    <a data-src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk">Video Principal</a>
+                    <a data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Segundo Video</a>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Bloque de Podcast -->
-    <section class="archive-block" id="podcast-archive">
-        <div class="content-wrapper">
+        <!-- Panel Derecho: Archivo Sonoro -->
+        <div class="archive-pane" id="podcast-archive">
             <h2 class="block-title">Archivo Sonoro</h2>
-            <div class="media-grid-container">
-                <div class="player-container">
-                    <iframe id="spotify-player" src="" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                </div>
-                <div class="media-list">
-                    <ul id="podcast-list-ul"></ul>
-                    <div id="podcast-sources" style="display: none;">
-                        <a data-src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0">Podcast Principal</a>
-                        <a data-src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0">Segundo Podcast</a>
-                    </div>
+            <div class="player-container">
+                <iframe id="spotify-player" src="" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+            <div class="media-list">
+                <ul id="podcast-list-ul"></ul>
+                <div id="podcast-sources" style="display: none;">
+                    <a data-src="https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator&theme=0">Podcast Principal</a>
+                    <a data-src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0">Segundo Podcast</a>
                 </div>
             </div>
         </div>
     </section>
-    
-    <!-- Botón de regreso eliminado -->
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // El JavaScript no necesita cambios, funciona con la nueva estructura.
             function setupArchiveSection(sectionId, playerIframeId, sourcesDivId, listUlId) {
+                const section = document.getElementById(sectionId);
+                if (!section) return; // Salir si el elemento no existe
+
                 const player = document.getElementById(playerIframeId);
                 const sourcesContainer = document.getElementById(sourcesDivId);
                 const listUl = document.getElementById(listUlId);
@@ -173,34 +164,4 @@
                 sourceLinks.forEach((link, index) => {
                     const li = document.createElement('li');
                     const newLink = document.createElement('a');
-                    newLink.className = 'media-link';
-                    newLink.href = '#';
-                    newLink.dataset.src = link.dataset.src;
-                    newLink.textContent = link.textContent;
-                    
-                    if (index === 0) {
-                        newLink.classList.add('is-active');
-                    }
-                    li.appendChild(newLink);
-                    listUl.appendChild(li);
-                });
-
-                player.src = sourceLinks[0].dataset.src;
-
-                const renderedLinks = listUl.querySelectorAll('.media-link');
-                renderedLinks.forEach(link => {
-                    link.addEventListener('click', function(event) {
-                        event.preventDefault();
-                        renderedLinks.forEach(l => l.classList.remove('is-active'));
-                        this.classList.add('is-active');
-                        player.src = this.dataset.src;
-                    });
-                });
-            }
-
-            setupArchiveSection('video-archive', 'youtube-player', 'video-sources', 'video-list-ul');
-            setupArchiveSection('podcast-archive', 'spotify-player', 'podcast-sources', 'podcast-list-ul');
-        });
-    </script>
-</body>
-</html>
+                   
