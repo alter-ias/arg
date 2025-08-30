@@ -21,69 +21,96 @@
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
 
-        .media-block { position: relative; width: 100%; height: 80vh; overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; }
-        #blog-hero { height: 100vh; }
-        .background-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; }
-        .background-media img { width: 100%; height: 130%; object-fit: cover; will-change: transform; }
-        .media-block::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 2; }
-        
-        .color-overlay { position: absolute; z-index: 3; }
-        .overlay-full { width: 100%; height: 100%; }
         @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .iridescent-base { background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; }
-        .iridescent-slow-h { animation: gradient-horizontal 25s ease infinite; }
+        
+        /* Fondo tornasolado continuo para toda la página */
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1;
+            background: linear-gradient(-45deg, #2c3e50, #4a6da7, #8c2a5c, #4c0e2f);
+            background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite;
+        }
+        
+        #blog-hero {
+            position: relative;
+            width: 100%;
+            height: 40vh; /* Header más compacto */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
         
         .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .content-overlay h1, .content-overlay h2 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 1rem 0; }
-        .content-overlay h1 { font-size: 5rem; } .content-overlay h2 { font-size: 3rem; }
-        .content-overlay p { font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.5rem auto; }
-        .post-date { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
-        .btn { display: inline-block; padding: 0.8rem 1.8rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: background-color 0.3s, color 0.3s; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
-        .btn:hover { background-color: var(--color-light); color: #1a1a1a; }
-        
-        footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background-color: #111; }
+        .content-overlay h1 { font-size: 5rem; }
+        .content-overlay p { font-size: 1.1rem; margin: 0 auto 1.5rem auto; }
         
         #filter-container { margin-top: 2rem; }
         .filter-btn, .tag-btn { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--color-light); padding: 0.5rem 1rem; margin: 0.25rem; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn:hover, .tag-btn:hover { background-color: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+        .filter-btn.is-active { background-color: rgba(255, 255, 255, 0.25); border-color: var(--color-light); box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+
+        /* Contenedor principal de los posts */
+        #postsContainer {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
         
-        /* --- ESTILO DE BOTONES MEJORADO --- */
-        .filter-btn:hover, .tag-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+        /* Nuevo estilo de "Tarjeta Flotante" para cada post */
+        .post-card {
+            background: rgba(26, 26, 26, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            text-align: center;
         }
-        .filter-btn.is-active {
-            background-color: rgba(255, 255, 255, 0.25);
-            border-color: var(--color-light);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-
-        .post-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
-
+        .post-card h2 { font-family: var(--font-serif); font-size: 2.5rem; }
+        .post-date { font-size: 0.9rem; margin-bottom: 1rem; opacity: 0.8; }
+        .post-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
+        .tag { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; }
+        
         .post-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
         .post-modal-container.is-active { opacity: 1; pointer-events: auto; }
-        .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; background-attachment: local; }
+        .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; isolation: isolate; /* Para que el ::before funcione bien */ background-size: cover; background-position: center; }
         .post-modal-container.is-active .post-modal-content-wrapper { transform: scale(1); }
-        .post-modal-content-wrapper.iridescent-base { background: linear-gradient(-45deg, rgba(238,119,82,0.95), rgba(231,60,126,0.95), rgba(35,166,213,0.95), rgba(35,213,171,0.95)); background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite; background-attachment: local; }
-        .post-modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; font-family: sans-serif; cursor: pointer; line-height: 1; color: var(--color-light); z-index: 10; }
-        #post-modal-image { width: 100%; height: 300px; object-fit: cover; display: block; }
-        .post-modal-text { padding: 3rem; }
-        #post-modal-title { font-family: var(--font-serif); font-size: 2.5rem; margin-top: 0; margin-bottom: 1rem; text-align: left; }
-        #post-modal-date { font-size: 0.9rem; opacity: 0.7; margin-bottom: 1rem; display: block; text-align: left; }
-        #post-modal-tags .tag { margin-bottom: 2rem; }
-        #post-modal-body { font-size: 1.1rem; line-height: 1.8; text-align: left; } #post-modal-body p { margin-bottom: 1.5rem; }
-        .loading, .error { text-align: center; padding: 40px; height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+
+        /* --- CORRECCIÓN CLAVE: Filtro tornasolado sobre la imagen de fondo del modal --- */
+        .post-modal-content-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(-45deg, rgba(238,119,82,0.85), rgba(231,60,126,0.85), rgba(35,166,213,0.85), rgba(35,213,171,0.85));
+            background-size: 400% 400%;
+            animation: gradient-horizontal 25s ease infinite;
+            z-index: 1;
+            border-radius: 8px;
+        }
+        
+        .post-modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; cursor: pointer; color: var(--color-light); z-index: 10; }
+        .post-modal-text { padding: 3rem; position: relative; z-index: 2; }
+        #post-modal-title { font-family: var(--font-serif); font-size: 2.5rem; margin-top: 0; margin-bottom: 1rem; }
+        #post-modal-date { font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem; }
+        #post-modal-tags { margin-bottom: 2rem; }
+        #post-modal-body { font-size: 1.1rem; line-height: 1.8; } #post-modal-body p { margin-bottom: 1.5rem; }
+        
+        .loading, .error { text-align: center; padding: 40px; }
         .spinner { border: 4px solid rgba(255,255,255, 0.2); border-left-color: var(--color-light); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .scroll-top-btn { position: fixed; bottom: 20px; right: 20px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem; cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; }
         .scroll-top-btn.is-visible { opacity: 1; pointer-events: auto; }
-        .scroll-top-btn:hover { transform: scale(1.1); background-color: rgba(255,255,255,0.2); }
+        .scroll-top-btn:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
     <main>
-        <section class="media-block" id="blog-hero">
-            <div class="color-overlay overlay-full iridescent-base iridescent-slow-h"></div>
+        <section id="blog-hero">
             <div class="content-overlay">
                 <h1>El Archivo</h1>
                 <p>Textos del Jardín Digital</p>
@@ -102,9 +129,8 @@
     <footer><p>&copy; 2025 El Archivo. Todos los derechos reservados.</p></footer>
 
     <div id="post-modal-container" class="post-modal-container">
-        <div class="post-modal-content-wrapper iridescent-base">
+        <div class="post-modal-content-wrapper">
             <span class="post-modal-close">&times;</span>
-            <img id="post-modal-image" src="" alt="">
             <div class="post-modal-text">
                 <h2 id="post-modal-title"></h2>
                 <span id="post-modal-date"></span>
@@ -142,27 +168,23 @@
                     return;
                 }
                 postsToRender.forEach(post => {
-                    const postElement = document.createElement('section');
-                    postElement.className = 'media-block'; 
+                    const postElement = document.createElement('div');
+                    postElement.className = 'post-card'; 
                     let tagsHTML = '';
                     if (post.tags && Array.isArray(post.tags)) {
                         tagsHTML = `<div class="post-tags">${post.tags.map(tag => `<button class="tag-btn" data-tag="${tag}">${tag}</button>`).join('')}</div>`;
                     }
                     postElement.innerHTML = `
-                        <div class="background-media"><img src="${post.image || 'https://via.placeholder.com/1200x800'}" alt="${post.title}"></div>
-                        <div class="content-overlay">
-                            <h2>${post.title}</h2>
-                            <div class="post-date">${post.date || new Date(post.createdAt).toLocaleDateString('es-ES')}</div>
-                            <p>${post.excerpt || ''}</p>
-                            ${tagsHTML}
-                            <button class="btn read-more-btn" data-post='${JSON.stringify(post)}'>Leer más</button>
-                        </div>
+                        <h2>${post.title}</h2>
+                        <div class="post-date">${post.date || new Date(post.createdAt).toLocaleDateString('es-ES')}</div>
+                        <p>${post.excerpt || ''}</p>
+                        ${tagsHTML}
+                        <button class="btn read-more-btn" data-post='${JSON.stringify(post)}'>Leer más</button>
                     `;
                     postsContainer.appendChild(postElement);
                 });
                 document.querySelectorAll('.read-more-btn').forEach(button => button.addEventListener('click', () => openPostModal(JSON.parse(button.dataset.post))));
                 document.querySelectorAll('.tag-btn').forEach(button => button.addEventListener('click', () => filterByTag(button.dataset.tag)));
-                initializeScrollEffects();
             }
 
             function renderFilterButtons() {
@@ -191,17 +213,19 @@
             }
 
             const modalContainer = document.getElementById('post-modal-container');
+            const modalWrapper = modalContainer.querySelector('.post-modal-content-wrapper');
+
             function openPostModal(post) {
                 if (modalContainer.classList.contains('is-active')) return;
+                
+                // --- CORRECCIÓN CLAVE: Aplicar la imagen de fondo dinámicamente ---
+                modalWrapper.style.backgroundImage = `url('${post.image || ''}')`;
+
                 document.getElementById('post-modal-title').textContent = post.title;
                 document.getElementById('post-modal-date').textContent = post.date || new Date(post.createdAt).toLocaleDateString('es-ES');
-                document.getElementById('post-modal-image').src = post.image || '';
-
-                // --- CORRECCIÓN PARA PÁRRAFOS ---
+                
                 const contentBody = document.getElementById('post-modal-body');
-                // Limpiar contenido anterior
                 contentBody.innerHTML = ''; 
-                // Dividir el contenido por saltos de línea y crear un <p> para cada uno
                 const paragraphs = post.content.split('\n').filter(p => p.trim() !== '');
                 paragraphs.forEach(pText => {
                     const p = document.createElement('p');
@@ -222,35 +246,18 @@
                 if (!modalContainer.classList.contains('is-active')) return;
                 modalContainer.classList.remove('is-active');
                 document.body.style.overflow = '';
+                // Limpiar la imagen de fondo al cerrar
+                modalWrapper.style.backgroundImage = 'none';
             }
 
-            function initializeScrollEffects() {
-                const mediaBlocks = document.querySelectorAll('.media-block');
-                const windowHeight = window.innerHeight;
-                let ticking = false;
-                function updateScrollEffects() {
-                    mediaBlocks.forEach(block => {
-                        const rect = block.getBoundingClientRect();
-                        const media = block.querySelector('.background-media > img');
-                        if (!media) return;
-                        if (rect.top < windowHeight && rect.bottom > 0) {
-                            const progress = (rect.top + block.offsetHeight) / (windowHeight + block.offsetHeight);
-                            const clampedProgress = 1 - Math.max(0, Math.min(1, progress));
-                            const travelRange = media.offsetHeight - block.offsetHeight;
-                            const translateY = -travelRange * clampedProgress;
-                            media.style.transform = `translateY(${translateY}px)`;
-                        }
-                    });
-                    if (window.scrollY > windowHeight) {
-                        scrollTopBtn.classList.add('is-visible');
-                    } else {
-                        scrollTopBtn.classList.remove('is-visible');
-                    }
-                    ticking = false;
+            // Lógica de Scroll-to-Top
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > window.innerHeight) {
+                    scrollTopBtn.classList.add('is-visible');
+                } else {
+                    scrollTopBtn.classList.remove('is-visible');
                 }
-                window.addEventListener('scroll', () => { if (!ticking) { window.requestAnimationFrame(updateScrollEffects); ticking = true; } });
-                updateScrollEffects();
-            }
+            });
 
             initializeBlog();
             
