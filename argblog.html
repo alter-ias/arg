@@ -42,34 +42,51 @@
         
         footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background-color: #111; }
         
+        /* ======================================================= */
+        /* BARRA DE FILTROS Y TAGS                                 */
+        /* ======================================================= */
+        #filter-container {
+            padding: 2rem var(--main-gap);
+            background-color: #111;
+            text-align: center;
+        }
+        .filter-btn, .tag-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--color-light);
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .filter-btn:hover, .tag-btn:hover {
+            background-color: var(--color-light);
+            color: #1a1a1a;
+        }
+        .filter-btn.is-active {
+            background-color: var(--color-light);
+            color: #1a1a1a;
+            font-weight: bold;
+        }
         .post-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .tag { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* ======================================================= */
-        /* MODAL CORREGIDO                                         */
-        /* ======================================================= */
+
+        /* Modal (sin cambios significativos) */
         .post-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
         .post-modal-container.is-active { opacity: 1; pointer-events: auto; }
-        .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; }
+        .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; background-attachment: local; }
         .post-modal-container.is-active .post-modal-content-wrapper { transform: scale(1); }
-
-        .post-modal-content-wrapper.iridescent-base {
-             background: linear-gradient(-45deg, rgba(238,119,82,0.95), rgba(231,60,126,0.95), rgba(35,166,213,0.95), rgba(35,213,171,0.95));
-             background-size: 400% 400%;
-             animation: gradient-horizontal 25s ease infinite;
-             /* CORRECCIÓN CLAVE: El fondo ahora se desplaza con el contenido */
-             background-attachment: local;
-        }
-
+        .post-modal-content-wrapper.iridescent-base { background: linear-gradient(-45deg, rgba(238,119,82,0.95), rgba(231,60,126,0.95), rgba(35,166,213,0.95), rgba(35,213,171,0.95)); background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite; background-attachment: local; }
         .post-modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; font-family: sans-serif; cursor: pointer; line-height: 1; color: var(--color-light); z-index: 10; }
         #post-modal-image { width: 100%; height: 300px; object-fit: cover; display: block; }
         .post-modal-text { padding: 3rem; }
         #post-modal-title { font-family: var(--font-serif); font-size: 2.5rem; margin-top: 0; margin-bottom: 1rem; text-align: left; }
         #post-modal-date { font-size: 0.9rem; opacity: 0.7; margin-bottom: 1rem; display: block; text-align: left; }
-        #post-modal-tags { text-align: left; margin-bottom: 2rem; }
-        #post-modal-body { font-size: 1.1rem; line-height: 1.8; text-align: left; }
-        #post-modal-body p { margin-bottom: 1.5rem; }
-
+        #post-modal-tags .tag-btn { margin-bottom: 2rem; }
+        #post-modal-body { font-size: 1.1rem; line-height: 1.8; text-align: left; } #post-modal-body p { margin-bottom: 1.5rem; }
         .loading, .error { text-align: center; padding: 40px; height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { border: 4px solid rgba(255,255,255, 0.2); border-left-color: var(--color-light); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -78,14 +95,16 @@
 <body>
     <main>
         <section class="media-block" id="blog-hero">
-            <!-- CAPA TORNASOLADA RESTAURADA -->
             <div class="color-overlay overlay-full iridescent-base iridescent-slow-h"></div>
             <div class="content-overlay">
                 <h1>El Archivo</h1>
                 <p>Textos del Jardín Digital</p>
             </div>
         </section>
-
+        
+        <!-- Contenedor para la barra de filtros -->
+        <div id="filter-container"></div>
+        
         <div id="postsContainer">
             <div class="loading" id="loading">
                 <div class="spinner"></div>
@@ -103,7 +122,7 @@
             <div class="post-modal-text">
                 <h2 id="post-modal-title"></h2>
                 <span id="post-modal-date"></span>
-                <div id="post-modal-tags" class="post-tags"></div>
+                <div id="post-modal-tags"></div>
                 <div id="post-modal-body"></div>
             </div>
         </div>
@@ -111,68 +130,84 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // El JavaScript no necesita cambios, los arreglos fueron en CSS y HTML.
-            const config = {
-                repoOwner: 'alter-ias',
-                repoName: 'argblog-datos'
-            };
+            // Variables globales
+            const config = { repoOwner: 'alter-ias', repoName: 'argblog-datos' };
+            const postsContainer = document.getElementById('postsContainer');
+            const filterContainer = document.getElementById('filter-container');
+            const loadingElement = document.getElementById('loading');
+            let allPosts = []; // Guardaremos todos los posts aquí
+            let activeFilter = 'all';
+
+            // --- Funciones de la API y renderizado ---
             async function fetchBlogPosts() {
                 try {
                     const response = await fetch(`https://api.github.com/repos/${config.repoOwner}/${config.repoName}/issues?labels=blog-post&state=open`);
                     if (!response.ok) throw new Error(`Error: ${response.status}`);
                     const issues = await response.json();
-                    return issues.map(issue => ({
-                        ...JSON.parse(issue.body),
-                        createdAt: issue.created_at,
-                    }));
-                } catch (error) {
-                    console.error('Error al obtener entradas:', error);
-                    return [];
-                }
+                    return issues.map(issue => ({ ...JSON.parse(issue.body), createdAt: issue.created_at }));
+                } catch (error) { console.error('Error al obtener entradas:', error); return []; }
             }
-            async function renderBlogPosts() {
-                const container = document.getElementById('postsContainer');
-                const loadingElement = document.getElementById('loading');
-                try {
-                    const posts = await fetchBlogPosts();
-                    loadingElement.style.display = 'none';
-                    if (posts.length === 0) {
-                        container.innerHTML = '<p class="error">No hay entradas disponibles aún.</p>';
-                        return;
+
+            function displayPosts(postsToRender) {
+                postsContainer.innerHTML = ''; // Limpiar contenedor
+                if (postsToRender.length === 0) {
+                    postsContainer.innerHTML = '<p class="error">No hay entradas para esta categoría.</p>';
+                    return;
+                }
+                postsToRender.forEach(post => {
+                    const postElement = document.createElement('section');
+                    postElement.className = 'media-block'; 
+                    let tagsHTML = '';
+                    if (post.tags && Array.isArray(post.tags)) {
+                        tagsHTML = `<div class="post-tags">${post.tags.map(tag => `<button class="tag-btn" data-tag="${tag}">${tag}</button>`).join('')}</div>`;
                     }
-                    posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    posts.forEach(post => {
-                        const postElement = document.createElement('section');
-                        postElement.className = 'media-block'; 
-                        let tagsHTML = '';
-                        if (post.tags && Array.isArray(post.tags)) {
-                            tagsHTML = `<div class="post-tags">${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`;
-                        }
-                        postElement.innerHTML = `
-                            <div class="background-media">
-                                <img src="${post.image || 'https://via.placeholder.com/1200x800'}" alt="${post.title}">
-                            </div>
-                            <div class="content-overlay">
-                                <h2>${post.title}</h2>
-                                <div class="post-date">${post.date || new Date(post.createdAt).toLocaleDateString('es-ES')}</div>
-                                <p>${post.excerpt || ''}</p>
-                                ${tagsHTML}
-                                <button class="btn read-more-btn" data-post='${JSON.stringify(post)}'>Leer más</button>
-                            </div>
-                        `;
-                        container.appendChild(postElement);
-                    });
-                    document.querySelectorAll('.read-more-btn').forEach(button => {
-                        button.addEventListener('click', function() {
-                            openPostModal(JSON.parse(this.getAttribute('data-post')));
-                        });
-                    });
-                    initializeScrollEffects();
-                } catch (error) {
-                    loadingElement.style.display = 'none';
-                    container.innerHTML = '<p class="error">Error al cargar las entradas.</p>';
-                }
+                    postElement.innerHTML = `
+                        <div class="background-media"><img src="${post.image || 'https://via.placeholder.com/1200x800'}" alt="${post.title}"></div>
+                        <div class="content-overlay">
+                            <h2>${post.title}</h2>
+                            <div class="post-date">${post.date || new Date(post.createdAt).toLocaleDateString('es-ES')}</div>
+                            <p>${post.excerpt || ''}</p>
+                            ${tagsHTML}
+                            <button class="btn read-more-btn" data-post='${JSON.stringify(post)}'>Leer más</button>
+                        </div>
+                    `;
+                    postsContainer.appendChild(postElement);
+                });
+
+                // Re-inicializar listeners para los botones de "Leer más" y tags
+                document.querySelectorAll('.read-more-btn').forEach(button => button.addEventListener('click', () => openPostModal(JSON.parse(button.dataset.post))));
+                document.querySelectorAll('.tag-btn').forEach(button => button.addEventListener('click', () => filterByTag(button.dataset.tag)));
+                
+                initializeScrollEffects(); // Re-inicializar parallax
             }
+
+            function renderFilterButtons() {
+                const allTags = new Set(allPosts.flatMap(post => post.tags || []));
+                filterContainer.innerHTML = `<button class="filter-btn ${activeFilter === 'all' ? 'is-active' : ''}" data-tag="all">Mostrar Todos</button>`;
+                allTags.forEach(tag => {
+                    filterContainer.innerHTML += `<button class="filter-btn ${activeFilter === tag ? 'is-active' : ''}" data-tag="${tag}">${tag}</button>`;
+                });
+                document.querySelectorAll('.filter-btn').forEach(button => button.addEventListener('click', () => filterByTag(button.dataset.tag)));
+            }
+            
+            function filterByTag(tag) {
+                activeFilter = tag;
+                let filteredPosts = (tag === 'all') ? allPosts : allPosts.filter(post => post.tags && post.tags.includes(tag));
+                displayPosts(filteredPosts);
+                renderFilterButtons(); // Re-render para actualizar el estado activo
+            }
+
+            async function initializeBlog() {
+                loadingElement.style.display = 'block';
+                allPosts = await fetchBlogPosts();
+                allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                loadingElement.style.display = 'none';
+                
+                renderFilterButtons();
+                displayPosts(allPosts);
+            }
+
+            // --- Funciones del Modal ---
             function openPostModal(post) {
                 document.getElementById('post-modal-title').textContent = post.title;
                 document.getElementById('post-modal-date').textContent = post.date || new Date(post.createdAt).toLocaleDateString('es-ES');
@@ -190,6 +225,8 @@
                 document.getElementById('post-modal-container').classList.remove('is-active');
                 document.body.style.overflow = '';
             }
+
+            // --- Efecto de Scroll Parallax ---
             function initializeScrollEffects() {
                 const mediaBlocks = document.querySelectorAll('.media-block');
                 const windowHeight = window.innerHeight;
@@ -209,24 +246,15 @@
                     });
                     ticking = false;
                 }
-                window.addEventListener('scroll', () => {
-                    if (!ticking) {
-                        window.requestAnimationFrame(updateScrollEffects);
-                        ticking = true;
-                    }
-                });
+                window.addEventListener('scroll', () => { if (!ticking) { window.requestAnimationFrame(updateScrollEffects); ticking = true; } });
                 updateScrollEffects();
             }
-            renderBlogPosts();
+
+            // --- Inicialización y listeners del modal ---
+            initializeBlog();
             document.querySelector('.post-modal-close').addEventListener('click', closePostModal);
-            document.getElementById('post-modal-container').addEventListener('click', e => {
-                if (e.target === e.currentTarget) closePostModal();
-            });
-            document.addEventListener('keydown', e => {
-                if (e.key === 'Escape' && document.getElementById('post-modal-container').classList.contains('is-active')) {
-                    closePostModal();
-                }
-            });
+            document.getElementById('post-modal-container').addEventListener('click', e => { if (e.target === e.currentTarget) closePostModal(); });
+            document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('post-modal-container').classList.contains('is-active')) closePostModal(); });
         });
     </script>
 </body>
