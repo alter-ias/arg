@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="./assets/img/logo00.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     
@@ -20,17 +20,40 @@
             --text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.9);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { 
-            height: 100%; 
-        }
-        /* Clase que activa el modo monocromático */
-        html.monochrome {
-            filter: grayscale(100%);
-        }
+        html { height: 100%; }
+        html.monochrome { filter: grayscale(100%); }
         body { color: var(--text-color); font-family: 'Montserrat', sans-serif; background-color: var(--background-color); min-height: 100%; overflow-y: auto; }
         
-        #background-video { position: fixed; top: 50%; left: 50%; width: 100vw; height: 100vh; min-width: 100%; min-height: 100%; z-index: -1; transform: translateX(-50%) translateY(-50%); object-fit: cover; filter: brightness(0.4); transition: opacity 0.5s ease-in-out; opacity: 0; }
-        #background-video.is-active { opacity: 1; }
+        /* ======================================================= */
+        /* NUEVO FONDO TORNASOLADO                                 */
+        /* ======================================================= */
+        @keyframes gradient-horizontal { 
+            0% { background-position: 0% 50%; } 
+            50% { background-position: 100% 50%; } 
+            100% { background-position: 0% 50%; } 
+        }
+
+        .iridescent-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Detrás de todo el contenido */
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient-horizontal 20s ease infinite; /* Ritmo medio */
+        }
+
+        /* Capa de oscurecimiento para asegurar la legibilidad del texto */
+        .iridescent-background::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1; /* Se pone encima del gradiente pero debajo del contenido */
+        }
 
         .page-wrapper { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 2; }
         .view-container { width: 100%; min-height: 100vh; position: absolute; top: 0; left: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; opacity: 1; visibility: visible; transition: opacity 0.7s ease-in-out, visibility 0.7s ease-in-out; }
@@ -46,29 +69,8 @@
         .nav-arrow:hover { background-color: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
         .nav-arrow.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-        /* Estilos para el nuevo botón de cambio de color */
-        .color-toggle-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .color-toggle-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
+        .color-toggle-btn { position: fixed; top: 20px; right: 20px; z-index: 1000; background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; font-size: 1.5rem; cursor: pointer; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background-color 0.3s, transform 0.3s; }
+        .color-toggle-btn:hover { background-color: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
         
         #postal-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; max-width: 900px; perspective: 1000px; }
         .postal-card { width: 100%; aspect-ratio: 2 / 3; cursor: pointer; transition: transform 0.5s ease, box-shadow 0.5s ease; transform-style: preserve-3d; }
@@ -103,13 +105,14 @@
     </style>
 </head>
 <body>
-    <!-- Botón para cambiar entre color y monocromático -->
     <button id="toggle-color-btn" class="color-toggle-btn" title="Alternar color">
         <i class="bi bi-circle-half"></i>
     </button>
 
     <audio id="audio-player"></audio>
-    <video autoplay muted loop playsinline id="background-video" src="./assets/vid/fondo01.webm"></video>
+    
+    <!-- FONDO DE VIDEO ELIMINADO Y REEMPLAZADO POR EL SIGUIENTE DIV -->
+    <div class="iridescent-background"></div>
     
     <div class="page-wrapper">
         <div id="postal-selection-view" class="view-container">
@@ -136,29 +139,26 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
+    // Referencias a los elementos del DOM
     const postalSelectionView = document.getElementById('postal-selection-view');
     const poemDisplayView = document.getElementById('poem-display-view');
     const postalContainer = document.getElementById('postal-container');
     const poemTitleEl = document.getElementById('poem-title');
     const poemTextDisplayEl = document.getElementById('poem-text-display');
     const audioPlayer = document.getElementById('audio-player');
-    const backgroundVideo = document.getElementById('background-video');
+    // LA REFERENCIA AL VIDEO DE FONDO HA SIDO ELIMINADA
     const prevTablaBtn = document.getElementById('prev-tabla');
     const nextTablaBtn = document.getElementById('next-tabla');
-    // Referencia al nuevo botón
     const toggleColorBtn = document.getElementById('toggle-color-btn');
 
     const dataUrl = './data/datos.json';
-
     let allPoems = [];
     let currentPoemIndex = -1;
     let isPoemViewOpen = false;
-    
     let currentTabla = 0;
     const cardsPerTabla = 16;
     let totalTablas = 0;
-    const mainBackgroundVideoSrc = './assets/vid/fondo01.webm';
+    // YA NO NECESITAMOS LA URL DEL VIDEO PRINCIPAL
 
     let flippedCardIndices = new Set();
     const storageKey = 'loteriaTapatia_flippedCards';
@@ -180,39 +180,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function loadPoemsData() {
         postalContainer.innerHTML = `<div class="spinner"></div><p id="loading-message">Construyendo los universos...</p>`;
-
         fetch(dataUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error de red al cargar el archivo de datos: ${response.statusText}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 allPoems = data.map((row, originalIndex) => {
                     if (!row) return null;
-                    
                     const title = row.TITULO ? String(row.TITULO).trim() : '';
                     const poemText = row.POEMA ? String(row.POEMA).trim() : '';
                     const soundUrl = row.SONIDO_ID ? String(row.SONIDO_ID).trim() : '';
                     const videoUrl = row.VIDEO_ID ? String(row.VIDEO_ID).trim() : '';
                     const imageUrl = row.IMAGEN_POSTAL_ID ? String(row.IMAGEN_POSTAL_ID).trim() : '';
-                    
                     if (!title || !poemText || !imageUrl) return null;
                     return { title, poemText, soundUrl, videoUrl, imageUrl, originalIndex };
                 }).filter(p => p !== null);
 
-                if (allPoems.length === 0) {
-                    throw new Error("No se encontraron cartas válidas en la base de datos. El archivo JSON podría estar vacío o mal formado.");
-                }
-                
                 shuffleArray(allPoems);
                 totalTablas = Math.ceil(allPoems.length / cardsPerTabla);
                 renderTabla();
             })
             .catch(error => {
                 console.error('Error al cargar la Lotería:', error);
-                postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80; max-width: 500px;"><b>Error:</b><br>${error.message}</p>`;
+                postalContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #ff8a80;"><b>Error:</b><br>${error.message}</p>`;
             });
     }
 
@@ -226,11 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'postal-card';
             card.dataset.poemIndex = poem.originalIndex;
-            
-            if (flippedCardIndices.has(poem.originalIndex)) {
-                card.classList.add('is-flipping');
-            }
-            
+            if (flippedCardIndices.has(poem.originalIndex)) card.classList.add('is-flipping');
             const postalImageUrl = poem.imageUrl; 
             card.style.setProperty('--card-bg-image', `url('${postalImageUrl}')`);
             card.innerHTML = `<div class="card-inner"><div class="card-face card-front"><img src="${postalImageUrl}" alt="Postal para '${poem.title}'" loading="lazy"></div><div class="card-face card-back"><p>${poem.title}</p></div></div>`;
@@ -259,11 +243,13 @@ document.addEventListener('DOMContentLoaded', () => {
             p.textContent = pText;
             poemTextDisplayEl.appendChild(p);
         });
+
         const triggerTextAnimation = () => {
             const pElements = poemTextDisplayEl.querySelectorAll('p');
             pElements.forEach((p, index) => { p.style.transitionDelay = `${index * 150}ms`; });
             poemTextDisplayEl.classList.add('is-visible');
         };
+
         if (!isPoemViewOpen) {
             history.pushState({ poem: currentPoem.title }, "");
             postalSelectionView.classList.add('is-hidden');
@@ -277,47 +263,18 @@ document.addEventListener('DOMContentLoaded', () => {
             audioPlayer.play().catch(e => console.error("Error al reproducir audio:", e));
         }
         
-        poemDisplayView.style.backgroundImage = 'none';
-        
-        const hasValidVideo = currentPoem.videoUrl && currentPoem.videoUrl.trim().length > 5;
-
-        if (hasValidVideo) {
-            backgroundVideo.classList.remove('is-active');
-            setTimeout(() => {
-                backgroundVideo.style.display = 'block';
-                backgroundVideo.src = currentPoem.videoUrl;
-                backgroundVideo.load();
-                backgroundVideo.oncanplaythrough = () => {
-                    backgroundVideo.play();
-                    backgroundVideo.classList.add('is-active');
-                    triggerTextAnimation();
-                    backgroundVideo.oncanplaythrough = null;
-                };
-            }, 500);
-
-        } else {
-            backgroundVideo.style.display = 'none';
-            poemDisplayView.style.backgroundImage = `url('${currentPoem.imageUrl}')`;
-            setTimeout(triggerTextAnimation, 100);
-        }
+        // EL CÓDIGO QUE MANEJABA EL VIDEO DE FONDO FUE ELIMINADO.
+        // Ahora, simplemente usamos la imagen de la postal como fondo del poema.
+        poemDisplayView.style.backgroundImage = `url('${currentPoem.imageUrl}')`;
+        setTimeout(triggerTextAnimation, 100);
     }
     
     function closePoemView() {
         if (!isPoemViewOpen) return;
         audioPlayer.pause();
         audioPlayer.src = '';
-        backgroundVideo.pause();
 
-        if (backgroundVideo.src !== mainBackgroundVideoSrc) {
-            backgroundVideo.classList.remove('is-active');
-            setTimeout(() => {
-                backgroundVideo.src = mainBackgroundVideoSrc;
-                backgroundVideo.play().catch(()=>{});
-            }, 500);
-        }
-        backgroundVideo.classList.add('is-active');
-
-        backgroundVideo.style.display = 'block';
+        // EL CÓDIGO PARA RESTAURAR EL VIDEO DE FONDO HA SIDO ELIMINADO
         poemDisplayView.style.backgroundImage = 'none';
         poemDisplayView.classList.add('is-hidden');
         postalSelectionView.classList.remove('is-hidden');
@@ -329,8 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function playNextPoem() { displayPoem(allPoems[(currentPoemIndex + 1) % allPoems.length].originalIndex); }
     function playPrevPoem() { displayPoem(allPoems[(currentPoemIndex - 1 + allPoems.length) % allPoems.length].originalIndex); }
 
-    // --- NUEVO EVENT LISTENER ---
-    // Añade o quita la clase 'monochrome' al elemento HTML
     toggleColorBtn.addEventListener('click', () => {
         document.documentElement.classList.toggle('monochrome');
     });
@@ -346,25 +301,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (card.classList.contains('is-flipping')) {
             card.classList.remove('is-flipping');
             flippedCardIndices.delete(poemIndex);
-            saveFlippedState();
         } else {
             card.classList.add('is-flipping');
             flippedCardIndices.add(poemIndex);
-            saveFlippedState();
-            
-            setTimeout(() => {
-                displayPoem(poemIndex);
-            }, 1500);
+            setTimeout(() => { displayPoem(poemIndex); }, 1500);
         }
+        saveFlippedState();
     });
 
-    window.addEventListener('popstate', (e) => { if(isPoemViewOpen) { closePoemView(); } });
+    window.addEventListener('popstate', () => { if(isPoemViewOpen) { closePoemView(); } });
     document.addEventListener('keydown', (e) => { if (!isPoemViewOpen) return; if (e.key === 'Escape') { history.back(); } if (e.key === 'ArrowRight') { playNextPoem(); } if (e.key === 'ArrowLeft') { playPrevPoem(); } });
     let touchStartX = 0;
     poemDisplayView.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
     poemDisplayView.addEventListener('touchend', (e) => { const touchEndX = e.changedTouches[0].screenX; const swipeDistance = touchEndX - touchStartX; if (swipeDistance > 50) playPrevPoem(); else if (swipeDistance < -50) playNextPoem(); });
     
-    backgroundVideo.oncanplaythrough = () => { backgroundVideo.classList.add('is-active'); backgroundVideo.oncanplaythrough = null; };
+    // LA LÍNEA QUE ACTIVABA EL VIDEO HA SIDO ELIMINADA
     
     loadFlippedState();
     loadPoemsData();
