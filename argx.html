@@ -49,52 +49,11 @@
         .btn { display: inline-block; padding: 0.8rem 1.8rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: background-color 0.3s, color 0.3s; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
         .btn:hover { background-color: var(--color-light); color: #1a1a1a; }
         
-        /* ======================================================= */
-        /* NUEVOS ESTILOS PARA EL MODAL DE LA LOTERÍA              */
-        /* ======================================================= */
-        .loteria-modal-container {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: #0A0A0A;
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
-        .loteria-modal-container.is-active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .loteria-close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2rem;
-            color: white;
-            background-color: rgba(0,0,0,0.5);
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 2010;
-            line-height: 1;
-        }
-        #loteria-iframe-container {
-            width: 100%;
-            height: 100%;
-        }
-        #loteria-iframe-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+        .loteria-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0A0A0A; z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+        .loteria-modal-container.is-active { opacity: 1; pointer-events: auto; }
+        .loteria-close-btn { position: absolute; top: 20px; right: 20px; font-size: 2rem; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2010; line-height: 1; }
+        #loteria-iframe-container { width: 100%; height: 100%; }
+        #loteria-iframe-container iframe { width: 100%; height: 100%; border: none; }
 
         footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background-color: #111; }
         @media (max-width: 768px) { .content-overlay h1 { font-size: 3rem; } .content-overlay h2 { font-size: 2.5rem; } }
@@ -125,7 +84,6 @@
             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756530574/u4597281485_A_chaotic_still_life_on_a_wooden_floor_lit_by_a_h_a157247e-085a-457b-a207-f43933663674_3_or5v4i.png" alt="Lotería"></div>
             <div class="color-overlay overlay-window iridescent-base iridescent-fast-v"></div>
             <div class="content-overlay"><h2>Lotería Tapatía</h2><p>Una reinterpretación digital del clásico juego de mesa.</p>
-                <!-- BOTÓN CON ID PARA EL JAVASCRIPT -->
                 <button class="btn" id="open-loteria-btn">Jugar Ahora</button>
             </div>
         </section>
@@ -133,9 +91,6 @@
     
     <footer><p>&copy; 2025 - ARG. Todos los derechos reservados.</p></footer>
     
-    <!-- ======================================================= -->
-    <!-- NUEVO HTML PARA EL MODAL DE LA LOTERÍA                  -->
-    <!-- ======================================================= -->
     <div id="loteria-modal" class="loteria-modal-container">
         <span id="close-loteria-btn" class="loteria-close-btn">&times;</span>
         <div id="loteria-iframe-container"></div>
@@ -176,7 +131,7 @@
             updateScrollEffects();
 
             // ======================================================= //
-            // --- NUEVO CÓDIGO PARA LA LÓGICA DEL MODAL DE LOTERÍA --- //
+            // --- LÓGICA DEL MODAL CON GESTIÓN DE HISTORIAL (CORREGIDA) --- //
             // ======================================================= //
             const openLoteriaBtn = document.getElementById('open-loteria-btn');
             const closeLoteriaBtn = document.getElementById('close-loteria-btn');
@@ -185,34 +140,45 @@
             const loteriaURL = 'https://alter-ias.github.io/arg/loteriatapatiax.html';
 
             function openLoteria() {
-                // Si el iframe ya existe, no hacer nada
-                if (iframeContainer.querySelector('iframe')) return;
+                if (loteriaModal.classList.contains('is-active')) return;
 
-                // Crear el iframe y añadirlo al contenedor
                 const iframe = document.createElement('iframe');
                 iframe.src = loteriaURL;
                 iframeContainer.appendChild(iframe);
 
-                // Mostrar el modal y bloquear el scroll del fondo
                 loteriaModal.classList.add('is-active');
                 document.body.style.overflow = 'hidden';
+
+                // Añadimos una entrada "falsa" al historial para capturar el botón "atrás"
+                history.pushState({ modal: 'loteria' }, '', '#loteria');
             }
 
             function closeLoteria() {
-                // Ocultar el modal y restaurar el scroll
+                if (!loteriaModal.classList.contains('is-active')) return;
+
                 loteriaModal.classList.remove('is-active');
                 document.body.style.overflow = '';
-
-                // Eliminar el iframe para detener la ejecución del juego y liberar memoria
                 iframeContainer.innerHTML = '';
             }
 
             openLoteriaBtn.addEventListener('click', openLoteria);
-            closeLoteriaBtn.addEventListener('click', closeLoteria);
+            
+            // El botón de cierre ahora utiliza history.back() para activar el popstate
+            closeLoteriaBtn.addEventListener('click', () => {
+                history.back();
+            });
 
-            // Cerrar con la tecla Escape
+            // Cerrar con la tecla Escape también usa history.back()
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && loteriaModal.classList.contains('is-active')) {
+                    history.back();
+                }
+            });
+
+            // Listener principal que gestiona el botón "atrás" del navegador
+            window.addEventListener('popstate', () => {
+                // Si el modal está activo, significa que el popstate es para cerrarlo.
+                if (loteriaModal.classList.contains('is-active')) {
                     closeLoteria();
                 }
             });
