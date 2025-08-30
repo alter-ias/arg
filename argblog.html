@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,634 +5,262 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ecos en las Ruinas</title>
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts (Actualizadas) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --main-gap: 2rem;
-            --border-radius: 12px;
-        }
-        
-        /* ======================================================= */
-        /* BASE Y LAYOUT                                           */
-        /* ======================================================= */
-        body { 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Special Elite', monospace; 
-            color: #1a1a1a; 
-            background-color: #fdfdfd; 
-            font-size: 18px; 
-            line-height: 1.7; 
-        }
-        
-        .main-layout { 
-            padding: 0 var(--main-gap); 
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        @media (min-width: 1200px) { 
-            .main-layout { 
-                display: grid; 
-                grid-template-columns: 1fr 1fr; 
-                gap: var(--main-gap); 
-                align-items: flex-start; 
-            } 
-        }
-        
-        /* ======================================================= */
-        /* ENCABEZADO Y NAVEGACIÓN                                 */
-        /* ======================================================= */
-        header { 
-            text-align: center; 
-            padding: 4rem 1.5rem 2rem 1.5rem; 
-        }
-        
-        .header-content h1 { 
-            font-family: 'Special Elite', sans-serif; 
-            font-size: 6rem; 
-            font-weight: 400; 
-            line-height: 1.1; 
-            letter-spacing: 2px; 
-            margin: 0; 
-            color: transparent; 
-            -webkit-text-stroke: 2px #1a1a1a; 
-            text-stroke: 2px #1a1a1a; 
-        }
-        
-        .header-content p { 
-            font-family: 'Special Elite', monospace; 
-            font-size: 1rem; 
-            margin-top: 1rem; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-        }
-        
-        .main-nav { 
-            width: 100%; 
-            padding: 1rem 0; 
-            background-color: #fdfdfd; 
-            border-top: 2px solid #1a1a1a; 
-            border-bottom: 2px solid #1a1a1a; 
-            text-align: center; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-            margin-top: 2rem; 
-        }
-        
-        .main-nav ul { 
-            margin: 0; 
-            padding: 0; 
-            list-style: none; 
-            display: flex; 
-            justify-content: center; 
-            gap: 2.5rem; 
-            flex-wrap: wrap; 
-        }
-        
-        .main-nav a { 
-            font-family: 'Special Elite', monospace; 
-            text-decoration: none; 
-            color: #1a1a1a; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            font-size: 1rem; 
-            padding: 0.5rem 0; 
-            position: relative; 
-        }
-        
-        .main-nav a::after { 
-            content: ''; 
-            position: absolute; 
-            width: 100%; 
-            height: 2px; 
-            bottom: 0; 
-            left: 0; 
-            background-color: #1a1a1a; 
-            transform: scaleX(0); 
-            transform-origin: bottom right; 
-            transition: transform 0.25s ease-out; 
-        }
-        
-        .main-nav a:hover::after { 
-            transform: scaleX(1); 
-            transform-origin: bottom left; 
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Poppins', sans-serif;
+            --color-light: #f8f9fa;
         }
 
         /* ======================================================= */
-        /* SECCIONES Y CONTENIDO                                   */
+        /* BASE Y LAYOUT (ADAPTADOS)                               */
         /* ======================================================= */
-        .content-block { 
-            margin: 0 auto; 
-            padding: 3rem 1.5rem; 
-        }
-        
-        .seccion { 
-            opacity: 0; 
-            transition: opacity 1s ease-in-out; 
-        }
-        
-        .seccion.is-visible { 
-            opacity: 1; 
-        }
-        
-        .grid-item h3 { 
-            font-family: 'Special Elite', monospace; 
-            font-size: 1.5rem; 
-            text-transform: uppercase; 
-            margin: 1rem 0 0.5rem 0; 
-        }
-        
-        .grid-item p { 
-            font-size: 1rem; 
-            text-align: center; 
-            max-width: 600px; 
-            margin-left: auto; 
-            margin-right: auto; 
-        }
-        
-        .image-parallax-container, .video-container, .btn { 
-            border-radius: var(--border-radius); 
-        }
-        
-        .image-parallax-container, .video-container { 
-            overflow: hidden; 
-        }
-        
-        .image-parallax-container { 
-            height: 300px; 
-            margin-bottom: 1rem; 
-            border: 2px solid #1a1a1a; 
-            /* Efecto de papel cortado con las manos */
-            clip-path: polygon(
-                0 0, 
-                100% 0, 
-                100% calc(100% - 10px), 
-                calc(100% - 10px) 100%, 
-                0 100%
-            );
-        }
-        
-        .parallax-image { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-        }
-        
-        .btn { 
-            display: inline-block; 
-            padding: 0.8rem 1.8rem; 
-            border: 2px solid #1a1a1a; 
-            color: #1a1a1a; 
-            background-color: transparent; 
-            text-decoration: none; 
-            transition: background-color 0.2s, color 0.2s; 
-            margin-top: 1.5rem; 
-            font-family: 'Special Elite', monospace; 
-            font-size: 1rem; 
-            text-transform: uppercase; 
-            cursor: pointer; 
-        }
-        
-        .btn:hover { 
-            background-color: #1a1a1a; 
-            color: #fdfdfd; 
-        }
-        
-        .post-date {
-            font-size: 0.9rem;
-            color: #555;
-            text-align: center;
-            margin: 0.5rem 0;
-        }
-        
-        /* --- LAYOUTS ESPECÍFICOS --- */
-        .grid-container { 
-            display: grid; 
-            grid-template-columns: 1fr; 
-            gap: 3rem; 
-            perspective: 2000px; 
-        }
-        
-        .grid-item { 
-            text-align: center; 
-        }
-        
-        @media (min-width: 992px) { 
-            #blog-posts .grid-container { 
-                grid-template-columns: 1fr 1fr; 
-                gap: 2rem; 
-            } 
-        }
-        
-        footer { 
-            text-align: center; 
-            font-size: 0.9rem; 
-            padding: 2rem var(--main-gap) 2rem var(--main-gap); 
-            margin-top: 2rem; 
-            border-top: 2px solid #1a1a1a; 
-        }
-        
-        @media (max-width: 768px) {
-            body { 
-                font-size: 16px; 
-            }
-            
-            .header-content h1 { 
-                font-size: 3.5rem; 
-                -webkit-text-stroke-width: 1px; 
-                text-stroke-width: 1px; 
-            }
-            
-            .header-content p { 
-                font-size: 0.8rem; 
-            }
-            
-            .content-block { 
-                padding: 2rem 1rem; 
-            }
-            
-            .main-nav ul { 
-                gap: 1rem 1.5rem; 
-            }
-            
-            .main-nav a { 
-                font-size: 0.9rem; 
-            }
-        }
-        
-        /* Botón de administración */
-        .admin-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #1a1a1a;
-            color: #fdfdfd;
-            border: 2px solid #1a1a1a;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .admin-btn:hover {
-            background-color: #fdfdfd;
-            color: #1a1a1a;
-            transform: scale(1.1);
-        }
-        
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-        
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #1a1a1a;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Mensajes de error */
-        .no-posts, .error {
-            text-align: center;
-            padding: 40px;
-            color: #1a1a1a;
-        }
-        
-        /* Modal de entrada */
-        .post-modal-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(26, 26, 26, 0.95);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease-in-out;
-            perspective: 2000px;
-        }
-        
-        .post-modal-container.is-active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .post-modal-content {
-            background-color: #fdfdfd;
-            padding: 3rem;
-            border: 2px solid #1a1a1a;
-            max-width: 90%;
-            width: 90%;
-            max-height: 90vh;
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
+
+        /* ======================================================= */
+        /* ESTRUCTURA DE BLOQUES                                   */
+        /* ======================================================= */
+        .media-block {
             position: relative;
-            overflow-y: auto;
-            transform: rotateY(-20deg) scale(0.8);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-radius: var(--border-radius);
-        }
-        
-        .post-modal-container.is-active .post-modal-content {
-            transform: rotateY(0deg) scale(1);
-        }
-        
-        .post-modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1.5rem;
-            font-size: 2.5rem;
-            font-family: sans-serif;
-            cursor: pointer;
-            line-height: 1;
-            color: #1a1a1a;
-        }
-        
-        #post-modal-title {
-            font-family: 'Special Elite', monospace;
-            font-size: 2.2rem;
-            text-transform: uppercase;
-            margin-top: 0;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-        
-        #post-modal-date {
-            font-family: 'Special Elite', monospace;
-            font-size: 1rem;
-            color: #555;
-            text-align: center;
-            margin-bottom: 2rem;
-            display: block;
-        }
-        
-        #post-modal-image {
             width: 100%;
-            max-height: 400px;
-            object-fit: cover;
-            border: 2px solid #1a1a1a;
-            border-radius: var(--border-radius);
-            margin-bottom: 2rem;
+            height: 80vh; 
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
+        #blog-hero {
+            height: 100vh;
+        }
+
+        .background-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; }
+        .background-media img { width: 100%; height: 130%; object-fit: cover; will-change: transform; }
+        .media-block::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 2; }
         
-        #post-modal-content {
-            font-family: 'Special Elite', monospace;
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
+        /* ======================================================= */
+        /* SISTEMA DE GRADIENTES                                   */
+        /* ======================================================= */
+        .color-overlay { position: absolute; z-index: 3; }
+        .overlay-full { width: 100%; height: 100%; opacity: 0.6; }
+        @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .iridescent-base { background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; }
+        .iridescent-slow-h { animation: gradient-horizontal 25s ease infinite; }
         
-        @media (min-width: 768px) {
-            .post-modal-content {
-                width: 80%;
-                max-width: 800px;
-            }
-        }
+        /* ======================================================= */
+        /* CONTENIDO SUPERPUESTO                                   */
+        /* ======================================================= */
+        .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .content-overlay h1, .content-overlay h2 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 1rem 0; }
+        .content-overlay h1 { font-size: 5rem; } .content-overlay h2 { font-size: 3rem; }
+        .content-overlay p { font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.5rem auto; }
+        .post-date { font-size: 0.9rem; margin-bottom: 1rem; opacity: 0.8; }
+
+        .btn { display: inline-block; padding: 0.8rem 1.8rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: background-color 0.3s, color 0.3s; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
+        .btn:hover { background-color: var(--color-light); color: #1a1a1a; }
+        
+        footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background-color: #111; }
+        
+        /* ======================================================= */
+        /* MODAL DE ENTRADA (REESTILIZADO)                         */
+        /* ======================================================= */
+        .post-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+        .post-modal-container.is-active { opacity: 1; pointer-events: auto; }
+        .post-modal-content-wrapper { background-color: #1a1a1a; max-width: 90%; width: 800px; max-height: 90vh; position: relative; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; }
+        .post-modal-container.is-active .post-modal-content-wrapper { transform: scale(1); }
+        .post-modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; font-family: sans-serif; cursor: pointer; line-height: 1; color: var(--color-light); z-index: 10; }
+        
+        #post-modal-image { width: 100%; height: 300px; object-fit: cover; display: block; }
+        .post-modal-text { padding: 3rem; }
+        #post-modal-title { font-family: var(--font-serif); font-size: 2.5rem; margin-top: 0; margin-bottom: 1rem; text-align: left; }
+        #post-modal-date { font-size: 0.9rem; opacity: 0.7; margin-bottom: 2rem; display: block; text-align: left; }
+        #post-modal-body { font-size: 1.1rem; line-height: 1.8; text-align: left; }
+        #post-modal-body p { margin-bottom: 1.5rem; }
+
+        /* Estilos de Loading, Admin, etc. */
+        .admin-btn { position: fixed; bottom: 20px; right: 20px; background-color: var(--color-light); color: #1a1a1a; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.3s; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .admin-btn:hover { transform: scale(1.1); }
+        .loading, .error { text-align: center; padding: 40px; height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner { border: 4px solid rgba(255,255,255, 0.2); border-left-color: var(--color-light); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <header>
-        <div class="header-content">
-            <h1>ECOS EN LAS RUINAS</h1>
-            <p>Jardín Digital de Alan Ruíz Galicia</p>
-        </div>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Categorías</a></li>
-                <li><a href="#">Sobre Nosotros</a></li>
-                <li><a href="#">Contacto</a></li>
-            </ul>
-        </nav>
+        <!-- Header simplificado, puedes añadir un logo o enlace al index aquí -->
     </header>
 
-    <main class="main-layout">
-        <div class="main-column">
-            <section id="blog-posts" class="seccion content-block">
-                <div class="grid-container" id="postsContainer">
-                    <!-- Las entradas se cargarán aquí dinámicamente -->
-                    <div class="loading" id="loading">
-                        <div class="spinner"></div>
-                        <p>Cargando entradas...</p>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-        <div class="main-column">
-            <!-- Columna derecha vacía para mantener el layout -->
+    <main>
+        <!-- Bloque "Hero" con fondo tornasolado -->
+        <section class="media-block" id="blog-hero">
+            <div class="color-overlay overlay-full iridescent-base iridescent-slow-h"></div>
+            <div class="content-overlay">
+                <h1>Ecos en las Ruinas</h1>
+                <p>Jardín Digital de Alan Ruíz Galicia</p>
+            </div>
+        </section>
+
+        <!-- Contenedor para las entradas del blog que se cargarán dinámicamente -->
+        <div id="postsContainer">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Cargando entradas...</p>
+            </div>
         </div>
     </main>
     
-    <footer class="content-block">
-        <p>&copy; 2023 Ecos en las Ruinas. Todos los derechos reservados.<br>Hecho con ❤️ en Guadalajara.</p>
+    <footer>
+        <p>&copy; 2025 Ecos en las Ruinas. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- Modal de entrada -->
+    <!-- Modal de entrada (reestructurado) -->
     <div id="post-modal-container" class="post-modal-container">
-        <div class="post-modal-content">
+        <div class="post-modal-content-wrapper">
             <span class="post-modal-close">&times;</span>
-            <h2 id="post-modal-title"></h2>
-            <span id="post-modal-date"></span>
             <img id="post-modal-image" src="" alt="">
-            <div id="post-modal-content"></div>
+            <div class="post-modal-text">
+                <h2 id="post-modal-title"></h2>
+                <span id="post-modal-date"></span>
+                <div id="post-modal-body"></div>
+            </div>
         </div>
     </div>
 
-    <!-- Botón de administración -->
     <button class="admin-btn" onclick="window.location.href='adminargblog.html'">✏️</button>
 
     <script>
-        // Configuración de GitHub (sin token para repositorio público)
-        const config = {
-            githubToken: '', // No se necesita token para repositorio público
-            repoOwner: 'alter-ias', // Tu nombre de usuario de GitHub
-            repoName: 'argblog-datos' // Nombre exacto de tu repositorio público
-        };
+        document.addEventListener('DOMContentLoaded', function() {
+            const config = {
+                githubToken: '',
+                repoOwner: 'alter-ias',
+                repoName: 'argblog-datos'
+            };
 
-        // Función para obtener entradas desde GitHub
-        async function fetchBlogPosts() {
-            try {
-                let headers = {
-                    'Accept': 'application/vnd.github.v3+json'
-                };
-                
-                // Solo agregar token si existe (para repositorio privado)
-                if (config.githubToken) {
-                    headers['Authorization'] = `token ${config.githubToken}`;
+            async function fetchBlogPosts() {
+                try {
+                    const response = await fetch(`https://api.github.com/repos/${config.repoOwner}/${config.repoName}/issues?labels=blog-post&state=open`);
+                    if (!response.ok) throw new Error(`Error: ${response.status}`);
+                    const issues = await response.json();
+                    return issues.map(issue => ({
+                        ...JSON.parse(issue.body),
+                        createdAt: issue.created_at,
+                    }));
+                } catch (error) {
+                    console.error('Error al obtener entradas:', error);
+                    return [];
                 }
+            }
+
+            async function renderBlogPosts() {
+                const container = document.getElementById('postsContainer');
+                const loadingElement = document.getElementById('loading');
                 
-                const response = await fetch(`https://api.github.com/repos/${config.repoOwner}/${config.repoName}/issues?labels=blog-post&state=open`, {
-                    headers: headers
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status} ${response.statusText}`);
+                try {
+                    const posts = await fetchBlogPosts();
+                    loadingElement.style.display = 'none';
+
+                    if (posts.length === 0) {
+                        container.innerHTML = '<p class="error">No hay entradas disponibles aún.</p>';
+                        return;
+                    }
+                    
+                    posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    
+                    posts.forEach(post => {
+                        const postElement = document.createElement('section');
+                        // Cada post es ahora un media-block
+                        postElement.className = 'media-block'; 
+                        
+                        // ESTRUCTURA ADAPTADA AL PARALLAX DE REVELACIÓN
+                        postElement.innerHTML = `
+                            <div class="background-media">
+                                <img src="${post.image || 'https://via.placeholder.com/1200x800'}" alt="${post.title}" onerror="this.src='https://via.placeholder.com/1200x800'">
+                            </div>
+                            <div class="content-overlay">
+                                <h2>${post.title}</h2>
+                                <div class="post-date">${post.date || new Date(post.createdAt).toLocaleDateString('es-ES')}</div>
+                                <p>${post.excerpt || ''}</p>
+                                <button class="btn read-more-btn" data-post='${JSON.stringify(post)}'>Leer más</button>
+                            </div>
+                        `;
+                        container.appendChild(postElement);
+                    });
+                    
+                    document.querySelectorAll('.read-more-btn').forEach(button => {
+                        button.addEventListener('click', function() {
+                            openPostModal(JSON.parse(this.getAttribute('data-post')));
+                        });
+                    });
+                    
+                    // Iniciar el efecto de scroll en los nuevos elementos
+                    initializeScrollEffects();
+
+                } catch (error) {
+                    loadingElement.style.display = 'none';
+                    container.innerHTML = '<p class="error">Error al cargar las entradas.</p>';
                 }
-                
-                const issues = await response.json();
-                
-                // Convertir issues a formato de entradas de blog
-                return issues.map(issue => {
-                    try {
-                        const postData = JSON.parse(issue.body);
-                        postData.issueNumber = issue.number;
-                        postData.createdAt = issue.created_at;
-                        postData.updatedAt = issue.updated_at;
-                        return postData;
-                    } catch (e) {
-                        return {
-                            id: issue.id,
-                            issueNumber: issue.number,
-                            title: issue.title,
-                            content: issue.body,
-                            createdAt: issue.created_at,
-                            updatedAt: issue.updated_at
-                        };
+            }
+
+            function openPostModal(post) {
+                document.getElementById('post-modal-title').textContent = post.title;
+                document.getElementById('post-modal-date').textContent = post.date || new Date(post.createdAt).toLocaleDateString('es-ES');
+                document.getElementById('post-modal-image').src = post.image || '';
+                document.getElementById('post-modal-body').innerHTML = post.content;
+                document.getElementById('post-modal-container').classList.add('is-active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closePostModal() {
+                document.getElementById('post-modal-container').classList.remove('is-active');
+                document.body.style.overflow = '';
+            }
+
+            // SCRIPT DE PARALLAX DE REVELACIÓN (INTEGRADO)
+            function initializeScrollEffects() {
+                const mediaBlocks = document.querySelectorAll('.media-block');
+                const windowHeight = window.innerHeight;
+                let ticking = false;
+
+                function updateScrollEffects() {
+                    mediaBlocks.forEach(block => {
+                        const rect = block.getBoundingClientRect();
+                        const media = block.querySelector('.background-media > img');
+                        if (!media) return;
+
+                        if (rect.top < windowHeight && rect.bottom > 0) {
+                            const progress = (rect.top + block.offsetHeight) / (windowHeight + block.offsetHeight);
+                            const clampedProgress = 1 - Math.max(0, Math.min(1, progress));
+                            const travelRange = media.offsetHeight - block.offsetHeight;
+                            const translateY = -travelRange * clampedProgress;
+                            media.style.transform = `translateY(${translateY}px)`;
+                        }
+                    });
+                    ticking = false;
+                }
+
+                window.addEventListener('scroll', () => {
+                    if (!ticking) {
+                        window.requestAnimationFrame(updateScrollEffects);
+                        ticking = true;
                     }
                 });
-            } catch (error) {
-                console.error('Error al obtener entradas:', error);
-                return [];
+                updateScrollEffects(); // Llamada inicial
             }
-        }
 
-        // Función para renderizar las entradas del blog
-        async function renderBlogPosts() {
-            const loadingElement = document.getElementById('loading');
-            const container = document.getElementById('postsContainer');
-            
-            // Mostrar loading
-            loadingElement.style.display = 'block';
-            container.innerHTML = '';
-            
-            try {
-                const posts = await fetchBlogPosts();
-                
-                // Ocultar loading
-                loadingElement.style.display = 'none';
-                
-                if (posts.length === 0) {
-                    container.innerHTML = '<p class="no-posts">No hay entradas disponibles aún. ¡Pronto habrá contenido!</p>';
-                    return;
-                }
-                
-                // Ordenar por fecha de creación (más recientes primero)
-                posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                
-                posts.forEach(post => {
-                    const postElement = document.createElement('div');
-                    postElement.className = 'grid-item';
-                    postElement.innerHTML = `
-                        <div class="image-parallax-container">
-                            <img src="${post.image || 'assets/img/img01.png'}" alt="${post.title}" class="parallax-image" onerror="this.src='assets/img/img01.png'">
-                        </div>
-                        <h3>${post.title}</h3>
-                        <div class="post-date">${post.date || new Date(post.createdAt).toLocaleDateString('es-ES')}</div>
-                        <p>${post.excerpt || post.content.substring(0, 150) + '...'}</p>
-                        <button class="btn read-more-btn" data-post='${JSON.stringify(post)}'>Leer más</button>
-                    `;
-                    container.appendChild(postElement);
-                });
-                
-                // Agregar event listeners a los botones "Leer más"
-                document.querySelectorAll('.read-more-btn').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const post = JSON.parse(this.getAttribute('data-post'));
-                        openPostModal(post);
-                    });
-                });
-                
-                // Activar animaciones
-                document.querySelectorAll('.seccion').forEach(section => {
-                    section.classList.add('is-visible');
-                });
-            } catch (error) {
-                loadingElement.style.display = 'none';
-                container.innerHTML = '<p class="error">Error al cargar las entradas. Por favor, inténtelo más tarde.</p>';
-                console.error('Error al renderizar entradas:', error);
-            }
-        }
-
-        // Función para abrir el modal de entrada
-        function openPostModal(post) {
-            const modal = document.getElementById('post-modal-container');
-            const title = document.getElementById('post-modal-title');
-            const date = document.getElementById('post-modal-date');
-            const image = document.getElementById('post-modal-image');
-            const content = document.getElementById('post-modal-content');
-            
-            title.textContent = post.title;
-            date.textContent = post.date || new Date(post.createdAt).toLocaleDateString('es-ES');
-            image.src = post.image || 'assets/img/img01.png';
-            image.alt = post.title;
-            content.innerHTML = `<p>${post.content}</p>`;
-            
-            modal.classList.add('is-active');
-            
-            // Prevenir scroll en el body
-            document.body.style.overflow = 'hidden';
-        }
-
-        // Función para cerrar el modal de entrada
-        function closePostModal() {
-            const modal = document.getElementById('post-modal-container');
-            modal.classList.remove('is-active');
-            
-            // Restaurar scroll en el body
-            document.body.style.overflow = '';
-        }
-
-        // Cargar las entradas al iniciar
-        document.addEventListener('DOMContentLoaded', function() {
             renderBlogPosts();
             
-            // Animación de scroll para secciones
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => { 
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.seccion').forEach(section => {
-                observer.observe(section);
-            });
-            
-            // Event listeners para el modal
             document.querySelector('.post-modal-close').addEventListener('click', closePostModal);
-            document.getElementById('post-modal-container').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closePostModal();
-                }
+            document.getElementById('post-modal-container').addEventListener('click', e => {
+                if (e.target === e.currentTarget) closePostModal();
             });
-            
-            // Cerrar modal con tecla Escape
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', e => {
                 if (e.key === 'Escape' && document.getElementById('post-modal-container').classList.contains('is-active')) {
                     closePostModal();
                 }
@@ -642,4 +269,3 @@
     </script>
 </body>
 </html>
-```
