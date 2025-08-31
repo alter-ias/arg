@@ -98,20 +98,20 @@
         
         .media-block { 
             position: relative; width: 100%;
-            padding: 18vh var(--main-gap); 
+            height: 100vh; /* Vuelve a ocupar toda la pantalla para un scroll definido */
             display: flex; align-items: center; justify-content: center; text-align: center;
             background-color: transparent; 
         }
-        #block-1 { padding-top: 25vh; }
         
         .content-overlay { 
             position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; 
             text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
-            opacity: 0; /* JS controlará la opacidad */
+            opacity: 0;
             transform: translateY(20px);
-            transition: opacity 0.4s ease, transform 0.8s ease;
+            transition: opacity 0.6s ease, transform 0.8s ease;
         }
         .media-block.is-visible .content-overlay {
+             opacity: 1;
              transform: translateY(0);
         }
         
@@ -198,26 +198,17 @@
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
 
-            function updateScrollEffects() {
-                const fadeOutZone = 250; 
+            function checkVisibility() {
                 mediaBlocks.forEach(block => {
-                    const content = block.querySelector('.content-overlay');
                     const rect = block.getBoundingClientRect();
-                    
-                    const isMostlyInView = rect.top < windowHeight * 0.8 && rect.bottom > windowHeight * 0.2;
-                    block.classList.toggle('is-visible', isMostlyInView);
-
-                    // Lógica de desvanecimiento
-                    if (isMostlyInView) {
-                        const fadeOutOpacity = Math.min(1, Math.max(0, rect.top / fadeOutZone));
-                        content.style.opacity = fadeOutOpacity;
-                    } else if (rect.bottom < windowHeight * 0.2) { // Si ya pasó por completo, se oculta
-                        content.style.opacity = 0;
-                    }
+                    // Aparece si está en el viewport
+                    const isInView = rect.top < windowHeight && rect.bottom > 0;
+                    block.classList.toggle('is-visible', isInView);
                 });
             }
-            window.addEventListener('scroll', updateScrollEffects);
+            window.addEventListener('scroll', checkVisibility);
             
+            // Lógica de filtros, modales y skins (sin cambios)
             const filterButtons = document.querySelectorAll('.filter-btn');
             const opacitySlider = document.getElementById('opacity-slider');
             const root = document.documentElement;
@@ -332,7 +323,7 @@
 
             const savedSkinIndex = parseInt(localStorage.getItem('argIndexSkin') || 0);
             applySkin(savedSkinIndex);
-            updateScrollEffects();
+            checkVisibility(); // Llamada inicial para mostrar el primer bloque
         });
     </script>
 </body>
