@@ -1,324 +1,361 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARG - Jardín Digital (Integración Final)</title>
-    
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARG - Jardín Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --main-gap: 2rem;
-            --font-serif: 'Cormorant Garamond', serif;
-            --font-sans: 'Poppins', sans-serif;
-            --color-light: #f8f9fa;
-            
-            --gradient-full: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            --gradient-cool: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
-            --gradient-dark: linear-gradient(-45deg, #2c3e50, #95a5a6, #1c1c1c, #34495e);
-            
-            --active-gradient: var(--gradient-full);
-            --filter-opacity: 0; 
-        }
-
-        * { box-sizing: border-box; }
-
-        body { 
-            margin: 0; font-family: var(--font-sans); color: var(--color-light); 
-            background-color: #1a1a1a; overflow-x: hidden;
-            background-size: cover; background-position: center center; background-attachment: fixed;
-            background-repeat: no-repeat;
-        }
-
-        #background-video-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; overflow: hidden; display: none;
-        }
-        
-        #background-video {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            min-width: 100vw; min-height: 100vh;
-            width: auto; height: auto; object-fit: cover;
-        }
-        
-        #global-color-overlay {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1; pointer-events: none;
-            background: var(--active-gradient);
-            background-size: 400% 400%;
-            animation: gradient-horizontal 25s ease infinite;
-            opacity: var(--filter-opacity);
-            transition: opacity 0.5s ease;
-        }
-
-        header { 
-            padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem;
-        }
-
-        .header-logo a { 
-            font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light); 
-            cursor: pointer; 
-        }
-        
-        .controls-container {
-            background-color: transparent; padding: 0.5rem 1rem;
-            border: none; border-radius: 20px;
-            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
-        }
-
-        .filter-controls { display: flex; gap: 0.5rem; }
-        .filter-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--color-light); cursor: pointer; transition: transform 0.2s; background-color: transparent; }
-        .filter-btn:hover { transform: scale(1.1); }
-        .filter-btn.is-active { border-width: 4px; }
-        #filter-full { background: var(--gradient-full); }
-        #filter-cool { background: var(--gradient-cool); }
-        #filter-dark { background: var(--gradient-dark); }
-
-        .opacity-control { width: 150px; }
-        input[type="range"] {
-            -webkit-appearance: none; appearance: none; width: 100%; height: 2px;
-            background: rgba(255, 255, 255, 0.3); border-radius: 2px; outline: none; cursor: pointer;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
-            background: var(--color-light); border-radius: 50%; border: 2px solid #1a1a1a;
-        }
-        
-        main { position: relative; }
-        main::before {
-            content: ''; position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); z-index: 2;
-        }
-        
-        .media-block { 
-            position: relative; width: 100%;
-            height: 100vh;
-            display: flex; align-items: center; justify-content: center; text-align: center;
-            background-color: transparent; 
-        }
-        
-        .content-overlay { 
-            position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; 
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
-            transition: transform 0.8s ease, opacity 0.2s linear; /* Transición de opacidad lineal para mayor suavidad */
-        }
-        
-        .content-overlay h1 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 0.8rem 0; font-size: 3.5rem; }
-        .content-overlay h2 { font-size: 2.8rem; }
-        .content-overlay p { font-size: 1rem; max-width: 600px; margin: 0 auto 1.2rem auto; line-height: 1.6; }
-        .btn { display: inline-block; padding: 0.6rem 1.5rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: background-color 0.3s, color 0.3s; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
-        
-        .section-icon { margin-bottom: 1.5rem; opacity: 0.9; }
-        .section-icon svg { width: 48px; height: 48px; fill: var(--color-light); }
-
-        .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0A0A0A; z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
-        .modal-container.is-active { opacity: 1; pointer-events: auto; }
-        .modal-close-btn { position: absolute; top: 20px; right: 20px; font-size: 2rem; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2010; line-height: 1; }
-        .iframe-container { width: 100%; height: 100%; }
-        .iframe-container iframe { width: 100%; height: 100%; border: none; }
-
-        footer { 
-            position: relative; z-index: 5;
-            text-align: center; font-size: 0.9rem; 
-            padding: 4rem var(--main-gap); background: transparent;
-        }
-        footer p {
-            margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
+      @keyframes gradient-horizontal {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      .animate-gradient {
+        background-size: 400% 400%;
+        animation: gradient-horizontal 25s ease infinite;
+      }
+      /* Custom styles for range input */
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        outline: none;
+        cursor: pointer;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        background: #f8f9fa;
+        border-radius: 50%;
+        border: 2px solid #1a1a1a;
+      }
+      input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: #f8f9fa;
+        border-radius: 50%;
+        border: 2px solid #1a1a1a;
+      }
     </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/"
+  }
+}
+</script>
 </head>
-<body>
-    <div id="background-video-container">
-        <video id="background-video" loop muted autoplay playsinline></video>
-    </div>
-    
-    <div id="global-color-overlay"></div>
+  <body class="bg-[#1a1a1a] text-[#f8f9fa] font-['Poppins'] overflow-x-hidden">
+    <div id="root"></div>
+    <script type="module">
+      import React from 'react';
+      import ReactDOM from 'react-dom/client';
 
-    <header>
-        <div class="header-logo"><a href="#">ARG</a></div>
-        <div class="controls-container">
-            <div class="filter-controls">
-                <button class="filter-btn" id="filter-full" data-palette="full" title="Filtro Espectro Completo"></button>
-                <button class="filter-btn" id="filter-cool" data-palette="cool" title="Filtro Frío"></button>
-                <button class="filter-btn" id="filter-dark" data-palette="dark" title="Filtro Oscuro"></button>
-            </div>
-            <div class="opacity-control">
-                 <input type="range" id="opacity-slider" min="0" max="80" value="0" title="Opacidad del filtro">
-            </div>
-        </div>
-    </header>
+      const { useState, useEffect, useCallback, useRef } = React;
 
-    <main>
-        <section class="media-block" id="block-1">
-            <div class="content-overlay"><h1>ALAN RUÍZ GALICIA</h1><p>Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana</p></div>
-        </section>
-        <section class="media-block" id="block-2">
-            <div class="content-overlay">
-                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M40 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h32c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H40zm432 0c22.1 0 40-17.9 40-40V72c0-22.1-17.9-40-40-40h-32c-22.1 0-40 17.9-40 40v368c0 22.1 17.9 40 40 40h32zM160 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h192c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H160z"/></svg></div>
-                <h2>Pergamino</h2><p>Textos periodísticos, ensayos, poemas y demás experimentos literarios</p>
-                <button class="btn" id="open-blog-btn">Leer Pergamino</button>
-            </div>
-        </section>
-        <section class="media-block" id="block-3">
-            <div class="content-overlay">
-                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M0 128C0 92.7 28.7 64 64 64H512c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128zM192 192a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0z"/></svg></div>
-                <h2>Mediateca</h2><p>Una colección de fragmentos audiovisuales</p>
-                <button class="btn" id="open-mediateca-btn">Explorar Mediateca</button>
-            </div>
-        </section>
-        <section class="media-block" id="block-4">
-            <div class="content-overlay">
-                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M192 32c0 17.7 14.3 32 32 32c123.7 0 224 100.3 224 224c0 17.7 14.3 32 32 32s32-14.3 32-32C512 128.9 383.1 0 224 0c-17.7 0-32 14.3-32 32zM96 23.3c-11.2-5.4-24.3-3.4-33.5 5.1L10.3 75.1C3.8 82.2 0 91.2 0 100.7V411.3c0 9.5 3.8 18.5 10.3 25.6l52.2 46.7c9.2 8.5 22.3 10.5 33.5 5.1l352-169.8c11.3-5.5 18-16.5 18-28.5s-6.7-23-18-28.5L96 23.3z"/></svg></div>
-                <h2>Lotería Tapatía</h2><p>Una reinterpretación digital del clásico juego de mesa.</p>
-                <button class="btn" id="open-loteria-btn">Jugar Ahora</button>
-            </div>
-        </section>
-    </main>
-    
-    <footer><p>&copy; 2025 - ARG. Todos los derechos reservados.</p></footer>
-    
-    <div id="loteria-modal" class="modal-container"></div>
-    <div id="blog-modal" class="modal-container"></div>
-    <div id="mediateca-modal" class="modal-container"></div>
+      // --- components/Icons.tsx ---
+      const PergaminoIcon = (props) => (
+          React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 512 512", ...props },
+              React.createElement('path', { d: "M40 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h32c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H40zm432 0c22.1 0 40-17.9 40-40V72c0-22.1-17.9-40-40-40h-32c-22.1 0-40 17.9-40 40v368c0 22.1 17.9 40 40 40h32zM160 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h192c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H160z" })
+          )
+      );
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const mediaBlocks = document.querySelectorAll('.media-block');
-            const windowHeight = window.innerHeight;
+      const MediatecaIcon = (props) => (
+          React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 576 512", ...props },
+              React.createElement('path', { d: "M0 128C0 92.7 28.7 64 64 64H512c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128zM192 192a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0z" })
+          )
+      );
 
-            // --- LÓGICA DE SCROLL REESCRITA Y CORREGIDA ---
-            function updateScrollEffects() {
-                const fadeZoneHeight = windowHeight * 0.5; // El desvanecimiento ocurre en la mitad superior/inferior
-                
-                mediaBlocks.forEach(block => {
-                    const content = block.querySelector('.content-overlay');
-                    const rect = block.getBoundingClientRect();
-                    
-                    // Calcula la distancia del centro del bloque al centro de la pantalla
-                    const blockCenter = rect.top + rect.height / 2;
-                    const screenCenter = windowHeight / 2;
-                    const distance = Math.abs(screenCenter - blockCenter);
-                    
-                    // Calcula la opacidad: 1 en el centro, 0 en los bordes de la zona de fade
-                    const opacity = Math.max(0, 1 - distance / (fadeZoneHeight));
-                    
-                    content.style.opacity = opacity;
-                    
-                    // Mueve el bloque un poco para un efecto más dinámico
-                    content.style.transform = `translateY(${ (1 - opacity) * 20 }px)`;
-                });
-            }
-            window.addEventListener('scroll', updateScrollEffects);
-            window.addEventListener('resize', updateScrollEffects);
-            
-            // --- CÓDIGO RESTANTE SIN CAMBIOS ---
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            const opacitySlider = document.getElementById('opacity-slider');
-            const root = document.documentElement;
-            let currentPalette = 'off';
-            function applySettings(palette, opacity) {
-                root.style.setProperty('--filter-opacity', opacity / 100);
-                if (palette !== 'off') {
-                    const gradient = getComputedStyle(root).getPropertyValue(`--gradient-${palette}`);
-                    root.style.setProperty('--active-gradient', gradient);
-                }
-                filterButtons.forEach(btn => { btn.classList.toggle('is-active', btn.dataset.palette === palette); });
-                opacitySlider.value = opacity;
-                currentPalette = palette;
-            }
-            function saveSettings(palette, opacity) { localStorage.setItem('argIndexPalette', palette); localStorage.setItem('argIndexOpacity', opacity); }
-            const savedPalette = localStorage.getItem('argIndexPalette') || 'off';
-            const savedOpacity = localStorage.getItem('argIndexOpacity') || '0';
-            applySettings(savedPalette, savedOpacity);
-            filterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const newPalette = button.dataset.palette;
-                    let newOpacity = opacitySlider.value;
-                    if (newOpacity == 0) { newOpacity = 40; }
-                    applySettings(newPalette, newOpacity);
-                    saveSettings(newPalette, newOpacity);
-                });
-            });
-            opacitySlider.addEventListener('input', () => {
-                const newOpacity = opacitySlider.value;
-                if (currentPalette === 'off' && newOpacity > 0) { currentPalette = 'full'; }
-                applySettings(currentPalette, newOpacity);
-                saveSettings(currentPalette, newOpacity);
-            });
-            const modals = {
-                loteria: { btn: 'open-loteria-btn', container: 'loteria-modal', url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
-                blog: { btn: 'open-blog-btn', container: 'blog-modal', url: 'https://alter-ias.github.io/arg/argblog.html' },
-                mediateca: { btn: 'open-mediateca-btn', container: 'mediateca-modal', url: 'https://alter-ias.github.io/arg/mediateca.html' }
-            };
-            function openModal(modalId, url) {
-                const modal = document.getElementById(modalId);
-                modal.innerHTML = `<span class="modal-close-btn">&times;</span><iframe src="${url}" style="width:100%; height:100%; border:none;"></iframe>`;
-                modal.classList.add('is-active');
-                document.body.style.overflow = 'hidden';
-                history.pushState({ modal: modalId }, '', `#${modalId.replace('-modal', '')}`);
-            }
-            function closeModal(modalId) {
-                const modal = document.getElementById(modalId);
-                if (modal && modal.classList.contains('is-active')) {
-                    modal.classList.remove('is-active');
-                    modal.innerHTML = '';
-                    document.body.style.overflow = '';
-                }
-            }
-            Object.keys(modals).forEach(key => {
-                document.getElementById(modals[key].btn).addEventListener('click', () => openModal(modals[key].container, modals[key].url));
-            });
-            document.addEventListener('click', (e) => { if (e.target.classList.contains('modal-close-btn')) { history.back(); }});
-            window.addEventListener('popstate', () => { Object.keys(modals).forEach(key => closeModal(modals[key].container)); });
-            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') history.back(); });
+      const LoteriaIcon = (props) => (
+          React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 512 512", ...props },
+              React.createElement('path', { d: "M192 32c0 17.7 14.3 32 32 32c123.7 0 224 100.3 224 224c0 17.7 14.3 32 32 32s32-14.3 32-32C512 128.9 383.1 0 224 0c-17.7 0-32 14.3-32 32zM96 23.3c-11.2-5.4-24.3-3.4-33.5 5.1L10.3 75.1C3.8 82.2 0 91.2 0 100.7V411.3c0 9.5 3.8 18.5 10.3 25.6l52.2 46.7c9.2 8.5 22.3 10.5 33.5 5.1l352-169.8c11.3-5.5 18-16.5 18-28.5s-6.7-23-18-28.5L96 23.3z" })
+          )
+      );
 
-            const skinSwitcherBtn = document.querySelector('.header-logo a');
-            const videoContainer = document.getElementById('background-video-container');
-            const videoElement = document.getElementById('background-video');
-            const backgroundSkins = [
-                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610854/skin06_py1plm.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610854/skin06_py1plm.webm' }},
-                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm' }},
-                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm' }},
-                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm' }},
-                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm' }},
-                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm' }},
-                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm' }},
-                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm' }},
-                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm' }}
-            ];
-            
-            let currentSkinIndex = 0;
-            function applySkin(index) {
-                const skin = backgroundSkins[index];
-                if (skin.type === 'video') {
-                    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-                    const videoUrl = isMobile ? skin.url.mobile : skin.url.desktop;
-                    if (videoElement.src !== videoUrl) { videoElement.src = videoUrl; }
-                    document.body.style.backgroundImage = 'none';
-                    videoContainer.style.display = 'block';
-                    videoElement.play().catch(e=>console.log(e));
-                }
-                currentSkinIndex = index;
-            }
-            skinSwitcherBtn.addEventListener('click', (event) => {
-                event.preventDefault(); 
-                const nextIndex = (currentSkinIndex + 1) % backgroundSkins.length;
-                localStorage.setItem('argIndexSkin', nextIndex);
-                applySkin(nextIndex);
-            });
-            window.addEventListener('resize', () => { applySkin(currentSkinIndex); });
-            const savedSkinIndex = parseInt(localStorage.getItem('argIndexSkin') || 0);
-            applySkin(savedSkinIndex);
-            
-            // Ejecutar una vez al cargar para establecer el estado inicial
-            updateScrollEffects();
-        });
+      // --- constants.tsx ---
+      const backgroundSkins = [
+          { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610854/skin06_py1plm.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610854/skin06_py1plm.webm' }},
+          { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm' }},
+          { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm' }},
+          { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm' }},
+          { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm' }},
+          { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm' }},
+          { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm' }},
+          { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm' }},
+          { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm' }}
+      ];
+
+      const modalData = {
+          pergamino: { url: 'https://alter-ias.github.io/arg/argblog.html' },
+          mediateca: { url: 'https://alter-ias.github.io/arg/mediateca.html' },
+          loteria: { url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
+      };
+
+      const sections = [
+          { id: "block-1", title: "ALAN RUÍZ GALICIA", description: "Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana" },
+          { id: "block-2", subtitle: "Pergamino", description: "Textos periodísticos, ensayos, poemas y demás experimentos literarios", buttonText: "Leer Pergamino", modalKey: "pergamino", icon: PergaminoIcon },
+          { id: "block-3", subtitle: "Mediateca", description: "Una colección de fragmentos audiovisuales", buttonText: "Explorar Mediateca", modalKey: "mediateca", icon: MediatecaIcon },
+          { id: "block-4", subtitle: "Lotería Tapatía", description: "Una reinterpretación digital del clásico juego de mesa.", buttonText: "Jugar Ahora", modalKey: "loteria", icon: LoteriaIcon }
+      ];
+
+      // --- components/Header.tsx ---
+      const FilterButton = ({ palette, title, gradient, isActive, onClick }) => (
+        React.createElement('button', {
+            className: `w-5 h-5 rounded-full border-2 border-[#f8f9fa] cursor-pointer transition-transform duration-200 hover:scale-110 ${gradient} ${isActive ? 'border-4' : ''}`,
+            title: title,
+            onClick: onClick
+        })
+      );
+
+      const Header = ({ onSkinChange, activePalette, onPaletteChange, opacity, onOpacityChange }) => {
+          return (
+              React.createElement('header', { className: "py-6 px-8 fixed top-0 left-0 w-full z-50 flex flex-col justify-center items-center gap-4" },
+                  React.createElement('div', null,
+                      React.createElement('a', { href: "#", onClick: (e) => { e.preventDefault(); onSkinChange(); }, className: "font-['Cormorant_Garamond'] text-4xl font-bold text-[#f8f9fa] no-underline cursor-pointer" }, "ARG")
+                  ),
+                  React.createElement('div', { className: "flex flex-col items-center gap-2 bg-transparent py-2 px-4 rounded-full" },
+                      React.createElement('div', { className: "flex gap-2" },
+                          React.createElement(FilterButton, { palette: "full", title: "Filtro Espectro Completo", gradient: "bg-[linear-gradient(-45deg,#ee7752,#e73c7e,#23a6d5,#23d5ab)]", isActive: activePalette === 'full', onClick: () => onPaletteChange('full') }),
+                          React.createElement(FilterButton, { palette: "cool", title: "Filtro Frío", gradient: "bg-[linear-gradient(-45deg,#2c3e50,#4a6da7,#34495e,#22577a)]", isActive: activePalette === 'cool', onClick: () => onPaletteChange('cool') }),
+                          React.createElement(FilterButton, { palette: "dark", title: "Filtro Oscuro", gradient: "bg-[linear-gradient(-45deg,#2c3e50,#95a5a6,#1c1c1c,#34495e)]", isActive: activePalette === 'dark', onClick: () => onPaletteChange('dark') })
+                      ),
+                      React.createElement('div', { className: "w-[150px]" },
+                          React.createElement('input', { type: "range", min: "0", max: "80", value: opacity, onChange: (e) => onOpacityChange(parseInt(e.target.value, 10)), title: "Opacidad del filtro" })
+                      )
+                  )
+              )
+          );
+      };
+
+      // --- components/MediaBlock.tsx ---
+      const MediaBlock = ({ id, title, subtitle, description, buttonText, onButtonClick, icon: Icon }) => {
+          const [opacity, setOpacity] = useState(0);
+          const blockRef = useRef(null);
+
+          useEffect(() => {
+              const handleScroll = () => {
+                  if (!blockRef.current) return;
+                  const rect = blockRef.current.getBoundingClientRect();
+                  const windowHeight = window.innerHeight;
+                  const blockCenter = rect.top + rect.height / 2;
+                  const viewportCenter = windowHeight / 2;
+                  const distanceFromCenter = Math.abs(blockCenter - viewportCenter);
+                  const fadeZone = windowHeight * 0.35;
+                  const newOpacity = Math.max(0, 1 - distanceFromCenter / fadeZone);
+                  setOpacity(newOpacity);
+              };
+              const timeoutId = setTimeout(handleScroll, 100);
+              window.addEventListener('scroll', handleScroll, { passive: true });
+              window.addEventListener('resize', handleScroll, { passive: true });
+              return () => {
+                  clearTimeout(timeoutId);
+                  window.removeEventListener('scroll', handleScroll);
+                  window.removeEventListener('resize', handleScroll);
+              };
+          }, []);
+
+          return (
+              React.createElement('section', { id: id, ref: blockRef, className: "relative w-full h-screen flex items-center justify-center text-center" },
+                  React.createElement('div', {
+                      className: "relative z-10 p-8 max-w-3xl text-shadow-lg transition-opacity duration-[600ms] ease-out transition-transform duration-[800ms] ease-out",
+                      style: { opacity: opacity, transform: `translateY(${(1 - opacity) * 20}px)` }
+                  },
+                      Icon && React.createElement('div', { className: "mb-6 opacity-90 flex justify-center" }, React.createElement(Icon, { className: "w-12 h-12 text-[#f8f9fa] fill-current" })),
+                      title && React.createElement('h1', { className: "font-['Cormorant_Garamond'] font-semibold leading-tight m-0 mb-3 text-6xl" }, title),
+                      subtitle && React.createElement('h2', { className: "font-['Cormorant_Garamond'] font-semibold leading-tight m-0 mb-3 text-5xl" }, subtitle),
+                      React.createElement('p', { className: "text-base max-w-xl mx-auto mb-5 leading-relaxed" }, description),
+                      buttonText && React.createElement('button', { onClick: onButtonClick, className: "inline-block py-2.5 px-6 border-2 border-[#f8f9fa] text-[#f8f9fa] bg-transparent no-underline transition-colors duration-300 text-xs uppercase tracking-wider cursor-pointer rounded-full hover:bg-[#f8f9fa] hover:text-[#1a1a1a]" }, buttonText)
+                  )
+              )
+          );
+      };
+
+      // --- components/Footer.tsx ---
+      const Footer = () => {
+          return (
+              React.createElement('footer', { className: "relative z-10 text-center text-sm py-16 px-8 bg-transparent" },
+                  React.createElement('p', { className: "m-0 text-shadow-lg" }, "© 2025 - ARG. Todos los derechos reservados.")
+              )
+          );
+      };
+
+      // --- components/Modal.tsx ---
+      const Modal = ({ isOpen, onClose, url }) => {
+          if (!isOpen) {
+              return null;
+          }
+          return (
+              React.createElement('div', { className: `fixed inset-0 bg-[#0A0A0A] z-[2000] flex items-center justify-center transition-opacity duration-500 ease-in-out ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}` },
+                  React.createElement('button', { onClick: onClose, className: "absolute top-5 right-5 text-3xl text-white bg-black/50 rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-[2010] leading-none", 'aria-label': "Cerrar modal" }, "×"),
+                  React.createElement('div', { className: "w-full h-full" },
+                      React.createElement('iframe', { src: url, className: "w-full h-full border-none", title: "Contenido embebido" })
+                  )
+              )
+          );
+      };
+
+      // --- App.tsx ---
+      const App = () => {
+          const [currentSkinIndex, setCurrentSkinIndex] = useState(0);
+          const [activePalette, setActivePalette] = useState('off');
+          const [filterOpacity, setFilterOpacity] = useState(0);
+          const [activeModal, setActiveModal] = useState(null);
+          const [videoUrl, setVideoUrl] = useState('');
+
+          useEffect(() => {
+              const savedSkinIndex = parseInt(localStorage.getItem('argIndexSkin') || '0', 10);
+              const savedPalette = localStorage.getItem('argIndexPalette') || 'off';
+              const savedOpacity = parseInt(localStorage.getItem('argIndexOpacity') || '0', 10);
+              setCurrentSkinIndex(savedSkinIndex);
+              setActivePalette(savedPalette);
+              setFilterOpacity(savedOpacity);
+          }, []);
+
+          const applySkin = useCallback((index) => {
+              const skin = backgroundSkins[index];
+              const isMobile = window.matchMedia("(max-width: 768px)").matches;
+              const newVideoUrl = isMobile ? skin.url.mobile : skin.url.desktop;
+              setVideoUrl(newVideoUrl);
+              setCurrentSkinIndex(index);
+          }, []);
+
+          useEffect(() => {
+              applySkin(currentSkinIndex);
+              const handleResize = () => applySkin(currentSkinIndex);
+              window.addEventListener('resize', handleResize);
+              return () => window.removeEventListener('resize', handleResize);
+          }, [currentSkinIndex, applySkin]);
+
+          useEffect(() => {
+              localStorage.setItem('argIndexSkin', currentSkinIndex.toString());
+              localStorage.setItem('argIndexPalette', activePalette);
+              localStorage.setItem('argIndexOpacity', filterOpacity.toString());
+          }, [currentSkinIndex, activePalette, filterOpacity]);
+
+          useEffect(() => {
+              const checkHash = () => {
+                  const hash = window.location.hash.replace('#', '');
+                  if (hash && modalData[hash]) {
+                      setActiveModal(hash);
+                      document.body.style.overflow = 'hidden';
+                  } else {
+                      setActiveModal(null);
+                      document.body.style.overflow = '';
+                  }
+              };
+              window.addEventListener('hashchange', checkHash);
+              checkHash();
+              return () => window.removeEventListener('hashchange', checkHash);
+          }, []);
+
+          useEffect(() => {
+              const handleKeyDown = (e) => {
+                  if (e.key === 'Escape' && activeModal) {
+                      window.location.hash = '';
+                  }
+              };
+              document.addEventListener('keydown', handleKeyDown);
+              return () => document.removeEventListener('keydown', handleKeyDown);
+          }, [activeModal]);
+
+          const handleSkinChange = () => {
+              const nextIndex = (currentSkinIndex + 1) % backgroundSkins.length;
+              applySkin(nextIndex);
+          };
+
+          const handlePaletteChange = (palette) => {
+              const newPalette = activePalette === palette ? 'off' : palette;
+              setActivePalette(newPalette);
+              if (newPalette !== 'off' && filterOpacity === 0) {
+                  setFilterOpacity(40);
+              } else if (newPalette === 'off') {
+                  setFilterOpacity(0);
+              }
+          };
+
+          const handleOpacityChange = (opacity) => {
+              setFilterOpacity(opacity);
+              if (opacity > 0 && activePalette === 'off') {
+                  setActivePalette('full');
+              } else if (opacity === 0) {
+                  setActivePalette('off');
+              }
+          };
+
+          const openModal = (modalKey) => {
+              window.location.hash = modalKey;
+          };
+
+          const closeModal = () => {
+              window.location.hash = '';
+          };
+
+          const paletteGradients = {
+              full: 'bg-[linear-gradient(-45deg,#ee7752,#e73c7e,#23a6d5,#23d5ab)]',
+              cool: 'bg-[linear-gradient(-45deg,#2c3e50,#4a6da7,#34495e,#22577a)]',
+              dark: 'bg-[linear-gradient(-45deg,#2c3e50,#95a5a6,#1c1c1c,#34495e)]',
+              off: ''
+          };
+
+          return (
+              React.createElement(React.Fragment, null,
+                  React.createElement('div', { className: "fixed top-0 left-0 w-full h-full -z-10 overflow-hidden" },
+                      React.createElement('video', { key: videoUrl, className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover", loop: true, muted: true, autoPlay: true, playsInline: true, src: videoUrl })
+                  ),
+                  React.createElement('div', {
+                      className: `fixed top-0 left-0 w-full h-full z-[1] pointer-events-none transition-opacity duration-500 ease-in-out animate-gradient ${paletteGradients[activePalette]}`,
+                      style: { opacity: filterOpacity / 100 }
+                  }),
+                  React.createElement(Header, { onSkinChange: handleSkinChange, activePalette: activePalette, onPaletteChange: handlePaletteChange, opacity: filterOpacity, onOpacityChange: handleOpacityChange }),
+                  React.createElement('main', { className: "relative" },
+                      React.createElement('div', { className: "absolute top-0 left-0 w-full h-full bg-black/40 z-[2]" }),
+                      sections.map(section =>
+                          React.createElement(MediaBlock, {
+                              key: section.id,
+                              id: section.id,
+                              title: section.title,
+                              subtitle: section.subtitle,
+                              description: section.description,
+                              buttonText: section.buttonText,
+                              icon: section.icon,
+                              onButtonClick: () => openModal(section.modalKey)
+                          })
+                      )
+                  ),
+                  React.createElement(Footer, null),
+                  Object.keys(modalData).map(key =>
+                      React.createElement(Modal, {
+                          key: key,
+                          isOpen: activeModal === key,
+                          onClose: closeModal,
+                          url: modalData[key].url
+                      })
+                  )
+              )
+          );
+      }
+
+      // --- index.tsx ---
+      const rootElement = document.getElementById('root');
+      if (!rootElement) {
+        throw new Error("Could not find root element to mount to");
+      }
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(
+        React.createElement(React.StrictMode, null, React.createElement(App, null))
+      );
     </script>
-</body>
+  </body>
 </html>
