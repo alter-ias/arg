@@ -235,7 +235,8 @@
             const windowHeight = window.innerHeight;
 
             function updateFadeEffects() {
-                const fadeOutZone = windowHeight * 0.3; // Zona de desvanecimiento
+                // Aumentamos la zona de desvanecimiento para que sea más gradual
+                const fadeOutZone = windowHeight * 0.5; // Aumentado de 0.3 a 0.5 para un desvanecimiento más lento
                 fadeElements.forEach(element => {
                     // Excluir el podcast-archive del efecto de desvanecimiento
                     if (element.id === 'podcast-archive') {
@@ -244,7 +245,15 @@
                     }
                     
                     const rect = element.getBoundingClientRect();
-                    const opacity = Math.max(0, Math.min(1, rect.top / fadeOutZone));
+                    // Ajustamos el cálculo para que el desvanecimiento comience más tarde
+                    const fadeStart = windowHeight * 0.2; // Empieza a desvanecerse cuando el elemento está al 20% del viewport
+                    let opacity = 1;
+                    
+                    if (rect.top < fadeStart) {
+                        // Comienza a desvanecerse
+                        opacity = Math.max(0.3, Math.min(1, (rect.top - fadeStart) / (fadeOutZone * 0.8) + 1));
+                    }
+                    
                     element.style.opacity = opacity;
                 });
             }
