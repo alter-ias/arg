@@ -30,20 +30,31 @@
             margin: 0; font-family: var(--font-sans); color: var(--color-light); 
             background-color: #1a1a1a; overflow-x: hidden;
             background-size: cover; background-position: center center; background-attachment: fixed;
-            background-repeat: no-repeat; transition: background-image 1s ease-in-out;
+            background-repeat: no-repeat;
         }
 
         #background-video-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1; overflow: hidden; display: none;
         }
-        
         #background-video {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             min-width: 100vw; min-height: 100vh;
             width: auto; height: auto; object-fit: cover;
         }
         
+        /* --- LA SOLUCIÓN DEFINITIVA (PARTE 1): CAPA DE DESENFOQUE --- */
+        #blur-pane {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 25vh; /* Altura de la zona desenfocada */
+            z-index: 900; /* Debajo de los controles, encima del contenido */
+            pointer-events: none; /* No interfiere con clics */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
         #global-color-overlay {
             position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
@@ -56,11 +67,8 @@
         }
 
         header { 
-            padding-top: 1.5rem; /* Reducido para acercarlo */
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-            display: flex; flex-direction: column; justify-content: flex-start; /* Alineado arriba */
-            align-items: center; gap: 1rem;
-            height: auto; /* Altura automática */
+            padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem;
         }
 
         .header-logo a { 
@@ -69,13 +77,13 @@
         }
         
         .controls-container {
-            background-color: transparent; padding: 0; border: none;
+            background-color: transparent; padding: 0.5rem 1rem;
+            border: none; border-radius: 20px;
             display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
         }
 
         .filter-controls { display: flex; gap: 0.5rem; }
         .filter-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--color-light); cursor: pointer; transition: transform 0.2s; background-color: transparent; }
-        .filter-btn:hover { transform: scale(1.1); }
         .filter-btn.is-active { border-width: 4px; }
         #filter-full { background: var(--gradient-full); }
         #filter-cool { background: var(--gradient-cool); }
@@ -91,31 +99,22 @@
             background: var(--color-light); border-radius: 50%; border: 2px solid #1a1a1a;
         }
         
-        main { 
-            position: relative; 
-            /* --- LA SOLUCIÓN DEFINITIVA: MÁSCARA CSS --- */
-            mask-image: linear-gradient(to bottom, 
-                transparent 0%, 
-                black 25vh, /* Zona de desvanecimiento */
-                black 100%
-            );
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25vh, black 100%);
-        }
+        main { position: relative; z-index: 5; }
         main::before {
             content: ''; position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); z-index: 2;
+            background: rgba(0, 0, 0, 0.45); z-index: 2;
         }
         
         .media-block { 
             position: relative; width: 100%;
-            height: 100vh;
+            padding: 25vh var(--main-gap); /* Espaciado reducido */
             display: flex; align-items: center; justify-content: center; text-align: center;
-            background-color: transparent; 
         }
+        #block-1 { padding-top: 30vh; }
         
         .content-overlay { 
-            position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; 
+            position: relative; z-index: 4; max-width: 800px; 
             text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
             opacity: 0;
             transform: translateY(30px);
@@ -137,23 +136,22 @@
         .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0A0A0A; z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
         .modal-container.is-active { opacity: 1; pointer-events: auto; }
         .modal-close-btn { position: absolute; top: 20px; right: 20px; font-size: 2rem; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2010; line-height: 1; }
-        .iframe-container { width: 100%; height: 100%; }
-        .iframe-container iframe { width: 100%; height: 100%; border: none; }
 
         footer { 
             position: relative; z-index: 5;
             text-align: center; font-size: 0.9rem; 
             padding: 4rem var(--main-gap); background: transparent;
         }
-        footer p {
-            margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
+        footer p { margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
     <div id="background-video-container">
         <video id="background-video" loop muted autoplay playsinline></video>
     </div>
+
+    <!-- LA SOLUCIÓN DEFINITIVA (PARTE 2): Elemento HTML para el desenfoque -->
+    <div id="blur-pane"></div>
     
     <div id="global-color-overlay"></div>
 
@@ -198,29 +196,25 @@
         </section>
     </main>
     
+    <div id="loteria-modal" class="modal-container"></div>
+    <div id="blog-modal" class="modal-container"></div>
+    <div id="mediateca-modal" class="modal-container"></div>
     <footer><p>&copy; 2025 - ARG. Todos los derechos reservados.</p></footer>
-    
-    <div id="loteria-modal" class="modal-container"><span id="close-loteria-btn" class="modal-close-btn">&times;</span><div id="loteria-iframe-container" class="iframe-container"></div></div>
-    <div id="blog-modal" class="modal-container"><span id="close-blog-btn" class="modal-close-btn">&times;</span><div id="blog-iframe-container" class="iframe-container"></div></div>
-    <div id="mediateca-modal" class="modal-container"><span id="close-mediateca-btn" class="modal-close-btn">&times;</span><div id="mediateca-iframe-container" class="iframe-container"></div></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
 
-            // --- LÓGICA DE SCROLL SIMPLE Y EFECTIVA ---
             function checkVisibility() {
                 mediaBlocks.forEach(block => {
                     const rect = block.getBoundingClientRect();
-                    // El bloque se considera visible si una parte de él está en la pantalla
-                    const isInView = rect.top < windowHeight && rect.bottom > 0;
+                    const isInView = rect.top < windowHeight * 0.8 && rect.bottom > windowHeight * 0.2;
                     block.classList.toggle('is-visible', isInView);
                 });
             }
             window.addEventListener('scroll', checkVisibility);
             
-            // --- Lógica de filtros, modales y skins ---
             const filterButtons = document.querySelectorAll('.filter-btn');
             const opacitySlider = document.getElementById('opacity-slider');
             const root = document.documentElement;
@@ -254,38 +248,46 @@
                 applySettings(currentPalette, newOpacity);
                 saveSettings(currentPalette, newOpacity);
             });
-            function openModal(modal, iframeContainer, url, historyState, historyHash) {
-                if (modal.classList.contains('is-active')) return;
-                const iframe = document.createElement('iframe');
-                iframe.src = url;
-                iframeContainer.appendChild(iframe);
+
+            // Lógica de Modales simplificada
+            const modals = {
+                loteria: { btn: 'open-loteria-btn', container: 'loteria-modal', url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
+                blog: { btn: 'open-blog-btn', container: 'blog-modal', url: 'https://alter-ias.github.io/arg/argblog.html' },
+                mediateca: { btn: 'open-mediateca-btn', container: 'mediateca-modal', url: 'https://alter-ias.github.io/arg/mediateca.html' }
+            };
+
+            function openModal(modalId, url) {
+                const modal = document.getElementById(modalId);
+                modal.innerHTML = `<span class="modal-close-btn">&times;</span><iframe src="${url}"></iframe>`;
                 modal.classList.add('is-active');
                 document.body.style.overflow = 'hidden';
-                history.pushState({ modal: historyState }, '', historyHash);
+                history.pushState({ modal: modalId }, '', `#${modalId}`);
             }
-            function closeModal(modal, iframeContainer) {
-                if (!modal.classList.contains('is-active')) return;
-                modal.classList.remove('is-active');
-                document.body.style.overflow = '';
-                iframeContainer.innerHTML = '';
+
+            function closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal && modal.classList.contains('is-active')) {
+                    modal.classList.remove('is-active');
+                    modal.innerHTML = '';
+                    document.body.style.overflow = '';
+                }
             }
-            const loteriaModal = document.getElementById('loteria-modal');
-            document.getElementById('open-loteria-btn').addEventListener('click', () => openModal(loteriaModal, document.getElementById('loteria-iframe-container'), 'https://alter-ias.github.io/arg/loteriatapatiax.html', 'loteria', '#loteria'));
-            document.getElementById('close-loteria-btn').addEventListener('click', () => history.back());
-            const blogModal = document.getElementById('blog-modal');
-            document.getElementById('open-blog-btn').addEventListener('click', () => openModal(blogModal, document.getElementById('blog-iframe-container'), 'https://alter-ias.github.io/arg/argblog.html', 'blog', '#blog'));
-            document.getElementById('close-blog-btn').addEventListener('click', () => history.back());
-            const mediatecaModal = document.getElementById('mediateca-modal');
-            document.getElementById('open-mediateca-btn').addEventListener('click', () => openModal(mediatecaModal, document.getElementById('mediateca-iframe-container'), 'https://alter-ias.github.io/arg/mediateca.html', 'mediateca', '#mediateca'));
-            document.getElementById('close-mediateca-btn').addEventListener('click', () => history.back());
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && (loteriaModal.classList.contains('is-active') || blogModal.classList.contains('is-active') || mediatecaModal.classList.contains('is-active'))) { history.back(); }
+            
+            Object.keys(modals).forEach(key => {
+                document.getElementById(modals[key].btn).addEventListener('click', () => openModal(modals[key].container, modals[key].url));
             });
+
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-close-btn')) {
+                    history.back();
+                }
+            });
+
             window.addEventListener('popstate', () => {
-                closeModal(loteriaModal, document.getElementById('loteria-iframe-container'));
-                closeModal(blogModal, document.getElementById('blog-iframe-container'));
-                closeModal(mediatecaModal, document.getElementById('mediateca-iframe-container'));
+                Object.keys(modals).forEach(key => closeModal(modals[key].container));
             });
+            
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') history.back(); });
 
             const skinSwitcherBtn = document.querySelector('.header-logo a');
             const videoContainer = document.getElementById('background-video-container');
