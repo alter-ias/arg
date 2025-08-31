@@ -29,7 +29,6 @@
         body { 
             margin: 0; font-family: var(--font-sans); color: var(--color-light); 
             background-color: #1a1a1a; overflow-x: hidden;
-            /* Se deja sin imagen inicial, ya que el JS la pondrá siempre */
             background-size: cover; background-position: center center; background-attachment: fixed;
             background-repeat: no-repeat; transition: background-image 1s ease-in-out;
         }
@@ -38,7 +37,19 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1; overflow: hidden; display: none;
         }
-        #background-video { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* --- CORRECCIÓN #2: MEJOR AJUSTE DE VIDEO --- */
+        #background-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100vw;
+            min-height: 100vh;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
         
         #global-color-overlay {
             position: fixed; top: 0; left: 0;
@@ -61,16 +72,12 @@
             cursor: pointer; 
         }
         
-        /* --- CORRECCIÓN #1: CONTROLES TOTALMENTE TRANSPARENTES --- */
         .controls-container {
             background-color: transparent;
             padding: 0.5rem 1rem;
-            border: none; /* Sin borde */
+            border: none;
             border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
+            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
         }
 
         .filter-controls { display: flex; gap: 0.5rem; }
@@ -106,8 +113,17 @@
         }
         #block-1 { padding-top: 25vh; }
         
-        .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
-        .media-block.is-visible .content-overlay { opacity: 1; transform: translateY(0); }
+        .content-overlay { 
+            position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
+            /* La opacidad ahora es controlada por JS, pero la transición se mantiene aquí */
+            transition: transform 0.8s ease;
+            transform: translateY(20px);
+        }
+        /* La clase is-visible ahora solo controla el movimiento, no la opacidad */
+        .media-block.is-visible .content-overlay {
+             transform: translateY(0);
+        }
         
         .content-overlay h1 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 0.8rem 0; font-size: 3.5rem; }
         .content-overlay h2 { font-size: 2.8rem; }
@@ -128,9 +144,7 @@
             text-align: center; font-size: 0.9rem; 
             padding: 4rem var(--main-gap); background: transparent;
         }
-        footer p {
-            margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
+        footer p { margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
@@ -199,15 +213,33 @@
         document.addEventListener('DOMContentLoaded', () => {
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
-            function checkVisibility() {
-                 mediaBlocks.forEach(block => {
+
+            // --- CORRECCIÓN #1: LÓGICA DE SCROLL MEJORADA CON FADE OUT ---
+            function updateScrollEffects() {
+                const fadeOutZone = 250; // Distancia en píxeles desde arriba para empezar a desvanecer
+
+                mediaBlocks.forEach(block => {
+                    const content = block.querySelector('.content-overlay');
                     const rect = block.getBoundingClientRect();
-                    if (rect.top < windowHeight * 0.8 && rect.bottom > windowHeight * 0.2) { block.classList.add('is-visible'); } 
-                    else { block.classList.remove('is-visible'); }
+
+                    // Controla la animación de entrada (movimiento)
+                    const isInView = rect.top < windowHeight * 0.8 && rect.bottom > windowHeight * 0.2;
+                    block.classList.toggle('is-visible', isInView);
+
+                    // Controla la opacidad para el desvanecimiento
+                    if (isInView) {
+                        // Calcula la opacidad para el desvanecimiento superior
+                        const fadeOutOpacity = Math.min(1, Math.max(0, rect.top / fadeOutZone));
+                        content.style.opacity = fadeOutOpacity;
+                    } else {
+                        content.style.opacity = 0; // Se asegura que esté oculto si no está en el área visible
+                    }
                 });
             }
-            window.addEventListener('scroll', checkVisibility);
-            checkVisibility();
+            window.addEventListener('scroll', updateScrollEffects);
+            updateScrollEffects(); // Llamada inicial
+            
+            // --- CÓDIGO DE FILTROS Y MODALES (SIN CAMBIOS) ---
             const filterButtons = document.querySelectorAll('.filter-btn');
             const opacitySlider = document.getElementById('opacity-slider');
             const root = document.documentElement;
@@ -278,7 +310,6 @@
             const videoContainer = document.getElementById('background-video-container');
             const videoElement = document.getElementById('background-video');
             
-            // --- CORRECCIÓN #2: LISTA DE SKINS ACTUALIZADA ---
             const backgroundSkins = [
                 { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610854/skin06_py1plm.webm' },
                 { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm' },
@@ -300,7 +331,7 @@
                     videoElement.src = skin.url;
                     videoContainer.style.display = 'block';
                     videoElement.play();
-                } else { // Aunque no hay imágenes, se deja por si se añaden en el futuro
+                } else {
                     videoContainer.style.display = 'none';
                     videoElement.pause();
                     document.body.style.backgroundImage = `url('${skin.url}')`;
