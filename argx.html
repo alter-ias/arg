@@ -29,7 +29,7 @@
         body { 
             margin: 0; font-family: var(--font-sans); color: var(--color-light); 
             background-color: #1a1a1a; overflow-x: hidden;
-            background-image: url('https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png');
+            /* Se deja sin imagen inicial, ya que el JS la pondrá siempre */
             background-size: cover; background-position: center center; background-attachment: fixed;
             background-repeat: no-repeat; transition: background-image 1s ease-in-out;
         }
@@ -40,13 +40,10 @@
         }
         #background-video { width: 100%; height: 100%; object-fit: cover; }
         
-        /* --- CORRECCIÓN #2: OVERLAY DE COLOR GLOBAL Y FIJO --- */
         #global-color-overlay {
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 1; /* Encima del fondo, debajo del contenido */
-            pointer-events: none; /* Para que no bloquee los clics */
+            z-index: 1; pointer-events: none;
             background: var(--active-gradient);
             background-size: 400% 400%;
             animation: gradient-horizontal 25s ease infinite;
@@ -64,11 +61,11 @@
             cursor: pointer; 
         }
         
-        /* --- CORRECCIÓN #3: CONTROLES TRANSPARENTES --- */
+        /* --- CORRECCIÓN #1: CONTROLES TOTALMENTE TRANSPARENTES --- */
         .controls-container {
-            background-color: transparent; /* Eliminado el fondo oscuro */
+            background-color: transparent;
             padding: 0.5rem 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.2); /* Borde sutil para definirlo */
+            border: none; /* Sin borde */
             border-radius: 20px;
             display: flex;
             flex-direction: column;
@@ -94,23 +91,20 @@
             background: var(--color-light); border-radius: 50%; border: 2px solid #1a1a1a;
         }
         
-        main {
-            position: relative;
-        }
+        main { position: relative; }
         main::before {
             content: ''; position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.4); z-index: 2;
         }
         
-        /* --- CORRECCIÓN #1: SECCIONES MÁS COMPACTAS --- */
         .media-block { 
             position: relative; width: 100%;
-            padding: 18vh var(--main-gap); /* Padding vertical reducido */
+            padding: 18vh var(--main-gap); 
             display: flex; align-items: center; justify-content: center; text-align: center;
             background-color: transparent; 
         }
-        #block-1 { padding-top: 25vh; } /* Espacio para el header */
+        #block-1 { padding-top: 25vh; }
         
         .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
         .media-block.is-visible .content-overlay { opacity: 1; transform: translateY(0); }
@@ -144,7 +138,6 @@
         <video id="background-video" loop muted autoplay playsinline></video>
     </div>
     
-    <!-- El overlay de color ahora es un elemento único y global -->
     <div id="global-color-overlay"></div>
 
     <header>
@@ -162,7 +155,6 @@
     </header>
 
     <main>
-        <!-- Eliminados los .color-overlay de cada sección -->
         <section class="media-block" id="block-1">
             <div class="content-overlay"><h1>ALAN RUÍZ GALICIA</h1><p>Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana</p></div>
         </section>
@@ -286,12 +278,17 @@
             const videoContainer = document.getElementById('background-video-container');
             const videoElement = document.getElementById('background-video');
             
+            // --- CORRECCIÓN #2: LISTA DE SKINS ACTUALIZADA ---
             const backgroundSkins = [
-                { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png'},
-                { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602021/u7545868924_Una_vieja_mquina_de_escribir_sobre_una_mesa_de_ma_834e7f81-26c3-4b22-9218-c2e6d90fadc2_0_rhjxmm.png'},
-                { type: 'video', url: 'https://cdn.coverr.co/videos/coverr-a-man-looks-at-a-big-city-through-a-telescope-7133/1080p.mp4'},
-                { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602044/u7545868924_Un_micrfono_vintage_de_los_aos_50_pero_en_lugar_d_7928519f-5d0d-4ae1-8520-7e9d8add1608_0_urhsaz.png'},
-                { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602027/u7545868924_Bodegn_de_alto_contraste._Una_cmara_de_fotos_rfle_7fb3de29-8b25-4f70-81cb-6f7e0c57fe21_3_ua2j7r.png'}
+                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610854/skin06_py1plm.webm' },
+                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm' },
+                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm' },
+                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm' },
+                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm' },
+                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm' },
+                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm' },
+                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm' },
+                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm' }
             ];
             
             let currentSkinIndex = 0;
@@ -303,7 +300,7 @@
                     videoElement.src = skin.url;
                     videoContainer.style.display = 'block';
                     videoElement.play();
-                } else {
+                } else { // Aunque no hay imágenes, se deja por si se añaden en el futuro
                     videoContainer.style.display = 'none';
                     videoElement.pause();
                     document.body.style.backgroundImage = `url('${skin.url}')`;
