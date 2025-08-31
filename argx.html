@@ -16,12 +16,10 @@
             --font-sans: 'Poppins', sans-serif;
             --color-light: #f8f9fa;
             
-            /* --- TRES PALETAS DE COLORES DEFINIDAS --- */
             --gradient-full: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             --gradient-cool: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
             --gradient-dark: linear-gradient(-45deg, #2c3e50, #95a5a6, #1c1c1c, #34495e);
             
-            /* Variables dinámicas que controlará el JS */
             --active-gradient: var(--gradient-full);
             --filter-opacity: 0; 
         }
@@ -36,7 +34,7 @@
 
         .header-logo a { 
             font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light); 
-            cursor: pointer; /* Indica que es un elemento interactivo */
+            cursor: pointer; 
         }
         
         .controls-container {
@@ -130,15 +128,16 @@
     </header>
 
     <main>
+        <!-- AHORA TODAS LAS IMÁGENES TIENEN EL MISMO SRC INICIAL -->
         <section class="media-block" id="block-1">
              <div class="color-overlay"></div>
-             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png" alt="Jardín Digital"></div>
+             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png" alt="Fondo Unico"></div>
             <div class="content-overlay"><h1>ALAN RUÍZ GALICIA</h1><p>Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana</p></div>
         </section>
 
         <section class="media-block" id="block-2">
              <div class="color-overlay"></div>
-             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602021/u7545868924_Una_vieja_mquina_de_escribir_sobre_una_mesa_de_ma_834e7f81-26c3-4b22-9218-c2e6d90fadc2_0_rhjxmm.png" alt="Jardín Digital"></div>
+             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png" alt="Fondo Unico"></div>
             <div class="content-overlay">
                 <h2>Pergamino</h2>
                 <p>Textos periodísticos, ensayos, poemas y demás experimentos literarios</p>
@@ -148,7 +147,7 @@
 
         <section class="media-block" id="block-3">
              <div class="color-overlay"></div>
-            <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602044/u7545868924_Un_micrfono_vintage_de_los_aos_50_pero_en_lugar_d_7928519f-5d30-4ae1-8520-7e9d8add1608_0_urhsaz.png" alt="Archivo Sonoro"></div>
+            <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png" alt="Fondo Unico"></div>
             <div class="content-overlay">
                 <h2>Mediateca</h2>
                 <p>Una colección de fragmentos audiovisuales</p>
@@ -158,7 +157,7 @@
         
         <section class="media-block" id="block-4">
              <div class="color-overlay"></div>
-            <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602027/u7545868924_Bodegn_de_alto_contraste._Una_cmara_de_fotos_rfle_7fb3de29-8b25-4f70-81cb-6f7e0c57fe21_3_ua2j7r.png" alt="Lotería"></div>
+            <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png" alt="Fondo Unico"></div>
             <div class="content-overlay"><h2>Lotería Tapatía</h2><p>Una reinterpretación digital del clásico juego de mesa.</p>
                 <button class="btn" id="open-loteria-btn">Jugar Ahora</button>
             </div>
@@ -274,7 +273,7 @@
                 closeModal(mediatecaModal, document.getElementById('mediateca-iframe-container'));
             });
 
-            // --- LÓGICA DEL INTERRUPTOR DE SKINS (VERSIÓN CORREGIDA Y FUNCIONAL) ---
+            // --- LÓGICA DEL INTERRUPTOR DE SKINS ---
             const skinSwitcherBtn = document.querySelector('.header-logo a');
             const allBackgroundImages = document.querySelectorAll('.media-block .background-media img');
             
@@ -288,22 +287,17 @@
             let currentSkinIndex = 0;
 
             skinSwitcherBtn.addEventListener('click', (event) => {
-                event.preventDefault(); // Evita que el enlace recargue la página
+                event.preventDefault(); 
 
-                // Avanza al siguiente índice de skin, volviendo al principio si llega al final
                 currentSkinIndex = (currentSkinIndex + 1) % backgroundSkins.length;
-                
-                // Obtiene la URL de la nueva imagen
                 const newSkinUrl = backgroundSkins[currentSkinIndex];
 
-                // Aplica la nueva imagen de fondo A TODAS las imágenes de los bloques
                 allBackgroundImages.forEach(imgElement => {
-                    // Opcional: añade un efecto de fundido para suavizar el cambio
                     imgElement.style.opacity = '0';
                     setTimeout(() => {
                         imgElement.src = newSkinUrl;
                         imgElement.style.opacity = '1';
-                    }, 400); // 400ms, coincide con la transición en el CSS
+                    }, 400); 
                 });
             });
         });
