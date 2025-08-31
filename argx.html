@@ -6,7 +6,7 @@
     <title>ARG - Jardín Digital (Integración Final)</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     
     <style>
@@ -27,14 +27,30 @@
         }
 
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
+        body { 
+            margin: 0; 
+            font-family: var(--font-sans); 
+            color: var(--color-light); 
+            background-color: #1a1a1a; 
+            overflow-x: hidden;
+            
+            /* --- ESTILOS AÑADIDOS PARA EL FONDO DE PÁGINA --- */
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out; /* Transición suave para el cambio de imagen */
+        }
         
         header { 
             padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; 
             mix-blend-mode: exclusion; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem;
         }
 
-        .header-logo a { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light); }
+        .header-logo a { 
+            font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light);
+            cursor: pointer; /* --- AÑADIDO: Cambia el cursor para indicar que es clickeable --- */
+        }
         
         .controls-container {
             background-color: rgba(0,0,0,0.3);
@@ -116,7 +132,6 @@
         <div class="header-logo"><a href="#">ARG</a></div>
         <div class="controls-container">
             <div class="filter-controls">
-                <!-- Botón "off" eliminado -->
                 <button class="filter-btn" id="filter-full" data-palette="full" title="Filtro Espectro Completo"></button>
                 <button class="filter-btn" id="filter-cool" data-palette="cool" title="Filtro Frío"></button>
                 <button class="filter-btn" id="filter-dark" data-palette="dark" title="Filtro Oscuro"></button>
@@ -137,7 +152,6 @@
         <section class="media-block" id="block-2">
              <div class="color-overlay"></div>
              <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602021/u7545868924_Una_vieja_mquina_de_escribir_sobre_una_mesa_de_ma_834e7f81-26c3-4b22-9218-c2e6d90fadc2_0_rhjxmm.png" alt="Jardín Digital"></div>
-            <div class="background-media"><video src="" autoplay loop muted playsinline></video></div>
             <div class="content-overlay">
                 <h2>Pergamino</h2>
                 <p>Textos periodísticos, ensayos, poemas y demás experimentos literarios</p>
@@ -198,7 +212,7 @@
             window.addEventListener('scroll', () => { if (!ticking) { window.requestAnimationFrame(updateScrollEffects); ticking = true; } });
             updateScrollEffects();
 
-            // --- LÓGICA DE FILTRO CON OPACIDAD Y LOCALSTORAGE (SIMPLIFICADA) ---
+            // --- LÓGICA DE FILTRO CON OPACIDAD Y LOCALSTORAGE (SIN CAMBIOS) ---
             const filterButtons = document.querySelectorAll('.filter-btn');
             const opacitySlider = document.getElementById('opacity-slider');
             const root = document.documentElement;
@@ -222,29 +236,25 @@
                 localStorage.setItem('argIndexOpacity', opacity);
             }
 
-            // Cargar configuración guardada
             const savedPalette = localStorage.getItem('argIndexPalette') || 'off';
             const savedOpacity = localStorage.getItem('argIndexOpacity') || '0';
             applySettings(savedPalette, savedOpacity);
 
-            // Listeners para los botones de color
             filterButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const newPalette = button.dataset.palette;
                     let newOpacity = opacitySlider.value;
                     if (newOpacity == 0) {
-                        newOpacity = 40; // Opacidad por defecto si estaba apagado
+                        newOpacity = 40;
                     }
                     applySettings(newPalette, newOpacity);
                     saveSettings(newPalette, newOpacity);
                 });
             });
 
-            // Listener para el slider de opacidad
             opacitySlider.addEventListener('input', () => {
                 const newOpacity = opacitySlider.value;
                 if (currentPalette === 'off' && newOpacity > 0) {
-                    // Si no había color y se sube la opacidad, se activa el primer filtro
                     currentPalette = 'full'; 
                 }
                 applySettings(currentPalette, newOpacity);
@@ -286,6 +296,29 @@
                 closeModal(loteriaModal, document.getElementById('loteria-iframe-container'));
                 closeModal(blogModal, document.getElementById('blog-iframe-container'));
                 closeModal(mediatecaModal, document.getElementById('mediateca-iframe-container'));
+            });
+
+            // --- NUEVA LÓGICA DEL INTERRUPTOR DE SKINS ---
+            const skinSwitcherBtn = document.querySelector('.header-logo a');
+            const backgroundSkins = [
+                'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png',
+                'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602021/u7545868924_Una_vieja_mquina_de_escribir_sobre_una_mesa_de_ma_834e7f81-26c3-4b22-9218-c2e6d90fadc2_0_rhjxmm.png',
+                'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602044/u7545868924_Un_micrfono_vintage_de_los_aos_50_pero_en_lugar_d_7928519f-5d30-4ae1-8520-7e9d8add1608_0_urhsaz.png',
+                'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602027/u7545868924_Bodegn_de_alto_contraste._Una_cmara_de_fotos_rfle_7fb3de29-8b25-4f70-81cb-6f7e0c57fe21_3_ua2j7r.png'
+            ];
+            let currentSkinIndex = -1; // Empezamos en -1 para que el primer click muestre la primera imagen (índice 0)
+
+            skinSwitcherBtn.addEventListener('click', (event) => {
+                event.preventDefault(); // Evita que el enlace recargue la página o salte al ancla #
+
+                // Avanza al siguiente índice de skin, volviendo al principio si llega al final
+                currentSkinIndex = (currentSkinIndex + 1) % backgroundSkins.length;
+                
+                // Obtiene la URL de la nueva imagen
+                const newSkinUrl = backgroundSkins[currentSkinIndex];
+
+                // Aplica la nueva imagen de fondo al body
+                document.body.style.backgroundImage = `url('${newSkinUrl}')`;
             });
         });
     </script>
