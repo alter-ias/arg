@@ -159,12 +159,11 @@
               };
           }, []);
 
-          // --- ÚNICO CAMBIO: className del contenedor de la sección ---
           return (
               React.createElement('section', { 
                   id: id, 
                   ref: blockRef, 
-                  className: "relative w-full min-h-[35vh] flex items-center justify-center text-center" // Se quita h-screen y se usa min-height
+                  className: "relative w-full min-h-[35vh] flex items-center justify-center text-center"
               },
                   React.createElement('div', {
                       className: "relative z-10 p-8 max-w-3xl text-shadow-lg transition-opacity duration-[600ms] ease-out transition-transform duration-[800ms] ease-out",
@@ -180,11 +179,7 @@
           );
       };
 
-      const Footer = () => (
-          React.createElement('footer', { className: "relative z-10 text-center text-sm py-16 px-8 bg-transparent" },
-              React.createElement('p', { className: "m-0 text-shadow-lg" }, "© 2025 - ARG. Todos los derechos reservados.")
-          )
-      );
+      // --- COMPONENTE FOOTER ELIMINADO ---
 
       const Modal = ({ isOpen, onClose, url }) => {
           if (!isOpen) return null;
@@ -315,7 +310,7 @@
                           })
                       )
                   ),
-                  React.createElement(Footer, null),
+                  // --- LLAMADA AL FOOTER ELIMINADA ---
                   Object.keys(modalData).map(key =>
                       React.createElement(Modal, {
                           key: key,
