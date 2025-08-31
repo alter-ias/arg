@@ -44,6 +44,10 @@
         border-radius: 50%;
         border: 2px solid #1a1a1a;
       }
+      /* --- ÚNICO CAMBIO: Espacio para el header fijo --- */
+      main > section:first-child {
+        margin-top: 25vh;
+      }
     </style>
     <script type="importmap">
 {
@@ -98,7 +102,6 @@
       };
 
       const sections = [
-          { id: "block-0", title: "", description: "" },
           { id: "block-1", title: "ALAN RUÍZ GALICIA", description: "Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana" },
           { id: "block-2", subtitle: "Pergamino", description: "Textos periodísticos, ensayos, poemas y demás experimentos literarios", buttonText: "Leer Pergamino", modalKey: "pergamino", icon: PergaminoIcon },
           { id: "block-3", subtitle: "Mediateca", description: "Una colección de fragmentos audiovisuales", buttonText: "Explorar Mediateca", modalKey: "mediateca", icon: MediatecaIcon },
@@ -159,12 +162,11 @@
               };
           }, []);
 
-          // --- ÚNICO CAMBIO: className del contenedor de la sección ---
           return (
               React.createElement('section', { 
                   id: id, 
                   ref: blockRef, 
-                  className: "relative w-full min-h-[40vh] flex items-center justify-center text-center" // Se quita h-screen y se usa min-height
+                  className: "relative w-full min-h-[50vh] flex items-center justify-center text-center"
               },
                   React.createElement('div', {
                       className: "relative z-10 p-8 max-w-3xl text-shadow-lg transition-opacity duration-[600ms] ease-out transition-transform duration-[800ms] ease-out",
