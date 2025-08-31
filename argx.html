@@ -40,7 +40,20 @@
         }
         #background-video { width: 100%; height: 100%; object-fit: cover; }
         
-        /* --- CORRECCIÓN #1: CONTROL ARREGLADO (SIN MIX-BLEND-MODE) --- */
+        /* --- CORRECCIÓN #2: OVERLAY DE COLOR GLOBAL Y FIJO --- */
+        #global-color-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1; /* Encima del fondo, debajo del contenido */
+            pointer-events: none; /* Para que no bloquee los clics */
+            background: var(--active-gradient);
+            background-size: 400% 400%;
+            animation: gradient-horizontal 25s ease infinite;
+            opacity: var(--filter-opacity);
+            transition: opacity 0.5s ease;
+        }
+
         header { 
             padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
             display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem;
@@ -51,9 +64,16 @@
             cursor: pointer; 
         }
         
+        /* --- CORRECCIÓN #3: CONTROLES TRANSPARENTES --- */
         .controls-container {
-            background-color: rgba(0,0,0,0.3); padding: 0.5rem 1rem; border-radius: 20px;
-            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+            background-color: transparent; /* Eliminado el fondo oscuro */
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Borde sutil para definirlo */
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .filter-controls { display: flex; gap: 0.5rem; }
@@ -73,7 +93,7 @@
             -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
             background: var(--color-light); border-radius: 50%; border: 2px solid #1a1a1a;
         }
-
+        
         main {
             position: relative;
         }
@@ -83,20 +103,14 @@
             background: rgba(0, 0, 0, 0.4); z-index: 2;
         }
         
+        /* --- CORRECCIÓN #1: SECCIONES MÁS COMPACTAS --- */
         .media-block { 
             position: relative; width: 100%;
-            padding: 25vh var(--main-gap); 
+            padding: 18vh var(--main-gap); /* Padding vertical reducido */
             display: flex; align-items: center; justify-content: center; text-align: center;
             background-color: transparent; 
         }
-        #block-1 { padding-top: 30vh; }
-        
-        .color-overlay { 
-            position: absolute; z-index: 3; width: 100%; height: 100%; pointer-events: none;
-            transition: opacity 0.5s ease; background: var(--active-gradient);
-            background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite;
-            opacity: var(--filter-opacity);
-        }
+        #block-1 { padding-top: 25vh; } /* Espacio para el header */
         
         .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
         .media-block.is-visible .content-overlay { opacity: 1; transform: translateY(0); }
@@ -115,18 +129,13 @@
         .iframe-container { width: 100%; height: 100%; }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
 
-        /* --- CORRECCIÓN #2: FOOTER 100% TRANSPARENTE --- */
         footer { 
-            position: relative;
-            z-index: 5;
-            text-align: center; 
-            font-size: 0.9rem; 
-            padding: 4rem var(--main-gap); 
-            background: transparent;
+            position: relative; z-index: 5;
+            text-align: center; font-size: 0.9rem; 
+            padding: 4rem var(--main-gap); background: transparent;
         }
         footer p {
-            margin: 0;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5); /* Sombra para legibilidad */
+            margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -134,6 +143,9 @@
     <div id="background-video-container">
         <video id="background-video" loop muted autoplay playsinline></video>
     </div>
+    
+    <!-- El overlay de color ahora es un elemento único y global -->
+    <div id="global-color-overlay"></div>
 
     <header>
         <div class="header-logo"><a href="#">ARG</a></div>
@@ -150,12 +162,11 @@
     </header>
 
     <main>
+        <!-- Eliminados los .color-overlay de cada sección -->
         <section class="media-block" id="block-1">
-             <div class="color-overlay"></div>
             <div class="content-overlay"><h1>ALAN RUÍZ GALICIA</h1><p>Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana</p></div>
         </section>
         <section class="media-block" id="block-2">
-             <div class="color-overlay"></div>
             <div class="content-overlay">
                 <div class="section-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M40 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h32c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H40zm432 0c22.1 0 40-17.9 40-40V72c0-22.1-17.9-40-40-40h-32c-22.1 0-40 17.9-40 40v368c0 22.1 17.9 40 40 40h32zM160 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h192c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H160z"/></svg>
@@ -166,7 +177,6 @@
             </div>
         </section>
         <section class="media-block" id="block-3">
-             <div class="color-overlay"></div>
             <div class="content-overlay">
                 <div class="section-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M0 128C0 92.7 28.7 64 64 64H512c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128zM192 192a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0z"/></svg>
@@ -177,7 +187,6 @@
             </div>
         </section>
         <section class="media-block" id="block-4">
-             <div class="color-overlay"></div>
             <div class="content-overlay">
                 <div class="section-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M192 32c0 17.7 14.3 32 32 32c123.7 0 224 100.3 224 224c0 17.7 14.3 32 32 32s32-14.3 32-32C512 128.9 383.1 0 224 0c-17.7 0-32 14.3-32 32zM96 23.3c-11.2-5.4-24.3-3.4-33.5 5.1L10.3 75.1C3.8 82.2 0 91.2 0 100.7V411.3c0 9.5 3.8 18.5 10.3 25.6l52.2 46.7c9.2 8.5 22.3 10.5 33.5 5.1l352-169.8c11.3-5.5 18-16.5 18-28.5s-6.7-23-18-28.5L96 23.3z"/></svg>
@@ -195,7 +204,6 @@
     <div id="mediateca-modal" class="modal-container"><span id="close-mediateca-btn" class="modal-close-btn">&times;</span><div id="mediateca-iframe-container" class="iframe-container"></div></div>
 
     <script>
-        // --- EL CÓDIGO JAVASCRIPT PERMANECE SIN CAMBIOS ---
         document.addEventListener('DOMContentLoaded', () => {
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
