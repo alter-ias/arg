@@ -6,7 +6,7 @@
     <title>ARG - Jardín Digital (Integración Final)</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     
     <style>
@@ -40,28 +40,13 @@
             transition: background-image 1s ease-in-out;
         }
 
-        /* --- CONTENEDOR PARA EL VIDEO DE FONDO --- */
         #background-video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* Lo pone detrás de todo el contenido */
-            overflow: hidden;
-            display: none; /* Oculto por defecto */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; display: none;
         }
-
-        #background-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Asegura que el video cubra todo el espacio */
-        }
+        #background-video { width: 100%; height: 100%; object-fit: cover; }
         
-        header, main, footer {
-            position: relative;
-            z-index: 5; /* Asegura que el contenido esté por encima del fondo */
-        }
+        header, main, footer { position: relative; z-index: 5; }
         
         header { 
             padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%;
@@ -100,9 +85,16 @@
             border-radius: 50%; border: 2px solid #1a1a1a;
         }
 
+        /* --- CAMBIO #2: ELIMINADA LA SEPARACIÓN DE BLOQUES --- */
         .media-block { 
-            position: relative; width: 100%; height: 100vh; overflow: hidden; 
-            display: flex; align-items: center; justify-content: center; text-align: center;
+            position: relative; 
+            width: 100%; 
+            /* Se elimina height: 100vh y se usa padding para un flujo continuo */
+            padding: 28vh var(--main-gap); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
             background-color: transparent; 
         }
 
@@ -121,10 +113,11 @@
         .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
         .media-block.is-visible .content-overlay { opacity: 1; transform: translateY(0); }
         
-        .content-overlay h1 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 0.8rem 0; font-size: 3.5rem; }
-        .content-overlay h2 { font-size: 2.8rem; }
-        .content-overlay p { font-size: 1rem; max-width: 600px; margin: 0 auto 1rem auto; line-height: 1.6; }
-        .btn { display: inline-block; padding: 0.6rem 1.5rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: background-color 0.3s, color 0.3s; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
+        /* --- CAMBIO #1: TIPOGRAFÍA AÚN MÁS PEQUEÑA Y COMPACTA --- */
+        .content-overlay h1 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 0.5rem 0; font-size: 2.8rem; }
+        .content-overlay h2 { margin-bottom: 0.5rem; font-size: 2.2rem; }
+        .content-overlay p { font-size: 0.9rem; max-width: 550px; margin: 0 auto 1.2rem auto; line-height: 1.5; }
+        .btn { display: inline-block; padding: 0.5rem 1.2rem; border: 1px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: background-color 0.3s, color 0.3s; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
         
         .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0A0A0A; z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
         .modal-container.is-active { opacity: 1; pointer-events: auto; }
@@ -132,16 +125,35 @@
         .iframe-container { width: 100%; height: 100%; }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
 
-        footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a); background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite; }
+        /* --- CAMBIO #3: FOOTER TRANSPARENTE --- */
+        footer {
+            position: relative; /* Necesario para el pseudo-elemento */
+            text-align: center;
+            font-size: 0.8rem;
+            padding: 6rem var(--main-gap) 4rem; /* Más padding superior para separarlo del último bloque */
+            background: transparent; /* Fondo transparente */
+        }
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1; /* Detrás del texto */
+        }
+        footer p {
+            position: relative;
+            z-index: 2; /* Delante de la superposición */
+        }
     </style>
 </head>
 <body>
-    <!-- ELEMENTO AÑADIDO PARA EL FONDO DE VIDEO -->
     <div id="background-video-container">
         <video id="background-video" loop muted autoplay playsinline></video>
     </div>
 
     <header>
+        <!-- ... Contenido del header sin cambios ... -->
         <div class="header-logo"><a href="#">ARG</a></div>
         <div class="controls-container">
             <div class="filter-controls">
@@ -156,11 +168,11 @@
     </header>
 
     <main>
+        <!-- ... Contenido del main sin cambios ... -->
         <section class="media-block" id="block-1">
              <div class="color-overlay"></div>
             <div class="content-overlay"><h1>ALAN RUÍZ GALICIA</h1><p>Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana</p></div>
         </section>
-
         <section class="media-block" id="block-2">
              <div class="color-overlay"></div>
             <div class="content-overlay">
@@ -169,7 +181,6 @@
                 <button class="btn" id="open-blog-btn">Leer Pergamino</button>
             </div>
         </section>
-
         <section class="media-block" id="block-3">
              <div class="color-overlay"></div>
             <div class="content-overlay">
@@ -178,7 +189,6 @@
                 <button class="btn" id="open-mediateca-btn">Explorar Mediateca</button>
             </div>
         </section>
-        
         <section class="media-block" id="block-4">
              <div class="color-overlay"></div>
             <div class="content-overlay"><h2>Lotería Tapatía</h2><p>Una reinterpretación digital del clásico juego de mesa.</p>
@@ -195,7 +205,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- CÓDIGO DE VISIBILIDAD Y FILTROS (SIN CAMBIOS) ---
+            // --- CÓDIGO JS SIN CAMBIOS FUNCIONALES ---
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
             function checkVisibility() {
@@ -273,16 +283,13 @@
                 closeModal(mediatecaModal, document.getElementById('mediateca-iframe-container'));
             });
 
-            // --- LÓGICA DEL INTERRUPTOR DE SKINS (AHORA SOPORTA VIDEO) ---
             const skinSwitcherBtn = document.querySelector('.header-logo a');
             const videoContainer = document.getElementById('background-video-container');
             const videoElement = document.getElementById('background-video');
             
-            // Ahora es una lista de objetos para diferenciar tipo y url
             const backgroundSkins = [
                 { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png'},
                 { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602021/u7545868924_Una_vieja_mquina_de_escribir_sobre_una_mesa_de_ma_834e7f81-26c3-4b22-9218-c2e6d90fadc2_0_rhjxmm.png'},
-                // Ejemplo de video .webm - ¡Puedes añadir más aquí!
                 { type: 'video', url: 'https://cdn.coverr.co/videos/coverr-a-man-looks-at-a-big-city-through-a-telescope-7133/1080p.mp4'},
                 { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602044/u7545868924_Un_micrfono_vintage_de_los_aos_50_pero_en_lugar_d_7928519f-5d0d-4ae1-8520-7e9d8add1608_0_urhsaz.png'},
                 { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602027/u7545868924_Bodegn_de_alto_contraste._Una_cmara_de_fotos_rfle_7fb3de29-8b25-4f70-81cb-6f7e0c57fe21_3_ua2j7r.png'}
@@ -296,14 +303,12 @@
                 const newSkin = backgroundSkins[currentSkinIndex];
                 
                 if (newSkin.type === 'video') {
-                    // Si es un video, lo activamos
-                    document.body.style.backgroundImage = 'none'; // Ocultamos el fondo de imagen del body
+                    document.body.style.backgroundImage = 'none';
                     videoElement.src = newSkin.url;
                     videoContainer.style.display = 'block';
                     videoElement.play();
                 } else {
-                    // Si es una imagen, la activamos
-                    videoContainer.style.display = 'none'; // Ocultamos el contenedor de video
+                    videoContainer.style.display = 'none';
                     videoElement.pause();
                     document.body.style.backgroundImage = `url('${newSkin.url}')`;
                 }
