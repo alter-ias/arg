@@ -38,17 +38,10 @@
             z-index: -1; overflow: hidden; display: none;
         }
         
-        /* --- CORRECCIÓN #2: MEJOR AJUSTE DE VIDEO --- */
         #background-video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            min-width: 100vw;
-            min-height: 100vh;
-            width: auto;
-            height: auto;
-            object-fit: cover;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            min-width: 100vw; min-height: 100vh;
+            width: auto; height: auto; object-fit: cover;
         }
         
         #global-color-overlay {
@@ -73,10 +66,8 @@
         }
         
         .controls-container {
-            background-color: transparent;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 20px;
+            background-color: transparent; padding: 0.5rem 1rem;
+            border: none; border-radius: 20px;
             display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
         }
 
@@ -116,11 +107,10 @@
         .content-overlay { 
             position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; 
             text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
-            /* La opacidad ahora es controlada por JS, pero la transición se mantiene aquí */
-            transition: transform 0.8s ease;
+            opacity: 0; /* JS controlará la opacidad */
             transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.8s ease;
         }
-        /* La clase is-visible ahora solo controla el movimiento, no la opacidad */
         .media-block.is-visible .content-overlay {
              transform: translateY(0);
         }
@@ -144,7 +134,9 @@
             text-align: center; font-size: 0.9rem; 
             padding: 4rem var(--main-gap); background: transparent;
         }
-        footer p { margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        footer p {
+            margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
@@ -174,29 +166,21 @@
         </section>
         <section class="media-block" id="block-2">
             <div class="content-overlay">
-                <div class="section-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M40 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h32c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H40zm432 0c22.1 0 40-17.9 40-40V72c0-22.1-17.9-40-40-40h-32c-22.1 0-40 17.9-40 40v368c0 22.1 17.9 40 40 40h32zM160 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h192c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H160z"/></svg>
-                </div>
-                <h2>Pergamino</h2>
-                <p>Textos periodísticos, ensayos, poemas y demás experimentos literarios</p>
+                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M40 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h32c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H40zm432 0c22.1 0 40-17.9 40-40V72c0-22.1-17.9-40-40-40h-32c-22.1 0-40 17.9-40 40v368c0 22.1 17.9 40 40 40h32zM160 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h192c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H160z"/></svg></div>
+                <h2>Pergamino</h2><p>Textos periodísticos, ensayos, poemas y demás experimentos literarios</p>
                 <button class="btn" id="open-blog-btn">Leer Pergamino</button>
             </div>
         </section>
         <section class="media-block" id="block-3">
             <div class="content-overlay">
-                <div class="section-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M0 128C0 92.7 28.7 64 64 64H512c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128zM192 192a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0z"/></svg>
-                </div>
-                <h2>Mediateca</h2>
-                <p>Una colección de fragmentos audiovisuales</p>
+                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M0 128C0 92.7 28.7 64 64 64H512c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128zM192 192a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0z"/></svg></div>
+                <h2>Mediateca</h2><p>Una colección de fragmentos audiovisuales</p>
                 <button class="btn" id="open-mediateca-btn">Explorar Mediateca</button>
             </div>
         </section>
         <section class="media-block" id="block-4">
             <div class="content-overlay">
-                <div class="section-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M192 32c0 17.7 14.3 32 32 32c123.7 0 224 100.3 224 224c0 17.7 14.3 32 32 32s32-14.3 32-32C512 128.9 383.1 0 224 0c-17.7 0-32 14.3-32 32zM96 23.3c-11.2-5.4-24.3-3.4-33.5 5.1L10.3 75.1C3.8 82.2 0 91.2 0 100.7V411.3c0 9.5 3.8 18.5 10.3 25.6l52.2 46.7c9.2 8.5 22.3 10.5 33.5 5.1l352-169.8c11.3-5.5 18-16.5 18-28.5s-6.7-23-18-28.5L96 23.3z"/></svg>
-                </div>
+                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M192 32c0 17.7 14.3 32 32 32c123.7 0 224 100.3 224 224c0 17.7 14.3 32 32 32s32-14.3 32-32C512 128.9 383.1 0 224 0c-17.7 0-32 14.3-32 32zM96 23.3c-11.2-5.4-24.3-3.4-33.5 5.1L10.3 75.1C3.8 82.2 0 91.2 0 100.7V411.3c0 9.5 3.8 18.5 10.3 25.6l52.2 46.7c9.2 8.5 22.3 10.5 33.5 5.1l352-169.8c11.3-5.5 18-16.5 18-28.5s-6.7-23-18-28.5L96 23.3z"/></svg></div>
                 <h2>Lotería Tapatía</h2><p>Una reinterpretación digital del clásico juego de mesa.</p>
                 <button class="btn" id="open-loteria-btn">Jugar Ahora</button>
             </div>
@@ -214,32 +198,25 @@
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
 
-            // --- CORRECCIÓN #1: LÓGICA DE SCROLL MEJORADA CON FADE OUT ---
             function updateScrollEffects() {
-                const fadeOutZone = 250; // Distancia en píxeles desde arriba para empezar a desvanecer
-
+                const fadeOutZone = 250; 
                 mediaBlocks.forEach(block => {
                     const content = block.querySelector('.content-overlay');
                     const rect = block.getBoundingClientRect();
-
-                    // Controla la animación de entrada (movimiento)
+                    
                     const isInView = rect.top < windowHeight * 0.8 && rect.bottom > windowHeight * 0.2;
                     block.classList.toggle('is-visible', isInView);
 
-                    // Controla la opacidad para el desvanecimiento
                     if (isInView) {
-                        // Calcula la opacidad para el desvanecimiento superior
                         const fadeOutOpacity = Math.min(1, Math.max(0, rect.top / fadeOutZone));
                         content.style.opacity = fadeOutOpacity;
                     } else {
-                        content.style.opacity = 0; // Se asegura que esté oculto si no está en el área visible
+                        content.style.opacity = 0;
                     }
                 });
             }
             window.addEventListener('scroll', updateScrollEffects);
-            updateScrollEffects(); // Llamada inicial
             
-            // --- CÓDIGO DE FILTROS Y MODALES (SIN CAMBIOS) ---
             const filterButtons = document.querySelectorAll('.filter-btn');
             const opacitySlider = document.getElementById('opacity-slider');
             const root = document.documentElement;
@@ -311,15 +288,15 @@
             const videoElement = document.getElementById('background-video');
             
             const backgroundSkins = [
-                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610854/skin06_py1plm.webm' },
-                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm' },
-                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm' },
-                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm' },
-                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm' },
-                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm' },
-                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm' },
-                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm' },
-                { type: 'video', url: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm' }
+                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610854/skin06_py1plm.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610854/skin06_py1plm.webm' }},
+                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm' }},
+                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm' }},
+                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm' }},
+                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm' }},
+                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm' }},
+                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm' }},
+                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm' }},
+                { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm' }}
             ];
             
             let currentSkinIndex = 0;
@@ -327,14 +304,17 @@
             function applySkin(index) {
                 const skin = backgroundSkins[index];
                 if (skin.type === 'video') {
+                    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                    const videoUrl = isMobile ? skin.url.mobile : skin.url.desktop;
+
+                    // Evita recargar el mismo video si no es necesario (ej. en resize)
+                    if (videoElement.src !== videoUrl) {
+                        videoElement.src = videoUrl;
+                    }
+                    
                     document.body.style.backgroundImage = 'none';
-                    videoElement.src = skin.url;
                     videoContainer.style.display = 'block';
                     videoElement.play();
-                } else {
-                    videoContainer.style.display = 'none';
-                    videoElement.pause();
-                    document.body.style.backgroundImage = `url('${skin.url}')`;
                 }
                 currentSkinIndex = index;
             }
@@ -346,8 +326,15 @@
                 applySkin(nextIndex);
             });
 
+            // Re-evaluar el video en resize para cambiar entre versión desktop/mobile
+            window.addEventListener('resize', () => {
+                applySkin(currentSkinIndex);
+            });
+
+            // Aplicar skin al cargar
             const savedSkinIndex = parseInt(localStorage.getItem('argIndexSkin') || 0);
             applySkin(savedSkinIndex);
+            updateScrollEffects(); // Llamada final para asegurar estado inicial correcto
         });
     </script>
 </body>
