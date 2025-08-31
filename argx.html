@@ -18,7 +18,6 @@
         background-size: 400% 400%;
         animation: gradient-horizontal 25s ease infinite;
       }
-      /* Custom styles for range input */
       input[type="range"] {
         -webkit-appearance: none;
         appearance: none;
@@ -50,9 +49,7 @@
 {
   "imports": {
     "react": "https://esm.sh/react@18.3.1",
-    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
-    "react/": "https://aistudiocdn.com/react@^19.1.1/"
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client"
   }
 }
 </script>
@@ -65,7 +62,6 @@
 
       const { useState, useEffect, useCallback, useRef } = React;
 
-      // --- components/Icons.tsx ---
       const PergaminoIcon = (props) => (
           React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 512 512", ...props },
               React.createElement('path', { d: "M40 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h32c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H40zm432 0c22.1 0 40-17.9 40-40V72c0-22.1-17.9-40-40-40h-32c-22.1 0-40 17.9-40 40v368c0 22.1 17.9 40 40 40h32zM160 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h192c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H160z" })
@@ -84,9 +80,7 @@
           )
       );
 
-      // --- constants.tsx ---
       const backgroundSkins = [
-          { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610854/skin06_py1plm.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610854/skin06_py1plm.webm' }},
           { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm' }},
           { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm' }},
           { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm' }},
@@ -110,7 +104,6 @@
           { id: "block-4", subtitle: "Lotería Tapatía", description: "Una reinterpretación digital del clásico juego de mesa.", buttonText: "Jugar Ahora", modalKey: "loteria", icon: LoteriaIcon }
       ];
 
-      // --- components/Header.tsx ---
       const FilterButton = ({ palette, title, gradient, isActive, onClick }) => (
         React.createElement('button', {
             className: `w-5 h-5 rounded-full border-2 border-[#f8f9fa] cursor-pointer transition-transform duration-200 hover:scale-110 ${gradient} ${isActive ? 'border-4' : ''}`,
@@ -139,7 +132,6 @@
           );
       };
 
-      // --- components/MediaBlock.tsx ---
       const MediaBlock = ({ id, title, subtitle, description, buttonText, onButtonClick, icon: Icon }) => {
           const [opacity, setOpacity] = useState(0);
           const blockRef = useRef(null);
@@ -182,20 +174,14 @@
           );
       };
 
-      // --- components/Footer.tsx ---
-      const Footer = () => {
-          return (
-              React.createElement('footer', { className: "relative z-10 text-center text-sm py-16 px-8 bg-transparent" },
-                  React.createElement('p', { className: "m-0 text-shadow-lg" }, "© 2025 - ARG. Todos los derechos reservados.")
-              )
-          );
-      };
+      const Footer = () => (
+          React.createElement('footer', { className: "relative z-10 text-center text-sm py-16 px-8 bg-transparent" },
+              React.createElement('p', { className: "m-0 text-shadow-lg" }, "© 2025 - ARG. Todos los derechos reservados.")
+          )
+      );
 
-      // --- components/Modal.tsx ---
       const Modal = ({ isOpen, onClose, url }) => {
-          if (!isOpen) {
-              return null;
-          }
+          if (!isOpen) return null;
           return (
               React.createElement('div', { className: `fixed inset-0 bg-[#0A0A0A] z-[2000] flex items-center justify-center transition-opacity duration-500 ease-in-out ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}` },
                   React.createElement('button', { onClick: onClose, className: "absolute top-5 right-5 text-3xl text-white bg-black/50 rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-[2010] leading-none", 'aria-label': "Cerrar modal" }, "×"),
@@ -206,29 +192,20 @@
           );
       };
 
-      // --- App.tsx ---
       const App = () => {
-          const [currentSkinIndex, setCurrentSkinIndex] = useState(0);
-          const [activePalette, setActivePalette] = useState('off');
-          const [filterOpacity, setFilterOpacity] = useState(0);
+          // --- ÚNICO CAMBIO: INICIALIZAR EL ESTADO DIRECTAMENTE DESDE LOCALSTORAGE ---
+          const [currentSkinIndex, setCurrentSkinIndex] = useState(() => parseInt(localStorage.getItem('argIndexSkin') || '0', 10));
+          
+          const [activePalette, setActivePalette] = useState(() => localStorage.getItem('argIndexPalette') || 'off');
+          const [filterOpacity, setFilterOpacity] = useState(() => parseInt(localStorage.getItem('argIndexOpacity') || '0', 10));
           const [activeModal, setActiveModal] = useState(null);
           const [videoUrl, setVideoUrl] = useState('');
-
-          useEffect(() => {
-              const savedSkinIndex = parseInt(localStorage.getItem('argIndexSkin') || '0', 10);
-              const savedPalette = localStorage.getItem('argIndexPalette') || 'off';
-              const savedOpacity = parseInt(localStorage.getItem('argIndexOpacity') || '0', 10);
-              setCurrentSkinIndex(savedSkinIndex);
-              setActivePalette(savedPalette);
-              setFilterOpacity(savedOpacity);
-          }, []);
 
           const applySkin = useCallback((index) => {
               const skin = backgroundSkins[index];
               const isMobile = window.matchMedia("(max-width: 768px)").matches;
               const newVideoUrl = isMobile ? skin.url.mobile : skin.url.desktop;
               setVideoUrl(newVideoUrl);
-              setCurrentSkinIndex(index);
           }, []);
 
           useEffect(() => {
@@ -272,7 +249,7 @@
 
           const handleSkinChange = () => {
               const nextIndex = (currentSkinIndex + 1) % backgroundSkins.length;
-              applySkin(nextIndex);
+              setCurrentSkinIndex(nextIndex);
           };
 
           const handlePaletteChange = (palette) => {
@@ -347,7 +324,6 @@
           );
       }
 
-      // --- index.tsx ---
       const rootElement = document.getElementById('root');
       if (!rootElement) {
         throw new Error("Could not find root element to mount to");
