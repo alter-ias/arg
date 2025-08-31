@@ -133,7 +133,7 @@
                     <ul id="video-list-ul"></ul>
                     <div id="video-sources" style="display: none;">
                         <a data-src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk">¿Quién es Alan Ruíz?</a>
-                        <a data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Manifiesto</a>
+                        <a data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Ecos en las Ruinas</a>
                     </div>
                 </div>
             </div>
@@ -149,8 +149,8 @@
                 <div class="media-list-box">
                     <ul id="podcast-list-ul"></ul>
                     <div id="podcast-sources" style="display: none;">
-                        <a data-src="https://open.spotify.com/embed/episode/1UNPu6kLKZJ3fHrCWB4yJg?utm_source=generator&theme=0">Episodio sobre Creatividad</a>
-                        <a data-src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0">Diálogos sobre el Futuro</a>
+                        <a data-src="https://open.spotify.com/embed/episode/1UNPu6kLKZJ3fHrCWB4yJg?utm_source=generator&theme=0">Capítulo 4 - Los casiamigos</a>
+                        <a data-src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0">Capítulo 3 - Gentrificación</a>
                     </div>
                 </div>
             </div>
@@ -235,7 +235,8 @@
             const windowHeight = window.innerHeight;
 
             function updateFadeEffects() {
-                const fadeOutZone = windowHeight * 0.35; // Zona de desvanecimiento
+                // Aumentamos la zona de desvanecimiento para que sea más gradual
+                const fadeOutZone = windowHeight * 0.5; // Aumentado de 0.3 a 0.5 para un desvanecimiento más lento
                 fadeElements.forEach(element => {
                     // Excluir el podcast-archive del efecto de desvanecimiento
                     if (element.id === 'podcast-archive') {
@@ -244,7 +245,15 @@
                     }
                     
                     const rect = element.getBoundingClientRect();
-                    const opacity = Math.max(0, Math.min(1, rect.top / fadeOutZone));
+                    // Ajustamos el cálculo para que el desvanecimiento comience más tarde
+                    const fadeStart = windowHeight * 0.2; // Empieza a desvanecerse cuando el elemento está al 20% del viewport
+                    let opacity = 1;
+                    
+                    if (rect.top < fadeStart) {
+                        // Comienza a desvanecerse
+                        opacity = Math.max(0.3, Math.min(1, (rect.top - fadeStart) / (fadeOutZone * 0.8) + 1));
+                    }
+                    
                     element.style.opacity = opacity;
                 });
             }
