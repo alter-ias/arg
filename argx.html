@@ -39,32 +39,9 @@
             background-repeat: no-repeat;
             transition: background-image 1s ease-in-out;
         }
-
-        /* --- CONTENEDOR PARA EL VIDEO DE FONDO --- */
-        #background-video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* Lo pone detrás de todo el contenido */
-            overflow: hidden;
-            display: none; /* Oculto por defecto */
-        }
-
-        #background-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Asegura que el video cubra todo el espacio */
-        }
-        
-        header, main, footer {
-            position: relative;
-            z-index: 5; /* Asegura que el contenido esté por encima del fondo */
-        }
         
         header { 
-            padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%;
+            padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; 
             mix-blend-mode: exclusion; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem;
         }
 
@@ -74,8 +51,13 @@
         }
         
         .controls-container {
-            background-color: rgba(0,0,0,0.3); padding: 0.5rem 1rem; border-radius: 20px;
-            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+            background-color: rgba(0,0,0,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .filter-controls { display: flex; gap: 0.5rem; }
@@ -88,43 +70,92 @@
 
         .opacity-control { width: 150px; }
         input[type="range"] {
-            -webkit-appearance: none; appearance: none; width: 100%; height: 2px;
-            background: rgba(255, 255, 255, 0.3); border-radius: 2px; outline: none; cursor: pointer;
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
         }
         input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
-            background: var(--color-light); border-radius: 50%; border: 2px solid #1a1a1a;
+            -webkit-appearance: none; appearance: none;
+            width: 16px; height: 16px;
+            background: var(--color-light);
+            border-radius: 50%;
+            border: 2px solid #1a1a1a;
         }
         input[type="range"]::-moz-range-thumb {
-            width: 16px; height: 16px; background: var(--color-light);
-            border-radius: 50%; border: 2px solid #1a1a1a;
+            width: 16px; height: 16px;
+            background: var(--color-light);
+            border-radius: 50%;
+            border: 2px solid #1a1a1a;
         }
 
         .media-block { 
-            position: relative; width: 100%; height: 100vh; overflow: hidden; 
-            display: flex; align-items: center; justify-content: center; text-align: center;
+            position: relative; 
+            width: 100%; 
+            height: 100vh; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
             background-color: transparent; 
         }
 
         .media-block::before { 
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.4); z-index: 2; 
+            content: ''; 
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.4); 
+            z-index: 2; 
         }
         
         .color-overlay { 
-            position: absolute; z-index: 3; width: 100%; height: 100%; pointer-events: none;
-            transition: opacity 0.5s ease; background: var(--active-gradient);
-            background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite;
+            position: absolute; z-index: 3;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            background: var(--active-gradient);
+            background-size: 400% 400%;
+            animation: gradient-horizontal 25s ease infinite;
             opacity: var(--filter-opacity);
         }
         
         .content-overlay { position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
         .media-block.is-visible .content-overlay { opacity: 1; transform: translateY(0); }
         
-        .content-overlay h1 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 0.8rem 0; font-size: 3.5rem; }
-        .content-overlay h2 { font-size: 2.8rem; }
-        .content-overlay p { font-size: 1rem; max-width: 600px; margin: 0 auto 1rem auto; line-height: 1.6; }
-        .btn { display: inline-block; padding: 0.6rem 1.5rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: background-color 0.3s, color 0.3s; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
+        /* --- CAMBIOS DE TAMAÑO Y ESPACIADO AQUÍ --- */
+        .content-overlay h1 { 
+            font-family: var(--font-serif); 
+            font-weight: 600; 
+            line-height: 1.1; 
+            margin: 0 0 0.8rem 0; /* Margen inferior reducido */
+            font-size: 3.5rem; /* Reducido de 5rem */
+        }
+        .content-overlay h2 { 
+            font-size: 2.8rem; /* Reducido de 4rem */
+        }
+        .content-overlay p { 
+            font-size: 1rem; /* Reducido de 1.2rem */
+            max-width: 600px; 
+            margin: 0 auto 1rem auto; /* Margen inferior reducido */
+            line-height: 1.6;
+        }
+        .btn { 
+            display: inline-block; 
+            padding: 0.6rem 1.5rem; /* Relleno reducido */
+            border: 2px solid var(--color-light); 
+            color: var(--color-light); 
+            background-color: transparent; 
+            text-decoration: none; 
+            transition: background-color 0.3s, color 0.3s; 
+            font-size: 0.8rem; /* Reducido de 0.9rem */
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            cursor: pointer; 
+            border-radius: 50px; 
+        }
         
         .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0A0A0A; z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
         .modal-container.is-active { opacity: 1; pointer-events: auto; }
@@ -132,14 +163,11 @@
         .iframe-container { width: 100%; height: 100%; }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
 
-        footer { text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a); background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite; }
+        footer { position: relative; text-align: center; font-size: 0.9rem; padding: 4rem var(--main-gap); background: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a); background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite; }
+        footer p { position: relative; z-index: 2; }
     </style>
 </head>
 <body>
-    <!-- ELEMENTO AÑADIDO PARA EL FONDO DE VIDEO -->
-    <div id="background-video-container">
-        <video id="background-video" loop muted autoplay playsinline></video>
-    </div>
 
     <header>
         <div class="header-logo"><a href="#">ARG</a></div>
@@ -195,18 +223,22 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- CÓDIGO DE VISIBILIDAD Y FILTROS (SIN CAMBIOS) ---
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
+            
             function checkVisibility() {
                  mediaBlocks.forEach(block => {
                     const rect = block.getBoundingClientRect();
-                    if (rect.top < windowHeight * 0.75 && rect.bottom > windowHeight * 0.25) { block.classList.add('is-visible'); } 
-                    else { block.classList.remove('is-visible'); }
+                    if (rect.top < windowHeight * 0.75 && rect.bottom > windowHeight * 0.25) {
+                         block.classList.add('is-visible');
+                    } else {
+                         block.classList.remove('is-visible');
+                    }
                 });
             }
             window.addEventListener('scroll', checkVisibility);
             checkVisibility();
+
             const filterButtons = document.querySelectorAll('.filter-btn');
             const opacitySlider = document.getElementById('opacity-slider');
             const root = document.documentElement;
@@ -217,11 +249,16 @@
                     const gradient = getComputedStyle(root).getPropertyValue(`--gradient-${palette}`);
                     root.style.setProperty('--active-gradient', gradient);
                 }
-                filterButtons.forEach(btn => { btn.classList.toggle('is-active', btn.dataset.palette === palette); });
+                filterButtons.forEach(btn => {
+                    btn.classList.toggle('is-active', btn.dataset.palette === palette);
+                });
                 opacitySlider.value = opacity;
                 currentPalette = palette;
             }
-            function saveSettings(palette, opacity) { localStorage.setItem('argIndexPalette', palette); localStorage.setItem('argIndexOpacity', opacity); }
+            function saveSettings(palette, opacity) {
+                localStorage.setItem('argIndexPalette', palette);
+                localStorage.setItem('argIndexOpacity', opacity);
+            }
             const savedPalette = localStorage.getItem('argIndexPalette') || 'off';
             const savedOpacity = localStorage.getItem('argIndexOpacity') || '0';
             applySettings(savedPalette, savedOpacity);
@@ -240,6 +277,7 @@
                 applySettings(currentPalette, newOpacity);
                 saveSettings(currentPalette, newOpacity);
             });
+
             function openModal(modal, iframeContainer, url, historyState, historyHash) {
                 if (modal.classList.contains('is-active')) return;
                 const iframe = document.createElement('iframe');
@@ -265,7 +303,9 @@
             document.getElementById('open-mediateca-btn').addEventListener('click', () => openModal(mediatecaModal, document.getElementById('mediateca-iframe-container'), 'https://alter-ias.github.io/arg/mediateca.html', 'mediateca', '#mediateca'));
             document.getElementById('close-mediateca-btn').addEventListener('click', () => history.back());
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && (loteriaModal.classList.contains('is-active') || blogModal.classList.contains('is-active') || mediatecaModal.classList.contains('is-active'))) { history.back(); }
+                if (e.key === 'Escape' && (loteriaModal.classList.contains('is-active') || blogModal.classList.contains('is-active') || mediatecaModal.classList.contains('is-active'))) {
+                    history.back();
+                }
             });
             window.addEventListener('popstate', () => {
                 closeModal(loteriaModal, document.getElementById('loteria-iframe-container'));
@@ -273,19 +313,13 @@
                 closeModal(mediatecaModal, document.getElementById('mediateca-iframe-container'));
             });
 
-            // --- LÓGICA DEL INTERRUPTOR DE SKINS (AHORA SOPORTA VIDEO) ---
             const skinSwitcherBtn = document.querySelector('.header-logo a');
-            const videoContainer = document.getElementById('background-video-container');
-            const videoElement = document.getElementById('background-video');
             
-            // Ahora es una lista de objetos para diferenciar tipo y url
             const backgroundSkins = [
-                { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png'},
-                { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602021/u7545868924_Una_vieja_mquina_de_escribir_sobre_una_mesa_de_ma_834e7f81-26c3-4b22-9218-c2e6d90fadc2_0_rhjxmm.png'},
-                // Ejemplo de video .webm - ¡Puedes añadir más aquí!
-                { type: 'video', url: 'https://cdn.coverr.co/videos/coverr-a-man-looks-at-a-big-city-through-a-telescope-7133/1080p.mp4'},
-                { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602044/u7545868924_Un_micrfono_vintage_de_los_aos_50_pero_en_lugar_d_7928519f-5d0d-4ae1-8520-7e9d8add1608_0_urhsaz.png'},
-                { type: 'image', url: 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602027/u7545868924_Bodegn_de_alto_contraste._Una_cmara_de_fotos_rfle_7fb3de29-8b25-4f70-81cb-6f7e0c57fe21_3_ua2j7r.png'}
+                'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png',
+                'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602021/u7545868924_Una_vieja_mquina_de_escribir_sobre_una_mesa_de_ma_834e7f81-26c3-4b22-9218-c2e6d90fadc2_0_rhjxmm.png',
+                'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602044/u7545868924_Un_micrfono_vintage_de_los_aos_50_pero_en_lugar_d_7928519f-5d0d-4ae1-8520-7e9d8add1608_0_urhsaz.png',
+                'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602027/u7545868924_Bodegn_de_alto_contraste._Una_cmara_de_fotos_rfle_7fb3de29-8b25-4f70-81cb-6f7e0c57fe21_3_ua2j7r.png'
             ];
             
             let currentSkinIndex = 0;
@@ -293,20 +327,9 @@
             skinSwitcherBtn.addEventListener('click', (event) => {
                 event.preventDefault(); 
                 currentSkinIndex = (currentSkinIndex + 1) % backgroundSkins.length;
-                const newSkin = backgroundSkins[currentSkinIndex];
+                const newSkinUrl = backgroundSkins[currentSkinIndex];
                 
-                if (newSkin.type === 'video') {
-                    // Si es un video, lo activamos
-                    document.body.style.backgroundImage = 'none'; // Ocultamos el fondo de imagen del body
-                    videoElement.src = newSkin.url;
-                    videoContainer.style.display = 'block';
-                    videoElement.play();
-                } else {
-                    // Si es una imagen, la activamos
-                    videoContainer.style.display = 'none'; // Ocultamos el contenedor de video
-                    videoElement.pause();
-                    document.body.style.backgroundImage = `url('${newSkin.url}')`;
-                }
+                document.body.style.backgroundImage = `url('${newSkinUrl}')`;
             });
         });
     </script>
