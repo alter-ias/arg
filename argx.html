@@ -106,12 +106,7 @@
         .content-overlay { 
             position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; 
             text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.8s ease;
-        }
-        .media-block.is-visible .content-overlay {
-             transform: translateY(0);
+            transition: transform 0.8s ease, opacity 0.2s linear; /* Transición de opacidad lineal para mayor suavidad */
         }
         
         .content-overlay h1 { font-family: var(--font-serif); font-weight: 600; line-height: 1.1; margin: 0 0 0.8rem 0; font-size: 3.5rem; }
@@ -197,24 +192,30 @@
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
 
+            // --- LÓGICA DE SCROLL REESCRITA Y CORREGIDA ---
             function updateScrollEffects() {
-                const fadeOutZone = 300; // Aumenta la zona de desvanecimiento para un efecto más suave
+                const fadeZoneHeight = windowHeight * 0.5; // El desvanecimiento ocurre en la mitad superior/inferior
+                
                 mediaBlocks.forEach(block => {
                     const content = block.querySelector('.content-overlay');
                     const rect = block.getBoundingClientRect();
                     
-                    const isMostlyInView = rect.top < windowHeight * 0.9 && rect.bottom > 0;
-                    block.classList.toggle('is-visible', isMostlyInView);
-
-                    if (isMostlyInView) {
-                        const opacity = Math.max(0, Math.min(1, rect.top / fadeOutZone));
-                        content.style.opacity = opacity;
-                    } else {
-                        content.style.opacity = 0;
-                    }
+                    // Calcula la distancia del centro del bloque al centro de la pantalla
+                    const blockCenter = rect.top + rect.height / 2;
+                    const screenCenter = windowHeight / 2;
+                    const distance = Math.abs(screenCenter - blockCenter);
+                    
+                    // Calcula la opacidad: 1 en el centro, 0 en los bordes de la zona de fade
+                    const opacity = Math.max(0, 1 - distance / (fadeZoneHeight));
+                    
+                    content.style.opacity = opacity;
+                    
+                    // Mueve el bloque un poco para un efecto más dinámico
+                    content.style.transform = `translateY(${ (1 - opacity) * 20 }px)`;
                 });
             }
             window.addEventListener('scroll', updateScrollEffects);
+            window.addEventListener('resize', updateScrollEffects);
             
             // --- CÓDIGO RESTANTE SIN CAMBIOS ---
             const filterButtons = document.querySelectorAll('.filter-btn');
@@ -301,7 +302,7 @@
                     if (videoElement.src !== videoUrl) { videoElement.src = videoUrl; }
                     document.body.style.backgroundImage = 'none';
                     videoContainer.style.display = 'block';
-                    videoElement.play();
+                    videoElement.play().catch(e=>console.log(e));
                 }
                 currentSkinIndex = index;
             }
@@ -314,6 +315,8 @@
             window.addEventListener('resize', () => { applySkin(currentSkinIndex); });
             const savedSkinIndex = parseInt(localStorage.getItem('argIndexSkin') || 0);
             applySkin(savedSkinIndex);
+            
+            // Ejecutar una vez al cargar para establecer el estado inicial
             updateScrollEffects();
         });
     </script>
