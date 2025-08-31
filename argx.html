@@ -180,7 +180,12 @@
           );
       };
 
-    
+      const Footer = () => (
+          React.createElement('footer', { className: "relative z-10 text-center text-sm py-16 px-8 bg-transparent" },
+              React.createElement('p', { className: "m-0 text-shadow-lg" }, "© 2025 - ARG. Todos los derechos reservados.")
+          )
+      );
+
       const Modal = ({ isOpen, onClose, url }) => {
           if (!isOpen) return null;
           return (
