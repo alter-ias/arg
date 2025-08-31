@@ -107,7 +107,6 @@
             position: relative; z-index: 4; padding: var(--main-gap); max-width: 800px; 
             text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
             transform: translateY(20px);
-            /* La opacidad es manejada 100% por JS, pero la transición del transform se queda */
             transition: transform 0.8s ease;
         }
         .media-block.is-visible .content-overlay {
@@ -160,6 +159,7 @@
     </header>
 
     <main>
+        <!-- SECCIÓN RESTAURADA -->
         <section class="media-block" id="block-1">
             <div class="content-overlay"><h1>ALAN RUÍZ GALICIA</h1><p>Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana</p></div>
         </section>
@@ -203,10 +203,10 @@
                     const content = block.querySelector('.content-overlay');
                     const rect = block.getBoundingClientRect();
                     
-                    const isInView = rect.top < windowHeight * 0.8 && rect.bottom > windowHeight * 0.2;
-                    block.classList.toggle('is-visible', isInView);
+                    const isMostlyInView = rect.top < windowHeight * 0.8 && rect.bottom > windowHeight * 0.2;
+                    block.classList.toggle('is-visible', isMostlyInView);
 
-                    if (isInView) {
+                    if (isMostlyInView) {
                         const fadeOutOpacity = Math.min(1, Math.max(0, rect.top / fadeOutZone));
                         content.style.opacity = fadeOutOpacity;
                     } else {
