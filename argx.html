@@ -308,7 +308,7 @@
                               description: section.description,
                               buttonText: section.buttonText,
                               icon: section.icon,
-                              onButtonClick: () => openModal(section.modalKey)
+                              onButtonClick: section.modalKey ? () => { window.location.href = modalData[section.modalKey].url; } : null
                           })
                       )
                   ),
