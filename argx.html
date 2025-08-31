@@ -27,20 +27,7 @@
         }
 
         * { box-sizing: border-box; }
-        body { 
-            margin: 0; 
-            font-family: var(--font-sans); 
-            color: var(--color-light); 
-            background-color: #1a1a1a; 
-            overflow-x: hidden;
-            
-            /* --- ESTILOS AÑADIDOS PARA EL FONDO DE PÁGINA --- */
-            background-size: cover;
-            background-position: center center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            transition: background-image 1s ease-in-out; /* Transición suave para el cambio de imagen */
-        }
+        body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
         
         header { 
             padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; 
@@ -48,8 +35,8 @@
         }
 
         .header-logo a { 
-            font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light);
-            cursor: pointer; /* --- AÑADIDO: Cambia el cursor para indicar que es clickeable --- */
+            font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light); 
+            cursor: pointer; /* Indica que es un elemento interactivo */
         }
         
         .controls-container {
@@ -95,7 +82,7 @@
 
         .media-block { position: relative; width: 100%; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; }
         .background-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; }
-        .background-media img, .background-media video { width: 100%; height: 130%; object-fit: cover; will-change: transform; }
+        .background-media img, .background-media video { width: 100%; height: 130%; object-fit: cover; will-change: transform; transition: opacity 0.4s ease-in-out; }
         .media-block::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 2; }
         
         .color-overlay { 
@@ -186,6 +173,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // --- CÓDIGO ORIGINAL (SIN CAMBIOS) ---
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
             let ticking = false;
@@ -212,12 +200,10 @@
             window.addEventListener('scroll', () => { if (!ticking) { window.requestAnimationFrame(updateScrollEffects); ticking = true; } });
             updateScrollEffects();
 
-            // --- LÓGICA DE FILTRO CON OPACIDAD Y LOCALSTORAGE (SIN CAMBIOS) ---
             const filterButtons = document.querySelectorAll('.filter-btn');
             const opacitySlider = document.getElementById('opacity-slider');
             const root = document.documentElement;
             let currentPalette = 'off';
-
             function applySettings(palette, opacity) {
                 root.style.setProperty('--filter-opacity', opacity / 100);
                 if (palette !== 'off') {
@@ -230,39 +216,29 @@
                 opacitySlider.value = opacity;
                 currentPalette = palette;
             }
-
             function saveSettings(palette, opacity) {
                 localStorage.setItem('argIndexPalette', palette);
                 localStorage.setItem('argIndexOpacity', opacity);
             }
-
             const savedPalette = localStorage.getItem('argIndexPalette') || 'off';
             const savedOpacity = localStorage.getItem('argIndexOpacity') || '0';
             applySettings(savedPalette, savedOpacity);
-
             filterButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const newPalette = button.dataset.palette;
                     let newOpacity = opacitySlider.value;
-                    if (newOpacity == 0) {
-                        newOpacity = 40;
-                    }
+                    if (newOpacity == 0) { newOpacity = 40; }
                     applySettings(newPalette, newOpacity);
                     saveSettings(newPalette, newOpacity);
                 });
             });
-
             opacitySlider.addEventListener('input', () => {
                 const newOpacity = opacitySlider.value;
-                if (currentPalette === 'off' && newOpacity > 0) {
-                    currentPalette = 'full'; 
-                }
+                if (currentPalette === 'off' && newOpacity > 0) { currentPalette = 'full'; }
                 applySettings(currentPalette, newOpacity);
                 saveSettings(currentPalette, newOpacity);
             });
 
-
-            // --- GESTIÓN DE MODALES (SIN CAMBIOS) ---
             function openModal(modal, iframeContainer, url, historyState, historyHash) {
                 if (modal.classList.contains('is-active')) return;
                 const iframe = document.createElement('iframe');
@@ -298,18 +274,21 @@
                 closeModal(mediatecaModal, document.getElementById('mediateca-iframe-container'));
             });
 
-            // --- NUEVA LÓGICA DEL INTERRUPTOR DE SKINS ---
+            // --- LÓGICA DEL INTERRUPTOR DE SKINS (VERSIÓN CORREGIDA Y FUNCIONAL) ---
             const skinSwitcherBtn = document.querySelector('.header-logo a');
+            const allBackgroundImages = document.querySelectorAll('.media-block .background-media img');
+            
             const backgroundSkins = [
                 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png',
                 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602021/u7545868924_Una_vieja_mquina_de_escribir_sobre_una_mesa_de_ma_834e7f81-26c3-4b22-9218-c2e6d90fadc2_0_rhjxmm.png',
                 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602044/u7545868924_Un_micrfono_vintage_de_los_aos_50_pero_en_lugar_d_7928519f-5d30-4ae1-8520-7e9d8add1608_0_urhsaz.png',
                 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602027/u7545868924_Bodegn_de_alto_contraste._Una_cmara_de_fotos_rfle_7fb3de29-8b25-4f70-81cb-6f7e0c57fe21_3_ua2j7r.png'
             ];
-            let currentSkinIndex = -1; // Empezamos en -1 para que el primer click muestre la primera imagen (índice 0)
+            
+            let currentSkinIndex = 0;
 
             skinSwitcherBtn.addEventListener('click', (event) => {
-                event.preventDefault(); // Evita que el enlace recargue la página o salte al ancla #
+                event.preventDefault(); // Evita que el enlace recargue la página
 
                 // Avanza al siguiente índice de skin, volviendo al principio si llega al final
                 currentSkinIndex = (currentSkinIndex + 1) % backgroundSkins.length;
@@ -317,8 +296,15 @@
                 // Obtiene la URL de la nueva imagen
                 const newSkinUrl = backgroundSkins[currentSkinIndex];
 
-                // Aplica la nueva imagen de fondo al body
-                document.body.style.backgroundImage = `url('${newSkinUrl}')`;
+                // Aplica la nueva imagen de fondo A TODAS las imágenes de los bloques
+                allBackgroundImages.forEach(imgElement => {
+                    // Opcional: añade un efecto de fundido para suavizar el cambio
+                    imgElement.style.opacity = '0';
+                    setTimeout(() => {
+                        imgElement.src = newSkinUrl;
+                        imgElement.style.opacity = '1';
+                    }, 400); // 400ms, coincide con la transición en el CSS
+                });
             });
         });
     </script>
