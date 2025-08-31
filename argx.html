@@ -25,7 +25,27 @@
         }
 
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
+
+        /* --- ESTILOS CLAVE PARA EL FONDO ÚNICO Y FIJO --- */
+        body { 
+            margin: 0; 
+            font-family: var(--font-sans); 
+            color: var(--color-light); 
+            background-color: #1a1a1a; 
+            overflow-x: hidden;
+            
+            /* Define la imagen de fondo inicial */
+            background-image: url('https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png');
+            
+            /* Propiedades para que el fondo cubra todo y se quede fijo */
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed; /* <-- LA MAGIA ESTÁ AQUÍ: ELIMINA EL PARALLAX */
+            background-repeat: no-repeat;
+            
+            /* Transición suave para el cambio de skin */
+            transition: background-image 1s ease-in-out;
+        }
         
         header { 
             padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; 
@@ -78,10 +98,28 @@
             border: 2px solid #1a1a1a;
         }
 
-        .media-block { position: relative; width: 100%; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; }
-        .background-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; }
-        .background-media img, .background-media video { width: 100%; height: 130%; object-fit: cover; will-change: transform; transition: opacity 0.4s ease-in-out; }
-        .media-block::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 2; }
+        .media-block { 
+            position: relative; 
+            width: 100%; 
+            height: 100vh; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+            /* El fondo ahora es transparente para dejar ver el fondo del body */
+            background-color: transparent; 
+        }
+
+        /* Se eliminaron .background-media y sus hijos porque ya no existen */
+
+        .media-block::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.4); 
+            z-index: 2; 
+        }
         
         .color-overlay { 
             position: absolute; z-index: 3;
@@ -128,16 +166,14 @@
     </header>
 
     <main>
-        <!-- AHORA TODAS LAS IMÁGENES TIENEN EL MISMO SRC INICIAL -->
+        <!-- YA NO HAY <div class="background-media"> DENTRO DE LAS SECCIONES -->
         <section class="media-block" id="block-1">
              <div class="color-overlay"></div>
-             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png" alt="Fondo Unico"></div>
             <div class="content-overlay"><h1>ALAN RUÍZ GALICIA</h1><p>Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana</p></div>
         </section>
 
         <section class="media-block" id="block-2">
              <div class="color-overlay"></div>
-             <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png" alt="Fondo Unico"></div>
             <div class="content-overlay">
                 <h2>Pergamino</h2>
                 <p>Textos periodísticos, ensayos, poemas y demás experimentos literarios</p>
@@ -147,7 +183,6 @@
 
         <section class="media-block" id="block-3">
              <div class="color-overlay"></div>
-            <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png" alt="Fondo Unico"></div>
             <div class="content-overlay">
                 <h2>Mediateca</h2>
                 <p>Una colección de fragmentos audiovisuales</p>
@@ -157,7 +192,6 @@
         
         <section class="media-block" id="block-4">
              <div class="color-overlay"></div>
-            <div class="background-media"><img src="https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png" alt="Fondo Unico"></div>
             <div class="content-overlay"><h2>Lotería Tapatía</h2><p>Una reinterpretación digital del clásico juego de mesa.</p>
                 <button class="btn" id="open-loteria-btn">Jugar Ahora</button>
             </div>
@@ -172,33 +206,24 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- CÓDIGO ORIGINAL (SIN CAMBIOS) ---
+            // --- EFECTO DE APARICIÓN DEL CONTENIDO AL HACER SCROLL (MODIFICADO) ---
             const mediaBlocks = document.querySelectorAll('.media-block');
             const windowHeight = window.innerHeight;
-            let ticking = false;
-            function updateScrollEffects() {
-                mediaBlocks.forEach(block => {
+            
+            function checkVisibility() {
+                 mediaBlocks.forEach(block => {
                     const rect = block.getBoundingClientRect();
-                    const media = block.querySelector('.background-media > *');
-                    if (!media) return;
-                    if (rect.top < windowHeight && rect.bottom > 0) {
-                        const progress = (rect.top + block.offsetHeight) / (windowHeight + block.offsetHeight);
-                        const clampedProgress = 1 - Math.max(0, Math.min(1, progress));
-                        const travelRange = media.offsetHeight - block.offsetHeight;
-                        const translateY = -travelRange * clampedProgress;
-                        media.style.transform = `translateY(${translateY}px)`;
-                    }
                     if (rect.top < windowHeight * 0.75 && rect.bottom > windowHeight * 0.25) {
                          block.classList.add('is-visible');
                     } else {
                          block.classList.remove('is-visible');
                     }
                 });
-                ticking = false;
             }
-            window.addEventListener('scroll', () => { if (!ticking) { window.requestAnimationFrame(updateScrollEffects); ticking = true; } });
-            updateScrollEffects();
+            window.addEventListener('scroll', checkVisibility);
+            checkVisibility(); // Ejecutar al cargar la página
 
+            // --- LÓGICA DE FILTRO CON OPACIDAD Y LOCALSTORAGE (SIN CAMBIOS) ---
             const filterButtons = document.querySelectorAll('.filter-btn');
             const opacitySlider = document.getElementById('opacity-slider');
             const root = document.documentElement;
@@ -238,6 +263,7 @@
                 saveSettings(currentPalette, newOpacity);
             });
 
+            // --- GESTIÓN DE MODALES (SIN CAMBIOS) ---
             function openModal(modal, iframeContainer, url, historyState, historyHash) {
                 if (modal.classList.contains('is-active')) return;
                 const iframe = document.createElement('iframe');
@@ -273,14 +299,13 @@
                 closeModal(mediatecaModal, document.getElementById('mediateca-iframe-container'));
             });
 
-            // --- LÓGICA DEL INTERRUPTOR DE SKINS ---
+            // --- LÓGICA DEL INTERRUPTOR DE SKINS (ADAPTADA AL NUEVO SISTEMA) ---
             const skinSwitcherBtn = document.querySelector('.header-logo a');
-            const allBackgroundImages = document.querySelectorAll('.media-block .background-media img');
             
             const backgroundSkins = [
                 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602035/u7545868924_Fotografa_conceptual_de_bodegn._Un_proyector_de_c_86450e9a-fe6b-4cfe-9293-44853e6e87ff_1_l8p3rn.png',
                 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602021/u7545868924_Una_vieja_mquina_de_escribir_sobre_una_mesa_de_ma_834e7f81-26c3-4b22-9218-c2e6d90fadc2_0_rhjxmm.png',
-                'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602044/u7545868924_Un_micrfono_vintage_de_los_aos_50_pero_en_lugar_d_7928519f-5d30-4ae1-8520-7e9d8add1608_0_urhsaz.png',
+                'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602044/u7545868924_Un_micrfono_vintage_de_los_aos_50_pero_en_lugar_d_7928519f-5d0d-4ae1-8520-7e9d8add1608_0_urhsaz.png',
                 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1756602027/u7545868924_Bodegn_de_alto_contraste._Una_cmara_de_fotos_rfle_7fb3de29-8b25-4f70-81cb-6f7e0c57fe21_3_ua2j7r.png'
             ];
             
@@ -288,17 +313,11 @@
 
             skinSwitcherBtn.addEventListener('click', (event) => {
                 event.preventDefault(); 
-
                 currentSkinIndex = (currentSkinIndex + 1) % backgroundSkins.length;
                 const newSkinUrl = backgroundSkins[currentSkinIndex];
-
-                allBackgroundImages.forEach(imgElement => {
-                    imgElement.style.opacity = '0';
-                    setTimeout(() => {
-                        imgElement.src = newSkinUrl;
-                        imgElement.style.opacity = '1';
-                    }, 400); 
-                });
+                
+                // Ahora, simplemente cambiamos el fondo del body
+                document.body.style.backgroundImage = `url('${newSkinUrl}')`;
             });
         });
     </script>
