@@ -6,7 +6,7 @@
     <title>Mediateca - Jardín Digital</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     
     <style>
@@ -155,11 +155,6 @@
                 </div>
             </div>
         </section>
-         
-        <section class="archive-block" id="podcast-archive">
-            <div class="content-wrapper">
-            </div>
-        </section>
     </main>
 
     <script>
@@ -242,6 +237,12 @@
             function updateFadeEffects() {
                 const fadeOutZone = windowHeight * 0.3; // Zona de desvanecimiento
                 fadeElements.forEach(element => {
+                    // Excluir el podcast-archive del efecto de desvanecimiento
+                    if (element.id === 'podcast-archive') {
+                        element.style.opacity = 1; // Mantener siempre opacidad completa
+                        return;
+                    }
+                    
                     const rect = element.getBoundingClientRect();
                     const opacity = Math.max(0, Math.min(1, rect.top / fadeOutZone));
                     element.style.opacity = opacity;
