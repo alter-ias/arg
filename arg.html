@@ -62,17 +62,16 @@
 
       const { useState, useEffect, useCallback, useRef } = React;
 
-      // --- DATOS DE LA APLICACIÓN ---
+      // --- DATOS ---
       const sections = {
           home: { title: "ARG", url: null },
           pergamino: { title: "Pergamino", url: 'https://alter-ias.github.io/arg/argblog.html' },
           mediateca: { title: "Mediateca", url: 'https://alter-ias.github.io/arg/mediateca.html' },
           loteria: { title: "Lotería", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
       };
-      
-      const BACKGROUND_IMAGE = 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=3432&auto=format&fit=crop';
+      const BACKGROUND_IMAGE = 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=3432&auto-format&fit=crop';
 
-      // --- COMPONENTES (CONTROLES E INTERFAZ) ---
+      // --- COMPONENTES UI ---
       const PhysicsControls = ({ settings, onUpdate }) => {
           const [isOpen, setIsOpen] = useState(false);
           return React.createElement('div', {
@@ -110,62 +109,64 @@
           return React.createElement('div', { className: "fixed inset-0 flex items-center justify-center text-center p-8 pointer-events-none text-white" }, React.createElement('div', { className: 'relative w-full h-full flex items-center justify-center' }, React.createElement('div', { className: 'max-w-4xl' }, React.createElement('h1', { className: `font-['Cormorant_Garamond'] font-bold leading-none transition-transform duration-500 ease-in-out`, style: { fontSize: 'clamp(5rem, 15vw, 18rem)', transform: `scale(${isHome ? 1 : 1.2})` } }, currentData.title), React.createElement('div', { className: `transition-all duration-700 ease-in-out delay-200`, style: { opacity: isHome ? 0 : 1 } }, React.createElement('p', { className: "max-w-xl mx-auto my-8 text-lg text-white/80" }, currentData.description), React.createElement('a', { href: currentData.url, target: "_blank", rel: "noopener noreferrer", className: "inline-block py-3 px-10 border-2 border-white text-white no-underline transition-all duration-300 text-sm uppercase tracking-wider rounded-full pointer-events-auto hover:bg-white hover:text-black hover:scale-105" }, `Visitar ${currentData.title}`))), Object.keys(sections).filter(key => key !== 'home').map((key, index) => { const angle = (index / (Object.keys(sections).length - 1)) * 2 * Math.PI - (Math.PI / 2); const radius = window.innerWidth > 768 ? 350 : 200; const x = Math.cos(angle) * radius; const y = Math.sin(angle) * radius; return React.createElement('button', { key: key, onClick: () => onNavigate(key), className: `absolute font-['Cormorant_Garamond'] text-4xl text-white/70 transition-all duration-700 ease-in-out pointer-events-auto hover:text-white hover:scale-110`, style: { opacity: isHome ? 1 : 0, transform: `translate(${x}px, ${y}px) scale(${isHome ? 1 : 0.5})` } }, sections[key].title); }), !isHome && React.createElement('button', { onClick: () => onNavigate('home'), className: 'absolute top-8 left-8 text-white/70 text-sm uppercase tracking-widest pointer-events-auto hover:text-white transition-opacity duration-300' }, '← Volver')));
       };
 
-      // --- COMPONENTE PRINCIPAL ---
+      // --- COMPONENTE PRINCIPAL (LÓGICA CORREGIDA) ---
       const App = () => {
           const [activeSection, setActiveSection] = useState('home');
           const [physics, setPhysics] = useState({ radius: 250, stiffness: 0.025, damping: 0.96 });
-          const maskGroupRef = useRef(null);
+          
+          // [CORRECCIÓN CLAVE 1]: El estado de los puntos de la animación
+          const [points, setPoints] = useState([]);
           
           const physicsRef = useRef(physics);
+          const mousePos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+          const animationFrameId = useRef(null);
+
           useEffect(() => { physicsRef.current = physics; }, [physics]);
 
           const handleControlUpdate = useCallback((key, value) => {
               setPhysics(prev => ({ ...prev, [key]: value }));
           }, []);
 
-          // La animación se ejecuta en un useEffect que se activa una sola vez
+          // [CORRECCIÓN CLAVE 2]: El bucle de animación ahora vive en su propio useEffect y actualiza el estado de React
           useEffect(() => {
-              const maskGroup = maskGroupRef.current;
-              if (!maskGroup) return;
-
               const NUM_POINTS = 16;
-              const mousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-              let animationFrameId = null;
-
-              maskGroup.innerHTML = '';
-              const points = Array.from({ length: NUM_POINTS }, () => {
-                  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                  circle.setAttribute('fill', 'white');
-                  maskGroup.appendChild(circle);
-                  return { el: circle, x: mousePos.x, y: mousePos.y, vx: 0, vy: 0 };
-              });
               
-              const handleMouseMove = (e) => { mousePos.x = e.clientX; mousePos.y = e.clientY; };
+              // Inicializar el estado de los puntos
+              let initialPoints = Array.from({ length: NUM_POINTS }, () => ({
+                  x: window.innerWidth / 2,
+                  y: window.innerHeight / 2,
+                  vx: 0,
+                  vy: 0
+              }));
+              setPoints(initialPoints);
+
+              const handleMouseMove = (e) => { mousePos.current = { x: e.clientX, y: e.clientY }; };
               window.addEventListener('mousemove', handleMouseMove);
 
               const animate = () => {
-                  const { stiffness, damping, radius } = physicsRef.current;
-                  points.forEach((point, i) => {
-                      let target = (i === 0) ? mousePos : points[i - 1];
-                      point.vx = (point.vx + (target.x - point.x) * stiffness) * damping;
-                      point.vy = (point.vy + (target.y - point.y) * stiffness) * damping;
-                      point.x += point.vx;
-                      point.y += point.vy;
-                      
-                      const newRadius = radius * (1 - (i / NUM_POINTS) * 0.7);
-                      point.el.setAttribute('cx', point.x);
-                      point.el.setAttribute('cy', point.y);
-                      point.el.setAttribute('r', newRadius);
+                  const { stiffness, damping } = physicsRef.current;
+                  
+                  // Se usa una función de actualización para evitar dependencias en el estado 'points'
+                  setPoints(prevPoints => {
+                      return prevPoints.map((point, i) => {
+                          const target = (i === 0) ? mousePos.current : prevPoints[i - 1];
+                          const newVx = (point.vx + (target.x - point.x) * stiffness) * damping;
+                          const newVy = (point.vy + (target.y - point.y) * stiffness) * damping;
+                          const newX = point.x + newVx;
+                          const newY = point.y + newVy;
+                          return { x: newX, y: newY, vx: newVx, vy: newVy };
+                      });
                   });
-                  animationFrameId = requestAnimationFrame(animate);
+                  
+                  animationFrameId.current = requestAnimationFrame(animate);
               };
               animate();
 
               return () => {
                   window.removeEventListener('mousemove', handleMouseMove);
-                  if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                  if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
               };
-          }, []); // El array vacío [] asegura que este efecto se ejecute UNA SOLA VEZ
+          }, []); // El array vacío [] asegura que este efecto se configure UNA SOLA VEZ
 
           return (
               React.createElement(React.Fragment, null,
@@ -177,31 +178,28 @@
                         React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -15" }),
                       ),
                       React.createElement('mask', { id: "gooey-mask" },
-                        React.createElement('g', { ref: maskGroupRef, filter: "url(#gooey-filter)" })
+                        React.createElement('g', { filter: "url(#gooey-filter)" },
+                            // [CORRECCIÓN CLAVE 3]: Los círculos se renderizan desde el estado de React
+                            points.map((point, i) => React.createElement('circle', {
+                                key: i,
+                                cx: point.x,
+                                cy: point.y,
+                                r: physics.radius * (1 - (i / points.length) * 0.7),
+                                fill: "white"
+                            }))
+                        )
                       )
                     )
                   ),
                   
-                  // Capa 1: Fondo (no afectado por la máscara)
-                  React.createElement('div', {
-                    className: "fixed inset-0 -z-20 bg-cover bg-center",
-                    style: { backgroundImage: `url(${BACKGROUND_IMAGE})` }
-                  }),
-                  React.createElement('div', {className: "fixed inset-0 -z-10 bg-black/70"}),
+                  React.createElement('div', { className: "fixed inset-0 -z-20 bg-cover bg-center", style: { backgroundImage: `url(${BACKGROUND_IMAGE})` } }),
+                  React.createElement('div', { className: "fixed inset-0 -z-10 bg-black/70" }),
 
-                  // Capa 2: Mundo enmascarado. TODO lo que está aquí dentro es revelado por el efecto.
                   React.createElement('div', {
                       className: "fixed inset-0",
-                      style: { 
-                        mask: 'url(#gooey-mask)', 
-                        WebkitMask: 'url(#gooey-mask)' 
-                      }
+                      style: { mask: 'url(#gooey-mask)', WebkitMask: 'url(#gooey-mask)' }
                   },
-                      // Fondo del mundo enmascarado. Podría ser un color o una segunda imagen.
-                      // Por simplicidad y contraste, usamos un color oscuro.
-                      React.createElement('div', {className: 'w-full h-full bg-[#0a0a0a]'}),
-
-                      // La interfaz de texto, que ahora vive dentro del mundo enmascarado.
+                      React.createElement('div', { className: 'w-full h-full bg-[#0a0a0a]' }),
                       React.createElement(ContentLayer, { activeSection, onNavigate: setActiveSection })
                   )
               )
