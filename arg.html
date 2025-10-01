@@ -1,70 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ARG - Jardín Digital</title>
+    <title>ARG - Jardín Fluido</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     <style>
-      body, html {
-        cursor: none; /* Ocultamos el cursor real para el efecto */
+      /* --- Estilos Base y Animaciones --- */
+      html, body {
+        cursor: none;
+        overscroll-behavior: none;
       }
-      @keyframes gradient-horizontal {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+      body {
+        background-color: #101010;
+        color: #f0e9e2;
+        font-family: 'Poppins', sans-serif;
       }
-      .animate-gradient {
-        background-size: 400% 400%;
-        animation: gradient-horizontal 25s ease infinite;
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.05); opacity: 1; }
       }
-      input[type="range"] {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 100%;
-        height: 2px;
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 2px;
-        outline: none;
-        /* El cursor se gestiona globalmente, pero dejamos el puntero para indicar interactividad */
-        cursor: pointer;
+      .animate-pulse-custom {
+        animation: pulse 4s ease-in-out infinite;
       }
-      input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 16px;
-        height: 16px;
-        background: #f8f9fa;
-        border-radius: 50%;
-        border: 2px solid #1a1a1a;
-      }
-      input[type="range"]::-moz-range-thumb {
-        width: 16px;
-        height: 16px;
-        background: #f8f9fa;
-        border-radius: 50%;
-        border: 2px solid #1a1a1a;
-      }
-       /* El SVG de definiciones no debe ocupar espacio visible */
+      /* Ocultar el SVG de definiciones */
       .svg-defs {
-          position: absolute;
-          width: 0;
-          height: 0;
+        position: absolute;
+        width: 0;
+        height: 0;
       }
     </style>
     <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@18.3.1",
-    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client"
-  }
-}
-</script>
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.3.1",
+          "react-dom/client": "https://esm.sh/react-dom@18.3.1/client"
+        }
+      }
+    </script>
 </head>
-  <body class="bg-[#1a1a1a] text-[#f8f9fa] font-['Poppins'] overflow-x-hidden">
+<body class="overflow-hidden">
     <div id="root"></div>
     <script type="module">
       import React from 'react';
@@ -72,59 +50,42 @@
 
       const { useState, useEffect, useCallback, useRef } = React;
 
-      // --- ICONOS Y DATOS (Sin cambios) ---
-      const PergaminoIcon = (props) => ( React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 512 512", ...props }, React.createElement('path', { d: "M40 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h32c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H40zm432 0c22.1 0 40-17.9 40-40V72c0-22.1-17.9-40-40-40h-32c-22.1 0-40 17.9-40 40v368c0 22.1 17.9 40 40 40h32zM160 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h192c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H160z" })) );
-      const MediatecaIcon = (props) => ( React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 576 512", ...props }, React.createElement('path', { d: "M0 128C0 92.7 28.7 64 64 64H512c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128zM192 192a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0z" })) );
-      const LoteriaIcon = (props) => ( React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 512 512", ...props }, React.createElement('path', { d: "M192 32c0 17.7 14.3 32 32 32c123.7 0 224 100.3 224 224c0 17.7 14.3 32 32 32s32-14.3 32-32C512 128.9 383.1 0 224 0c-17.7 0-32 14.3-32 32zM96 23.3c-11.2-5.4-24.3-3.4-33.5 5.1L10.3 75.1C3.8 82.2 0 91.2 0 100.7V411.3c0 9.5 3.8 18.5 10.3 25.6l52.2 46.7c9.2 8.5 22.3 10.5 33.5 5.1l352-169.8c11.3-5.5 18-16.5 18-28.5s-6.7-23-18-28.5L96 23.3z" })) );
+      // --- Datos y Activos (sin cambios) ---
       const backgroundSkins = [ { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm' }} ];
-      const modalData = { pergamino: { url: 'https://alter-ias.github.io/arg/argblog.html' }, mediateca: { url: 'https://alter-ias.github.io/arg/mediateca.html' }, loteria: { url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' }, };
-      const sections = [ { id: "block-0", title: "", description: "" }, { id: "block-1", subtitle: "ALAN RUÍZ GALICIA", description: "Un experimento digital donde se entretejen técnicas del rap, la lírica clásica, el pensamiento crítico y los ritmos de la vida urbana"}, { id: "block-2", subtitle: "Pergamino", description: "Textos periodísticos, ensayos, poemas y demás experimentos literarios", buttonText: "Leer Pergamino", modalKey: "pergamino", icon: PergaminoIcon }, { id: "block-3", subtitle: "Mediateca", description: "Una colección de fragmentos audiovisuales", buttonText: "Explorar Mediateca", modalKey: "mediateca", icon: MediatecaIcon }, { id: "block-4", subtitle: "Lotería Tapatía", description: "Una reinterpretación digital del clásico juego de mesa.", buttonText: "Jugar Ahora", modalKey: "loteria", icon: LoteriaIcon }, { id: "block-5", title: "", description: "" }, ];
+      const sections = {
+          "arg": { title: "Alan Ruíz Galicia", description: "Un jardín digital donde se entretejen la lírica, el pensamiento crítico y los ritmos de la vida urbana.", url: null, position: { top: '50%', left: '50%' }, size: 'large' },
+          "pergamino": { title: "Pergamino", description: "Textos periodísticos, ensayos, poemas y demás experimentos literarios.", url: 'https://alter-ias.github.io/arg/argblog.html', position: { top: '30%', left: '25%' }, size: 'medium' },
+          "mediateca": { title: "Mediateca", description: "Una colección de fragmentos audiovisuales.", url: 'https://alter-ias.github.io/arg/mediateca.html', position: { top: '75%', left: '35%' }, size: 'medium' },
+          "loteria": { title: "Lotería Tapatía", description: "Una reinterpretación digital del clásico juego de mesa.", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html', position: { top: '40%', left: '78%' }, size: 'medium' },
+      };
 
-      // --- COMPONENTES (Header, MediaBlock, etc. sin cambios) ---
-      const FilterButton = ({ palette, title, gradient, isActive, onClick }) => ( React.createElement('button', { className: `w-5 h-5 rounded-full border-2 border-[#f8f9fa] cursor-pointer transition-transform duration-200 hover:scale-110 ${gradient} ${isActive ? 'border-4' : ''}`, title: title, onClick: onClick }) );
-      const Header = ({ onSkinChange, activePalette, onPaletteChange, opacity, onOpacityChange }) => { return ( React.createElement('header', { className: "py-6 px-8 fixed top-0 left-0 w-full z-50 flex flex-col justify-center items-center gap-4" }, React.createElement('div', null, React.createElement('a', { href: "#", onClick: (e) => { e.preventDefault(); onSkinChange(); }, className: "font-['Cormorant_Garamond'] text-4xl font-bold text-[#f8f9fa] no-underline cursor-pointer" }, "ARG")), React.createElement('div', { className: "flex flex-col items-center gap-2 bg-transparent py-2 px-4 rounded-full" }, React.createElement('div', { className: "flex gap-2" }, React.createElement(FilterButton, { palette: "full", title: "Filtro Espectro Completo", gradient: "bg-[linear-gradient(-45deg,#ee7752,#e73c7e,#23a6d5,#23d5ab)]", isActive: activePalette === 'full', onClick: () => onPaletteChange('full') }), React.createElement(FilterButton, { palette: "cool", title: "Filtro Frío", gradient: "bg-[linear-gradient(-45deg,#2c3e50,#4a6da7,#34495e,#22577a)]", isActive: activePalette === 'cool', onClick: () => onPaletteChange('cool') }), React.createElement(FilterButton, { palette: "dark", title: "Filtro Oscuro", gradient: "bg-[linear-gradient(-45deg,#2c3e50,#95a5a6,#1c1c1c,#34495e)]", isActive: activePalette === 'dark', onClick: () => onPaletteChange('dark') })), React.createElement('div', { className: "w-[150px]" }, React.createElement('input', { type: "range", min: "0", max: "80", value: opacity, onChange: (e) => onOpacityChange(parseInt(e.target.value, 10)), title: "Opacidad del filtro" }))))); };
-      const MediaBlock = ({ id, title, subtitle, description, buttonText, onButtonClick, icon: Icon, textColorClass }) => { const [opacity, setOpacity] = useState(0); const blockRef = useRef(null); useEffect(() => { const handleScroll = () => { if (!blockRef.current) return; const rect = blockRef.current.getBoundingClientRect(); const windowHeight = window.innerHeight; const blockCenter = rect.top + rect.height / 2; const viewportCenter = windowHeight / 2; const distanceFromCenter = Math.abs(blockCenter - viewportCenter); const fadeZone = windowHeight * 0.35; const newOpacity = Math.max(0, 1 - distanceFromCenter / fadeZone); setOpacity(newOpacity); }; const timeoutId = setTimeout(handleScroll, 100); window.addEventListener('scroll', handleScroll, { passive: true }); window.addEventListener('resize', handleScroll, { passive: true }); return () => { clearTimeout(timeoutId); window.removeEventListener('scroll', handleScroll); window.removeEventListener('resize', handleScroll); }; }, []); return ( React.createElement('section', { id: id, ref: blockRef, className: "relative w-full min-h-[35vh] flex items-center justify-center text-center" }, React.createElement('div', { className: `relative z-10 p-8 max-w-3xl text-shadow-lg transition-opacity duration-[600ms] ease-out transition-transform duration-[800ms] ease-out ${textColorClass}`, style: { opacity: opacity, transform: `translateY(${(1 - opacity) * 20}px)` } }, Icon && React.createElement('div', { className: "mb-6 opacity-90 flex justify-center" }, React.createElement(Icon, { className: "w-12 h-12 fill-current" })), title && React.createElement('h1', { className: "font-['Cormorant_Garamond'] font-semibold leading-tight m-0 mb-3 text-6xl" }, title), subtitle && React.createElement('h2', { className: "font-['Cormorant_Garamond'] font-semibold leading-tight m-0 mb-3 text-5xl" }, subtitle), React.createElement('p', { className: "text-base max-w-xl mx-auto mb-5 leading-relaxed" }, description), buttonText && React.createElement('button', { onClick: onButtonClick, className: "inline-block py-2.5 px-6 border-2 border-current text-current bg-transparent no-underline transition-colors duration-300 text-xs uppercase tracking-wider cursor-pointer rounded-full hover:bg-[#f8f9fa] hover:text-[#1a1a1a]" }, buttonText)))); };
-      const Modal = ({ isOpen, onClose, url }) => { if (!isOpen) return null; return ( React.createElement('div', { className: `fixed inset-0 bg-[#0A0A0A] z-[2000] flex items-center justify-center transition-opacity duration-500 ease-in-out ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}` }, React.createElement('button', { onClick: onClose, className: "absolute top-5 right-5 text-3xl text-white bg-black/50 rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-[2010] leading-none", 'aria-label': "Cerrar modal" }, "×"), React.createElement('div', { className: "w-full h-full" }, React.createElement('iframe', { src: url, className: "w-full h-full border-none", title: "Contenido embebido" }))) ); };
-
-      // --- [NUEVO] Componente para el efecto viscoso ---
+      // --- [NUEVO] Componente del Cursor Líquido ---
       const GooeyCursor = () => {
           useEffect(() => {
               const gooeyGroup = document.querySelector('#gooey-mask-group');
               if (!gooeyGroup) return;
 
-              const STIFFNESS = 0.1;
-              const DAMPING = 0.75;
-              const NUM_POINTS = 10;
-              const BASE_RADIUS = 70;
-
+              const STIFFNESS = 0.1, DAMPING = 0.8, NUM_POINTS = 12, BASE_RADIUS = 100;
               let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
               let animationFrameId = null;
               
-              const points = [];
-              for (let i = 0; i < NUM_POINTS; i++) {
+              const points = Array.from({ length: NUM_POINTS }, (_, i) => {
                   const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                  const radius = BASE_RADIUS * (1 - (i / NUM_POINTS) * 0.7);
-                  
+                  const radius = BASE_RADIUS * (1 - (i / NUM_POINTS) * 0.6);
                   circle.setAttribute('r', String(radius));
-                  circle.setAttribute('fill', 'white'); // El blanco en una máscara significa "visible"
+                  circle.setAttribute('fill', 'white');
                   gooeyGroup.appendChild(circle);
+                  return { el: circle, x: mouse.x, y: mouse.y, vx: 0, vy: 0 };
+              });
 
-                  points.push({ el: circle, x: mouse.x, y: mouse.y, vx: 0, vy: 0 });
-              }
-
-              const handleMouseMove = (e) => {
-                  mouse.x = e.clientX;
-                  mouse.y = e.clientY;
-              };
+              const handleMouseMove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
               window.addEventListener('mousemove', handleMouseMove);
 
               const animate = () => {
                   points.forEach((point, i) => {
                       let target = (i === 0) ? mouse : points[i - 1];
-                      const ax = (target.x - point.x) * STIFFNESS;
-                      const ay = (target.y - point.y) * STIFFNESS;
-                      point.vx = (point.vx + ax) * DAMPING;
-                      point.vy = (point.vy + ay) * DAMPING;
+                      point.vx = (point.vx + (target.x - point.x) * STIFFNESS) * DAMPING;
+                      point.vy = (point.vy + (target.y - point.y) * STIFFNESS) * DAMPING;
                       point.x += point.vx;
                       point.y += point.vy;
                       point.el.setAttribute('cx', String(point.x));
@@ -132,139 +93,147 @@
                   });
                   animationFrameId = requestAnimationFrame(animate);
               };
-
               animate();
-
-              // Función de limpieza
               return () => {
                   window.removeEventListener('mousemove', handleMouseMove);
-                  if (animationFrameId) {
-                      cancelAnimationFrame(animationFrameId);
-                  }
-                  // Limpiar los círculos del SVG
+                  if (animationFrameId) cancelAnimationFrame(animationFrameId);
                   gooeyGroup.innerHTML = '';
               };
-          }, []); // El array vacío asegura que esto se ejecute solo una vez (al montar)
-
-          return null; // Este componente no renderiza nada en el DOM, solo maneja el efecto
+          }, []);
+          return null;
       };
 
-      const App = () => {
-          const [currentSkinIndex, setCurrentSkinIndex] = useState(() => parseInt(localStorage.getItem('argIndexSkin') || '0', 10));
-          const [activePalette, setActivePalette] = useState(() => localStorage.getItem('argIndexPalette') || 'off');
-          const [filterOpacity, setFilterOpacity] = useState(() => parseInt(localStorage.getItem('argIndexOpacity') || '0', 10));
-          const [activeModal, setActiveModal] = useState(null);
-          const [videoUrl, setVideoUrl] = useState('');
+      // --- [NUEVO] Componente para los Nodos de Navegación ---
+      const NavNode = ({ id, title, position, size, onClick, isActive, isAnyActive }) => {
+        const sizeClasses = {
+            large: 'w-48 h-48 text-4xl',
+            medium: 'w-32 h-32 text-2xl',
+        }[size];
+        
+        return React.createElement('div', {
+            className: `absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-700 ease-in-out ${isAnyActive && !isActive ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`,
+            style: { top: position.top, left: position.left }
+        },
+          React.createElement('button', {
+            onClick: () => onClick(id),
+            className: `flex items-center justify-center rounded-full bg-white/5 border border-white/20 text-center font-['Cormorant_Garamond'] font-semibold backdrop-blur-sm transition-all duration-300 hover:border-white/80 hover:scale-110 animate-pulse-custom ${sizeClasses}`
+          }, title)
+        );
+      };
 
-          const applySkin = useCallback((index) => {
-              const skin = backgroundSkins[index];
+      // --- [NUEVO] Componente para el Contenido Expandido ---
+      const ExpandedContent = ({ section, onClose, isActive }) => {
+          if (!section) return null;
+
+          return React.createElement('div', {
+              className: `fixed inset-0 z-20 flex items-center justify-center transition-opacity duration-500 ease-in-out ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`,
+          },
+          React.createElement('div', {
+              className: "w-full h-full bg-black/50",
+              onClick: onClose
+          }),
+          React.createElement('div', {
+              className: 'relative text-center max-w-2xl p-10'
+            },
+            React.createElement('h1', { className: "font-['Cormorant_Garamond'] text-7xl font-bold mb-4 text-white" }, section.title),
+            React.createElement('p', { className: "text-lg text-white/80 mb-8 max-w-lg mx-auto" }, section.description),
+            section.url && React.createElement('a', {
+              href: section.url,
+              target: "_blank",
+              rel: "noopener noreferrer",
+              className: "inline-block py-3 px-8 border-2 border-white text-white bg-transparent no-underline transition-all duration-300 text-sm uppercase tracking-wider rounded-full hover:bg-white hover:text-black hover:scale-105"
+            }, `Visitar ${section.title}`)
+          ));
+      };
+      
+      const App = () => {
+          const [videoUrl, setVideoUrl] = useState('');
+          const [activeSectionId, setActiveSectionId] = useState(null);
+
+          useEffect(() => {
+              const skin = backgroundSkins[Math.floor(Math.random() * backgroundSkins.length)];
               const isMobile = window.matchMedia("(max-width: 768px)").matches;
-              const newVideoUrl = isMobile ? skin.url.mobile : skin.url.desktop;
-              setVideoUrl(newVideoUrl);
+              setVideoUrl(isMobile ? skin.url.mobile : skin.url.desktop);
           }, []);
 
-          // --- Hooks (useEffect, etc. sin cambios) ---
-          useEffect(() => { applySkin(currentSkinIndex); const handleResize = () => applySkin(currentSkinIndex); window.addEventListener('resize', handleResize); return () => window.removeEventListener('resize', handleResize); }, [currentSkinIndex, applySkin]);
-          useEffect(() => { localStorage.setItem('argIndexSkin', currentSkinIndex.toString()); localStorage.setItem('argIndexPalette', activePalette); localStorage.setItem('argIndexOpacity', filterOpacity.toString()); }, [currentSkinIndex, activePalette, filterOpacity]);
-          useEffect(() => { const checkHash = () => { const hash = window.location.hash.replace('#', ''); if (hash && modalData[hash]) { setActiveModal(hash); document.body.style.overflow = 'hidden'; } else { setActiveModal(null); document.body.style.overflow = ''; } }; window.addEventListener('hashchange', checkHash); checkHash(); return () => window.removeEventListener('hashchange', checkHash); }, []);
-          useEffect(() => { const handleKeyDown = (e) => { if (e.key === 'Escape' && activeModal) { window.location.hash = ''; } }; document.addEventListener('keydown', handleKeyDown); return () => document.removeEventListener('keydown', handleKeyDown); }, [activeModal]);
-          
-          const handleSkinChange = () => { const nextIndex = (currentSkinIndex + 1) % backgroundSkins.length; setCurrentSkinIndex(nextIndex); };
-          const handlePaletteChange = (palette) => { const newPalette = activePalette === palette ? 'off' : palette; setActivePalette(newPalette); if (newPalette !== 'off' && filterOpacity === 0) { setFilterOpacity(40); } else if (newPalette === 'off') { setFilterOpacity(0); } };
-          const handleOpacityChange = (opacity) => { setFilterOpacity(opacity); if (opacity > 0 && activePalette === 'off') { setActivePalette('full'); } else if (opacity === 0) { setActivePalette('off'); } };
-          const openModal = (modalKey) => { window.location.hash = modalKey; };
-          const closeModal = () => { window.location.hash = ''; };
+          const handleNodeClick = useCallback((id) => {
+              // El nodo principal 'ARG' no se expande, solo cambia el video
+              if (id === 'arg') {
+                  const skin = backgroundSkins[Math.floor(Math.random() * backgroundSkins.length)];
+                  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                  setVideoUrl(isMobile ? skin.url.mobile : skin.url.desktop);
+                  return;
+              }
+              setActiveSectionId(id);
+          }, []);
 
-          const paletteGradients = {
-              full: 'bg-[linear-gradient(-45deg,#ee7752,#e73c7e,#23a6d5,#23d5ab)]',
-              cool: 'bg-[linear-gradient(-45deg,#2c3e50,#4a6da7,#34495e,#22577a)]',
-              dark: 'bg-[linear-gradient(-45deg,#2c3e50,#95a5a6,#1c1c1c,#34495e)]',
-              off: ''
-          };
-          
-          const MainContent = ({ textColorClass }) => (
-            React.createElement('main', { className: "relative" },
-              React.createElement('div', { className: `absolute top-0 left-0 w-full h-full bg-black/40 z-[2] ${textColorClass}` }),
-              sections.map(section =>
-                React.createElement(MediaBlock, {
-                  key: section.id,
-                  id: section.id,
-                  title: section.title,
-                  subtitle: section.subtitle,
-                  description: section.description,
-                  buttonText: section.buttonText,
-                  icon: section.icon,
-                  onButtonClick: section.modalKey ? () => { window.location.href = modalData[section.modalKey].url; } : null,
-                  textColorClass: textColorClass
+          const handleClose = useCallback(() => {
+              setActiveSectionId(null);
+          }, []);
+
+          // Estructura de contenido duplicada para el efecto de máscara
+          const ContentLayer = ({ isMasked }) => (
+            React.createElement('div', { 
+                className: `fixed inset-0 z-10 transition-opacity duration-1000 ${isMasked ? '' : 'pointer-events-none'}` 
+            },
+              Object.entries(sections).map(([id, section]) => 
+                React.createElement(NavNode, {
+                  key: id,
+                  id: id,
+                  ...section,
+                  onClick: handleNodeClick,
+                  isActive: activeSectionId === id,
+                  isAnyActive: activeSectionId !== null
                 })
-              )
+              ),
+              React.createElement(ExpandedContent, {
+                  section: sections[activeSectionId],
+                  onClose: handleClose,
+                  isActive: activeSectionId !== null
+              })
             )
           );
 
           return (
               React.createElement(React.Fragment, null,
-                  // Componente del efecto y definiciones SVG. No renderizan nada visible.
+                  // Efecto de cursor y definiciones SVG (no visibles)
                   React.createElement(GooeyCursor, null),
                   React.createElement('svg', { className: "svg-defs" },
                     React.createElement('defs', null,
                       React.createElement('filter', { id: "gooey-filter" },
-                        React.createElement('feGaussianBlur', { in: "SourceGraphic", stdDeviation: "10", result: "blur" }),
-                        React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 25 -10", result: "gooey" }),
-                        React.createElement('feBlend', { in: "SourceGraphic", in2: "gooey" })
+                        React.createElement('feGaussianBlur', { in: "SourceGraphic", stdDeviation: "12", result: "blur" }),
+                        React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 25 -10" }),
                       ),
                       React.createElement('mask', { id: "gooey-mask" },
                         React.createElement('g', { id: "gooey-mask-group", filter: "url(#gooey-filter)" })
                       )
                     )
                   ),
-              
-                  // Capas de fondo
-                  React.createElement('div', { className: "fixed top-0 left-0 w-full h-full -z-10 overflow-hidden" },
-                      React.createElement('video', { key: videoUrl, className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover", loop: true, muted: true, autoPlay: true, playsInline: true, src: videoUrl })
+                  
+                  // Fondo de video
+                  React.createElement('div', { className: "fixed top-0 left-0 w-full h-full -z-20 overflow-hidden" },
+                      React.createElement('video', { 
+                          key: videoUrl, 
+                          className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover transition-opacity duration-1000", 
+                          loop: true, muted: true, autoPlay: true, playsInline: true, src: videoUrl 
+                      })
                   ),
+                  React.createElement('div', {className: "fixed inset-0 -z-10 bg-black/60"}),
+
+                  // Capa base (visible a través de la máscara)
                   React.createElement('div', {
-                      className: `fixed top-0 left-0 w-full h-full z-[1] pointer-events-none transition-opacity duration-500 ease-in-out animate-gradient ${paletteGradients[activePalette]}`,
-                      style: { opacity: filterOpacity / 100 }
+                      className: "fixed inset-0 bg-white",
+                      style: { mask: 'url(#gooey-mask)', WebkitMask: 'url(#gooey-mask)' }
                   }),
                   
-                  // Header (siempre visible arriba)
-                  React.createElement(Header, { onSkinChange: handleSkinChange, activePalette: activePalette, onPaletteChange: handlePaletteChange, opacity: filterOpacity, onOpacityChange: handleOpacityChange }),
-                  
-                  // [MODIFICADO] Contenedor para las capas de contenido
-                  React.createElement('div', { className: "relative" },
-                      // Capa Base (siempre visible, texto opaco)
-                      React.createElement(MainContent, { textColorClass: "text-gray-600" }),
-                      
-                      // Capa Revelada (encima de la base, enmascarada, texto brillante)
-                      React.createElement('div', {
-                        className: "absolute top-0 left-0 w-full h-full",
-                        style: { mask: 'url(#gooey-mask)', WebkitMask: 'url(#gooey-mask)' }
-                      },
-                        React.createElement(MainContent, { textColorClass: "text-[#f8f9fa]" })
-                      )
-                  ),
-
-                  // Modales (siempre al final)
-                  Object.keys(modalData).map(key =>
-                      React.createElement(Modal, {
-                          key: key,
-                          isOpen: activeModal === key,
-                          onClose: closeModal,
-                          url: modalData[key].url
-                      })
-                  )
+                  // Contenido de la interfaz (texto, botones)
+                  React.createElement(ContentLayer, { isMasked: false })
               )
           );
-      }
+      };
 
-      const rootElement = document.getElementById('root');
-      if (!rootElement) {
-        throw new Error("Could not find root element to mount to");
-      }
-      const root = ReactDOM.createRoot(rootElement);
-      root.render(
-        React.createElement(React.StrictMode, null, React.createElement(App, null))
-      );
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(React.createElement(React.StrictMode, null, React.createElement(App, null)));
     </script>
-  </body>
+</body>
 </html>
