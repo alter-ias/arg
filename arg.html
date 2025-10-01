@@ -21,21 +21,6 @@
         width: 0;
         height: 0;
       }
-      .control-slider {
-        -webkit-appearance: none; appearance: none;
-        width: 100%; height: 2px;
-        background: rgba(255, 255, 255, 0.2);
-        outline: none; transition: opacity .2s; cursor: pointer;
-      }
-      .control-slider::-webkit-slider-thumb {
-        -webkit-appearance: none; appearance: none;
-        width: 14px; height: 14px;
-        background: #f0e9e2; border-radius: 50%;
-      }
-      .control-slider::-moz-range-thumb {
-        width: 14px; height: 14px;
-        background: #f0e9e2; border-radius: 50%;
-      }
     </style>
     <script type="importmap">
       {
@@ -54,51 +39,23 @@
 
       const { useState, useEffect, useCallback, useRef } = React;
 
-      // --- DATOS Y COMPONENTES UI ---
+      // --- DATOS Y CONFIGURACIÓN ---
       const sections = {
           home: { title: "ARG", url: null },
-          pergamino: { title: "Pergamino", url: 'https://alter-ias.github.io/arg/argblog.html' },
-          mediateca: { title: "Mediateca", url: 'https://alter-ias.github.io/arg/mediateca.html' },
-          loteria: { title: "Lotería", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
+          pergamino: { title: "Pergamino", description: "Textos periodísticos, ensayos, poemas y demás experimentos literarios.", url: 'https://alter-ias.github.io/arg/argblog.html' },
+          mediateca: { title: "Mediateca", description: "Una colección de fragmentos audiovisuales.", url: 'https://alter-ias.github.io/arg/mediateca.html' },
+          loteria: { title: "Lotería", description: "Una reinterpretación digital del clásico juego de mesa.", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
       };
-      const BACKGROUND_IMAGE = 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=3432&auto-format&fit=crop';
       
-      const PhysicsControls = ({ settings, onUpdate }) => {
-          const [isOpen, setIsOpen] = useState(false);
-          return React.createElement('div', { className: "fixed top-4 left-4 z-50 pointer-events-auto", onMouseEnter: () => setIsOpen(true), onMouseLeave: () => setIsOpen(false) },
-            React.createElement('div', { className: `p-4 bg-black/30 backdrop-blur-md rounded-lg text-white transition-all duration-300 ease-in-out`, style: { width: isOpen ? '16rem' : '3rem', height: 'auto', overflow: 'hidden' } },
-              React.createElement('svg', { xmlns:"http://www.w3.org/2000/svg", viewBox:"0 0 20 20", fill:"currentColor", className:"w-6 h-6 absolute top-3 left-3 text-white/80" },
-                  React.createElement('path', { d:"M10 3.75a2 2 0 100 4 2 2 0 000-4zM4.25 4.5a.75.75 0 000 1.5h.5a.75.75 0 000-1.5h-.5zM15.25 4.5a.75.75 0 000 1.5h.5a.75.75 0 000-1.5h-.5zM4.25 10.5a.75.75 0 000 1.5h.5a.75.75 0 000-1.5h-.5zM10 10.25a2 2 0 114 0 2 2 0 01-4 0zM15.25 10.5a.75.75 0 000 1.5h.5a.75.75 0 000-1.5h-.5zM10 15.75a2 2 0 100-4 2 2 0 000 4z" })
-              ),
-              React.createElement('div', { className: `space-y-3 transition-opacity duration-200 delay-100 ${isOpen ? 'opacity-100' : 'opacity-0'}` },
-                React.createElement('div', { style:{ paddingTop: '2.5rem' } },
-                  React.createElement('div', { className: 'flex justify-between items-center mb-1' }, React.createElement('label', { className: 'text-xs uppercase tracking-wider' }, 'Tamaño'), React.createElement('span', { className: 'text-xs font-mono' }, settings.radius.toFixed(0))),
-                  React.createElement('input', { type: 'range', min: '20', max: '800', value: settings.radius, onChange: (e) => onUpdate('radius', parseFloat(e.target.value)), className: 'control-slider' })
-                ),
-                React.createElement('div', null,
-                  React.createElement('div', { className: 'flex justify-between items-center mb-1' }, React.createElement('label', { className: 'text-xs uppercase tracking-wider' }, 'Lentitud'), React.createElement('span', { className: 'text-xs font-mono' }, settings.stiffness.toFixed(3))),
-                  React.createElement('input', { type: 'range', min: '0.005', max: '0.2', step: '0.001', value: settings.stiffness, onChange: (e) => onUpdate('stiffness', parseFloat(e.target.value)), className: 'control-slider' })
-                ),
-                React.createElement('div', null,
-                  React.createElement('div', { className: 'flex justify-between items-center mb-1' }, React.createElement('label', { className: 'text-xs uppercase tracking-wider' }, 'Viscosidad'), React.createElement('span', { className: 'text-xs font-mono' }, settings.damping.toFixed(3))),
-                  React.createElement('input', { type: 'range', min: '0.80', max: '0.99', step: '0.001', value: settings.damping, onChange: (e) => onUpdate('damping', parseFloat(e.target.value)), className: 'control-slider' })
-                ),
-                React.createElement('div', null,
-                  React.createElement('div', { className: 'flex justify-between items-center mb-1' }, React.createElement('label', { className: 'text-xs uppercase tracking-wider' }, 'Longitud Cola'), React.createElement('span', { className: 'text-xs font-mono' }, settings.numPoints)),
-                  React.createElement('input', { type: 'range', min: '3', max: '40', step: '1', value: settings.numPoints, onChange: (e) => onUpdate('numPoints', parseInt(e.target.value)), className: 'control-slider' })
-                ),
-                React.createElement('div', null,
-                  React.createElement('div', { className: 'flex justify-between items-center mb-1' }, React.createElement('label', { className: 'text-xs uppercase tracking-wider' }, 'Forma Cola'), React.createElement('span', { className: 'text-xs font-mono' }, settings.tailTaper.toFixed(2))),
-                  React.createElement('input', { type: 'range', min: '0.1', max: '0.9', step: '0.05', value: settings.tailTaper, onChange: (e) => onUpdate('tailTaper', parseFloat(e.target.value)), className: 'control-slider' })
-                ),
-                React.createElement('div', null,
-                  React.createElement('div', { className: 'flex justify-between items-center mb-1' }, React.createElement('label', { className: 'text-xs uppercase tracking-wider' }, 'Elasticidad'), React.createElement('span', { className: 'text-xs font-mono' }, settings.blurAmount)),
-                  React.createElement('input', { type: 'range', min: '5', max: '50', step: '1', value: settings.blurAmount, onChange: (e) => onUpdate('blurAmount', parseInt(e.target.value)), className: 'control-slider' })
-                )
-              )
-            )
-          );
-      };
+      // ******** RUTAS PARA CAMBIAR LOS FONDOS ********
+      // La imagen exterior, visible por defecto.
+      const BACKGROUND_IMAGE = 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=3432&auto=format&fit=crop';
+      
+      // La imagen interior, que se revela a través del efecto.
+      const REVEALED_IMAGE = 'https://cdn.pixabay.com/photo/2023/09/16/18/18/wallpaper-8257343_1280.png';
+      // *************************************************
+
+      // --- COMPONENTE DE LA INTERFAZ ---
       const ContentLayer = ({ activeSection, onNavigate }) => {
           const isHome = activeSection === 'home';
           const currentData = sections[activeSection];
@@ -108,23 +65,17 @@
       // --- COMPONENTE PRINCIPAL ---
       const App = () => {
           const [activeSection, setActiveSection] = useState('home');
-          const [physics, setPhysics] = useState({
-              radius: 250,
-              stiffness: 0.010,
-              damping: 0.900,
-              numPoints: 16,
-              tailTaper: 0.7,
-              blurAmount: 20
-          });
-          
           const maskGroupRef = useRef(null);
-          const physicsRef = useRef(physics);
           
-          useEffect(() => { physicsRef.current = physics; }, [physics]);
-
-          const handleControlUpdate = useCallback((key, value) => {
-              setPhysics(prev => ({ ...prev, [key]: value }));
-          }, []);
+          // Parámetros de la física fijados según tu imagen.
+          const physics = {
+              radius: 136,
+              stiffness: 0.010,
+              damping: 0.805,
+              numPoints: 3,
+              tailTaper: 0.15,
+              blurAmount: 48
+          };
 
           useEffect(() => {
               const maskGroup = maskGroupRef.current;
@@ -148,30 +99,22 @@
                   }
               };
 
-              setupPoints(physicsRef.current.numPoints);
+              setupPoints(physics.numPoints);
               
               const handleMouseMove = (e) => { mousePos.x = e.clientX; mousePos.y = e.clientY; };
               window.addEventListener('mousemove', handleMouseMove);
 
-              let lastNumPoints = physicsRef.current.numPoints;
-
               const animate = () => {
-                  const currentPhysics = physicsRef.current;
-                  if (currentPhysics.numPoints !== lastNumPoints) {
-                      setupPoints(currentPhysics.numPoints);
-                      lastNumPoints = currentPhysics.numPoints;
-                  }
-
-                  blurFilter.setAttribute('stdDeviation', currentPhysics.blurAmount);
+                  blurFilter.setAttribute('stdDeviation', physics.blurAmount);
                   
                   points.forEach((point, i) => {
                       const target = (i === 0) ? mousePos : points[i - 1];
-                      point.vx = (point.vx + (target.x - point.x) * currentPhysics.stiffness) * currentPhysics.damping;
-                      point.vy = (point.vy + (target.y - point.y) * currentPhysics.stiffness) * currentPhysics.damping;
+                      point.vx = (point.vx + (target.x - point.x) * physics.stiffness) * physics.damping;
+                      point.vy = (point.vy + (target.y - point.y) * physics.stiffness) * physics.damping;
                       point.x += point.vx;
                       point.y += point.vy;
                       
-                      const pointRadius = currentPhysics.radius * (1 - (i / currentPhysics.numPoints) * currentPhysics.tailTaper);
+                      const pointRadius = physics.radius * (1 - (i / physics.numPoints) * physics.tailTaper);
                       point.el.setAttribute('cx', point.x);
                       point.el.setAttribute('cy', point.y);
                       point.el.setAttribute('r', pointRadius);
@@ -188,7 +131,6 @@
 
           return (
               React.createElement(React.Fragment, null,
-                  React.createElement(PhysicsControls, { settings: physics, onUpdate: handleControlUpdate }),
                   React.createElement('svg', { className: "svg-defs" },
                     React.createElement('defs', null,
                       React.createElement('filter', { id: "gooey-filter" },
@@ -201,14 +143,19 @@
                     )
                   ),
                   
+                  // Capa 1: Imagen base (fondo no afectado)
                   React.createElement('div', { className: "fixed inset-0 -z-20 bg-cover bg-center", style: { backgroundImage: `url(${BACKGROUND_IMAGE})` } }),
                   React.createElement('div', { className: "fixed inset-0 -z-10 bg-black/70" }),
 
+                  // Capa 2: Mundo enmascarado
                   React.createElement('div', {
                       className: "fixed inset-0",
                       style: { mask: 'url(#gooey-mask)', WebkitMask: 'url(#gooey-mask)' }
                   },
-                      React.createElement('div', { className: 'w-full h-full bg-[#0a0a0a]' }),
+                      // Capa 2a: La imagen que se revela
+                      React.createElement('div', { className: "absolute inset-0 bg-cover bg-center", style: { backgroundImage: `url(${REVEALED_IMAGE})` } }),
+                      
+                      // Capa 2b: La interfaz de texto
                       React.createElement(ContentLayer, { activeSection, onNavigate: setActiveSection })
                   )
               )
