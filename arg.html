@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     <style>
       html, body {
-        /* Se elimina cursor: none; para mejorar la usabilidad */
         overscroll-behavior: none;
         background-color: #0a0a0a;
         color: #e8e3dc;
@@ -74,7 +73,7 @@
       const IMAGE_LAYER_BASE = 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=3432&auto=format&fit=crop';
       const IMAGE_LAYER_REVEALED = 'https://images.unsplash.com/photo-1558816335-515b6c3c5a04?q=80&w=3270&auto=format&fit=crop';
 
-      // --- COMPONENTE DE CONTROLES VISUALES (REDISEÑADO) ---
+      // --- COMPONENTES (CONTROLES E INTERFAZ) ---
       const PhysicsControls = ({ settings, onUpdate }) => {
           const [isOpen, setIsOpen] = useState(false);
           return React.createElement('div', {
@@ -84,7 +83,7 @@
           },
             React.createElement('div', {
               className: `p-4 bg-black/30 backdrop-blur-md rounded-lg text-white transition-all duration-300 ease-in-out`,
-              style: { width: isOpen ? '14rem' : '3rem', height: isOpen ? 'auto' : '3rem' }
+              style: { width: isOpen ? '14rem' : '3rem', height: isOpen ? 'auto' : '3rem', overflow: 'hidden' }
             },
               React.createElement('svg', { xmlns:"http://www.w3.org/2000/svg", viewBox:"0 0 20 20", fill:"currentColor", className:"w-6 h-6 absolute top-3 left-3 text-white/80" },
                   React.createElement('path', { d:"M10 3.75a2 2 0 100 4 2 2 0 000-4zM4.25 4.5a.75.75 0 000 1.5h.5a.75.75 0 000-1.5h-.5zM15.25 4.5a.75.75 0 000 1.5h.5a.75.75 0 000-1.5h-.5zM4.25 10.5a.75.75 0 000 1.5h.5a.75.75 0 000-1.5h-.5zM10 10.25a2 2 0 114 0 2 2 0 01-4 0zM15.25 10.5a.75.75 0 000 1.5h.5a.75.75 0 000-1.5h-.5zM10 15.75a2 2 0 100-4 2 2 0 000 4z" })
@@ -106,24 +105,18 @@
             )
           );
       };
-
-      // --- COMPONENTE DE LA INTERFAZ PRINCIPAL ---
       const ContentLayer = ({ activeSection, onNavigate }) => {
-          // ... (Sin cambios respecto a la versión anterior)
           const isHome = activeSection === 'home';
           const currentData = sections[activeSection];
-          return React.createElement('div', {
-              className: "fixed inset-0 flex items-center justify-center text-center p-8 pointer-events-none text-white"
-            }, React.createElement('div', { className: 'relative w-full h-full flex items-center justify-center' }, React.createElement('div', { className: 'max-w-4xl' }, React.createElement('h1', { className: `font-['Cormorant_Garamond'] font-bold leading-none transition-transform duration-500 ease-in-out`, style: { fontSize: 'clamp(5rem, 15vw, 18rem)', transform: `scale(${isHome ? 1 : 1.2})` } }, currentData.title), React.createElement('div', { className: `transition-all duration-700 ease-in-out delay-200`, style: { opacity: isHome ? 0 : 1 } }, React.createElement('p', { className: "max-w-xl mx-auto my-8 text-lg text-white/80" }, currentData.description), React.createElement('a', { href: currentData.url, target: "_blank", rel: "noopener noreferrer", className: "inline-block py-3 px-10 border-2 border-white text-white no-underline transition-all duration-300 text-sm uppercase tracking-wider rounded-full pointer-events-auto hover:bg-white hover:text-black hover:scale-105" }, `Visitar ${currentData.title}`))), Object.keys(sections).filter(key => key !== 'home').map((key, index) => { const angle = (index / (Object.keys(sections).length - 1)) * 2 * Math.PI - (Math.PI / 2); const radius = window.innerWidth > 768 ? 350 : 200; const x = Math.cos(angle) * radius; const y = Math.sin(angle) * radius; return React.createElement('button', { key: key, onClick: () => onNavigate(key), className: `absolute font-['Cormorant_Garamond'] text-4xl text-white/70 transition-all duration-700 ease-in-out pointer-events-auto hover:text-white hover:scale-110`, style: { opacity: isHome ? 1 : 0, transform: `translate(${x}px, ${y}px) scale(${isHome ? 1 : 0.5})` } }, sections[key].title); }), !isHome && React.createElement('button', { onClick: () => onNavigate('home'), className: 'absolute top-8 left-8 text-white/70 text-sm uppercase tracking-widest pointer-events-auto hover:text-white transition-opacity duration-300' }, '← Volver')));
+          return React.createElement('div', { className: "fixed inset-0 flex items-center justify-center text-center p-8 pointer-events-none text-white" }, React.createElement('div', { className: 'relative w-full h-full flex items-center justify-center' }, React.createElement('div', { className: 'max-w-4xl' }, React.createElement('h1', { className: `font-['Cormorant_Garamond'] font-bold leading-none transition-transform duration-500 ease-in-out`, style: { fontSize: 'clamp(5rem, 15vw, 18rem)', transform: `scale(${isHome ? 1 : 1.2})` } }, currentData.title), React.createElement('div', { className: `transition-all duration-700 ease-in-out delay-200`, style: { opacity: isHome ? 0 : 1 } }, React.createElement('p', { className: "max-w-xl mx-auto my-8 text-lg text-white/80" }, currentData.description), React.createElement('a', { href: currentData.url, target: "_blank", rel: "noopener noreferrer", className: "inline-block py-3 px-10 border-2 border-white text-white no-underline transition-all duration-300 text-sm uppercase tracking-wider rounded-full pointer-events-auto hover:bg-white hover:text-black hover:scale-105" }, `Visitar ${currentData.title}`))), Object.keys(sections).filter(key => key !== 'home').map((key, index) => { const angle = (index / (Object.keys(sections).length - 1)) * 2 * Math.PI - (Math.PI / 2); const radius = window.innerWidth > 768 ? 350 : 200; const x = Math.cos(angle) * radius; const y = Math.sin(angle) * radius; return React.createElement('button', { key: key, onClick: () => onNavigate(key), className: `absolute font-['Cormorant_Garamond'] text-4xl text-white/70 transition-all duration-700 ease-in-out pointer-events-auto hover:text-white hover:scale-110`, style: { opacity: isHome ? 1 : 0, transform: `translate(${x}px, ${y}px) scale(${isHome ? 1 : 0.5})` } }, sections[key].title); }), !isHome && React.createElement('button', { onClick: () => onNavigate('home'), className: 'absolute top-8 left-8 text-white/70 text-sm uppercase tracking-widest pointer-events-auto hover:text-white transition-opacity duration-300' }, '← Volver')));
       };
 
-      // --- COMPONENTE PRINCIPAL (LÓGICA DE ANIMACIÓN RECONSTRUIDA) ---
+      // --- COMPONENTE PRINCIPAL ---
       const App = () => {
           const [activeSection, setActiveSection] = useState('home');
           const [physics, setPhysics] = useState({ radius: 250, stiffness: 0.025, damping: 0.96 });
           const maskGroupRef = useRef(null);
           
-          // Usamos un ref para los settings de la física para no reiniciar el efecto en cada cambio
           const physicsRef = useRef(physics);
           useEffect(() => { physicsRef.current = physics; }, [physics]);
 
@@ -131,6 +124,7 @@
               setPhysics(prev => ({ ...prev, [key]: value }));
           }, []);
 
+          // [CORREGIDO] La animación se ejecuta en un useEffect que se activa una sola vez
           useEffect(() => {
               const maskGroup = maskGroupRef.current;
               if (!maskGroup) return;
@@ -151,6 +145,7 @@
               window.addEventListener('mousemove', handleMouseMove);
 
               const animate = () => {
+                  // Lee los valores de la física en tiempo real desde el ref, sin reiniciar el efecto
                   const { stiffness, damping, radius } = physicsRef.current;
                   points.forEach((point, i) => {
                       let target = (i === 0) ? mousePos : points[i - 1];
@@ -176,7 +171,10 @@
 
           return (
               React.createElement(React.Fragment, null,
+                  // Controles visuales
                   React.createElement(PhysicsControls, { settings: physics, onUpdate: handleControlUpdate }),
+                  
+                  // Definiciones SVG para la máscara
                   React.createElement('svg', { className: "svg-defs" },
                     React.createElement('defs', null,
                       React.createElement('filter', { id: "gooey-filter" },
@@ -188,10 +186,27 @@
                       )
                     )
                   ),
+                  
+                  // Capa 1: Imagen base (fondo no afectado)
                   React.createElement('div', { className: "fixed inset-0 -z-30 bg-cover bg-center", style: { backgroundImage: `url(${IMAGE_LAYER_BASE})` } }),
                   React.createElement('div', { className: "fixed inset-0 -z-20 bg-black/70" }),
-                  React.createElement('div', { className: "fixed inset-0 -z-10 bg-cover bg-center", style: { backgroundImage: `url(${IMAGE_LAYER_REVEALED})`, mask: 'url(#gooey-mask)', WebkitMask: 'url(#gooey-mask)' } }),
-                  React.createElement(ContentLayer, { activeSection, onNavigate: setActiveSection })
+
+                  // [CORREGIDO] Capa 2: "Mundo enmascarado". Este contenedor es el que tiene la máscara.
+                  React.createElement('div', {
+                      className: "fixed inset-0",
+                      style: { 
+                        mask: 'url(#gooey-mask)', 
+                        WebkitMask: 'url(#gooey-mask)' 
+                      }
+                  },
+                      // TODO lo que pongas aquí DENTRO será revelado por el efecto.
+                      
+                      // Capa 2a: La imagen que se revela
+                      React.createElement('div', { className: "absolute inset-0 bg-cover bg-center", style: { backgroundImage: `url(${IMAGE_LAYER_REVEALED})` } }),
+                      
+                      // Capa 2b: La interfaz de texto, que ahora también está dentro del mundo enmascarado.
+                      React.createElement(ContentLayer, { activeSection, onNavigate: setActiveSection })
+                  )
               )
           );
       };
