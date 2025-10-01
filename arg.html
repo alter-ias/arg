@@ -70,8 +70,7 @@
           loteria: { title: "Lotería", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
       };
       
-      const IMAGE_LAYER_BASE = 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=3432&auto=format&fit=crop';
-      const IMAGE_LAYER_REVEALED = 'https://images.unsplash.com/photo-1558816335-515b6c3c5a04?q=80&w=3270&auto=format&fit=crop';
+      const BACKGROUND_IMAGE = 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=3432&auto=format&fit=crop';
 
       // --- COMPONENTES (CONTROLES E INTERFAZ) ---
       const PhysicsControls = ({ settings, onUpdate }) => {
@@ -124,7 +123,7 @@
               setPhysics(prev => ({ ...prev, [key]: value }));
           }, []);
 
-          // [CORREGIDO] La animación se ejecuta en un useEffect que se activa una sola vez
+          // La animación se ejecuta en un useEffect que se activa una sola vez
           useEffect(() => {
               const maskGroup = maskGroupRef.current;
               if (!maskGroup) return;
@@ -145,7 +144,6 @@
               window.addEventListener('mousemove', handleMouseMove);
 
               const animate = () => {
-                  // Lee los valores de la física en tiempo real desde el ref, sin reiniciar el efecto
                   const { stiffness, damping, radius } = physicsRef.current;
                   points.forEach((point, i) => {
                       let target = (i === 0) ? mousePos : points[i - 1];
@@ -171,10 +169,7 @@
 
           return (
               React.createElement(React.Fragment, null,
-                  // Controles visuales
                   React.createElement(PhysicsControls, { settings: physics, onUpdate: handleControlUpdate }),
-                  
-                  // Definiciones SVG para la máscara
                   React.createElement('svg', { className: "svg-defs" },
                     React.createElement('defs', null,
                       React.createElement('filter', { id: "gooey-filter" },
@@ -187,11 +182,14 @@
                     )
                   ),
                   
-                  // Capa 1: Imagen base (fondo no afectado)
-                  React.createElement('div', { className: "fixed inset-0 -z-30 bg-cover bg-center", style: { backgroundImage: `url(${IMAGE_LAYER_BASE})` } }),
-                  React.createElement('div', { className: "fixed inset-0 -z-20 bg-black/70" }),
+                  // Capa 1: Fondo (no afectado por la máscara)
+                  React.createElement('div', {
+                    className: "fixed inset-0 -z-20 bg-cover bg-center",
+                    style: { backgroundImage: `url(${BACKGROUND_IMAGE})` }
+                  }),
+                  React.createElement('div', {className: "fixed inset-0 -z-10 bg-black/70"}),
 
-                  // [CORREGIDO] Capa 2: "Mundo enmascarado". Este contenedor es el que tiene la máscara.
+                  // Capa 2: Mundo enmascarado. TODO lo que está aquí dentro es revelado por el efecto.
                   React.createElement('div', {
                       className: "fixed inset-0",
                       style: { 
@@ -199,12 +197,11 @@
                         WebkitMask: 'url(#gooey-mask)' 
                       }
                   },
-                      // TODO lo que pongas aquí DENTRO será revelado por el efecto.
-                      
-                      // Capa 2a: La imagen que se revela
-                      React.createElement('div', { className: "absolute inset-0 bg-cover bg-center", style: { backgroundImage: `url(${IMAGE_LAYER_REVEALED})` } }),
-                      
-                      // Capa 2b: La interfaz de texto, que ahora también está dentro del mundo enmascarado.
+                      // Fondo del mundo enmascarado. Podría ser un color o una segunda imagen.
+                      // Por simplicidad y contraste, usamos un color oscuro.
+                      React.createElement('div', {className: 'w-full h-full bg-[#0a0a0a]'}),
+
+                      // La interfaz de texto, que ahora vive dentro del mundo enmascarado.
                       React.createElement(ContentLayer, { activeSection, onNavigate: setActiveSection })
                   )
               )
