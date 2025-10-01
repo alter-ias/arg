@@ -11,14 +11,13 @@
     <style>
       html, body {
         cursor: none;
-        overscroll-behavior: none; /* Evita el 'pull-to-refresh' en móviles */
+        overscroll-behavior: none;
       }
       body {
         background-color: #0a0a0a;
         color: #e8e3dc;
         font-family: 'Poppins', sans-serif;
       }
-      /* Ocultar el SVG de definiciones, no debe ocupar espacio */
       .svg-defs {
         position: absolute;
         width: 0;
@@ -40,10 +39,10 @@
       import React from 'react';
       import ReactDOM from 'react-dom/client';
 
-      const { useState, useEffect, useCallback, useRef } = React;
+      const { useState, useEffect, useCallback } = React;
 
       // --- DATOS DE LA APLICACIÓN ---
-      const backgroundSkins = [ { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm' }} ];
+      const backgroundSkins = [ { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm' }} ];
       
       const sections = {
           home: { title: "ARG", description: "Un experimento digital donde se entretejen la lírica, el pensamiento crítico y los ritmos de la vida urbana.", url: null },
@@ -52,13 +51,18 @@
           loteria: { title: "Lotería", description: "Una reinterpretación digital del clásico juego de mesa.", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
       };
 
-      // --- COMPONENTE DEL EFECTO VISCOSO ---
+      // --- COMPONENTE DEL EFECTO VISCOSO (FÍSICA AJUSTADA) ---
       const GooeyEffect = () => {
           useEffect(() => {
               const gooeyGroup = document.querySelector('#gooey-mask-group');
               if (!gooeyGroup) return;
 
-              const STIFFNESS = 0.08, DAMPING = 0.90, NUM_POINTS = 15, BASE_RADIUS = 250;
+              // PARÁMETROS AJUSTADOS PARA UN EFECTO MÁS LENTO Y COHESIVO
+              const STIFFNESS = 0.04; // Muelle más suave
+              const DAMPING = 0.94;   // Más arrastre/fricción
+              const NUM_POINTS = 18;  // Más puntos para una cola más suave
+              const BASE_RADIUS = 350;// Efecto general más grande
+
               let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
               let animationFrameId = null;
               
@@ -98,55 +102,53 @@
       };
 
       // --- COMPONENTE DE LA INTERFAZ ---
-      const ContentLayer = ({ activeSection, onNavigate }) => {
+      const ContentLayer = ({ activeSection, onNavigate, onChangeBackground }) => {
           const isHome = activeSection === 'home';
           const currentData = sections[activeSection];
           
           return React.createElement('div', {
-              className: "fixed inset-0 flex items-center justify-center text-center p-8 pointer-events-none"
+              className: "fixed inset-0 flex items-center justify-center text-center p-8 pointer-events-none text-white"
             },
-            // Contenedor para el contenido principal (títulos, etc.)
-            React.createElement('div', {
-                className: 'relative w-full h-full flex items-center justify-center'
-              },
-              // Renderiza el contenido de la sección activa
-              React.createElement('div', {
-                  className: `transition-all duration-700 ease-in-out`,
-                  style: { opacity: 1, transform: 'scale(1)' }
-                },
-                React.createElement('h1', { className: "font-['Cormorant_Garamond'] font-bold text-white leading-none", style: { fontSize: 'clamp(4rem, 12vw, 15rem)' } }, currentData.title),
-                React.createElement('p', { className: `text-white/70 max-w-lg mx-auto mt-4 transition-all duration-500 ease-in-out ${isHome ? 'opacity-100' : 'opacity-0 h-0'}` }, currentData.description),
-                !isHome && React.createElement('div', {className: 'mt-10'},
-                  React.createElement('p', { className: "text-white/80 max-w-xl mx-auto mb-8 text-lg" }, currentData.description),
+            React.createElement('div', { className: 'relative w-full h-full flex items-center justify-center' },
+              React.createElement('div', null,
+                React.createElement('h1', { 
+                    onClick: isHome ? onChangeBackground : null,
+                    className: `font-['Cormorant_Garamond'] font-bold leading-none transition-transform duration-500 ease-in-out ${isHome ? 'pointer-events-auto' : ''}`, 
+                    style: { fontSize: 'clamp(5rem, 15vw, 18rem)', transform: isHome ? 'scale(1)' : 'scale(1.2)'} 
+                }, currentData.title),
+                
+                React.createElement('div', {
+                    className: `transition-all duration-700 ease-in-out delay-200`,
+                    style: { opacity: isHome ? 0 : 1 }
+                  },
+                  React.createElement('p', { className: "max-w-xl mx-auto my-8 text-lg text-white/80" }, currentData.description),
                   React.createElement('a', {
                     href: currentData.url,
                     target: "_blank", rel: "noopener noreferrer",
                     className: "inline-block py-3 px-10 border-2 border-white text-white no-underline transition-all duration-300 text-sm uppercase tracking-wider rounded-full pointer-events-auto hover:bg-white hover:text-black hover:scale-105"
-                  }, `Entrar a ${currentData.title}`)
+                  }, `Visitar ${currentData.title}`)
                 )
               ),
 
-              // Renderiza los links de navegación si estamos en 'home'
               Object.keys(sections).filter(key => key !== 'home').map((key, index) => {
-                const angle = (index / (Object.keys(sections).length - 1)) * 2 * Math.PI;
-                const radius = 250; // Distancia desde el centro
+                const angle = (index / (Object.keys(sections).length - 1)) * 2 * Math.PI - (Math.PI / 2); // Start from top
+                const radius = window.innerWidth > 768 ? 350 : 200; // Radius adapts to screen size
                 const x = Math.cos(angle) * radius;
                 const y = Math.sin(angle) * radius;
                 return React.createElement('button', {
                   key: key,
                   onClick: () => onNavigate(key),
-                  className: `absolute font-['Cormorant_Garamond'] text-3xl text-white/80 transition-all duration-500 ease-in-out pointer-events-auto hover:text-white hover:scale-110`,
+                  className: `absolute font-['Cormorant_Garamond'] text-4xl text-white/70 transition-all duration-700 ease-in-out pointer-events-auto hover:text-white hover:scale-110`,
                   style: {
                     opacity: isHome ? 1 : 0,
-                    transform: `translate(${x}px, ${y}px) ${isHome ? 'scale(1)' : 'scale(0.5)'}`
+                    transform: `translate(${x}px, ${y}px) scale(${isHome ? 1 : 0.5})`
                   }
                 }, sections[key].title);
               }),
 
-              // Botón para volver a 'home'
               !isHome && React.createElement('button', {
                   onClick: () => onNavigate('home'),
-                  className: 'absolute top-8 left-8 text-white/80 text-sm uppercase tracking-widest pointer-events-auto hover:text-white'
+                  className: 'absolute top-8 left-8 text-white/70 text-sm uppercase tracking-widest pointer-events-auto hover:text-white transition-opacity duration-300'
               }, '← Volver')
             )
           );
@@ -157,21 +159,27 @@
           const [videoUrl, setVideoUrl] = useState('');
           const [activeSection, setActiveSection] = useState('home');
 
+          const changeBackground = useCallback(() => {
+              const currentSkinIndex = backgroundSkins.findIndex(skin => skin.url.desktop === videoUrl);
+              const nextIndex = (currentSkinIndex + 1) % backgroundSkins.length;
+              setVideoUrl(backgroundSkins[nextIndex].url.desktop);
+          }, [videoUrl]);
+          
           useEffect(() => {
-              const skin = backgroundSkins[Math.floor(Math.random() * backgroundSkins.length)];
-              setVideoUrl(skin.url.desktop);
+              if (backgroundSkins.length > 0) {
+                 setVideoUrl(backgroundSkins[0].url.desktop);
+              }
           }, []);
 
           return (
               React.createElement(React.Fragment, null,
                   React.createElement(GooeyEffect, null),
                   
-                  // Definiciones SVG (no visibles, pero necesarias para el filtro/máscara)
                   React.createElement('svg', { className: "svg-defs" },
                     React.createElement('defs', null,
                       React.createElement('filter', { id: "gooey-filter" },
-                        React.createElement('feGaussianBlur', { in: "SourceGraphic", stdDeviation: "15", result: "blur" }),
-                        React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -12" }),
+                        React.createElement('feGaussianBlur', { in: "SourceGraphic", stdDeviation: "20", result: "blur" }),
+                        React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -15" }),
                       ),
                       React.createElement('mask', { id: "gooey-mask" },
                         React.createElement('g', { id: "gooey-mask-group", filter: "url(#gooey-filter)" })
@@ -179,8 +187,7 @@
                     )
                   ),
                   
-                  // Capa 1: Fondo de video
-                  React.createElement('div', { className: "fixed top-0 left-0 w-full h-full -z-20 overflow-hidden" },
+                  React.createElement('div', { className: "fixed inset-0 -z-20" },
                       React.createElement('video', { 
                           key: videoUrl, 
                           className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover", 
@@ -188,10 +195,9 @@
                       })
                   ),
                   
-                  // Capa 2: Superposición oscura para mejorar contraste
                   React.createElement('div', {className: "fixed inset-0 -z-10 bg-black/70"}),
 
-                  // Capa 3: Contenido de la UI, enmascarado por el efecto viscoso
+                  // [CORREGIDO] EL CONTENIDO ESTÁ AHORA DENTRO DEL CONTENEDOR ENMASCARADO
                   React.createElement('div', {
                       className: "fixed inset-0",
                       style: { 
@@ -199,10 +205,9 @@
                         WebkitMask: 'url(#gooey-mask)' 
                       }
                   },
-                    // Fondo del contenido enmascarado (el color oscuro del tema)
-                    React.createElement('div', {className: 'w-full h-full bg-[#1a1a1a]'}),
-                    // La interfaz de texto y botones que será visible
-                    React.createElement(ContentLayer, { activeSection, onNavigate: setActiveSection })
+                    React.createElement('div', {className: 'w-full h-full bg-[#1a1a1a]'},
+                        React.createElement(ContentLayer, { activeSection, onNavigate: setActiveSection, onChangeBackground: changeBackground })
+                    )
                   )
               )
           );
