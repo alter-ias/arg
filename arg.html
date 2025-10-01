@@ -3,30 +3,22 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ARG - Jardín Fluido</title>
+    <title>ARG - El Crisol de Tinta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     <style>
-      /* --- Estilos Base y Animaciones --- */
       html, body {
         cursor: none;
-        overscroll-behavior: none;
+        overscroll-behavior: none; /* Evita el 'pull-to-refresh' en móviles */
       }
       body {
-        background-color: #101010;
-        color: #f0e9e2;
+        background-color: #0a0a0a;
+        color: #e8e3dc;
         font-family: 'Poppins', sans-serif;
       }
-      @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.8; }
-        50% { transform: scale(1.05); opacity: 1; }
-      }
-      .animate-pulse-custom {
-        animation: pulse 4s ease-in-out infinite;
-      }
-      /* Ocultar el SVG de definiciones */
+      /* Ocultar el SVG de definiciones, no debe ocupar espacio */
       .svg-defs {
         position: absolute;
         width: 0;
@@ -50,28 +42,29 @@
 
       const { useState, useEffect, useCallback, useRef } = React;
 
-      // --- Datos y Activos (sin cambios) ---
+      // --- DATOS DE LA APLICACIÓN ---
       const backgroundSkins = [ { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610840/skin10_qlyxkj.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610853/skin07_wzpfcc.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610843/skin04_mojqxg.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610844/skin11_zr6f7r.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756611282/skin03_vscsu5.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin09_v4tnsg.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin05_zvyjh6.webm' }}, { type: 'video', url: { desktop: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm', mobile: 'https://res.cloudinary.com/dahrwkdzd/video/upload/v1756610856/skin08_ayedbg.webm' }} ];
+      
       const sections = {
-          "arg": { title: "Alan Ruíz Galicia", description: "Un jardín digital donde se entretejen la lírica, el pensamiento crítico y los ritmos de la vida urbana.", url: null, position: { top: '50%', left: '50%' }, size: 'large' },
-          "pergamino": { title: "Pergamino", description: "Textos periodísticos, ensayos, poemas y demás experimentos literarios.", url: 'https://alter-ias.github.io/arg/argblog.html', position: { top: '30%', left: '25%' }, size: 'medium' },
-          "mediateca": { title: "Mediateca", description: "Una colección de fragmentos audiovisuales.", url: 'https://alter-ias.github.io/arg/mediateca.html', position: { top: '75%', left: '35%' }, size: 'medium' },
-          "loteria": { title: "Lotería Tapatía", description: "Una reinterpretación digital del clásico juego de mesa.", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html', position: { top: '40%', left: '78%' }, size: 'medium' },
+          home: { title: "ARG", description: "Un experimento digital donde se entretejen la lírica, el pensamiento crítico y los ritmos de la vida urbana.", url: null },
+          pergamino: { title: "Pergamino", description: "Textos periodísticos, ensayos, poemas y demás experimentos literarios.", url: 'https://alter-ias.github.io/arg/argblog.html' },
+          mediateca: { title: "Mediateca", description: "Una colección de fragmentos audiovisuales.", url: 'https://alter-ias.github.io/arg/mediateca.html' },
+          loteria: { title: "Lotería", description: "Una reinterpretación digital del clásico juego de mesa.", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
       };
 
-      // --- [NUEVO] Componente del Cursor Líquido ---
-      const GooeyCursor = () => {
+      // --- COMPONENTE DEL EFECTO VISCOSO ---
+      const GooeyEffect = () => {
           useEffect(() => {
               const gooeyGroup = document.querySelector('#gooey-mask-group');
               if (!gooeyGroup) return;
 
-              const STIFFNESS = 0.1, DAMPING = 0.8, NUM_POINTS = 12, BASE_RADIUS = 100;
+              const STIFFNESS = 0.08, DAMPING = 0.90, NUM_POINTS = 15, BASE_RADIUS = 250;
               let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
               let animationFrameId = null;
               
               const points = Array.from({ length: NUM_POINTS }, (_, i) => {
                   const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                  const radius = BASE_RADIUS * (1 - (i / NUM_POINTS) * 0.6);
+                  const radius = BASE_RADIUS * (1 - (i / NUM_POINTS) * 0.7);
                   circle.setAttribute('r', String(radius));
                   circle.setAttribute('fill', 'white');
                   gooeyGroup.appendChild(circle);
@@ -94,6 +87,7 @@
                   animationFrameId = requestAnimationFrame(animate);
               };
               animate();
+
               return () => {
                   window.removeEventListener('mousemove', handleMouseMove);
                   if (animationFrameId) cancelAnimationFrame(animationFrameId);
@@ -103,106 +97,81 @@
           return null;
       };
 
-      // --- [NUEVO] Componente para los Nodos de Navegación ---
-      const NavNode = ({ id, title, position, size, onClick, isActive, isAnyActive }) => {
-        const sizeClasses = {
-            large: 'w-48 h-48 text-4xl',
-            medium: 'w-32 h-32 text-2xl',
-        }[size];
-        
-        return React.createElement('div', {
-            className: `absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-700 ease-in-out ${isAnyActive && !isActive ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`,
-            style: { top: position.top, left: position.left }
-        },
-          React.createElement('button', {
-            onClick: () => onClick(id),
-            className: `flex items-center justify-center rounded-full bg-white/5 border border-white/20 text-center font-['Cormorant_Garamond'] font-semibold backdrop-blur-sm transition-all duration-300 hover:border-white/80 hover:scale-110 animate-pulse-custom ${sizeClasses}`
-          }, title)
-        );
-      };
-
-      // --- [NUEVO] Componente para el Contenido Expandido ---
-      const ExpandedContent = ({ section, onClose, isActive }) => {
-          if (!section) return null;
-
+      // --- COMPONENTE DE LA INTERFAZ ---
+      const ContentLayer = ({ activeSection, onNavigate }) => {
+          const isHome = activeSection === 'home';
+          const currentData = sections[activeSection];
+          
           return React.createElement('div', {
-              className: `fixed inset-0 z-20 flex items-center justify-center transition-opacity duration-500 ease-in-out ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`,
-          },
-          React.createElement('div', {
-              className: "w-full h-full bg-black/50",
-              onClick: onClose
-          }),
-          React.createElement('div', {
-              className: 'relative text-center max-w-2xl p-10'
+              className: "fixed inset-0 flex items-center justify-center text-center p-8 pointer-events-none"
             },
-            React.createElement('h1', { className: "font-['Cormorant_Garamond'] text-7xl font-bold mb-4 text-white" }, section.title),
-            React.createElement('p', { className: "text-lg text-white/80 mb-8 max-w-lg mx-auto" }, section.description),
-            section.url && React.createElement('a', {
-              href: section.url,
-              target: "_blank",
-              rel: "noopener noreferrer",
-              className: "inline-block py-3 px-8 border-2 border-white text-white bg-transparent no-underline transition-all duration-300 text-sm uppercase tracking-wider rounded-full hover:bg-white hover:text-black hover:scale-105"
-            }, `Visitar ${section.title}`)
-          ));
+            // Contenedor para el contenido principal (títulos, etc.)
+            React.createElement('div', {
+                className: 'relative w-full h-full flex items-center justify-center'
+              },
+              // Renderiza el contenido de la sección activa
+              React.createElement('div', {
+                  className: `transition-all duration-700 ease-in-out`,
+                  style: { opacity: 1, transform: 'scale(1)' }
+                },
+                React.createElement('h1', { className: "font-['Cormorant_Garamond'] font-bold text-white leading-none", style: { fontSize: 'clamp(4rem, 12vw, 15rem)' } }, currentData.title),
+                React.createElement('p', { className: `text-white/70 max-w-lg mx-auto mt-4 transition-all duration-500 ease-in-out ${isHome ? 'opacity-100' : 'opacity-0 h-0'}` }, currentData.description),
+                !isHome && React.createElement('div', {className: 'mt-10'},
+                  React.createElement('p', { className: "text-white/80 max-w-xl mx-auto mb-8 text-lg" }, currentData.description),
+                  React.createElement('a', {
+                    href: currentData.url,
+                    target: "_blank", rel: "noopener noreferrer",
+                    className: "inline-block py-3 px-10 border-2 border-white text-white no-underline transition-all duration-300 text-sm uppercase tracking-wider rounded-full pointer-events-auto hover:bg-white hover:text-black hover:scale-105"
+                  }, `Entrar a ${currentData.title}`)
+                )
+              ),
+
+              // Renderiza los links de navegación si estamos en 'home'
+              Object.keys(sections).filter(key => key !== 'home').map((key, index) => {
+                const angle = (index / (Object.keys(sections).length - 1)) * 2 * Math.PI;
+                const radius = 250; // Distancia desde el centro
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                return React.createElement('button', {
+                  key: key,
+                  onClick: () => onNavigate(key),
+                  className: `absolute font-['Cormorant_Garamond'] text-3xl text-white/80 transition-all duration-500 ease-in-out pointer-events-auto hover:text-white hover:scale-110`,
+                  style: {
+                    opacity: isHome ? 1 : 0,
+                    transform: `translate(${x}px, ${y}px) ${isHome ? 'scale(1)' : 'scale(0.5)'}`
+                  }
+                }, sections[key].title);
+              }),
+
+              // Botón para volver a 'home'
+              !isHome && React.createElement('button', {
+                  onClick: () => onNavigate('home'),
+                  className: 'absolute top-8 left-8 text-white/80 text-sm uppercase tracking-widest pointer-events-auto hover:text-white'
+              }, '← Volver')
+            )
+          );
       };
-      
+
+      // --- COMPONENTE PRINCIPAL DE LA APLICACIÓN ---
       const App = () => {
           const [videoUrl, setVideoUrl] = useState('');
-          const [activeSectionId, setActiveSectionId] = useState(null);
+          const [activeSection, setActiveSection] = useState('home');
 
           useEffect(() => {
               const skin = backgroundSkins[Math.floor(Math.random() * backgroundSkins.length)];
-              const isMobile = window.matchMedia("(max-width: 768px)").matches;
-              setVideoUrl(isMobile ? skin.url.mobile : skin.url.desktop);
+              setVideoUrl(skin.url.desktop);
           }, []);
-
-          const handleNodeClick = useCallback((id) => {
-              // El nodo principal 'ARG' no se expande, solo cambia el video
-              if (id === 'arg') {
-                  const skin = backgroundSkins[Math.floor(Math.random() * backgroundSkins.length)];
-                  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-                  setVideoUrl(isMobile ? skin.url.mobile : skin.url.desktop);
-                  return;
-              }
-              setActiveSectionId(id);
-          }, []);
-
-          const handleClose = useCallback(() => {
-              setActiveSectionId(null);
-          }, []);
-
-          // Estructura de contenido duplicada para el efecto de máscara
-          const ContentLayer = ({ isMasked }) => (
-            React.createElement('div', { 
-                className: `fixed inset-0 z-10 transition-opacity duration-1000 ${isMasked ? '' : 'pointer-events-none'}` 
-            },
-              Object.entries(sections).map(([id, section]) => 
-                React.createElement(NavNode, {
-                  key: id,
-                  id: id,
-                  ...section,
-                  onClick: handleNodeClick,
-                  isActive: activeSectionId === id,
-                  isAnyActive: activeSectionId !== null
-                })
-              ),
-              React.createElement(ExpandedContent, {
-                  section: sections[activeSectionId],
-                  onClose: handleClose,
-                  isActive: activeSectionId !== null
-              })
-            )
-          );
 
           return (
               React.createElement(React.Fragment, null,
-                  // Efecto de cursor y definiciones SVG (no visibles)
-                  React.createElement(GooeyCursor, null),
+                  React.createElement(GooeyEffect, null),
+                  
+                  // Definiciones SVG (no visibles, pero necesarias para el filtro/máscara)
                   React.createElement('svg', { className: "svg-defs" },
                     React.createElement('defs', null,
                       React.createElement('filter', { id: "gooey-filter" },
-                        React.createElement('feGaussianBlur', { in: "SourceGraphic", stdDeviation: "12", result: "blur" }),
-                        React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 25 -10" }),
+                        React.createElement('feGaussianBlur', { in: "SourceGraphic", stdDeviation: "15", result: "blur" }),
+                        React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -12" }),
                       ),
                       React.createElement('mask', { id: "gooey-mask" },
                         React.createElement('g', { id: "gooey-mask-group", filter: "url(#gooey-filter)" })
@@ -210,30 +179,37 @@
                     )
                   ),
                   
-                  // Fondo de video
+                  // Capa 1: Fondo de video
                   React.createElement('div', { className: "fixed top-0 left-0 w-full h-full -z-20 overflow-hidden" },
                       React.createElement('video', { 
                           key: videoUrl, 
-                          className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover transition-opacity duration-1000", 
+                          className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover", 
                           loop: true, muted: true, autoPlay: true, playsInline: true, src: videoUrl 
                       })
                   ),
-                  React.createElement('div', {className: "fixed inset-0 -z-10 bg-black/60"}),
-
-                  // Capa base (visible a través de la máscara)
-                  React.createElement('div', {
-                      className: "fixed inset-0 bg-white",
-                      style: { mask: 'url(#gooey-mask)', WebkitMask: 'url(#gooey-mask)' }
-                  }),
                   
-                  // Contenido de la interfaz (texto, botones)
-                  React.createElement(ContentLayer, { isMasked: false })
+                  // Capa 2: Superposición oscura para mejorar contraste
+                  React.createElement('div', {className: "fixed inset-0 -z-10 bg-black/70"}),
+
+                  // Capa 3: Contenido de la UI, enmascarado por el efecto viscoso
+                  React.createElement('div', {
+                      className: "fixed inset-0",
+                      style: { 
+                        mask: 'url(#gooey-mask)', 
+                        WebkitMask: 'url(#gooey-mask)' 
+                      }
+                  },
+                    // Fondo del contenido enmascarado (el color oscuro del tema)
+                    React.createElement('div', {className: 'w-full h-full bg-[#1a1a1a]'}),
+                    // La interfaz de texto y botones que será visible
+                    React.createElement(ContentLayer, { activeSection, onNavigate: setActiveSection })
+                  )
               )
           );
       };
 
       const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(React.createElement(React.StrictMode, null, React.createElement(App, null)));
+      root.render(React.createElement(App, null));
     </script>
 </body>
 </html>
