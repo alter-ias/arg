@@ -23,6 +23,35 @@
         width: 0;
         height: 0;
       }
+      /* Estilos para los sliders de control */
+      .control-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.2);
+        outline: none;
+        opacity: 0.7;
+        transition: opacity .2s;
+        cursor: pointer;
+      }
+      .control-slider:hover {
+        opacity: 1;
+      }
+      .control-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        background: #f0e9e2;
+        border-radius: 50%;
+      }
+      .control-slider::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        background: #f0e9e2;
+        border-radius: 50%;
+      }
     </style>
     <script type="importmap">
       {
@@ -39,75 +68,42 @@
       import React from 'react';
       import ReactDOM from 'react-dom/client';
 
-      const { useState, useEffect, useCallback } = React;
+      const { useState, useEffect, useCallback, useRef } = React;
 
       // --- DATOS DE LA APLICACIÓN ---
       const sections = {
-          home: { title: "ARG", description: "Un experimento digital donde se entretejen la lírica, el pensamiento crítico y los ritmos de la vida urbana.", url: null },
-          pergamino: { title: "Pergamino", description: "Textos periodísticos, ensayos, poemas y demás experimentos literarios.", url: 'https://alter-ias.github.io/arg/argblog.html' },
-          mediateca: { title: "Mediateca", description: "Una colección de fragmentos audiovisuales.", url: 'https://alter-ias.github.io/arg/mediateca.html' },
-          loteria: { title: "Lotería", description: "Una reinterpretación digital del clásico juego de mesa.", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
+          home: { title: "ARG", url: null },
+          pergamino: { title: "Pergamino", url: 'https://alter-ias.github.io/arg/argblog.html' },
+          mediateca: { title: "Mediateca", url: 'https://alter-ias.github.io/arg/mediateca.html' },
+          loteria: { title: "Lotería", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
       };
       
-      // --- IMÁGENES PARA EL EFECTO DE DOBLE CAPA ---
-      const IMAGE_LAYER_BASE = 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=3432&auto=format&fit=crop'; // Fondo oscuro/bosque
-      const IMAGE_LAYER_REVEALED = 'https://images.unsplash.com/photo-1558816335-515b6c3c5a04?q=80&w=3270&auto=format&fit=crop'; // Flores/luz
+      const IMAGE_LAYER_BASE = 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=3432&auto=format&fit=crop';
+      const IMAGE_LAYER_REVEALED = 'https://images.unsplash.com/photo-1558816335-515b6c3c5a04?q=80&w=3270&auto=format&fit=crop';
 
-      // --- COMPONENTE DEL EFECTO VISCOSO (CON CONTROLES) ---
-      const GooeyEffect = () => {
-          useEffect(() => {
-              // --- CONTROLES DEL EFECTO ---
-              // Ajusta estos valores para cambiar la "sensación" del líquido.
-              const CONTROLS = {
-                  STIFFNESS: 0.025, // Rigidez del muelle. MÁS BAJO = MÁS LENTO Y PESADO. (Ej: 0.01 - 0.1)
-                  DAMPING: 0.96,    // Fricción. MÁS ALTO = MENOS REBOTE, MÁS VISCOSO. (Ej: 0.9 - 0.99)
-                  BASE_RADIUS: 250, // Tamaño general del efecto en píxeles.
-                  NUM_POINTS: 16,   // Número de partículas en la cola. Afecta la suavidad.
-              };
-              // -----------------------------
-
-              const gooeyGroup = document.querySelector('#gooey-mask-group');
-              if (!gooeyGroup) return;
-
-              let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-              let animationFrameId = null;
-              
-              const points = Array.from({ length: CONTROLS.NUM_POINTS }, (_, i) => {
-                  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                  const radius = CONTROLS.BASE_RADIUS * (1 - (i / CONTROLS.NUM_POINTS) * 0.7);
-                  circle.setAttribute('r', String(radius));
-                  circle.setAttribute('fill', 'white');
-                  gooeyGroup.appendChild(circle);
-                  return { el: circle, x: mouse.x, y: mouse.y, vx: 0, vy: 0 };
-              });
-
-              const handleMouseMove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
-              window.addEventListener('mousemove', handleMouseMove);
-
-              const animate = () => {
-                  points.forEach((point, i) => {
-                      let target = (i === 0) ? mouse : points[i - 1];
-                      point.vx = (point.vx + (target.x - point.x) * CONTROLS.STIFFNESS) * CONTROLS.DAMPING;
-                      point.vy = (point.vy + (target.y - point.y) * CONTROLS.STIFFNESS) * CONTROLS.DAMPING;
-                      point.x += point.vx;
-                      point.y += point.vy;
-                      point.el.setAttribute('cx', String(point.x));
-                      point.el.setAttribute('cy', String(point.y));
-                  });
-                  animationFrameId = requestAnimationFrame(animate);
-              };
-              animate();
-
-              return () => {
-                  window.removeEventListener('mousemove', handleMouseMove);
-                  if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                  gooeyGroup.innerHTML = '';
-              };
-          }, []);
-          return null;
+      // --- COMPONENTE DE CONTROLES VISUALES ---
+      const PhysicsControls = ({ settings, onUpdate }) => {
+          return React.createElement('div', {
+            className: "fixed top-4 left-4 z-50 p-4 bg-black/20 backdrop-blur-sm rounded-lg text-white w-52 pointer-events-auto transition-opacity hover:opacity-100 opacity-80"
+          },
+            React.createElement('div', { className: 'space-y-3' },
+              React.createElement('div', null,
+                React.createElement('label', { className: 'text-xs uppercase tracking-wider' }, 'Tamaño'),
+                React.createElement('input', { type: 'range', min: '100', max: '500', value: settings.radius, onChange: (e) => onUpdate('radius', parseFloat(e.target.value)), className: 'control-slider' })
+              ),
+              React.createElement('div', null,
+                React.createElement('label', { className: 'text-xs uppercase tracking-wider' }, 'Lentitud'),
+                React.createElement('input', { type: 'range', min: '0.01', max: '0.1', step: '0.001', value: settings.stiffness, onChange: (e) => onUpdate('stiffness', parseFloat(e.target.value)), className: 'control-slider' })
+              ),
+              React.createElement('div', null,
+                React.createElement('label', { className: 'text-xs uppercase tracking-wider' }, 'Viscosidad'),
+                React.createElement('input', { type: 'range', min: '0.90', max: '0.99', step: '0.001', value: settings.damping, onChange: (e) => onUpdate('damping', parseFloat(e.target.value)), className: 'control-slider' })
+              )
+            )
+          );
       };
 
-      // --- COMPONENTE DE LA INTERFAZ ---
+      // --- COMPONENTE DE LA INTERFAZ PRINCIPAL ---
       const ContentLayer = ({ activeSection, onNavigate }) => {
           const isHome = activeSection === 'home';
           const currentData = sections[activeSection];
@@ -119,7 +115,7 @@
               React.createElement('div', { className: 'max-w-4xl' },
                 React.createElement('h1', { 
                     className: `font-['Cormorant_Garamond'] font-bold leading-none transition-transform duration-500 ease-in-out`, 
-                    style: { fontSize: 'clamp(5rem, 15vw, 18rem)', transform: isHome ? 'scale(1)' : 'scale(1.2)'} 
+                    style: { fontSize: 'clamp(5rem, 15vw, 18rem)', transform: `scale(${isHome ? 1 : 1.2})` } 
                 }, currentData.title),
                 
                 React.createElement('div', {
@@ -128,8 +124,7 @@
                   },
                   React.createElement('p', { className: "max-w-xl mx-auto my-8 text-lg text-white/80" }, currentData.description),
                   React.createElement('a', {
-                    href: currentData.url,
-                    target: "_blank", rel: "noopener noreferrer",
+                    href: currentData.url, target: "_blank", rel: "noopener noreferrer",
                     className: "inline-block py-3 px-10 border-2 border-white text-white no-underline transition-all duration-300 text-sm uppercase tracking-wider rounded-full pointer-events-auto hover:bg-white hover:text-black hover:scale-105"
                   }, `Visitar ${currentData.title}`)
                 )
@@ -141,13 +136,9 @@
                 const x = Math.cos(angle) * radius;
                 const y = Math.sin(angle) * radius;
                 return React.createElement('button', {
-                  key: key,
-                  onClick: () => onNavigate(key),
+                  key: key, onClick: () => onNavigate(key),
                   className: `absolute font-['Cormorant_Garamond'] text-4xl text-white/70 transition-all duration-700 ease-in-out pointer-events-auto hover:text-white hover:scale-110`,
-                  style: {
-                    opacity: isHome ? 1 : 0,
-                    transform: `translate(${x}px, ${y}px) scale(${isHome ? 1 : 0.5})`
-                  }
+                  style: { opacity: isHome ? 1 : 0, transform: `translate(${x}px, ${y}px) scale(${isHome ? 1 : 0.5})` }
                 }, sections[key].title);
               }),
 
@@ -162,10 +153,60 @@
       // --- COMPONENTE PRINCIPAL DE LA APLICACIÓN ---
       const App = () => {
           const [activeSection, setActiveSection] = useState('home');
+          const [physics, setPhysics] = useState({ radius: 250, stiffness: 0.025, damping: 0.96 });
+          const pointsRef = useRef([]);
+          const maskGroupRef = useRef(null);
+          const animationFrameId = useRef(null);
+          const mousePos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+
+          const handleControlUpdate = useCallback((key, value) => {
+              setPhysics(prev => ({ ...prev, [key]: value }));
+          }, []);
+
+          useEffect(() => {
+              const NUM_POINTS = 16;
+              const maskGroup = maskGroupRef.current;
+              if (!maskGroup) return;
+
+              // Inicializar los puntos y elementos SVG
+              maskGroup.innerHTML = ''; // Limpiar por si acaso
+              pointsRef.current = Array.from({ length: NUM_POINTS }, () => {
+                  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                  circle.setAttribute('fill', 'white');
+                  maskGroup.appendChild(circle);
+                  return { el: circle, x: mousePos.current.x, y: mousePos.current.y, vx: 0, vy: 0 };
+              });
+              
+              const handleMouseMove = (e) => { mousePos.current = { x: e.clientX, y: e.clientY }; };
+              window.addEventListener('mousemove', handleMouseMove);
+
+              const animate = () => {
+                  const { stiffness, damping, radius } = physics;
+                  pointsRef.current.forEach((point, i) => {
+                      let target = (i === 0) ? mousePos.current : pointsRef.current[i - 1];
+                      point.vx = (point.vx + (target.x - point.x) * stiffness) * damping;
+                      point.vy = (point.vy + (target.y - point.y) * stiffness) * damping;
+                      point.x += point.vx;
+                      point.y += point.vy;
+                      
+                      const newRadius = radius * (1 - (i / NUM_POINTS) * 0.7);
+                      point.el.setAttribute('cx', point.x);
+                      point.el.setAttribute('cy', point.y);
+                      point.el.setAttribute('r', newRadius);
+                  });
+                  animationFrameId.current = requestAnimationFrame(animate);
+              };
+              animate();
+
+              return () => {
+                  window.removeEventListener('mousemove', handleMouseMove);
+                  if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+              };
+          }, [physics]); // Re-iniciar la animación si la física cambia
 
           return (
               React.createElement(React.Fragment, null,
-                  React.createElement(GooeyEffect, null),
+                  React.createElement(PhysicsControls, { settings: physics, onUpdate: handleControlUpdate }),
                   
                   React.createElement('svg', { className: "svg-defs" },
                     React.createElement('defs', null,
@@ -174,21 +215,18 @@
                         React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -15" }),
                       ),
                       React.createElement('mask', { id: "gooey-mask" },
-                        React.createElement('g', { id: "gooey-mask-group", filter: "url(#gooey-filter)" })
+                        React.createElement('g', { ref: maskGroupRef, filter: "url(#gooey-filter)" })
                       )
                     )
                   ),
                   
-                  // Capa 1: Imagen Base (Siempre visible en el fondo)
                   React.createElement('div', {
                     className: "fixed inset-0 -z-30 bg-cover bg-center",
                     style: { backgroundImage: `url(${IMAGE_LAYER_BASE})` }
                   }),
                   
-                  // Capa 2: Superposición oscura para contraste
                   React.createElement('div', {className: "fixed inset-0 -z-20 bg-black/70"}),
 
-                  // Capa 3: Imagen Revelada (Enmascarada por el efecto viscoso)
                   React.createElement('div', {
                       className: "fixed inset-0 -z-10 bg-cover bg-center",
                       style: { 
@@ -198,7 +236,6 @@
                       }
                   }),
 
-                  // Capa 4: Contenido de la UI (Texto y botones)
                   React.createElement(ContentLayer, { activeSection, onNavigate: setActiveSection })
               )
           );
