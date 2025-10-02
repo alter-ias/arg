@@ -21,6 +21,19 @@
         width: 0;
         height: 0;
       }
+      .nav-link {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.25rem;
+        position: absolute;
+        cursor: pointer;
+        pointer-events: auto;
+        transition: all 0.3s ease-in-out;
+        opacity: 0.7;
+      }
+      .nav-link:hover {
+        opacity: 1;
+        transform: scale(1.1);
+      }
     </style>
     <script type="importmap">
       {
@@ -37,38 +50,56 @@
       import React from 'react';
       import ReactDOM from 'react-dom/client';
 
-      const { useState, useEffect, useCallback, useRef } = React;
+      const { useRef, useEffect } = React;
 
       // --- DATOS Y CONFIGURACIÓN ---
       const sections = {
           home: { title: "ARG", url: null },
-          pergamino: { title: "Pergamino", description: "Textos periodísticos, ensayos, poemas y demás experimentos literarios.", url: 'https://alter-ias.github.io/arg/argblog.html' },
-          mediateca: { title: "Mediateca", description: "Una colección de fragmentos audiovisuales.", url: 'https://alter-ias.github.io/arg/mediateca.html' },
-          loteria: { title: "Lotería", description: "Una reinterpretación digital del clásico juego de mesa.", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
+          pergamino: { title: "Pergamino", url: 'https://alter-ias.github.io/arg/argblog.html' },
+          mediateca: { title: "Mediateca", url: 'https://alter-ias.github.io/arg/mediateca.html' },
+          loteria: { title: "Lotería", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
       };
       
-      const BACKGROUND_IMAGE = 'https://cdn.wallpapersafari.com/86/63/rlojHA.jpg';
-      const REVEALED_IMAGE = 'https://cdn.pixabay.com/photo/2023/09/16/18/18/wallpaper-8257343_1280.png';
+      // ******** IMÁGENES CORREGIDAS ********
+      const BACKGROUND_IMAGE = 'https://cdn.pixabay.com/photo/2023/09/16/18/18/wallpaper-8257343_1280.png';
+      const REVEALED_IMAGE = 'https://cdn.wallpapersafari.com/86/63/rlojHA.jpg';
+      // ***************************************
 
-      // --- COMPONENTE DE LA INTERFAZ ---
-      const ContentLayer = ({ activeSection, onNavigate }) => {
-          const isHome = activeSection === 'home';
-          const currentData = sections[activeSection];
-          return React.createElement('div', { className: "fixed inset-0 flex items-center justify-center text-center p-8 pointer-events-none text-white" }, React.createElement('div', { className: 'relative w-full h-full flex items-center justify-center' }, React.createElement('div', { className: 'max-w-4xl' }, React.createElement('h1', { className: `font-['Cormorant_Garamond'] font-bold leading-none transition-transform duration-500 ease-in-out`, style: { fontSize: 'clamp(5rem, 15vw, 18rem)', transform: `scale(${isHome ? 1 : 1.2})` } }, currentData.title), React.createElement('div', { className: `transition-all duration-700 ease-in-out delay-200`, style: { opacity: isHome ? 0 : 1 } }, React.createElement('p', { className: "max-w-xl mx-auto my-8 text-lg text-white/80" }, currentData.description || ""), React.createElement('a', { href: currentData.url, target: "_blank", rel: "noopener noreferrer", className: "inline-block py-3 px-10 border-2 border-white text-white no-underline transition-all duration-300 text-sm uppercase tracking-wider rounded-full pointer-events-auto hover:bg-white hover:text-black hover:scale-105" }, `Visitar ${currentData.title}`))), Object.keys(sections).filter(key => key !== 'home').map((key, index) => { const angle = (index / (Object.keys(sections).length - 1)) * 2 * Math.PI - (Math.PI / 2); const radius = window.innerWidth > 768 ? 350 : 200; const x = Math.cos(angle) * radius; const y = Math.sin(angle) * radius; return React.createElement('button', { key: key, onTouchEnd: (e) => { e.preventDefault(); onNavigate(key); }, onClick: () => onNavigate(key), className: `absolute font-['Cormorant_Garamond'] text-4xl text-white/70 transition-all duration-700 ease-in-out pointer-events-auto hover:text-white hover:scale-110`, style: { opacity: isHome ? 1 : 0, transform: `translate(${x}px, ${y}px) scale(${isHome ? 1 : 0.5})` } }, sections[key].title); }), !isHome && React.createElement('button', { onTouchEnd: (e) => { e.preventDefault(); onNavigate('home'); }, onClick: () => onNavigate('home'), className: 'absolute top-8 left-8 text-white/70 text-sm uppercase tracking-widest pointer-events-auto hover:text-white transition-opacity duration-300' }, '← Volver')));
+      // --- COMPONENTE DE LA INTERFAZ (SIMPLIFICADO) ---
+      const ContentLayer = () => {
+          return React.createElement('div', { className: "fixed inset-0 flex items-center justify-center text-center p-8 pointer-events-none text-white" }, 
+            React.createElement('div', { className: 'relative w-full h-full flex items-center justify-center' }, 
+              React.createElement('div', { className: 'max-w-4xl' }, 
+                // [CORREGIDO] Solo el título principal
+                React.createElement('h1', { className: `font-['Cormorant_Garamond'] font-bold leading-none`, style: { fontSize: 'clamp(5rem, 15vw, 18rem)' } }, sections.home.title)
+              ),
+              
+              Object.keys(sections).filter(key => key !== 'home').map((key, index) => { 
+                const angle = (index / (Object.keys(sections).length - 1)) * 2 * Math.PI - (Math.PI / 2);
+                const radius = window.innerWidth > 768 ? 240 : 160;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                
+                return React.createElement('a', { 
+                  key: key, 
+                  href: sections[key].url,
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  className: `nav-link`, 
+                  style: { transform: `translate(${x}px, ${y}px)` } 
+                }, sections[key].title); 
+              })
+            )
+          );
       };
 
       // --- COMPONENTE PRINCIPAL ---
       const App = () => {
-          const [activeSection, setActiveSection] = useState('home');
           const maskGroupRef = useRef(null);
           
           const physics = {
-              radius: 136,
-              stiffness: 0.010,
-              damping: 0.805,
-              numPoints: 3,
-              tailTaper: 0.15,
-              blurAmount: 48
+              radius: 136, stiffness: 0.010, damping: 0.805,
+              numPoints: 3, tailTaper: 0.15, blurAmount: 48
           };
 
           useEffect(() => {
@@ -95,36 +126,25 @@
 
               setupPoints(physics.numPoints);
               
-              // ******** LA SOLUCIÓN RESPONSIVA ********
-              // Controlador universal para ratón y eventos táctiles
               const handlePointerMove = (e) => {
-                  if (e.touches) {
-                      // Es un evento táctil
-                      mousePos.x = e.touches[0].clientX;
-                      mousePos.y = e.touches[0].clientY;
-                  } else {
-                      // Es un evento de ratón
-                      mousePos.x = e.clientX;
-                      mousePos.y = e.clientY;
-                  }
+                  const posX = e.touches ? e.touches[0].clientX : e.clientX;
+                  const posY = e.touches ? e.touches[0].clientY : e.clientY;
+                  mousePos.x = posX;
+                  mousePos.y = posY;
               };
 
-              // Escuchar todos los tipos de entrada
               window.addEventListener('mousemove', handlePointerMove);
               window.addEventListener('touchstart', handlePointerMove, { passive: true });
               window.addEventListener('touchmove', handlePointerMove, { passive: true });
-              // ********************************************
 
               const animate = () => {
                   blurFilter.setAttribute('stdDeviation', physics.blurAmount);
-                  
                   points.forEach((point, i) => {
                       const target = (i === 0) ? mousePos : points[i - 1];
                       point.vx = (point.vx + (target.x - point.x) * physics.stiffness) * physics.damping;
                       point.vy = (point.vy + (target.y - point.y) * physics.stiffness) * physics.damping;
                       point.x += point.vx;
                       point.y += point.vy;
-                      
                       const pointRadius = physics.radius * (1 - (i / physics.numPoints) * physics.tailTaper);
                       point.el.setAttribute('cx', point.x);
                       point.el.setAttribute('cy', point.y);
@@ -135,7 +155,6 @@
               animate();
 
               return () => {
-                  // Limpiar todos los listeners
                   window.removeEventListener('mousemove', handlePointerMove);
                   window.removeEventListener('touchstart', handlePointerMove);
                   window.removeEventListener('touchmove', handlePointerMove);
@@ -165,7 +184,7 @@
                       style: { mask: 'url(#gooey-mask)', WebkitMask: 'url(#gooey-mask)' }
                   },
                       React.createElement('div', { className: "absolute inset-0 bg-cover bg-center", style: { backgroundImage: `url(${REVEALED_IMAGE})` } }),
-                      React.createElement(ContentLayer, { activeSection, onNavigate: setActiveSection })
+                      React.createElement(ContentLayer, null)
                   )
               )
           );
