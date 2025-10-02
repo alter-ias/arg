@@ -15,7 +15,6 @@
             --font-sans: 'Poppins', sans-serif;
             --color-light: #FFFFFF;
             --color-dark: #1a1a1a;
-            --color-dim: #555555; /* Color para el texto de fondo */
         }
 
         * { box-sizing: border-box; }
@@ -23,38 +22,44 @@
         body { 
             margin: 0; 
             font-family: var(--font-sans); 
-            background-color: var(--color-dark); 
+            background-color: #000; /* Fondo base negro */
+            color: var(--color-light);
             overflow-x: hidden;
             cursor: none;
         }
 
-        .svg-defs { position: absolute; width: 0; height: 0; }
+        .svg-defs { 
+            position: fixed; 
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1; /* La máscara vive entre el fondo y el contenido */
+        }
         
         .background-layer {
             position: fixed;
             inset: 0;
             background-size: cover;
             background-position: center;
-            z-index: -1;
+            z-index: -1; /* El fondo luminoso está detrás de todo */
         }
-
-        .content-block {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-        }
-
-        #background-content {
-            color: var(--color-dim);
-            z-index: 1;
-        }
-
-        #foreground-content {
-            color: var(--color-light);
-            z-index: 2;
+        
+        /* [NUEVA LÓGICA] Capa de sombra que será enmascarada */
+        #gooey-shadow {
+            position: fixed;
+            inset: 0;
+            background-image: url('https://cdn.wallpapersafari.com/86/63/rlojHA.jpg'); /* Fondo opaco */
+            background-size: cover;
+            background-position: center;
             mask: url(#gooey-mask);
             -webkit-mask: url(#gooey-mask);
+            z-index: 0; /* Entre el fondo y el contenido */
+        }
+
+        /* El contenido principal ahora es independiente */
+        #main-content {
+            position: relative;
+            z-index: 2; /* Encima de la sombra y el fondo */
         }
 
         header { 
@@ -105,8 +110,14 @@
 </head>
 <body>
 
-    <!-- Contenedor para el contenido principal (se duplicará) -->
-    <div id="content-source" style="display: none;">
+    <!-- Capa de fondo luminosa (detrás de todo) -->
+    <div class="background-layer" id="background-layer"></div>
+
+    <!-- Capa de sombra opaca (enmascarada) -->
+    <div id="gooey-shadow"></div>
+
+    <!-- Contenido principal -->
+    <div id="main-content">
         <header>
             <div class="header-logo"><a href="https://alter-ias.github.io/arg/arg.html">ARG</a></div>
         </header>
@@ -133,10 +144,6 @@
             </section>
         </main>
     </div>
-
-    <!-- Capas de la página -->
-    <div id="background-content" class="content-block"></div>
-    <div id="foreground-content" class="content-block"></div>
     
     <div id="video-sources" style="display: none;"><a data-src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk">¿Quién es Alan Ruíz?</a><a data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Ecos en las Ruinas</a></div>
     <div id="podcast-sources" style="display: none;"><a data-src="https://open.spotify.com/embed/episode/1UNPu6kLKZJ3fHrCWB4yJg?utm_source=generator&theme=0">Capítulo 4 - Los casiamigos</a><a data-src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0">Capítulo 3 - Gentrificación</a></div>
@@ -150,32 +157,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- CONFIGURACIÓN ---
-            const BACKGROUND_IMAGE = 'https://cdn.pixabay.com/photo/2023/09/16/18/18/wallpaper-8257343_1280.png'; // Luminosa
-            const REVEALED_IMAGE = 'https://cdn.wallpapersafari.com/86/63/rlojHA.jpg'; // Opaca
+            const BACKGROUND_IMAGE = 'https://cdn.pixabay.com/photo/2023/09/16/18/18/wallpaper-8257343_1280.png';
+            document.getElementById('background-layer').style.backgroundImage = `url(${BACKGROUND_IMAGE})`;
             
-            // --- DUPLICACIÓN DE CONTENIDO ---
-            const source = document.getElementById('content-source');
-            const bgContent = document.getElementById('background-content');
-            const fgContent = document.getElementById('foreground-content');
-            bgContent.innerHTML = source.innerHTML;
-            fgContent.innerHTML = source.innerHTML;
-            
-            // Insertar fondos
-            const bgLayer = document.createElement('div');
-            bgLayer.className = 'background-layer';
-            bgLayer.style.backgroundImage = `url(${BACKGROUND_IMAGE})`;
-            bgContent.insertBefore(bgLayer, bgContent.firstChild);
-
-            const revealedLayer = document.createElement('div');
-            revealedLayer.className = 'background-layer';
-            revealedLayer.style.backgroundImage = `url(${REVEALED_IMAGE})`;
-            fgContent.insertBefore(revealedLayer, fgContent.firstChild);
-            
-            // --- MOTOR DE ANIMACIÓN VISCOSA ---
             const gooeyGroup = document.querySelector('#gooey-mask g');
             const physics = { radius: 136, stiffness: 0.010, damping: 0.805, numPoints: 3, tailTaper: 0.15 };
-            let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+            
+            // Iniciar desde abajo
+            let mouse = { x: window.innerWidth / 2, y: window.innerHeight };
             const points = [];
 
             for (let i = 0; i < physics.numPoints; i++) {
@@ -186,21 +175,18 @@
             }
 
             const handlePointerMove = (e) => {
-                const posX = e.touches ? e.touches[0].clientX : e.clientX;
-                const posY = e.touches ? e.touches[0].clientY : e.clientY;
-                mouse.x = posX; mouse.y = posY;
+                mouse.x = e.touches ? e.touches[0].clientX : e.clientX;
+                mouse.y = e.touches ? e.touches[0].clientY : e.clientY;
             };
             window.addEventListener('mousemove', handlePointerMove);
             window.addEventListener('touchstart', handlePointerMove, { passive: true });
             window.addEventListener('touchmove', handlePointerMove, { passive: true });
 
             function animate() {
-                const scrollY = window.scrollY;
                 points.forEach((point, i) => {
                     let target = (i === 0) ? mouse : points[i - 1];
                     point.vx = (point.vx + (target.x - point.x) * physics.stiffness) * physics.damping;
-                    // El cursor Y debe considerar el scroll para mantenerse en la ventana
-                    point.vy = (point.vy + ((target.y + scrollY) - point.y) * physics.stiffness) * physics.damping;
+                    point.vy = (point.vy + (target.y - point.y) * physics.stiffness) * physics.damping;
                     point.x += point.vx;
                     point.y += point.vy;
                     
@@ -213,11 +199,11 @@
             }
             animate();
 
-            // --- LÓGICA DE LAS LISTAS (Aplicada a ambas copias) ---
-            function setupArchiveSection(container, sourcesDivId, listUlId, playerIframeId) {
-                const player = container.querySelector(`#${playerIframeId}`);
+            // Lógica original de las listas (funciona porque el contenido es independiente)
+            function setupArchiveSection(sourcesDivId, listUlId, playerIframeId) {
+                const player = document.getElementById(playerIframeId);
                 const sourcesContainer = document.getElementById(sourcesDivId);
-                const listUl = container.querySelector(`#${listUlId}`);
+                const listUl = document.getElementById(listUlId);
                 if (!player || !sourcesContainer || !listUl) return;
                 const sourceLinks = sourcesContainer.querySelectorAll('a');
                 if (sourceLinks.length === 0) return;
@@ -242,12 +228,8 @@
                     }
                 });
             }
-            // Inicializar para ambas copias del contenido
-            setupArchiveSection(fgContent, 'video-sources', 'video-list-ul', 'youtube-player');
-            setupArchiveSection(fgContent, 'podcast-sources', 'podcast-list-ul', 'spotify-player');
-            setupArchiveSection(bgContent, 'video-sources', 'video-list-ul', 'youtube-player');
-            setupArchiveSection(bgContent, 'podcast-sources', 'podcast-list-ul', 'spotify-player');
-
+            setupArchiveSection('video-sources', 'video-list-ul', 'youtube-player');
+            setupArchiveSection('podcast-sources', 'podcast-list-ul', 'spotify-player');
         });
     </script>
 </body>
