@@ -47,19 +47,14 @@
           loteria: { title: "Lotería", description: "Una reinterpretación digital del clásico juego de mesa.", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html' },
       };
       
-      // ******** RUTAS PARA CAMBIAR LOS FONDOS ********
-      // La imagen exterior, visible por defecto.
-      const BACKGROUND_IMAGE = 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=3432&auto=format&fit=crop';
-      
-      // La imagen interior, que se revela a través del efecto.
+      const BACKGROUND_IMAGE = 'https://cdn.wallpapersafari.com/86/63/rlojHA.jpg';
       const REVEALED_IMAGE = 'https://cdn.pixabay.com/photo/2023/09/16/18/18/wallpaper-8257343_1280.png';
-      // *************************************************
 
       // --- COMPONENTE DE LA INTERFAZ ---
       const ContentLayer = ({ activeSection, onNavigate }) => {
           const isHome = activeSection === 'home';
           const currentData = sections[activeSection];
-          return React.createElement('div', { className: "fixed inset-0 flex items-center justify-center text-center p-8 pointer-events-none text-white" }, React.createElement('div', { className: 'relative w-full h-full flex items-center justify-center' }, React.createElement('div', { className: 'max-w-4xl' }, React.createElement('h1', { className: `font-['Cormorant_Garamond'] font-bold leading-none transition-transform duration-500 ease-in-out`, style: { fontSize: 'clamp(5rem, 15vw, 18rem)', transform: `scale(${isHome ? 1 : 1.2})` } }, currentData.title), React.createElement('div', { className: `transition-all duration-700 ease-in-out delay-200`, style: { opacity: isHome ? 0 : 1 } }, React.createElement('p', { className: "max-w-xl mx-auto my-8 text-lg text-white/80" }, currentData.description || ""), React.createElement('a', { href: currentData.url, target: "_blank", rel: "noopener noreferrer", className: "inline-block py-3 px-10 border-2 border-white text-white no-underline transition-all duration-300 text-sm uppercase tracking-wider rounded-full pointer-events-auto hover:bg-white hover:text-black hover:scale-105" }, `Visitar ${currentData.title}`))), Object.keys(sections).filter(key => key !== 'home').map((key, index) => { const angle = (index / (Object.keys(sections).length - 1)) * 2 * Math.PI - (Math.PI / 2); const radius = window.innerWidth > 768 ? 350 : 200; const x = Math.cos(angle) * radius; const y = Math.sin(angle) * radius; return React.createElement('button', { key: key, onClick: () => onNavigate(key), className: `absolute font-['Cormorant_Garamond'] text-4xl text-white/70 transition-all duration-700 ease-in-out pointer-events-auto hover:text-white hover:scale-110`, style: { opacity: isHome ? 1 : 0, transform: `translate(${x}px, ${y}px) scale(${isHome ? 1 : 0.5})` } }, sections[key].title); }), !isHome && React.createElement('button', { onClick: () => onNavigate('home'), className: 'absolute top-8 left-8 text-white/70 text-sm uppercase tracking-widest pointer-events-auto hover:text-white transition-opacity duration-300' }, '← Volver')));
+          return React.createElement('div', { className: "fixed inset-0 flex items-center justify-center text-center p-8 pointer-events-none text-white" }, React.createElement('div', { className: 'relative w-full h-full flex items-center justify-center' }, React.createElement('div', { className: 'max-w-4xl' }, React.createElement('h1', { className: `font-['Cormorant_Garamond'] font-bold leading-none transition-transform duration-500 ease-in-out`, style: { fontSize: 'clamp(5rem, 15vw, 18rem)', transform: `scale(${isHome ? 1 : 1.2})` } }, currentData.title), React.createElement('div', { className: `transition-all duration-700 ease-in-out delay-200`, style: { opacity: isHome ? 0 : 1 } }, React.createElement('p', { className: "max-w-xl mx-auto my-8 text-lg text-white/80" }, currentData.description || ""), React.createElement('a', { href: currentData.url, target: "_blank", rel: "noopener noreferrer", className: "inline-block py-3 px-10 border-2 border-white text-white no-underline transition-all duration-300 text-sm uppercase tracking-wider rounded-full pointer-events-auto hover:bg-white hover:text-black hover:scale-105" }, `Visitar ${currentData.title}`))), Object.keys(sections).filter(key => key !== 'home').map((key, index) => { const angle = (index / (Object.keys(sections).length - 1)) * 2 * Math.PI - (Math.PI / 2); const radius = window.innerWidth > 768 ? 350 : 200; const x = Math.cos(angle) * radius; const y = Math.sin(angle) * radius; return React.createElement('button', { key: key, onTouchEnd: (e) => { e.preventDefault(); onNavigate(key); }, onClick: () => onNavigate(key), className: `absolute font-['Cormorant_Garamond'] text-4xl text-white/70 transition-all duration-700 ease-in-out pointer-events-auto hover:text-white hover:scale-110`, style: { opacity: isHome ? 1 : 0, transform: `translate(${x}px, ${y}px) scale(${isHome ? 1 : 0.5})` } }, sections[key].title); }), !isHome && React.createElement('button', { onTouchEnd: (e) => { e.preventDefault(); onNavigate('home'); }, onClick: () => onNavigate('home'), className: 'absolute top-8 left-8 text-white/70 text-sm uppercase tracking-widest pointer-events-auto hover:text-white transition-opacity duration-300' }, '← Volver')));
       };
 
       // --- COMPONENTE PRINCIPAL ---
@@ -67,7 +62,6 @@
           const [activeSection, setActiveSection] = useState('home');
           const maskGroupRef = useRef(null);
           
-          // Parámetros de la física fijados según tu imagen.
           const physics = {
               radius: 136,
               stiffness: 0.010,
@@ -101,8 +95,25 @@
 
               setupPoints(physics.numPoints);
               
-              const handleMouseMove = (e) => { mousePos.x = e.clientX; mousePos.y = e.clientY; };
-              window.addEventListener('mousemove', handleMouseMove);
+              // ******** LA SOLUCIÓN RESPONSIVA ********
+              // Controlador universal para ratón y eventos táctiles
+              const handlePointerMove = (e) => {
+                  if (e.touches) {
+                      // Es un evento táctil
+                      mousePos.x = e.touches[0].clientX;
+                      mousePos.y = e.touches[0].clientY;
+                  } else {
+                      // Es un evento de ratón
+                      mousePos.x = e.clientX;
+                      mousePos.y = e.clientY;
+                  }
+              };
+
+              // Escuchar todos los tipos de entrada
+              window.addEventListener('mousemove', handlePointerMove);
+              window.addEventListener('touchstart', handlePointerMove, { passive: true });
+              window.addEventListener('touchmove', handlePointerMove, { passive: true });
+              // ********************************************
 
               const animate = () => {
                   blurFilter.setAttribute('stdDeviation', physics.blurAmount);
@@ -124,7 +135,10 @@
               animate();
 
               return () => {
-                  window.removeEventListener('mousemove', handleMouseMove);
+                  // Limpiar todos los listeners
+                  window.removeEventListener('mousemove', handlePointerMove);
+                  window.removeEventListener('touchstart', handlePointerMove);
+                  window.removeEventListener('touchmove', handlePointerMove);
                   if (animationFrameId) cancelAnimationFrame(animationFrameId);
               };
           }, []);
@@ -143,19 +157,14 @@
                     )
                   ),
                   
-                  // Capa 1: Imagen base (fondo no afectado)
                   React.createElement('div', { className: "fixed inset-0 -z-20 bg-cover bg-center", style: { backgroundImage: `url(${BACKGROUND_IMAGE})` } }),
                   React.createElement('div', { className: "fixed inset-0 -z-10 bg-black/70" }),
 
-                  // Capa 2: Mundo enmascarado
                   React.createElement('div', {
                       className: "fixed inset-0",
                       style: { mask: 'url(#gooey-mask)', WebkitMask: 'url(#gooey-mask)' }
                   },
-                      // Capa 2a: La imagen que se revela
                       React.createElement('div', { className: "absolute inset-0 bg-cover bg-center", style: { backgroundImage: `url(${REVEALED_IMAGE})` } }),
-                      
-                      // Capa 2b: La interfaz de texto
                       React.createElement(ContentLayer, { activeSection, onNavigate: setActiveSection })
                   )
               )
