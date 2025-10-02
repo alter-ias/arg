@@ -161,7 +161,7 @@
             document.getElementById('background-layer').style.backgroundImage = `url(${BACKGROUND_IMAGE})`;
             
             const gooeyGroup = document.querySelector('#gooey-mask g');
-            const physics = { radius: 136, stiffness: 0.010, damping: 0.805, numPoints: 3, tailTaper: 0.15 };
+            const physics = { radius: 196, stiffness: 0.010, damping: 0.805, numPoints: 3, tailTaper: 0.15, blurAmount: 48 };
             
             // Iniciar desde abajo
             let mouse = { x: window.innerWidth / 2, y: window.innerHeight };
