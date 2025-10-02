@@ -45,20 +45,14 @@
         pointer-events: none;
       }
     </style>
-    <script type="importmap">
-      {
-        "imports": {
-          "react": "https://esm.sh/react@18.3.1",
-          "react-dom/client": "https://esm.sh/react-dom@18.3.1/client"
-        }
-      }
-    </script>
+    <!-- El <script type="importmap"> ha sido eliminado -->
 </head>
 <body class="overflow-hidden">
     <div id="root"></div>
     <script type="module">
-      import React from 'react';
-      import ReactDOM from 'react-dom/client';
+      // [CAMBIO] Se importan los módulos de React directamente desde su URL
+      import React from 'https://esm.sh/react@18.3.1';
+      import ReactDOM from 'https://esm.sh/react-dom@18.3.1/client';
 
       const { useRef, useEffect } = React;
 
@@ -69,7 +63,7 @@
 
       // --- DATOS Y CONFIGURACIÓN ---
       const sections = {
-          home: { title: "" },
+          home: { title: "Alan Ruíz" },
           pergamino: { title: "Pergamino", url: 'https://alter-ias.github.io/arg/argblog.html', icon: PergaminoIcon },
           mediateca: { title: "Mediateca", url: 'https://alter-ias.github.io/arg/mediateca.html', icon: MediatecaIcon },
           loteria: { title: "Lotería", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html', icon: LoteriaIcon },
@@ -90,7 +84,6 @@
             React.createElement('div', { className: 'flex justify-center items-start gap-16 md:gap-24 mt-8' },
               Object.keys(sections).filter(key => key !== 'home').map(key => { 
                 const section = sections[key];
-                // [CAMBIO] Se eliminan las propiedades target y rel para que los enlaces se abran en la misma pestaña
                 return React.createElement('a', { 
                   key: key, 
                   href: section.url,
