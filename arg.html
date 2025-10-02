@@ -109,9 +109,18 @@
       const App = () => {
           const maskGroupRef = useRef(null);
           
+          // [CAMBIO] Determinar el radio del efecto según el ancho de la pantalla.
+          // Si el ancho es menor a 768px, se considera móvil y el radio es 126.
+          // En caso contrario, para desktop, el radio es 196.
+          const radius = window.innerWidth < 768 ? 126 : 196;
+
           const physics = {
-              radius: 196, stiffness: 0.010, damping: 0.805,
-              numPoints: 3, tailTaper: 0.15, blurAmount: 48
+              radius: radius, // Usar el valor calculado
+              stiffness: 0.010, 
+              damping: 0.805,
+              numPoints: 3, 
+              tailTaper: 0.15, 
+              blurAmount: 48
           };
 
           useEffect(() => {
