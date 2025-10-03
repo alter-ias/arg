@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediateca - Jardín Digital</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Poppins', sans-serif;
+            --color-light: #FFFFFF;
+            --color-dark: #1a1a1a;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { 
+            margin: 0; 
+            font-family: var(--font-sans); 
+            background-color: #000;
+            color: var(--color-light);
+            overflow-x: hidden;
+            cursor: default; /* Safari no soporta SVG en cursor */
+        }
+
+        a {
+            cursor: pointer;
+        }
+
+        .background-layer {
+            position: fixed;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+        
+        #gooey-svg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* ←←← Clave para permitir interacción */
+            z-index: 0;
+        }
+
+        #main-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        header { 
+            padding: 1.5rem 2rem; 
+            position: absolute;
+            top: 0; left: 0; width: 100%; z-index: 100; 
+            display: flex;
+            justify-content: center; align-items: center;
+        }
+        .header-logo a { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: inherit; }
+        
+        main {
+             padding-top: 20vh;
+        }
+
+        .archive-block { 
+            position: relative; width: 100%; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; padding: 4rem 2rem;
+            min-height: 80vh;
+        }
+        
+        .hero-content h1 { font-family: var(--font-serif); font-size: 5rem; }
+        .hero-content p { font-size: 1.2rem; max-width: 600px; }
+        .content-wrapper { width: 100%; max-width: 700px; }
+        .block-title { font-family: var(--font-serif); font-size: 2.5rem; margin-bottom: 2rem; text-align: center; }
+        
+        .player-container, .media-list-box {
+            background: rgba(20, 20, 20, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            pointer-events: auto;
+        }
+        
+        .player-container { margin-bottom: 1rem; }
+        .video-wrapper { position: relative; padding-top: 56.25%; height: 0; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        #podcast-archive .player-container { height: 352px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        #podcast-archive .player-container iframe { width: 100%; height: 100%; border: none; }
+        
+        .media-list-box { height: 160px; overflow-y: auto; padding: 0.5rem; scrollbar-width: none; }
+        .media-list-box::-webkit-scrollbar { display: none; }
+        .media-list-box ul { list-style: none; padding: 0; margin: 0; }
+        .media-link { display: block; padding: 0.75rem; text-decoration: none; color: inherit; border-radius: 5px; margin-bottom: 0.25rem; transition: background-color 0.3s; border: 1px solid transparent; }
+        .media-link:hover { background-color: rgba(255, 255, 255, 0.1); }
+        .media-link.is-active { background-color: rgba(255, 255, 255, 0.2); border-color: currentColor; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo base luminoso -->
+    <div class="background-layer" id="background-layer"></div>
+
+    <!-- SVG con el efecto gooey -->
+    <svg id="gooey-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+            <filter id="gooey-filter">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="48" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -15" />
+            </filter>
+            <mask id="gooey-mask">
+                <g id="gooey-group" filter="url(#gooey-filter)"></g>
+            </mask>
+        </defs>
+        <!-- Imagen de sombra opaca con máscara -->
+        <image id="gooey-image" href="" x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" mask="url(#gooey-mask)" />
+        <!-- Overlay oscuro -->
+        <rect x="0" y="0" width="100%" height="100%" fill="black" opacity="0.5" mask="url(#gooey-mask)" />
+    </svg>
+
+    <!-- Contenido principal -->
+    <div id="main-content">
+        <header>
+            <div class="header-logo"><a href="https://alter-ias.github.io/arg/arg.html">ARG</a></div>
+        </header>
+        <main>
+            <section class="archive-block" id="video-archive">
+                <div class="content-wrapper">
+                    <h2 class="block-title">Archivo Visual</h2>
+                    <div class="player-container video-wrapper"><iframe id="youtube-player" src="" title="YouTube video player" allowfullscreen></iframe></div>
+                    <div class="media-list-box"><ul id="video-list-ul"></ul></div>
+                </div>
+            </section>
+            <section class="archive-block" id="podcast-archive">
+                <div class="content-wrapper">
+                    <h2 class="block-title">Archivo Sonoro</h2>
+                    <div class="player-container"><iframe id="spotify-player" src="" style="border-radius:12px" allowfullscreen></iframe></div>
+                    <div class="media-list-box"><ul id="podcast-list-ul"></ul></div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <div id="video-sources" style="display: none;">
+        <a data-src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk">¿Quién es Alan Ruíz?</a>
+        <a data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Ecos en las Ruinas</a>
+    </div>
+    <div id="podcast-sources" style="display: none;">
+        <a data-src="https://open.spotify.com/embed/episode/1UNPu6kLKZJ3fHrCWB4yJg?utm_source=generator&theme=0">Capítulo 4 - Los casiamigos</a>
+        <a data-src="https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator&theme=0">Capítulo 3 - Gentrificación</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const BACKGROUND_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759382911/arg04_oiuk4t.png';
+            const SHADOW_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759382921/arg03_tviy6c.png';
+            
+            document.getElementById('background-layer').style.backgroundImage = `url(${BACKGROUND_IMAGE})`;
+            document.getElementById('gooey-image').href.baseVal = SHADOW_IMAGE;
+            
+            const gooeyGroup = document.getElementById('gooey-group');
+            
+            const isMobile = window.matchMedia("(max-width: 767px)").matches;
+            const physics = {
+                radius: isMobile ? 126 : 196, 
+                stiffness: 0.010, 
+                damping: 0.805, 
+                numPoints: 3, 
+                tailTaper: 0.15, 
+                blurAmount: 48 
+            };
+            
+            let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+            const points = [];
+
+            // Crear círculos en el grupo SVG
+            for (let i = 0; i < physics.numPoints; i++) {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('fill', 'white');
+                gooeyGroup.appendChild(circle);
+                points.push({ el: circle, x: mouse.x, y: mouse.y, vx: 0, vy: 0 });
+            }
+
+            const handlePointerMove = (e) => {
+                mouse.x = e.touches ? e.touches[0].clientX : e.clientX;
+                mouse.y = e.touches ? e.touches[0].clientY : e.clientY;
+            };
+            window.addEventListener('mousemove', handlePointerMove);
+            window.addEventListener('touchstart', handlePointerMove, { passive: true });
+            window.addEventListener('touchmove', handlePointerMove, { passive: true });
+
+            function animate() {
+                points.forEach((point, i) => {
+                    let target = (i === 0) ? mouse : points[i - 1];
+                    point.vx = (point.vx + (target.x - point.x) * physics.stiffness) * physics.damping;
+                    point.vy = (point.vy + (target.y - point.y) * physics.stiffness) * physics.damping;
+                    point.x += point.vx;
+                    point.y += point.vy;
+                    
+                    const pointRadius = physics.radius * (1 - (i / physics.numPoints) * physics.tailTaper);
+                    point.el.setAttribute('cx', point.x);
+                    point.el.setAttribute('cy', point.y);
+                    point.el.setAttribute('r', pointRadius);
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+
+            // Función para configurar los archivos
+            function setupArchiveSection(sourcesDivId, listUlId, playerIframeId) {
+                const player = document.getElementById(playerIframeId);
+                const sourcesContainer = document.getElementById(sourcesDivId);
+                const listUl = document.getElementById(listUlId);
+                if (!player || !sourcesContainer || !listUl) return;
+                const sourceLinks = sourcesContainer.querySelectorAll('a');
+                if (sourceLinks.length === 0) return;
+                
+                player.src = sourceLinks[0].dataset.src;
+                sourceLinks.forEach((link, index) => {
+                    const li = document.createElement('li');
+                    const newLink = document.createElement('a');
+                    newLink.className = 'media-link'; newLink.href = '#';
+                    newLink.dataset.src = link.dataset.src; newLink.textContent = link.textContent;
+                    if (index === 0) newLink.classList.add('is-active');
+                    li.appendChild(newLink);
+                    listUl.appendChild(li);
+                });
+                
+                listUl.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('media-link')) {
+                        e.preventDefault();
+                        listUl.querySelectorAll('.media-link').forEach(l => l.classList.remove('is-active'));
+                        e.target.classList.add('is-active');
+                        player.src = e.target.dataset.src;
+                    }
+                });
+            }
+            setupArchiveSection('video-sources', 'video-list-ul', 'youtube-player');
+            setupArchiveSection('podcast-sources', 'podcast-list-ul', 'spotify-player');
+        });
+    </script>
+</body>
+</html>
