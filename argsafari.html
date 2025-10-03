@@ -24,13 +24,12 @@
             font-family: var(--font-sans); 
             background-color: #000;
             color: var(--color-light);
-            overflow-x: hidden;
-            cursor: default; /* Safari no soporta SVG en cursor */
+            overflow: hidden;
+            height: 100vh;
+            cursor: default;
         }
 
-        a {
-            cursor: pointer;
-        }
+        a { cursor: pointer; }
 
         .background-layer {
             position: fixed;
@@ -42,10 +41,9 @@
         
         #gooey-svg {
             position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none; /* ←←← Clave para permitir interacción */
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
             z-index: 0;
         }
 
@@ -73,9 +71,6 @@
             min-height: 80vh;
         }
         
-        .hero-content h1 { font-family: var(--font-serif); font-size: 5rem; }
-        .hero-content p { font-size: 1.2rem; max-width: 600px; }
-        .content-wrapper { width: 100%; max-width: 700px; }
         .block-title { font-family: var(--font-serif); font-size: 2.5rem; margin-bottom: 2rem; text-align: center; }
         
         .player-container, .media-list-box {
@@ -86,7 +81,6 @@
             pointer-events: auto;
         }
         
-        .player-container { margin-bottom: 1rem; }
         .video-wrapper { position: relative; padding-top: 56.25%; height: 0; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         #podcast-archive .player-container { height: 352px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
@@ -102,27 +96,22 @@
 </head>
 <body>
 
-    <!-- Fondo base luminoso -->
     <div class="background-layer" id="background-layer"></div>
 
-    <!-- SVG con el efecto gooey -->
-    <svg id="gooey-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <svg id="gooey-svg">
         <defs>
             <filter id="gooey-filter">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="48" result="blur" />
-                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -15" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="32" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10" />
             </filter>
             <mask id="gooey-mask">
                 <g id="gooey-group" filter="url(#gooey-filter)"></g>
             </mask>
         </defs>
-        <!-- Imagen de sombra opaca con máscara -->
-        <image id="gooey-image" href="" x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" mask="url(#gooey-mask)" />
-        <!-- Overlay oscuro -->
+        <image id="gooey-image" x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" mask="url(#gooey-mask)" />
         <rect x="0" y="0" width="100%" height="100%" fill="black" opacity="0.5" mask="url(#gooey-mask)" />
     </svg>
 
-    <!-- Contenido principal -->
     <div id="main-content">
         <header>
             <div class="header-logo"><a href="https://alter-ias.github.io/arg/arg.html">ARG</a></div>
@@ -161,23 +150,29 @@
             
             document.getElementById('background-layer').style.backgroundImage = `url(${BACKGROUND_IMAGE})`;
             document.getElementById('gooey-image').href.baseVal = SHADOW_IMAGE;
-            
+
+            // Ajustar viewBox al tamaño real de la ventana
+            const svg = document.getElementById('gooey-svg');
+            const updateViewBox = () => {
+                svg.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
+            };
+            updateViewBox();
+            window.addEventListener('resize', updateViewBox);
+
             const gooeyGroup = document.getElementById('gooey-group');
             
             const isMobile = window.matchMedia("(max-width: 767px)").matches;
             const physics = {
-                radius: isMobile ? 126 : 196, 
-                stiffness: 0.010, 
-                damping: 0.805, 
-                numPoints: 3, 
-                tailTaper: 0.15, 
-                blurAmount: 48 
+                radius: isMobile ? 100 : 160,   // ← más pequeño para mejor rendimiento
+                stiffness: 0.02,                // ← más rígido = menos rebote = más estable
+                damping: 0.85,                  // ← más amortiguado
+                numPoints: 2,                   // ← reducir a 2 puntos (suficiente para efecto)
+                blurAmount: 32                  // ← menor desenfoque = mejor rendimiento
             };
-            
+
             let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
             const points = [];
 
-            // Crear círculos en el grupo SVG
             for (let i = 0; i < physics.numPoints; i++) {
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('fill', 'white');
@@ -193,24 +188,29 @@
             window.addEventListener('touchstart', handlePointerMove, { passive: true });
             window.addEventListener('touchmove', handlePointerMove, { passive: true });
 
+            // Animación optimizada: solo actualiza atributos si hay cambio significativo
+            let lastUpdate = 0;
             function animate() {
-                points.forEach((point, i) => {
-                    let target = (i === 0) ? mouse : points[i - 1];
-                    point.vx = (point.vx + (target.x - point.x) * physics.stiffness) * physics.damping;
-                    point.vy = (point.vy + (target.y - point.y) * physics.stiffness) * physics.damping;
-                    point.x += point.vx;
-                    point.y += point.vy;
-                    
-                    const pointRadius = physics.radius * (1 - (i / physics.numPoints) * physics.tailTaper);
-                    point.el.setAttribute('cx', point.x);
-                    point.el.setAttribute('cy', point.y);
-                    point.el.setAttribute('r', pointRadius);
-                });
+                const now = Date.now();
+                if (now - lastUpdate > 16) { // ~60fps
+                    points.forEach((point, i) => {
+                        let target = (i === 0) ? mouse : points[i - 1];
+                        point.vx = (point.vx + (target.x - point.x) * physics.stiffness) * physics.damping;
+                        point.vy = (point.vy + (target.y - point.y) * physics.stiffness) * physics.damping;
+                        point.x += point.vx;
+                        point.y += point.vy;
+                        
+                        const pointRadius = physics.radius * (1 - (i / physics.numPoints) * 0.2);
+                        point.el.setAttribute('cx', point.x);
+                        point.el.setAttribute('cy', point.y);
+                        point.el.setAttribute('r', pointRadius);
+                    });
+                    lastUpdate = now;
+                }
                 requestAnimationFrame(animate);
             }
             animate();
 
-            // Función para configurar los archivos
             function setupArchiveSection(sourcesDivId, listUlId, playerIframeId) {
                 const player = document.getElementById(playerIframeId);
                 const sourcesContainer = document.getElementById(sourcesDivId);
