@@ -14,41 +14,27 @@
         background-color: #0a0a0a;
         color: #FFFFFF;
         font-family: 'Poppins', sans-serif;
-        /* Safari no soporta SVG en cursor; usamos fallback */
-        cursor: default;
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
       }
-      .svg-defs {
-        position: absolute;
-        width: 0;
-        height: 0;
-        overflow: hidden;
-      }
+      .svg-defs { position: absolute; }
       .nav-link {
         font-family: 'Cormorant Garamond', serif;
         font-size: 1.25rem;
-        cursor: pointer;
+        cursor: inherit; 
+        pointer-events: auto;
         transition: all 0.3s ease-in-out;
         opacity: 0.8;
       }
       .nav-link:hover {
         opacity: 1;
         transform: scale(1.1);
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
       }
       .opacity-overlay {
         position: absolute;
         inset: 0;
         background-color: #000;
         pointer-events: none;
-      }
-      .masked-content {
-        -webkit-mask: url(#gooey-mask);
-        mask: url(#gooey-mask);
-        -webkit-mask-composite: source-in;
-        mask-composite: include;
-        /* Fallback para Safari antiguo */
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        transform: translateZ(0);
       }
     </style>
 </head>
@@ -58,36 +44,29 @@
       import React from 'https://esm.sh/react@18.3.1';
       import ReactDOM from 'https://esm.sh/react-dom@18.3.1/client';
 
-      const { useRef, useEffect } = React;
+      // Añadimos useState a la desestructuración de React
+      const { useState, useRef, useEffect } = React;
 
       const PergaminoIcon = (props) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 512 512", ...props }, React.createElement('path', { fill:"currentColor", d: "M40 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h32c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H40zm432 0c22.1 0 40-17.9 40-40V72c0-22.1-17.9-40-40-40h-32c-22.1 0-40 17.9-40 40v368c0 22.1 17.9 40 40 40h32zM160 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h192c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H160z" }));
       const MediatecaIcon = (props) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 576 512", ...props }, React.createElement('path', { fill:"currentColor", d: "M0 128C0 92.7 28.7 64 64 64H512c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128zM192 192a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0z" }));
       const LoteriaIcon = (props) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 512 512", ...props }, React.createElement('path', { fill:"currentColor", d: "M192 32c0 17.7 14.3 32 32 32c123.7 0 224 100.3 224 224c0 17.7 14.3 32 32 32s32-14.3 32-32C512 128.9 383.1 0 224 0c-17.7 0-32 14.3-32 32zM96 23.3c-11.2-5.4-24.3-3.4-33.5 5.1L10.3 75.1C3.8 82.2 0 91.2 0 100.7V411.3c0 9.5 3.8 18.5 10.3 25.6l52.2 46.7c9.2 8.5 22.3 10.5 33.5 5.1l352-169.8c11.3-5.5 18-16.5 18-28.5s-6.7-23-18-28.5L96 23.3z" }));
-
       const sections = {
           home: { title: "" },
           pergamino: { title: "Pergamino", url: 'https://alter-ias.github.io/arg/argblog.html', icon: PergaminoIcon },
           mediateca: { title: "Mediateca", url: 'https://alter-ias.github.io/arg/mediateca.html', icon: MediatecaIcon },
           loteria: { title: "Lotería", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html', icon: LoteriaIcon },
       };
-      
       const BACKGROUND_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380713/arg01_ft9glg.png';
       const REVEALED_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380719/arg02_o9yqpm.png';
-      
       const BACKGROUND_OVERLAY_OPACITY = 0.0; 
       const REVEALED_OVERLAY_OPACITY = 0.5;
-
       const ContentLayer = () => {
           return React.createElement('div', { className: "fixed inset-0 flex flex-col items-center justify-center text-center p-8 pointer-events-none text-white" },
             React.createElement('h1', { className: `font-['Cormorant_Garamond'] font-bold leading-none`, style: { fontSize: 'clamp(5rem, 15vw, 18rem)' } }, sections.home.title),
             React.createElement('div', { className: 'flex justify-center items-start gap-16 md:gap-24 mt-8' },
               Object.keys(sections).filter(key => key !== 'home').map(key => { 
                 const section = sections[key];
-                return React.createElement('a', { 
-                  key: key, 
-                  href: section.url,
-                  className: `nav-link flex flex-col items-center gap-2`
-                },
+                return React.createElement('a', { key: key, href: section.url, className: `nav-link flex flex-col items-center gap-2` },
                   React.createElement(section.icon, { className: 'w-8 h-8' }),
                   React.createElement('span', null, section.title)
                 ); 
@@ -97,7 +76,6 @@
       };
 
       const App = () => {
-          const maskGroupRef = useRef(null);
           const isMobile = window.matchMedia("(max-width: 767px)").matches;
           const physics = {
               radius: isMobile ? 126 : 196,
@@ -107,57 +85,41 @@
               tailTaper: 0.15, 
               blurAmount: 48
           };
+          
+          const [points, setPoints] = useState(() => 
+              Array.from({ length: physics.numPoints }, () => ({
+                  x: window.innerWidth / 2,
+                  y: window.innerHeight / 2,
+                  vx: 0,
+                  vy: 0
+              }))
+          );
+          const mousePos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
 
           useEffect(() => {
-              const maskGroup = maskGroupRef.current;
-              const blurFilter = document.querySelector('#gooey-filter feGaussianBlur');
-              if (!maskGroup || !blurFilter) return;
-
-              const mousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-              let animationFrameId = null;
-              let points = [];
-
-              const setupPoints = (num) => {
-                  while (points.length < num) {
-                      const circleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                      circleEl.setAttribute('fill', 'white');
-                      maskGroup.appendChild(circleEl);
-                      points.push({ el: circleEl, x: mousePos.x, y: mousePos.y, vx: 0, vy: 0 });
-                  }
-                  while (points.length > num) {
-                      const pointToRemove = points.pop();
-                      maskGroup.removeChild(pointToRemove.el);
-                  }
-              };
-
-              setupPoints(physics.numPoints);
-              
               const handlePointerMove = (e) => {
                   const posX = e.touches ? e.touches[0].clientX : e.clientX;
                   const posY = e.touches ? e.touches[0].clientY : e.clientY;
-                  mousePos.x = posX;
-                  mousePos.y = posY;
+                  mousePos.current = { x: posX, y: posY };
               };
 
               window.addEventListener('mousemove', handlePointerMove);
               window.addEventListener('touchstart', handlePointerMove, { passive: true });
               window.addEventListener('touchmove', handlePointerMove, { passive: true });
 
+              let animationFrameId = null;
               const animate = () => {
-                  blurFilter.setAttribute('stdDeviation', physics.blurAmount);
-                  points.forEach((point, i) => {
-                      const target = (i === 0) ? mousePos : points[i - 1];
-                      point.vx = (point.vx + (target.x - point.x) * physics.stiffness) * physics.damping;
-                      point.vy = (point.vy + (target.y - point.y) * physics.stiffness) * physics.damping;
-                      point.x += point.vx;
-                      point.y += point.vy;
-                      const pointRadius = physics.radius * (1 - (i / physics.numPoints) * physics.tailTaper);
-                      point.el.setAttribute('cx', point.x);
-                      point.el.setAttribute('cy', point.y);
-                      point.el.setAttribute('r', pointRadius);
-                  });
+                  setPoints(prevPoints => 
+                      prevPoints.map((point, i) => {
+                          const target = (i === 0) ? mousePos.current : prevPoints[i - 1];
+                          const newVx = (point.vx + (target.x - point.x) * physics.stiffness) * physics.damping;
+                          const newVy = (point.vy + (target.y - point.y) * physics.stiffness) * physics.damping;
+                          return { x: point.x + newVx, y: point.y + newVy, vx: newVx, vy: newVy };
+                      })
+                  );
                   animationFrameId = requestAnimationFrame(animate);
               };
+              
               animate();
 
               return () => {
@@ -174,19 +136,35 @@
                     React.createElement('defs', null,
                       React.createElement('filter', { id: "gooey-filter" },
                         React.createElement('feGaussianBlur', { in: "SourceGraphic", stdDeviation: physics.blurAmount, result: "blur" }),
-                        React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -15" })
+                        React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -15" }),
                       ),
                       React.createElement('mask', { id: "gooey-mask" },
-                        React.createElement('g', { ref: maskGroupRef, filter: "url(#gooey-filter)" })
+                        React.createElement('g', { filter: "url(#gooey-filter)" },
+                          points.map((point, i) => {
+                            const pointRadius = physics.radius * (1 - (i / physics.numPoints) * physics.tailTaper);
+                            return React.createElement('circle', {
+                              key: i,
+                              cx: point.x,
+                              cy: point.y,
+                              r: pointRadius,
+                              fill: 'white'
+                            });
+                          })
+                        )
                       )
                     )
                   ),
                   
                   React.createElement('div', { className: "fixed inset-0 -z-20 bg-cover bg-center", style: { backgroundImage: `url(${BACKGROUND_IMAGE})` } }),
                   React.createElement('div', { className: "opacity-overlay -z-10", style: { opacity: BACKGROUND_OVERLAY_OPACITY } }),
-
+                  
                   React.createElement('div', {
-                      className: "fixed inset-0 masked-content"
+                      className: "fixed inset-0",
+                      style: { 
+                        mask: 'url(#gooey-mask)', 
+                        WebkitMask: 'url(#gooey-mask)',
+                        transform: 'translateZ(0)' 
+                      }
                   },
                       React.createElement('div', { className: "absolute inset-0 bg-cover bg-center", style: { backgroundImage: `url(${REVEALED_IMAGE})` } }),
                       React.createElement('div', { className: "opacity-overlay", style: { opacity: REVEALED_OVERLAY_OPACITY } }),
