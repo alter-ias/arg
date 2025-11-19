@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>ARG - Alan Ruíz Galicia</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,10 +14,14 @@
         background-color: #0a0a0a;
         color: #FFFFFF;
         font-family: 'Poppins', sans-serif;
+        /* Cursor personalizado */
         cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
       }
       .svg-defs {
         position: absolute;
+        width: 0;
+        height: 0;
+        pointer-events: none;
       }
       .nav-link {
         font-family: 'Cormorant Garamond', serif;
@@ -40,7 +44,7 @@
       }
     </style>
 </head>
-<body class="overflow-hidden">
+<body class="overflow-hidden select-none">
     <div id="root"></div>
     <script type="module">
       import React from 'https://esm.sh/react@18.3.1';
@@ -102,6 +106,7 @@
 
           useEffect(() => {
               const maskGroup = maskGroupRef.current;
+              // Nota: en Safari a veces es mejor seleccionar por ID si hay problemas con el querySelector global, pero esto está bien.
               const blurFilter = document.querySelector('#gooey-filter feGaussianBlur');
               if (!maskGroup || !blurFilter) return;
 
@@ -162,13 +167,15 @@
 
           return (
               React.createElement(React.Fragment, null,
-                  React.createElement('svg', { className: "svg-defs" },
+                  React.createElement('svg', { className: "svg-defs", width: 0, height: 0 },
                     React.createElement('defs', null,
                       React.createElement('filter', { id: "gooey-filter" },
                         React.createElement('feGaussianBlur', { in: "SourceGraphic", stdDeviation: physics.blurAmount, result: "blur" }),
                         React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -15" }),
                       ),
-                      React.createElement('mask', { id: "gooey-mask" },
+                      // FIX SAFARI: maskUnits y maskContentUnits deben ser "userSpaceOnUse" 
+                      // para que las coordenadas de JS coincidan con el sistema de la máscara.
+                      React.createElement('mask', { id: "gooey-mask", maskUnits: "userSpaceOnUse" },
                         React.createElement('g', { ref: maskGroupRef, filter: "url(#gooey-filter)" })
                       )
                     )
@@ -180,9 +187,12 @@
                   React.createElement('div', {
                       className: "fixed inset-0",
                       style: { 
+                        // FIX SAFARI: Usar tanto mask como WebkitMask
                         mask: 'url(#gooey-mask)', 
                         WebkitMask: 'url(#gooey-mask)',
-                        transform: 'translateZ(0)' 
+                        // Importante para el renderizado en capas de Apple
+                        transform: 'translate3d(0,0,0)',
+                        WebkitTransform: 'translate3d(0,0,0)' 
                       }
                   },
                       React.createElement('div', { className: "absolute inset-0 bg-cover bg-center", style: { backgroundImage: `url(${REVEALED_IMAGE})` } }),
