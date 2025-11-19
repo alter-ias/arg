@@ -18,12 +18,12 @@
         padding: 0;
         width: 100%;
         height: 100%;
-        overflow: hidden; /* Bloquea scroll nativo */
-        touch-action: none; /* Vital para Android: evita comportamientos táctiles por defecto */
+        overflow: hidden;
+        touch-action: none;
         -webkit-font-smoothing: antialiased;
+        /* Cursor personalizado */
         cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
       }
-      /* El SVG debe ocupar espacio real para que userSpaceOnUse funcione en Android */
       .svg-defs-container {
         position: fixed;
         top: 0;
@@ -32,7 +32,7 @@
         height: 100%;
         pointer-events: none;
         z-index: -9999;
-        opacity: 0; /* Invisible pero renderizable */
+        opacity: 0;
       }
       .nav-link {
         font-family: 'Cormorant Garamond', serif;
@@ -41,20 +41,15 @@
         pointer-events: auto;
         transition: all 0.3s ease-in-out;
         opacity: 0.8;
-        position: relative;
-        z-index: 50; /* Asegura que los links estén por encima */
       }
       .nav-link:hover {
         opacity: 1;
         transform: scale(1.1);
         cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
       }
-      .opacity-overlay {
-        position: absolute;
-        inset: 0;
-        background-color: #000;
-        pointer-events: none;
-      }
+      /* Utilidad para asegurar capas */
+      .layer-bg { z-index: 0; }
+      .layer-mask { z-index: 10; }
     </style>
 </head>
 <body>
@@ -81,10 +76,11 @@
       const BACKGROUND_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380713/arg01_ft9glg.png';
       const REVEALED_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380719/arg02_o9yqpm.png';
       
+      // Opcional: Si quieres que el fondo sea un poco más oscuro que la imagen original
       const BACKGROUND_OVERLAY_OPACITY = 0.0; 
       const REVEALED_OVERLAY_OPACITY = 0.5;
 
-      // --- COMPONENTE DE LA INTERFAZ ---
+      // --- COMPONENTE DE CONTENIDO ---
       const ContentLayer = () => {
           return React.createElement('div', { className: "fixed inset-0 flex flex-col items-center justify-center text-center p-8 pointer-events-none text-white z-20" },
             React.createElement('h1', { className: `font-['Cormorant_Garamond'] font-bold leading-none`, style: { fontSize: 'clamp(5rem, 15vw, 18rem)' } }, sections.home.title),
@@ -104,12 +100,12 @@
           );
       };
 
-      // --- COMPONENTE PRINCIPAL ---
+      // --- APP PRINCIPAL ---
       const App = () => {
           const maskGroupRef = useRef(null);
           const isMobile = window.matchMedia("(max-width: 767px)").matches;
           const physics = {
-              radius: isMobile ? 110 : 196, // Ajuste ligero para móviles
+              radius: isMobile ? 110 : 196,
               stiffness: 0.015, 
               damping: 0.80,
               numPoints: 3, 
@@ -123,12 +119,10 @@
               
               if (!maskGroup || !blurFilter) return;
 
-              // Inicializar en el centro para evitar parpadeos
               const mousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
               let animationFrameId = null;
               let points = [];
 
-              // Creación de puntos del rastro
               const setupPoints = (num) => {
                   while (points.length < num) {
                       const circleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -145,37 +139,27 @@
               setupPoints(physics.numPoints);
               
               const handlePointerMove = (e) => {
-                  // Prevención de comportamiento por defecto en móviles para evitar scroll mientras se mueve la luz
-                  if (e.cancelable) e.preventDefault();
-                  
+                  if (e.cancelable) e.preventDefault(); 
                   const posX = e.touches ? e.touches[0].clientX : e.clientX;
                   const posY = e.touches ? e.touches[0].clientY : e.clientY;
                   mousePos.x = posX;
                   mousePos.y = posY;
               };
 
-              // Listeners unificados
               window.addEventListener('mousemove', handlePointerMove);
-              window.addEventListener('touchmove', handlePointerMove, { passive: false }); // passive: false para poder usar preventDefault
+              window.addEventListener('touchmove', handlePointerMove, { passive: false });
               window.addEventListener('touchstart', handlePointerMove, { passive: false });
 
               const animate = () => {
-                  // Actualizar filtro dinámicamente (opcional, pero mantiene el valor sincronizado)
                   blurFilter.setAttribute('stdDeviation', physics.blurAmount);
-                  
                   points.forEach((point, i) => {
                       const target = (i === 0) ? mousePos : points[i - 1];
-                      
-                      // Física simple de resorte
                       point.vx = (point.vx + (target.x - point.x) * physics.stiffness) * physics.damping;
                       point.vy = (point.vy + (target.y - point.y) * physics.stiffness) * physics.damping;
-                      
                       point.x += point.vx;
                       point.y += point.vy;
                       
                       const pointRadius = physics.radius * (1 - (i / physics.numPoints) * physics.tailTaper);
-                      
-                      // Actualización directa del DOM SVG (más rápido que React State para esto)
                       point.el.setAttribute('cx', point.x);
                       point.el.setAttribute('cy', point.y);
                       point.el.setAttribute('r', pointRadius);
@@ -194,42 +178,44 @@
 
           return (
               React.createElement(React.Fragment, null,
-                  // 1. DEFINICIÓN DE LA MÁSCARA (Invisible pero ocupa toda la pantalla)
+                  // 1. SVG DEFS (Invisible pero necesario)
                   React.createElement('svg', { className: "svg-defs-container" },
                     React.createElement('defs', null,
                       React.createElement('filter', { id: "gooey-filter" },
                         React.createElement('feGaussianBlur', { id: "blur-filter-primitive", in: "SourceGraphic", stdDeviation: physics.blurAmount, result: "blur" }),
                         React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -15" }),
                       ),
-                      // FIX CRÍTICO: maskUnits="userSpaceOnUse" y el SVG padre debe tener tamaño real
                       React.createElement('mask', { id: "gooey-mask", maskUnits: "userSpaceOnUse" },
                         React.createElement('g', { ref: maskGroupRef, filter: "url(#gooey-filter)" })
                       )
                     )
                   ),
                   
-                  // 2. FONDO OSCURO (Capa Base)
-                  React.createElement('div', { className: "fixed inset-0 -z-20 bg-cover bg-center", style: { backgroundImage: `url(${BACKGROUND_IMAGE})` } }),
-                  React.createElement('div', { className: "opacity-overlay -z-10", style: { opacity: BACKGROUND_OVERLAY_OPACITY } }),
+                  // 2. CAPA FONDO (Dark/Dimmed) - CAMBIO CRÍTICO: z-0 (No usar negativo)
+                  React.createElement('div', { 
+                      className: "fixed inset-0 layer-bg bg-cover bg-center", 
+                      style: { backgroundImage: `url(${BACKGROUND_IMAGE})` } 
+                  },
+                    // Overlay para el fondo si se requiere oscurecer más
+                    React.createElement('div', { className: "absolute inset-0 bg-black", style: { opacity: BACKGROUND_OVERLAY_OPACITY } })
+                  ),
 
-                  // 3. CAPA REVELADA (La que tiene la máscara)
+                  // 3. CAPA REVELADA (Light/Bright) - z-10 con Máscara
                   React.createElement('div', {
-                      className: "fixed inset-0 z-10",
+                      className: "fixed inset-0 layer-mask",
                       style: { 
-                        // Compatibilidad Total
                         maskImage: 'url(#gooey-mask)', 
-                        WebkitMaskImage: 'url(#gooey-mask)', // Chrome antiguo, Safari, Android WebView
-                        mask: 'url(#gooey-mask)',            // Estándar moderno
+                        WebkitMaskImage: 'url(#gooey-mask)',
+                        mask: 'url(#gooey-mask)',
                         WebkitMask: 'url(#gooey-mask)',
-                        // Aceleración de Hardware forzada
                         transform: 'translate3d(0,0,0)',
                         WebkitTransform: 'translate3d(0,0,0)' 
                       }
                   },
                       React.createElement('div', { className: "absolute inset-0 bg-cover bg-center", style: { backgroundImage: `url(${REVEALED_IMAGE})` } }),
-                      React.createElement('div', { className: "opacity-overlay", style: { opacity: REVEALED_OVERLAY_OPACITY } }),
+                      React.createElement('div', { className: "absolute inset-0 bg-black", style: { opacity: REVEALED_OVERLAY_OPACITY } }),
                       
-                      // El contenido va aquí dentro para que se vea "iluminado"
+                      // Contenido (Botones/Texto) solo visible en la luz
                       React.createElement(ContentLayer, null)
                   )
               )
