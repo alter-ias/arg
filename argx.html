@@ -14,11 +14,11 @@
         padding: 0;
         width: 100%;
         height: 100%;
-        overflow: hidden; /* Bloquea scroll */
+        overflow: hidden;
         background-color: #0a0a0a;
         color: #FFFFFF;
         font-family: 'Poppins', sans-serif;
-        touch-action: none; /* Crucial para iOS: evita rebote y scroll */
+        touch-action: none;
         -webkit-font-smoothing: antialiased;
         cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
       }
@@ -31,7 +31,6 @@
         transition: transform 0.2s ease-out, opacity 0.2s;
         opacity: 0.9;
         position: relative;
-        /* Fix Safari: asegurar que el link tenga área de toque sólida */
         padding: 10px; 
       }
       .nav-link:hover {
@@ -47,7 +46,7 @@
       import React from 'https://esm.sh/react@18.3.1';
       import ReactDOM from 'https://esm.sh/react-dom@18.3.1/client';
 
-      const { useRef, useEffect, useState } = React;
+      const { useRef, useEffect } = React;
 
       // --- ICONOS ---
       const PergaminoIcon = (props) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 512 512", ...props }, React.createElement('path', { fill:"currentColor", d: "M40 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h32c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H40zm432 0c22.1 0 40-17.9 40-40V72c0-22.1-17.9-40-40-40h-32c-22.1 0-40 17.9-40 40v368c0 22.1 17.9 40 40 40h32zM160 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h192c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H160z" }));
@@ -57,27 +56,29 @@
       const sections = {
           home: { title: "" },
           pergamino: { title: "Pergamino", url: 'https://alter-ias.github.io/arg/argblog.html', icon: PergaminoIcon },
-          mediateca: { title: "Mediateca", url: 'https://alter-ias.github.io/arg/mediateca.html', icon: MediatecaIcon },
+          mediateca: { title: "Mediateca", url: 'https://alter-ias.github.io/arg/mediatecasafari.html', icon: MediatecaIcon },
           loteria: { title: "Lotería", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html', icon: LoteriaIcon },
       };
       
       const BACKGROUND_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380713/arg01_ft9glg.png';
       const REVEALED_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380719/arg02_o9yqpm.png';
 
-      // --- COMPONENTE PRINCIPAL ---
+      // --- APP ---
       const App = () => {
           const revealedLayerRef = useRef(null);
-          // Usamos Refs para valores de animación para no re-renderizar React constantemente
-          const pos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
-          const mouse = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
           
-          // Detectar móvil para ajustar radio
+          // CONFIGURACIÓN DE FÍSICA
           const isMobile = window.matchMedia("(max-width: 768px)").matches;
-          const radius = isMobile ? 130 : 200; 
+          const TRAIL_LENGTH = isMobile ? 5 : 8; // Cantidad de círculos en la cola
+          const BASE_RADIUS = isMobile ? 130 : 190;
+          
+          // Inicializamos los puntos (Cola de serpiente)
+          // Cada punto tiene x, y
+          const points = useRef(Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 }));
+          const mouse = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
 
           useEffect(() => {
               const handleMove = (e) => {
-                  // Unificamos touch y mouse
                   let clientX, clientY;
                   if (e.touches && e.touches.length > 0) {
                       clientX = e.touches[0].clientX;
@@ -86,36 +87,59 @@
                       clientX = e.clientX;
                       clientY = e.clientY;
                   }
-                  
-                  // Guardamos la posición "destino"
                   mouse.current = { x: clientX, y: clientY };
               };
 
-              // Listeners globales
               window.addEventListener('mousemove', handleMove);
               window.addEventListener('touchstart', handleMove, { passive: false });
               window.addEventListener('touchmove', handleMove, { passive: false });
 
               let animationFrameId;
-              
-              // Bucle de animación (Física de retraso suave)
-              const loop = () => {
-                  // Lerp (Interpolación lineal) para suavidad: pos += (target - pos) * factor
-                  const easing = 0.08; // Ajusta esto: menor = más lento/pesado, mayor = más rápido
-                  
-                  pos.current.x += (mouse.current.x - pos.current.x) * easing;
-                  pos.current.y += (mouse.current.y - pos.current.y) * easing;
 
+              const loop = () => {
+                  // FÍSICA DE FLUIDOS (Snake Trail)
+                  // El punto 0 sigue al mouse, el punto 1 al 0, etc.
+                  
+                  // Clonamos el array actual para modificarlo
+                  const currentPoints = [...points.current];
+                  
+                  // Física para la cabeza (Punto 0)
+                  const leaderEasing = 0.15; // Qué tan rápido sigue el mouse
+                  currentPoints[0] = {
+                      x: currentPoints[0].x + (mouse.current.x - currentPoints[0].x) * leaderEasing,
+                      y: currentPoints[0].y + (mouse.current.y - currentPoints[0].y) * leaderEasing
+                  };
+
+                  // Física para el cuerpo (Cola)
+                  const trailEasing = 0.25; // Qué tan rápido la cola sigue a la cabeza (mayor = más rígido, menor = más líquido)
+                  
+                  for (let i = 1; i < TRAIL_LENGTH; i++) {
+                      const leader = currentPoints[i - 1];
+                      const follower = currentPoints[i];
+                      
+                      currentPoints[i] = {
+                          x: follower.x + (leader.x - follower.x) * trailEasing,
+                          y: follower.y + (leader.y - follower.y) * trailEasing
+                      };
+                  }
+                  
+                  points.current = currentPoints;
+
+                  // RENDERIZADO (Construir el string de gradientes múltiples)
                   if (revealedLayerRef.current) {
-                      const x = pos.current.x;
-                      const y = pos.current.y;
+                      // Generamos un gradiente por cada punto en la cola
+                      const gradients = currentPoints.map((p, i) => {
+                          // Disminuir tamaño progresivamente para efecto "Gota"
+                          const scale = 1 - (i / TRAIL_LENGTH) * 0.6; // El último círculo es 40% del tamaño
+                          const radius = BASE_RADIUS * scale;
+                          return `radial-gradient(circle ${radius}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
+                      });
                       
-                      // EL SECRETO DE COMPATIBILIDAD: CSS Mask Image
-                      // Esto funciona nativamente en el compositor de GPU de Safari y Chrome.
-                      const maskValue = `radial-gradient(circle ${radius}px at ${x}px ${y}px, black 90%, transparent 100%)`;
+                      // Unimos todos los gradientes con comas. CSS renderizará todos juntos.
+                      const maskString = gradients.join(', ');
                       
-                      revealedLayerRef.current.style.maskImage = maskValue;
-                      revealedLayerRef.current.style.webkitMaskImage = maskValue; // Prefijo vital para Safari/iOS
+                      revealedLayerRef.current.style.maskImage = maskString;
+                      revealedLayerRef.current.style.webkitMaskImage = maskString;
                   }
                   
                   animationFrameId = requestAnimationFrame(loop);
@@ -129,36 +153,32 @@
                   window.removeEventListener('touchmove', handleMove);
                   cancelAnimationFrame(animationFrameId);
               };
-          }, [isMobile, radius]);
+          }, [isMobile]);
 
           return (
               React.createElement(React.Fragment, null,
                   
-                  // 1. CAPA OSCURA (Fondo base) - Siempre visible
+                  // 1. CAPA OSCURA
                   React.createElement('div', { 
                       className: "fixed inset-0 z-0 bg-cover bg-center", 
                       style: { backgroundImage: `url(${BACKGROUND_IMAGE})` } 
                   }),
 
-                  // 2. CAPA CLARA (Revelada) - Tiene la máscara dinámica
-                  // Esta capa contiene los botones. Al revelarse visualmente, también se revelan para el clic.
+                  // 2. CAPA CLARA (Revelada con Multiball Mask)
                   React.createElement('div', {
                       ref: revealedLayerRef,
                       className: "fixed inset-0 z-10 bg-cover bg-center flex flex-col items-center justify-center text-center p-8",
                       style: { 
                           backgroundImage: `url(${REVEALED_IMAGE})`,
-                          // Inicializamos la máscara fuera de pantalla o en el centro para evitar parpadeo
-                          WebkitMaskImage: 'radial-gradient(circle 0px at 50% 50%, black 100%, transparent 100%)',
-                          maskImage: 'radial-gradient(circle 0px at 50% 50%, black 100%, transparent 100%)',
-                          // Fix para Safari: will-change fuerza a crear una capa de composición separada
-                          willChange: 'mask-image, -webkit-mask-image' 
+                          // Inicializamos vacío
+                          WebkitMaskImage: 'none',
+                          maskImage: 'none',
+                          willChange: 'mask-image' // Optimización importante
                       }
                   },
-                      // Capa negra semitransparente sobre la imagen clara (opcional, según diseño original)
                       React.createElement('div', { className: "absolute inset-0 bg-black opacity-40 pointer-events-none" }),
                       
-                      // CONTENIDO INTERACTIVO
-                      // z-20 para asegurar que esté encima del overlay de opacidad
+                      // CONTENIDO
                       React.createElement('div', { className: "relative z-20 flex flex-col items-center w-full h-full justify-center" },
                           React.createElement('h1', { className: "font-['Cormorant_Garamond'] font-bold leading-none text-white mb-8 select-none pointer-events-none", style: { fontSize: 'clamp(5rem, 15vw, 18rem)' } }, sections.home.title),
                           
