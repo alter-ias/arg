@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Editor Irónico - Asistente de Alan Ruiz</title>
+    
+    <!-- Tailwind CSS (Estilos) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fuentes (Google Fonts para el estilo editorial) -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Iconos (Phosphor Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #Fdfbf7; /* Color Crema Editorial */
+        }
+        .font-serif {
+            font-family: 'Merriweather', serif;
+        }
+        .paper-texture {
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+        }
+        /* Animación suave */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 selection:bg-red-200 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="border-b border-gray-300 bg-white sticky top-0 z-10 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-black text-white p-2 rounded-sm shadow-md">
+                    <i class="ph-bold ph-feather text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-serif font-bold tracking-tight text-gray-900 leading-none">El Editor Irónico</h1>
+                    <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Asistente de Producción: Alan Ruiz Galicia</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8 w-full flex-grow">
+        
+        <!-- Columna Izquierda: Controles -->
+        <div class="md:col-span-1 space-y-6">
+            
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-wider">
+                    1. ¿Sobre qué quieres escribir?
+                </label>
+                <input
+                    type="text"
+                    id="topicInput"
+                    placeholder="Ej. Gentrificación, Tráfico, Elecciones..."
+                    class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-md focus:ring-2 focus:ring-black focus:border-black block p-3 mb-6 font-serif placeholder-gray-400 transition-all outline-none"
+                />
+
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-3 tracking-wider">
+                    2. Selecciona el Formato
+                </label>
+                <div class="space-y-2" id="formatButtons">
+                    <!-- Los botones se generan abajo o se controlan por JS, pero aquí los pondré estáticos para simplicidad y control -->
+                    <button onclick="selectFormat('reel')" id="btn-reel" class="format-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md transition-all bg-black text-white shadow-md">
+                        <i class="ph ph-camera text-lg"></i> Filosofía de Banqueta (Reel)
+                    </button>
+                    <button onclick="selectFormat('carousel')" id="btn-carousel" class="format-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md transition-all bg-white text-gray-600 border border-gray-200 hover:bg-gray-50">
+                        <i class="ph ph-book-open text-lg"></i> Columna Visual (Carrusel)
+                    </button>
+                    <button onclick="selectFormat('chronicle')" id="btn-chronicle" class="format-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md transition-all bg-white text-gray-600 border border-gray-200 hover:bg-gray-50">
+                        <i class="ph ph-microphone text-lg"></i> Crónica Sonora (Voz Off)
+                    </button>
+                    <button onclick="selectFormat('glossary')" id="btn-glossary" class="format-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md transition-all bg-white text-gray-600 border border-gray-200 hover:bg-gray-50">
+                        <i class="ph ph-text-t text-lg"></i> Glosario Irónico
+                    </button>
+                </div>
+
+                <button
+                    onclick="generateContent()"
+                    id="generateBtn"
+                    class="mt-8 w-full flex items-center justify-center gap-2 px-4 py-4 rounded-md font-bold uppercase tracking-wider text-xs transition-all bg-red-700 hover:bg-red-800 text-white shadow-lg transform active:scale-95"
+                >
+                    <i class="ph-bold ph-sparkle"></i> Generar Ideas
+                </button>
+            </div>
+
+            <!-- Historial -->
+            <div class="bg-white p-4 rounded-lg border border-gray-200 hidden" id="historyContainer">
+                <h3 class="text-xs font-bold text-gray-400 uppercase mb-3">Historial Reciente</h3>
+                <ul class="space-y-2" id="historyList">
+                    <!-- Items del historial -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Resultado -->
+        <div class="md:col-span-2">
+            
+            <!-- Estado Vacío -->
+            <div id="emptyState" class="h-full flex flex-col items-center justify-center bg-white/50 rounded-lg border-2 border-dashed border-gray-300 p-10 text-center min-h-[400px]">
+                <div class="bg-white p-4 rounded-full mb-4 shadow-sm">
+                    <i class="ph-duotone ph-pen-nib text-4xl text-gray-300"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">Esperando inspiración...</h3>
+                <p class="text-gray-500 text-sm max-w-xs mx-auto leading-relaxed">
+                    Introduce un tema a la izquierda y selecciona un formato para generar un borrador con el estilo editorial de Alan Ruiz.
+                </p>
+            </div>
+
+            <!-- Estado Cargando -->
+            <div id="loadingState" class="hidden h-full flex flex-col items-center justify-center bg-white/50 rounded-lg border border-gray-200 p-10 text-center min-h-[400px]">
+                <i class="ph-bold ph-arrows-clockwise text-4xl text-red-700 animate-spin mb-4"></i>
+                <h3 class="text-lg font-serif font-bold text-gray-800">Analizando Retórica...</h3>
+                <p class="text-sm text-gray-500 mt-2">Consultando a Rorty, Schlegel y a la ciudad.</p>
+            </div>
+
+            <!-- Resultado Generado -->
+            <div id="resultState" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col h-full fade-in">
+                <!-- Output Header -->
+                <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                    <h2 class="font-serif text-lg font-bold text-gray-800 flex items-center gap-2">
+                        <i class="ph-fill ph-pen-nib text-red-700"></i>
+                        <span id="resultTitle">Título del Resultado</span>
+                    </h2>
+                    <div class="flex gap-2">
+                        <button onclick="copyToClipboard()" class="p-2 text-gray-500 hover:text-black hover:bg-gray-200 rounded-full transition-colors tooltip" title="Copiar texto">
+                            <i class="ph-bold ph-copy text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Output Body -->
+                <div class="p-8 flex-1 overflow-y-auto paper-texture">
+                    <div id="resultContent" class="max-w-prose mx-auto space-y-8">
+                        <!-- El contenido dinámico va aquí -->
+                    </div>
+                    
+                    <div class="mt-12 pt-6 border-t border-gray-200 text-center">
+                        <p class="text-xs text-gray-400 italic font-serif">
+                            "La ironía es una tabla de salvación ante los males mundanos." — IA Editorial
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Lógica de la Aplicación -->
+    <script>
+        // --- DATA ---
+        const VOCABULARY = {
+            philosophical: ["la dialéctica", "el desasosiego", "la finitud", "el simulacro", "la hybris", "la paradoja", "el absurdo", "la ontología", "el imperativo categórico", "la otredad"],
+            urban: ["la gentrificación", "el asfalto", "las ruinas modernas", "la urbe devoradora", "el tráfico existencial", "la arquitectura del olvido", "el paisaje tapatío", "la ciudad fragmentada"],
+            emotional: ["una nostalgia prematura", "la ironía salvadora", "un silencio ensordecedor", "la resistencia íntima", "la esperanza crítica", "el vértigo contemporáneo"],
+            authors: ["como diría Rorty", "pensando en Schlegel", "bajo la óptica de Kierkegaard", "en palabras de Erasmo", "recordando a Walter Benjamin", "según Cioran"]
+        };
+
+        const TEMPLATES = {
+            reel: [
+                {
+                    hook: "Nos han vendido la idea de que [TOPIC] es progreso, pero si miramos bien...",
+                    body: "Es en realidad un retroceso disfrazado. [AUTHOR], la ironía no es burla, es distancia. Y al ver [TOPIC] desde lejos, solo veo [CONCEPT].",
+                    cta: "¿Es esto lo que queríamos o solo lo que nos permitieron tener?"
+                },
+                {
+                    hook: "Detente un segundo. Mira [TOPIC]. ¿No te parece absurdo?",
+                    body: "La ciudad intenta convencernos de que esto es normal. Pero [CONCEPT] nos dice lo contrario. Estamos normalizando la catástrofe cotidiana.",
+                    cta: "La pregunta no es por qué pasa, sino por qué dejamos de cuestionarlo."
+                }
+            ],
+            carousel: [
+                {
+                    title: "La insoportable levedad de [TOPIC]",
+                    slides: [
+                        "Vivimos tiempos donde [TOPIC] se ha vuelto moneda de cambio.",
+                        "Pero, ¿qué hay detrás de esta fachada?",
+                        "1. El olvido sistemático de nuestra historia.",
+                        "2. La priorización de la estética sobre la ética.",
+                        "3. [AUTHOR]: 'La verdad es una hueste en movimiento'.",
+                        "En conclusión: [TOPIC] no es el problema, es el síntoma de [CONCEPT].",
+                        "Lee la columna completa en el enlace."
+                    ]
+                }
+            ],
+            chronicle: [
+                {
+                    opening: "La tarde caía sobre Guadalajara con ese peso plomizo que solo tienen los domingos.",
+                    development: "Frente a mí, [TOPIC] se alzaba no como un objeto, sino como una advertencia. El ruido de la ciudad se apagó por un instante.",
+                    climax: "Fue ahí donde entendí que [TOPIC] y [CONCEPT] son dos caras de la misma moneda rota.",
+                    closing: "Seguí caminando. La ciudad no espera a nadie, ni siquiera a quienes intentan comprenderla."
+                }
+            ]
+        };
+
+        // --- STATE ---
+        let currentFormat = 'reel';
+        let currentContent = null;
+        let history = [];
+
+        // --- FUNCTIONS ---
+
+        function selectFormat(format) {
+            currentFormat = format;
+            
+            // Actualizar estilos de botones
+            document.querySelectorAll('.format-btn').forEach(btn => {
+                btn.classList.remove('bg-black', 'text-white', 'shadow-md');
+                btn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+            });
+            
+            const activeBtn = document.getElementById(`btn-${format}`);
+            activeBtn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+            activeBtn.classList.add('bg-black', 'text-white', 'shadow-md');
+        }
+
+        function getRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function generateContent() {
+            const topic = document.getElementById('topicInput').value.trim();
+            if (!topic) {
+                alert("Por favor escribe un tema primero.");
+                return;
+            }
+
+            // UI Loading
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('resultState').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+
+            // Simulación de proceso (1.5s)
+            setTimeout(() => {
+                const concept = getRandom(VOCABULARY.philosophical);
+                const author = getRandom(VOCABULARY.authors);
+                const urban = getRandom(VOCABULARY.urban);
+                
+                let result = { title: "", content: [] };
+
+                // Lógica de Generación
+                switch (currentFormat) {
+                    case 'reel':
+                        const reelTemp = getRandom(TEMPLATES.reel);
+                        result.title = "Guion para Reel: Filosofía de Banqueta";
+                        result.content = [
+                            { label: "VISUAL", text: `Alan caminando por la calle. Cámara en mano o plano medio. De fondo: ${urban} o el caos de la ciudad.` },
+                            { label: "TEXTO EN PANTALLA", text: `La mentira de ${topic}` },
+                            { label: "AUDIO (HOOK)", text: reelTemp.hook.replace("[TOPIC]", topic) },
+                            { label: "AUDIO (CUERPO)", text: reelTemp.body.replace("[TOPIC]", topic).replace("[AUTHOR]", author).replace("[CONCEPT]", concept) },
+                            { label: "AUDIO (CIERRE)", text: reelTemp.cta },
+                            { label: "CAPTION SUGERIDO", text: `A veces la ciudad nos grita lo que callamos. Hablemos de ${topic}. #FilosofiaUrbana #Periodismo #Guadalajara` }
+                        ];
+                        break;
+                    case 'carousel':
+                        const carTemp = getRandom(TEMPLATES.carousel);
+                        result.title = "Estructura para Carrusel Editorial";
+                        result.content = carTemp.slides.map((slide, index) => ({
+                            label: `SLIDE ${index + 1}`,
+                            text: slide.replace("[TOPIC]", topic).replace("[AUTHOR]", author).replace("[CONCEPT]", concept)
+                        }));
+                        break;
+                    case 'chronicle':
+                        const chronTemp = getRandom(TEMPLATES.chronicle);
+                        result.title = "Narrativa para Crónica Sonora";
+                        result.content = [
+                            { label: "AMBIENTE VISUAL", text: "Tomas B-Roll lentas, alto contraste. Blanco y negro o colores deslavados. Sin rostro, solo detalles urbanos." },
+                            { label: "AUDIO (INICIO)", text: chronTemp.opening },
+                            { label: "AUDIO (DESARROLLO)", text: chronTemp.development.replace("[TOPIC]", topic) },
+                            { label: "AUDIO (REFLEXIÓN)", text: `Pensé en ${author}, y en cómo ${concept} se manifiesta en cada esquina.` },
+                            { label: "AUDIO (CLÍMAX)", text: chronTemp.climax.replace("[TOPIC]", topic).replace("[CONCEPT]", concept) },
+                            { label: "AUDIO (CIERRE)", text: chronTemp.closing }
+                        ];
+                        break;
+                    case 'glossary':
+                        result.title = "Entrada de Glosario Irónico";
+                        result.content = [
+                            { label: "CONCEPTO A DEFINIR", text: topic.toUpperCase() },
+                            { label: "DEFINICIÓN IRÓNICA", text: `Sustantivo. Dícese de ${topic} que promete ${concept} pero entrega ${getRandom(VOCABULARY.emotional)}.` },
+                            { label: "EJEMPLO DE USO", text: `"El político inauguró ${topic} sin notar que ya era una ruina antes de cortar el listón."` },
+                            { label: "NOTA AL PIE", text: `Ver también: ${urban}.` }
+                        ];
+                        break;
+                }
+
+                currentContent = result;
+                
+                // Actualizar Historial
+                history.unshift({ topic, format: currentFormat });
+                renderHistory();
+
+                // Renderizar Resultado
+                renderResult(result);
+
+                // UI Loaded
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('resultState').classList.remove('hidden');
+
+            }, 1500);
+        }
+
+        function renderResult(data) {
+            document.getElementById('resultTitle').innerText = data.title;
+            const container = document.getElementById('resultContent');
+            container.innerHTML = '';
+
+            data.content.forEach(block => {
+                // Determinar estilos según el tipo de bloque
+                let bgClass = "bg-white border-gray-800 font-serif text-gray-900";
+                let labelColor = "text-gray-400";
+                
+                if (block.label.includes("VISUAL") || block.label.includes("AMBIENTE")) {
+                    bgClass = "bg-blue-50 border-blue-400 text-gray-600 italic font-sans text-sm";
+                } else if (block.label.includes("TEXTO EN PANTALLA") || block.label.includes("CONCEPTO")) {
+                    bgClass = "bg-yellow-50 border-yellow-400 font-bold font-sans text-gray-900";
+                }
+
+                const html = `
+                    <div class="relative group">
+                        <div class="absolute -left-12 top-0 text-[10px] font-bold ${labelColor} uppercase tracking-widest w-10 text-right mt-1 hidden md:block">
+                            ${block.label}
+                        </div>
+                        <div class="md:hidden text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                            ${block.label}
+                        </div>
+                        <div class="text-base leading-relaxed p-4 rounded-sm border-l-4 shadow-sm ${bgClass}">
+                            ${block.text}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyContainer');
+            const list = document.getElementById('historyList');
+            
+            if (history.length > 0) {
+                container.classList.remove('hidden');
+                list.innerHTML = '';
+                // Mostrar solo los últimos 3
+                history.slice(0, 3).forEach(item => {
+                    list.innerHTML += `
+                        <li class="text-xs text-gray-600 border-b border-gray-100 pb-2 last:border-0 flex justify-between">
+                            <span class="font-bold truncate max-w-[120px]">${item.topic}</span>
+                            <span class="text-gray-400 italic">${item.format}</span>
+                        </li>
+                    `;
+                });
+            }
+        }
+
+        function copyToClipboard() {
+            if (!currentContent) return;
+            
+            const textToCopy = currentContent.content
+                .map(item => `[${item.label}] ${item.text}`)
+                .join('\n\n');
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Feedback visual simple
+                const originalText = document.getElementById('resultTitle').innerText;
+                document.getElementById('resultTitle').innerText = "¡Copiado al portapapeles!";
+                setTimeout(() => {
+                    document.getElementById('resultTitle').innerText = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
