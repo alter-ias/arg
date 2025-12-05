@@ -151,8 +151,8 @@
         // CONFIGURACIÓN INICIAL (LA TUYA)
         let ACTIVE_KEY = "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";
         const API_URL = "https://openrouter.ai/api/v1/chat/completions";
-        // Usamos un modelo free muy estable
-        const MODEL = "google/gemini-2.0-flash-lite-preview-02-05:free"; 
+        // CORREGIDO: Usamos el modelo estándar experimental que es más estable
+        const MODEL = "google/gemini-2.0-flash-exp:free"; 
 
         let currentFormat = 'reel';
         let currentContent = null;
@@ -191,6 +191,8 @@
                     // Si la llave está mal, mostramos el panel de rescate
                     alert("Error: OpenRouter dice que la llave API no existe o es inválida. Usa el cuadro rojo para pegar una nueva.");
                     document.getElementById('apiRescuePanel').classList.remove('hidden');
+                } else if (error.message.includes("400") || error.message.includes("valid model")) {
+                     alert("Error técnico con el modelo de IA. Intenta de nuevo en unos segundos.");
                 } else {
                     alert(`Error de conexión: ${error.message}. Verifica tu internet.`);
                 }
