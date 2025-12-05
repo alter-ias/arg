@@ -30,17 +30,36 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* Animación de pulso para indicar reintentos */
-        @keyframes pulse-orange {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .5; }
-        }
-        .animate-pulse-fast {
-            animation: pulse-orange 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        
+        /* Modal Overlay */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
         }
     </style>
 </head>
-<body class="text-gray-800 selection:bg-red-200 min-h-screen flex flex-col">
+<body class="text-gray-800 selection:bg-red-200 min-h-screen flex flex-col relative">
+
+    <!-- Modal de Emergencia (Oculto por defecto) -->
+    <div id="keyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 border border-red-200">
+            <div class="flex items-center gap-3 text-red-600 mb-4">
+                <i class="ph-bold ph-warning-circle text-3xl"></i>
+                <h3 class="text-lg font-bold font-serif">Acceso Caducado</h3>
+            </div>
+            <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+                La llave de conexión con la IA ha dejado de funcionar (Error 401). Esto suele pasar cuando expira el acceso gratuito.
+            </p>
+            <div class="bg-gray-50 p-3 rounded border border-gray-200 mb-4">
+                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Nueva API Key de OpenRouter</label>
+                <input type="password" id="newKeyInput" placeholder="sk-or-v1-..." class="w-full bg-white border border-gray-300 text-sm p-2 rounded focus:border-black outline-none font-mono">
+            </div>
+            <button onclick="saveNewKey()" class="w-full bg-black text-white font-bold py-3 rounded hover:bg-gray-800 transition-colors shadow-lg">
+                Guardar y Reconectar
+            </button>
+            <p class="text-[10px] text-center text-gray-400 mt-3">La nueva llave se guardará en tu dispositivo.</p>
+        </div>
+    </div>
 
     <!-- Header -->
     <header class="border-b border-gray-300 bg-white sticky top-0 z-10 shadow-sm">
@@ -55,11 +74,9 @@
                 </div>
             </div>
             
-            <div class="flex items-center gap-3">
-                 <div class="flex items-center gap-2 text-xs text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-200" id="statusIndicator">
-                    <div id="statusDot" class="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span id="modelStatus">IA Online</span>
-                </div>
+            <div class="flex items-center gap-2 text-xs text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-200" id="statusIndicator">
+                <div id="statusDot" class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span id="statusText">IA Lista</span>
             </div>
         </div>
     </header>
@@ -71,7 +88,6 @@
         <div class="md:col-span-1 space-y-6">
             
             <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 relative overflow-hidden">
-                
                 <label class="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-wider">
                     1. ¿Sobre qué quieres escribir?
                 </label>
@@ -103,14 +119,14 @@
                 <button
                     onclick="generateContent()"
                     id="generateBtn"
-                    class="mt-8 w-full flex items-center justify-center gap-2 px-4 py-4 rounded-md font-bold uppercase tracking-wider text-xs transition-all bg-red-700 hover:bg-red-800 text-white shadow-lg transform active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    class="mt-8 w-full flex items-center justify-center gap-2 px-4 py-4 rounded-md font-bold uppercase tracking-wider text-xs transition-all bg-red-700 hover:bg-red-800 text-white shadow-lg transform active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
                 >
                     <i class="ph-bold ph-sparkle"></i> Generar Ideas Reales
                 </button>
             </div>
             
-            <!-- Consola de estado para ver qué modelo responde -->
-            <div id="networkLog" class="text-[10px] text-gray-400 mt-2 font-mono h-auto overflow-hidden p-2 border border-gray-100 rounded bg-gray-50 hidden"></div>
+            <!-- Consola de red para ver el intento en tiempo real -->
+            <div id="networkLog" class="hidden mt-2 p-3 bg-gray-900 text-green-400 font-mono text-[10px] rounded border border-gray-700 h-24 overflow-y-auto shadow-inner"></div>
         </div>
 
         <!-- Columna Derecha: Resultado -->
@@ -122,15 +138,18 @@
                 </div>
                 <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">IA Lista para pensar</h3>
                 <p class="text-gray-500 text-sm max-w-xs mx-auto leading-relaxed">
-                    Introduce un tema. La aplicación buscará el mejor servidor gratuito disponible en tiempo real para generar tu contenido.
+                    Introduce un tema. La aplicación buscará el mejor servidor gratuito disponible en tiempo real.
                 </p>
             </div>
 
             <!-- Estado Cargando -->
             <div id="loadingState" class="hidden h-full flex flex-col items-center justify-center bg-white/50 rounded-lg border border-gray-200 p-10 text-center min-h-[400px]">
-                <i class="ph-bold ph-arrows-clockwise text-4xl text-red-700 animate-spin mb-4"></i>
-                <h3 class="text-lg font-serif font-bold text-gray-800" id="loadingText">Conectando...</h3>
-                <p class="text-xs text-gray-500 mt-2 font-mono bg-gray-100 px-2 py-1 rounded" id="loadingSubtext">Iniciando...</p>
+                <div class="relative">
+                    <i class="ph-bold ph-arrows-clockwise text-5xl text-gray-200 animate-spin mb-4 absolute top-0 left-0"></i>
+                    <i class="ph-bold ph-arrows-clockwise text-5xl text-red-700 animate-spin mb-4 relative z-10" style="animation-duration: 1s;"></i>
+                </div>
+                <h3 class="text-lg font-serif font-bold text-gray-800 mt-4" id="loadingText">Conectando...</h3>
+                <p class="text-xs text-gray-500 mt-2 font-mono bg-gray-100 px-3 py-1 rounded border border-gray-200" id="loadingSubtext">Iniciando...</p>
             </div>
 
             <!-- Resultado -->
@@ -140,7 +159,7 @@
                         <i class="ph-fill ph-pen-nib text-red-700"></i>
                         <span id="resultTitle">Resultado</span>
                     </h2>
-                    <button onclick="copyToClipboard()" class="p-2 text-gray-500 hover:text-black hover:bg-gray-200 rounded-full transition-colors" title="Copiar todo">
+                    <button onclick="copyToClipboard()" class="p-2 text-gray-500 hover:text-black hover:bg-gray-200 rounded-full transition-colors tooltip" title="Copiar todo">
                         <i class="ph-bold ph-copy text-lg"></i>
                     </button>
                 </div>
@@ -148,7 +167,7 @@
                     <div id="resultContent" class="max-w-prose mx-auto space-y-8"></div>
                     <div class="mt-12 pt-6 border-t border-gray-200 text-center">
                         <p class="text-xs text-gray-400 italic font-serif">
-                            Generado por <span id="modelCredit" class="font-bold">IA</span>
+                            Generado por <span id="modelCredit" class="font-bold text-gray-800">IA</span>
                         </p>
                     </div>
                 </div>
@@ -157,25 +176,30 @@
     </main>
 
     <script>
-        // --- CONFIGURACIÓN DE ACCESO ---
-        const API_KEY = "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";
+        // ==========================================
+        // CONFIGURACIÓN DE ACCESO
+        // ==========================================
+        // NOTA: Esta llave parece haber expirado. 
+        // El sistema usará la guardada en localStorage si existe.
+        const DEFAULT_KEY = "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";
         const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-        // LISTA DE MODELOS (PRIORIDAD DE INTENTO)
-        // Mezclamos proveedores: Google, Meta (Llama), Microsoft (Phi), Qwen, DeepSeek.
-        // Si uno falla, pasamos al siguiente inmediatamente.
+        // LISTA DE MODELOS ROBUSTA (IDs actualizados)
+        // Se probarán en orden secuencial.
         const MODEL_CHAIN = [
-            "google/gemini-2.0-flash-exp:free",         // Opción 1: El más listo (Google)
-            "meta-llama/llama-3-8b-instruct:free",       // Opción 2: Rápido y estable (Meta)
-            "microsoft/phi-3-medium-128k-instruct:free", // Opción 3: Microsoft
-            "qwen/qwen-2.5-vl-72b-instruct:free",        // Opción 4: Qwen (Muy bueno)
-            "huggingfaceh4/zephyr-7b-beta:free",         // Opción 5: Zephyr
-            "meta-llama/llama-3.2-3b-instruct:free",     // Opción 6: Modelo muy ligero (Casi nunca falla)
-            "openchat/openchat-7b:free"                  // Opción 7: Backup final
+            "google/gemini-2.0-flash-exp:free",
+            "meta-llama/llama-3.2-3b-instruct:free",
+            "microsoft/phi-3-medium-128k-instruct:free",
+            "google/gemini-2.0-flash-thinking-exp:free",
+            "qwen/qwen-2.5-vl-72b-instruct:free",
+            "huggingfaceh4/zephyr-7b-beta:free"
         ];
 
         let currentFormat = 'reel';
         let currentContent = null;
+        
+        // Recuperar llave del usuario si ya la corrigió antes
+        let activeKey = localStorage.getItem('alan_ai_key') || DEFAULT_KEY;
 
         function selectFormat(format) {
             currentFormat = format;
@@ -197,51 +221,57 @@
             document.getElementById('resultState').classList.add('hidden');
             document.getElementById('loadingState').classList.remove('hidden');
             document.getElementById('generateBtn').disabled = true;
-            document.getElementById('networkLog').classList.remove('hidden');
-            document.getElementById('networkLog').innerHTML = "Iniciando búsqueda de servidor disponible...";
+            document.getElementById('generateBtn').classList.add('opacity-50');
             
-            // Iniciar Cascada de Modelos
+            const log = document.getElementById('networkLog');
+            log.classList.remove('hidden');
+            log.innerHTML = `> Iniciando sesión...<br>`;
+            
+            // Iniciar Cascada
             await tryModelChain(topic, 0);
         }
 
         async function tryModelChain(topic, index) {
-            // Si ya probamos todos y fallaron
+            // Si ya probamos todos
             if (index >= MODEL_CHAIN.length) {
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('emptyState').classList.remove('hidden');
-                document.getElementById('generateBtn').disabled = false;
-                
-                alert("⚠ Todos los servidores gratuitos están saturados en este momento exacto. Por favor espera 30 segundos e intenta de nuevo.");
-                document.getElementById('networkLog').innerHTML += `<br><span class="text-red-500">Fallo total. Intenta más tarde.</span>`;
+                resetUI("fail");
+                alert("Todos los servidores están ocupados temporalmente (Error 429). Por favor intenta en 1 minuto.");
                 return;
             }
 
             const modelId = MODEL_CHAIN[index];
-            const modelName = modelId.split('/')[1].split(':')[0]; // Nombre corto para UI
+            const modelName = modelId.split('/')[1].split(':')[0]; 
 
             // Actualizar UI
-            document.getElementById('loadingText').innerText = "Negociando conexión...";
-            document.getElementById('loadingSubtext').innerText = `Intentando servidor ${index + 1}/${MODEL_CHAIN.length}: ${modelName}`;
-            document.getElementById('networkLog').innerHTML = `> Probando: ${modelName}...`;
+            document.getElementById('loadingText').innerText = "Buscando servidor...";
+            document.getElementById('loadingSubtext').innerText = `Intento ${index + 1}/${MODEL_CHAIN.length}: ${modelName}`;
+            
+            const log = document.getElementById('networkLog');
+            log.innerHTML += `> Conectando a [${modelName}]... `;
 
             try {
-                // Hacemos la llamada
                 await callAI(topic, modelId);
-                
-                // Si llegamos aquí, FUE ÉXITO.
+                // Éxito
+                log.innerHTML += `<span class="text-white font-bold">OK 200</span><br>> Generando respuesta...`;
                 document.getElementById('generateBtn').disabled = false;
-                document.getElementById('networkLog').innerHTML += ` <span class="text-green-600 font-bold">¡CONECTADO!</span>`;
+                document.getElementById('generateBtn').classList.remove('opacity-50');
                 return;
 
             } catch (error) {
-                // Si falla, logueamos y pasamos al siguiente recursivamente
-                console.warn(`Fallo ${modelName}:`, error);
-                document.getElementById('networkLog').innerHTML += ` <span class="text-red-400">Ocupado (${error.message})</span>`;
-                
-                // Pequeña pausa para no bloquear el navegador
-                await new Promise(r => setTimeout(r, 500));
-                
-                // Intentar siguiente
+                // Manejo de errores
+                const errStr = error.message;
+                log.innerHTML += `<span class="text-red-500">ERROR ${errStr}</span><br>`;
+
+                // CRÍTICO: Si el error es 401 (Unauthorized), la llave está muerta.
+                // No tiene sentido seguir probando modelos. Hay que pedir llave nueva.
+                if (errStr.includes("401")) {
+                    resetUI("auth_fail");
+                    showKeyModal();
+                    return;
+                }
+
+                // Si es otro error (429, 503, 404), probamos el siguiente modelo
+                await new Promise(r => setTimeout(r, 500)); // Breve pausa
                 await tryModelChain(topic, index + 1);
             }
         }
@@ -250,21 +280,20 @@
             const systemPrompt = `Actúa como el editor creativo de Alan Ruiz Galicia.
             Estilo: Periodista mexicano irónico, crítico, filósofo urbano, elegante.
             Referencias obligatorias: Rorty, Schlegel, Gentrificación, Guadalajara.
-            IMPORTANTE: Devuelve SOLAMENTE un JSON válido. No incluyas texto antes ni después del JSON. No uses bloques de código markdown.
+            IMPORTANTE: Devuelve SOLAMENTE un JSON válido. No incluyas texto antes ni después.
             Estructura JSON: {"title": "Título", "content": [{"label": "ETIQUETA", "text": "Contenido"}]}`;
 
             let userPrompt = getPromptForFormat(currentFormat, topic);
             
-            // Controller para abortar si tarda más de 10s (para pasar rápido al siguiente modelo)
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
             try {
                 const response = await fetch(API_URL, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${API_KEY}`,
+                        "Authorization": `Bearer ${activeKey}`,
                         "HTTP-Referer": window.location.href,
                         "X-Title": "Editor Ironico App"
                     },
@@ -274,53 +303,79 @@
                             { role: "system", content: systemPrompt },
                             { role: "user", content: userPrompt }
                         ],
-                        temperature: 0.7,
-                        max_tokens: 1000
+                        temperature: 0.7
                     }),
                     signal: controller.signal
                 });
 
                 clearTimeout(timeoutId);
 
+                // Si hay error HTTP, lanzarlo para que el catch lo capture
                 if (!response.ok) {
-                    // Si el servidor responde con error (429, 503, etc), lanzamos error para activar el fallback
-                    throw new Error(`HTTP ${response.status}`);
+                    throw new Error(`${response.status}`);
                 }
 
                 const data = await response.json();
-                
-                // A veces OpenRouter devuelve 200 pero con error dentro
-                if (data.error) throw new Error(data.error.message);
+                if (data.error) throw new Error(data.error.message); // OpenRouter a veces devuelve 200 con error body
 
                 const aiContent = data.choices[0].message.content;
                 
-                // Parseo del JSON
+                // Parseo JSON resiliente
                 let parsedResult;
                 try {
-                    // Limpieza agresiva por si el modelo es "tonto" y pone texto extra
                     const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
                     const cleanJson = jsonMatch ? jsonMatch[0] : aiContent;
                     parsedResult = JSON.parse(cleanJson);
                 } catch (e) {
-                    // Si falla el JSON, no fallamos la petición, mostramos texto crudo
-                    console.warn("JSON Malformado, mostrando texto plano");
                     parsedResult = { 
-                        title: "Borrador sin formato (IA)", 
+                        title: "Borrador (IA sin formato)", 
                         content: [{ label: "CONTENIDO", text: aiContent }] 
                     };
                 }
                 
-                // Renderizar
                 renderResult(parsedResult, model.split('/')[1]);
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('resultState').classList.remove('hidden');
 
             } catch (error) {
                 clearTimeout(timeoutId);
-                throw error; // Re-lanzar para que tryModelChain lo capture
+                throw error;
             }
         }
 
+        // --- SISTEMA DE RECUPERACIÓN DE LLAVE ---
+        function showKeyModal() {
+            document.getElementById('keyModal').classList.remove('hidden');
+        }
+
+        function saveNewKey() {
+            const input = document.getElementById('newKeyInput');
+            const newKey = input.value.trim();
+            if (newKey && newKey.startsWith("sk-or-")) {
+                activeKey = newKey;
+                localStorage.setItem('alan_ai_key', newKey);
+                document.getElementById('keyModal').classList.add('hidden');
+                alert("Llave guardada correctamente. Intenta generar de nuevo.");
+                // Opcional: Reintentar automáticamente
+                // generateContent(); 
+            } else {
+                alert("La llave debe empezar con 'sk-or-...'");
+            }
+        }
+
+        function resetUI(reason) {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('emptyState').classList.remove('hidden');
+            document.getElementById('generateBtn').disabled = false;
+            document.getElementById('generateBtn').classList.remove('opacity-50');
+            const log = document.getElementById('networkLog');
+            
+            if (reason === "auth_fail") {
+                log.innerHTML += `<br><span class="text-red-500 font-bold">FALLO DE AUTENTICACIÓN</span>`;
+            }
+        }
+
+        // --- UTILS ---
         function getPromptForFormat(format, topic) {
             if (format === 'reel') return `Guion Reel sobre "${topic}". Estructura JSON requerida.`;
             else if (format === 'carousel') return `Estructura Carrusel (7 slides) sobre "${topic}". Frases cortas.`;
@@ -340,7 +395,6 @@
 
             content.forEach(block => {
                 let bgClass = "bg-white border-gray-800 font-serif text-gray-900";
-                // Colorización básica
                 const l = block.label ? block.label.toUpperCase() : "";
                 if (l.includes("VISUAL") || l.includes("AMBIENTE")) bgClass = "bg-blue-50 border-blue-400 text-gray-600 italic font-sans text-sm";
                 else if (l.includes("TEXTO") || l.includes("HOOK")) bgClass = "bg-yellow-50 border-yellow-400 font-bold font-sans text-gray-900";
