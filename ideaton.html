@@ -30,6 +30,14 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        /* Animación de pulso para indicar reintentos */
+        @keyframes pulse-orange {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .animate-pulse-fast {
+            animation: pulse-orange 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
     </style>
 </head>
 <body class="text-gray-800 selection:bg-red-200 min-h-screen flex flex-col">
@@ -48,9 +56,9 @@
             </div>
             
             <div class="flex items-center gap-3">
-                 <div class="hidden md:flex items-center gap-2 text-xs text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-200" id="statusIndicator">
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span id="modelStatus">IA Lista</span>
+                 <div class="flex items-center gap-2 text-xs text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-200" id="statusIndicator">
+                    <div id="statusDot" class="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span id="modelStatus">IA Online</span>
                 </div>
             </div>
         </div>
@@ -95,14 +103,14 @@
                 <button
                     onclick="generateContent()"
                     id="generateBtn"
-                    class="mt-8 w-full flex items-center justify-center gap-2 px-4 py-4 rounded-md font-bold uppercase tracking-wider text-xs transition-all bg-red-700 hover:bg-red-800 text-white shadow-lg transform active:scale-95"
+                    class="mt-8 w-full flex items-center justify-center gap-2 px-4 py-4 rounded-md font-bold uppercase tracking-wider text-xs transition-all bg-red-700 hover:bg-red-800 text-white shadow-lg transform active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                    <i class="ph-bold ph-sparkle"></i> Generar Ideas
+                    <i class="ph-bold ph-sparkle"></i> Generar Ideas Reales
                 </button>
             </div>
             
-            <!-- Log discreto para depuración (oculto visualmente para el usuario normal pero útil si algo falla grave) -->
-            <div id="debugLog" class="text-[10px] text-gray-300 mt-2 font-mono h-10 overflow-hidden"></div>
+            <!-- Consola de estado para ver qué modelo responde -->
+            <div id="networkLog" class="text-[10px] text-gray-400 mt-2 font-mono h-auto overflow-hidden p-2 border border-gray-100 rounded bg-gray-50 hidden"></div>
         </div>
 
         <!-- Columna Derecha: Resultado -->
@@ -110,19 +118,19 @@
             <!-- Estado Vacío -->
             <div id="emptyState" class="h-full flex flex-col items-center justify-center bg-white/50 rounded-lg border-2 border-dashed border-gray-300 p-10 text-center min-h-[400px]">
                 <div class="bg-white p-4 rounded-full mb-4 shadow-sm">
-                    <i class="ph-duotone ph-pen-nib text-4xl text-gray-300"></i>
+                    <i class="ph-duotone ph-brain text-4xl text-gray-300"></i>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">Esperando inspiración...</h3>
+                <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">IA Lista para pensar</h3>
                 <p class="text-gray-500 text-sm max-w-xs mx-auto leading-relaxed">
-                    Introduce un tema a la izquierda para generar contenido.
+                    Introduce un tema. La aplicación buscará el mejor servidor gratuito disponible en tiempo real para generar tu contenido.
                 </p>
             </div>
 
             <!-- Estado Cargando -->
             <div id="loadingState" class="hidden h-full flex flex-col items-center justify-center bg-white/50 rounded-lg border border-gray-200 p-10 text-center min-h-[400px]">
                 <i class="ph-bold ph-arrows-clockwise text-4xl text-red-700 animate-spin mb-4"></i>
-                <h3 class="text-lg font-serif font-bold text-gray-800" id="loadingText">Contactando a la IA...</h3>
-                <p class="text-xs text-gray-500 mt-2" id="loadingSubtext">Iniciando protocolo de redundancia...</p>
+                <h3 class="text-lg font-serif font-bold text-gray-800" id="loadingText">Conectando...</h3>
+                <p class="text-xs text-gray-500 mt-2 font-mono bg-gray-100 px-2 py-1 rounded" id="loadingSubtext">Iniciando...</p>
             </div>
 
             <!-- Resultado -->
@@ -140,7 +148,7 @@
                     <div id="resultContent" class="max-w-prose mx-auto space-y-8"></div>
                     <div class="mt-12 pt-6 border-t border-gray-200 text-center">
                         <p class="text-xs text-gray-400 italic font-serif">
-                            "La ironía es una tabla de salvación." — <span id="modelCredit">Editor IA</span>
+                            Generado por <span id="modelCredit" class="font-bold">IA</span>
                         </p>
                     </div>
                 </div>
@@ -149,20 +157,21 @@
     </main>
 
     <script>
-        // --- CONFIGURACIÓN "TODO TERRENO" ---
-        
+        // --- CONFIGURACIÓN DE ACCESO ---
         const API_KEY = "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";
         const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-        // LISTA DE MODELOS DE RESPALDO (Priority Queue)
-        // Si el 1 falla, usa el 2, etc.
-        const MODEL_FALLBACKS = [
-            "google/gemini-2.0-flash-exp:free",      // 1. El más inteligente (Suele estar saturado)
-            "meta-llama/llama-3.1-70b-instruct:free", // 2. Muy potente (Meta)
-            "google/gemini-2.0-flash-thinking-exp:free", // 3. Alternativa Gemini
-            "qwen/qwen-2.5-vl-72b-instruct:free",     // 4. Excelente modelo open source
-            "meta-llama/llama-3.1-8b-instruct:free",  // 5. Ligero y rápido (Casi nunca falla)
-            "microsoft/phi-3-medium-128k-instruct:free" // 6. Último recurso
+        // LISTA DE MODELOS (PRIORIDAD DE INTENTO)
+        // Mezclamos proveedores: Google, Meta (Llama), Microsoft (Phi), Qwen, DeepSeek.
+        // Si uno falla, pasamos al siguiente inmediatamente.
+        const MODEL_CHAIN = [
+            "google/gemini-2.0-flash-exp:free",         // Opción 1: El más listo (Google)
+            "meta-llama/llama-3-8b-instruct:free",       // Opción 2: Rápido y estable (Meta)
+            "microsoft/phi-3-medium-128k-instruct:free", // Opción 3: Microsoft
+            "qwen/qwen-2.5-vl-72b-instruct:free",        // Opción 4: Qwen (Muy bueno)
+            "huggingfaceh4/zephyr-7b-beta:free",         // Opción 5: Zephyr
+            "meta-llama/llama-3.2-3b-instruct:free",     // Opción 6: Modelo muy ligero (Casi nunca falla)
+            "openchat/openchat-7b:free"                  // Opción 7: Backup final
         ];
 
         let currentFormat = 'reel';
@@ -187,57 +196,68 @@
             document.getElementById('emptyState').classList.add('hidden');
             document.getElementById('resultState').classList.add('hidden');
             document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('networkLog').classList.remove('hidden');
+            document.getElementById('networkLog').innerHTML = "Iniciando búsqueda de servidor disponible...";
             
-            // Iniciar proceso de cascada
-            await tryGenerateWithFallback(topic, 0);
+            // Iniciar Cascada de Modelos
+            await tryModelChain(topic, 0);
         }
 
-        // FUNCIÓN RECURSIVA DE FALLBACK
-        async function tryGenerateWithFallback(topic, modelIndex) {
-            // Si ya probamos todos los modelos y fallaron
-            if (modelIndex >= MODEL_FALLBACKS.length) {
+        async function tryModelChain(topic, index) {
+            // Si ya probamos todos y fallaron
+            if (index >= MODEL_CHAIN.length) {
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('emptyState').classList.remove('hidden');
-                alert("Lo sentimos. Todos los servidores de IA están saturados en este momento. Por favor intenta en 1 minuto.");
+                document.getElementById('generateBtn').disabled = false;
+                
+                alert("⚠ Todos los servidores gratuitos están saturados en este momento exacto. Por favor espera 30 segundos e intenta de nuevo.");
+                document.getElementById('networkLog').innerHTML += `<br><span class="text-red-500">Fallo total. Intenta más tarde.</span>`;
                 return;
             }
 
-            const currentModel = MODEL_FALLBACKS[modelIndex];
-            
-            // Actualizar UI para mostrar qué está pasando
-            const displayIndex = modelIndex + 1;
-            document.getElementById('loadingText').innerText = `Intentando servidor ${displayIndex}/${MODEL_FALLBACKS.length}...`;
-            document.getElementById('loadingSubtext').innerText = `Modelo: ${currentModel.split('/')[1].split(':')[0]}`;
-            console.log(`Trying model: ${currentModel}`);
+            const modelId = MODEL_CHAIN[index];
+            const modelName = modelId.split('/')[1].split(':')[0]; // Nombre corto para UI
+
+            // Actualizar UI
+            document.getElementById('loadingText').innerText = "Negociando conexión...";
+            document.getElementById('loadingSubtext').innerText = `Intentando servidor ${index + 1}/${MODEL_CHAIN.length}: ${modelName}`;
+            document.getElementById('networkLog').innerHTML = `> Probando: ${modelName}...`;
 
             try {
-                await callAI(topic, currentModel);
-                // Si tiene éxito, paramos aquí
-                return; 
+                // Hacemos la llamada
+                await callAI(topic, modelId);
+                
+                // Si llegamos aquí, FUE ÉXITO.
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('networkLog').innerHTML += ` <span class="text-green-600 font-bold">¡CONECTADO!</span>`;
+                return;
+
             } catch (error) {
-                console.warn(`Model ${currentModel} failed:`, error);
+                // Si falla, logueamos y pasamos al siguiente recursivamente
+                console.warn(`Fallo ${modelName}:`, error);
+                document.getElementById('networkLog').innerHTML += ` <span class="text-red-400">Ocupado (${error.message})</span>`;
                 
-                // Si es un error de "Usuario canceló" o algo local grave, paramos.
-                // Pero si es 429, 503, 500, o "error fetching", intentamos el siguiente.
+                // Pequeña pausa para no bloquear el navegador
+                await new Promise(r => setTimeout(r, 500));
                 
-                // Pequeña pausa antes del siguiente intento para no bombardear
-                await new Promise(r => setTimeout(r, 1000));
-                
-                // Intentar siguiente modelo
-                await tryGenerateWithFallback(topic, modelIndex + 1);
+                // Intentar siguiente
+                await tryModelChain(topic, index + 1);
             }
         }
 
         async function callAI(topic, model) {
             const systemPrompt = `Actúa como el editor creativo de Alan Ruiz Galicia.
             Estilo: Periodista mexicano irónico, crítico, filósofo urbano, elegante.
-            Referencias: Rorty, Schlegel, Gentrificación, Guadalajara.
-            IMPORTANTE: Devuelve SOLAMENTE JSON válido con estructura: {"title": "...", "content": [{"label": "...", "text": "..."}]}. No uses markdown code blocks.`;
+            Referencias obligatorias: Rorty, Schlegel, Gentrificación, Guadalajara.
+            IMPORTANTE: Devuelve SOLAMENTE un JSON válido. No incluyas texto antes ni después del JSON. No uses bloques de código markdown.
+            Estructura JSON: {"title": "Título", "content": [{"label": "ETIQUETA", "text": "Contenido"}]}`;
 
             let userPrompt = getPromptForFormat(currentFormat, topic);
-
+            
+            // Controller para abortar si tarda más de 10s (para pasar rápido al siguiente modelo)
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 segundos timeout por modelo
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
 
             try {
                 const response = await fetch(API_URL, {
@@ -254,7 +274,8 @@
                             { role: "system", content: systemPrompt },
                             { role: "user", content: userPrompt }
                         ],
-                        temperature: 0.7
+                        temperature: 0.7,
+                        max_tokens: 1000
                     }),
                     signal: controller.signal
                 });
@@ -262,51 +283,49 @@
                 clearTimeout(timeoutId);
 
                 if (!response.ok) {
-                    // Si falla (ej 429), lanzamos error para que el fallback lo capture
-                    throw new Error(`HTTP error ${response.status}`);
+                    // Si el servidor responde con error (429, 503, etc), lanzamos error para activar el fallback
+                    throw new Error(`HTTP ${response.status}`);
                 }
 
                 const data = await response.json();
                 
+                // A veces OpenRouter devuelve 200 pero con error dentro
                 if (data.error) throw new Error(data.error.message);
 
                 const aiContent = data.choices[0].message.content;
                 
-                // Parseo y Renderizado
+                // Parseo del JSON
+                let parsedResult;
                 try {
-                    const cleanJson = aiContent.replace(/```json/g, '').replace(/```/g, '').trim();
-                    const parsedResult = JSON.parse(cleanJson);
-                    
-                    // Actualizar crédito del modelo
-                    const modelName = model.split('/')[1].split(':')[0];
-                    renderResult(parsedResult, `IA (${modelName})`);
+                    // Limpieza agresiva por si el modelo es "tonto" y pone texto extra
+                    const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
+                    const cleanJson = jsonMatch ? jsonMatch[0] : aiContent;
+                    parsedResult = JSON.parse(cleanJson);
                 } catch (e) {
-                    const modelName = model.split('/')[1].split(':')[0];
-                    renderResult({
-                        title: "Borrador Generado",
-                        content: [{ label: "CONTENIDO", text: aiContent }]
-                    }, `IA (${modelName})`);
+                    // Si falla el JSON, no fallamos la petición, mostramos texto crudo
+                    console.warn("JSON Malformado, mostrando texto plano");
+                    parsedResult = { 
+                        title: "Borrador sin formato (IA)", 
+                        content: [{ label: "CONTENIDO", text: aiContent }] 
+                    };
                 }
-
+                
+                // Renderizar
+                renderResult(parsedResult, model.split('/')[1]);
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('resultState').classList.remove('hidden');
 
             } catch (error) {
                 clearTimeout(timeoutId);
-                throw error; // Re-lanzar para que el sistema de fallback lo maneje
+                throw error; // Re-lanzar para que tryModelChain lo capture
             }
         }
 
         function getPromptForFormat(format, topic) {
-            if (format === 'reel') {
-                return `Guion Reel sobre "${topic}". Estructura: VISUAL, TEXTO PANTALLA, AUDIO (HOOK), AUDIO (CUERPO), CIERRE. Tono irónico.`;
-            } else if (format === 'carousel') {
-                return `Estructura Carrusel (7 slides) sobre "${topic}". Frases cortas y contundentes.`;
-            } else if (format === 'chronicle') {
-                return `Crónica Sonora (Voz en off) sobre "${topic}". Tono melancólico y observacional.`;
-            } else {
-                return `Definición para Glosario Irónico de "${topic}". Incluye Definición, Ejemplo y Nota al pie.`;
-            }
+            if (format === 'reel') return `Guion Reel sobre "${topic}". Estructura JSON requerida.`;
+            else if (format === 'carousel') return `Estructura Carrusel (7 slides) sobre "${topic}". Frases cortas.`;
+            else if (format === 'chronicle') return `Crónica Sonora sobre "${topic}". Tono melancólico.`;
+            else return `Definición Glosario Irónico de "${topic}".`;
         }
 
         function renderResult(data, sourceName) {
@@ -315,23 +334,22 @@
             
             const container = document.getElementById('resultContent');
             container.innerHTML = '';
+            
+            const content = data.content || [];
             currentContent = data;
 
-            data.content.forEach(block => {
+            content.forEach(block => {
                 let bgClass = "bg-white border-gray-800 font-serif text-gray-900";
-                const labelUpper = block.label.toUpperCase();
-                
-                if (labelUpper.includes("VISUAL") || labelUpper.includes("AMBIENTE")) {
-                    bgClass = "bg-blue-50 border-blue-400 text-gray-600 italic font-sans text-sm";
-                } else if (labelUpper.includes("TEXTO") || labelUpper.includes("HOOK")) {
-                    bgClass = "bg-yellow-50 border-yellow-400 font-bold font-sans text-gray-900";
-                }
+                // Colorización básica
+                const l = block.label ? block.label.toUpperCase() : "";
+                if (l.includes("VISUAL") || l.includes("AMBIENTE")) bgClass = "bg-blue-50 border-blue-400 text-gray-600 italic font-sans text-sm";
+                else if (l.includes("TEXTO") || l.includes("HOOK")) bgClass = "bg-yellow-50 border-yellow-400 font-bold font-sans text-gray-900";
 
                 container.innerHTML += `
                     <div class="relative group">
-                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">${block.label}</div>
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">${block.label || 'TEXTO'}</div>
                         <div class="text-base leading-relaxed p-4 rounded-sm border-l-4 shadow-sm ${bgClass}">
-                            ${block.text}
+                            ${block.text || block}
                         </div>
                     </div>
                 `;
@@ -340,7 +358,7 @@
 
         function copyToClipboard() {
             if (!currentContent) return;
-            const text = currentContent.content.map(i => `[${i.label}] ${i.text}`).join('\n\n');
+            const text = JSON.stringify(currentContent, null, 2);
             navigator.clipboard.writeText(text).then(() => alert("Copiado!"));
         }
     </script>
