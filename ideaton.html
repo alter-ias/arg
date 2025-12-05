@@ -46,9 +46,12 @@
                     <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Asistente de Producción: Alan Ruiz Galicia</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2 text-xs text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-200" id="statusIndicator">
-                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                IA Conectada
+            
+            <div class="flex items-center gap-3">
+                 <div class="hidden md:flex items-center gap-2 text-xs text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-200" id="statusIndicator">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span id="modelStatus">IA Lista</span>
+                </div>
             </div>
         </div>
     </header>
@@ -97,14 +100,9 @@
                     <i class="ph-bold ph-sparkle"></i> Generar Ideas
                 </button>
             </div>
-
-            <!-- Panel de Rescate de API (Solo visible si falla) -->
-            <div id="apiRescuePanel" class="hidden bg-red-50 p-4 rounded-lg border border-red-200 animate-pulse">
-                <h3 class="text-xs font-bold text-red-700 uppercase mb-2">⚠ Error de Llave API</h3>
-                <p class="text-xs text-red-600 mb-2">La llave integrada no funciona. Pega una nueva aquí:</p>
-                <input type="text" id="rescueKeyInput" placeholder="sk-or-v1..." class="w-full text-xs p-2 border border-red-300 rounded mb-2">
-                <button onclick="retryWithNewKey()" class="w-full bg-red-600 text-white text-xs font-bold py-2 rounded">Reintentar</button>
-            </div>
+            
+            <!-- Log discreto para depuración (oculto visualmente para el usuario normal pero útil si algo falla grave) -->
+            <div id="debugLog" class="text-[10px] text-gray-300 mt-2 font-mono h-10 overflow-hidden"></div>
         </div>
 
         <!-- Columna Derecha: Resultado -->
@@ -116,14 +114,15 @@
                 </div>
                 <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">Esperando inspiración...</h3>
                 <p class="text-gray-500 text-sm max-w-xs mx-auto leading-relaxed">
-                    Introduce un tema a la izquierda para generar contenido con IA real.
+                    Introduce un tema a la izquierda para generar contenido.
                 </p>
             </div>
 
             <!-- Estado Cargando -->
             <div id="loadingState" class="hidden h-full flex flex-col items-center justify-center bg-white/50 rounded-lg border border-gray-200 p-10 text-center min-h-[400px]">
                 <i class="ph-bold ph-arrows-clockwise text-4xl text-red-700 animate-spin mb-4"></i>
-                <h3 class="text-lg font-serif font-bold text-gray-800" id="loadingText">Conectando con la IA...</h3>
+                <h3 class="text-lg font-serif font-bold text-gray-800" id="loadingText">Contactando a la IA...</h3>
+                <p class="text-xs text-gray-500 mt-2" id="loadingSubtext">Iniciando protocolo de redundancia...</p>
             </div>
 
             <!-- Resultado -->
@@ -133,14 +132,16 @@
                         <i class="ph-fill ph-pen-nib text-red-700"></i>
                         <span id="resultTitle">Resultado</span>
                     </h2>
-                    <button onclick="copyToClipboard()" class="p-2 text-gray-500 hover:text-black hover:bg-gray-200 rounded-full transition-colors">
+                    <button onclick="copyToClipboard()" class="p-2 text-gray-500 hover:text-black hover:bg-gray-200 rounded-full transition-colors" title="Copiar todo">
                         <i class="ph-bold ph-copy text-lg"></i>
                     </button>
                 </div>
                 <div class="p-8 flex-1 overflow-y-auto paper-texture">
                     <div id="resultContent" class="max-w-prose mx-auto space-y-8"></div>
                     <div class="mt-12 pt-6 border-t border-gray-200 text-center">
-                        <p class="text-xs text-gray-400 italic font-serif">"La ironía es una tabla de salvación." — Editor IA</p>
+                        <p class="text-xs text-gray-400 italic font-serif">
+                            "La ironía es una tabla de salvación." — <span id="modelCredit">Editor IA</span>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -148,11 +149,21 @@
     </main>
 
     <script>
-        // CONFIGURACIÓN INICIAL (LA TUYA)
-        let ACTIVE_KEY = "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";
+        // --- CONFIGURACIÓN "TODO TERRENO" ---
+        
+        const API_KEY = "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";
         const API_URL = "https://openrouter.ai/api/v1/chat/completions";
-        // CORREGIDO: Usamos el modelo estándar experimental que es más estable
-        const MODEL = "google/gemini-2.0-flash-exp:free"; 
+
+        // LISTA DE MODELOS DE RESPALDO (Priority Queue)
+        // Si el 1 falla, usa el 2, etc.
+        const MODEL_FALLBACKS = [
+            "google/gemini-2.0-flash-exp:free",      // 1. El más inteligente (Suele estar saturado)
+            "meta-llama/llama-3.1-70b-instruct:free", // 2. Muy potente (Meta)
+            "google/gemini-2.0-flash-thinking-exp:free", // 3. Alternativa Gemini
+            "qwen/qwen-2.5-vl-72b-instruct:free",     // 4. Excelente modelo open source
+            "meta-llama/llama-3.1-8b-instruct:free",  // 5. Ligero y rápido (Casi nunca falla)
+            "microsoft/phi-3-medium-128k-instruct:free" // 6. Último recurso
+        ];
 
         let currentFormat = 'reel';
         let currentContent = null;
@@ -176,107 +187,132 @@
             document.getElementById('emptyState').classList.add('hidden');
             document.getElementById('resultState').classList.add('hidden');
             document.getElementById('loadingState').classList.remove('hidden');
-            document.getElementById('apiRescuePanel').classList.add('hidden');
+            
+            // Iniciar proceso de cascada
+            await tryGenerateWithFallback(topic, 0);
+        }
 
-            try {
-                await callAI(topic);
-            } catch (error) {
-                console.error("Error completo:", error);
-                
-                // Manejo de errores específicos
+        // FUNCIÓN RECURSIVA DE FALLBACK
+        async function tryGenerateWithFallback(topic, modelIndex) {
+            // Si ya probamos todos los modelos y fallaron
+            if (modelIndex >= MODEL_FALLBACKS.length) {
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('emptyState').classList.remove('hidden');
+                alert("Lo sentimos. Todos los servidores de IA están saturados en este momento. Por favor intenta en 1 minuto.");
+                return;
+            }
 
-                if (error.message.includes("401") || error.message.includes("404") || error.message.toLowerCase().includes("user not found")) {
-                    // Si la llave está mal, mostramos el panel de rescate
-                    alert("Error: OpenRouter dice que la llave API no existe o es inválida. Usa el cuadro rojo para pegar una nueva.");
-                    document.getElementById('apiRescuePanel').classList.remove('hidden');
-                } else if (error.message.includes("400") || error.message.includes("valid model")) {
-                     alert("Error técnico con el modelo de IA. Intenta de nuevo en unos segundos.");
-                } else {
-                    alert(`Error de conexión: ${error.message}. Verifica tu internet.`);
-                }
+            const currentModel = MODEL_FALLBACKS[modelIndex];
+            
+            // Actualizar UI para mostrar qué está pasando
+            const displayIndex = modelIndex + 1;
+            document.getElementById('loadingText').innerText = `Intentando servidor ${displayIndex}/${MODEL_FALLBACKS.length}...`;
+            document.getElementById('loadingSubtext').innerText = `Modelo: ${currentModel.split('/')[1].split(':')[0]}`;
+            console.log(`Trying model: ${currentModel}`);
+
+            try {
+                await callAI(topic, currentModel);
+                // Si tiene éxito, paramos aquí
+                return; 
+            } catch (error) {
+                console.warn(`Model ${currentModel} failed:`, error);
+                
+                // Si es un error de "Usuario canceló" o algo local grave, paramos.
+                // Pero si es 429, 503, 500, o "error fetching", intentamos el siguiente.
+                
+                // Pequeña pausa antes del siguiente intento para no bombardear
+                await new Promise(r => setTimeout(r, 1000));
+                
+                // Intentar siguiente modelo
+                await tryGenerateWithFallback(topic, modelIndex + 1);
             }
         }
 
-        function retryWithNewKey() {
-            const newKey = document.getElementById('rescueKeyInput').value.trim();
-            if(newKey && newKey.startsWith("sk-or-")) {
-                ACTIVE_KEY = newKey;
-                generateContent(); // Reintentar con la nueva llave
-            } else {
-                alert("Por favor pega una llave válida de OpenRouter (empieza con sk-or-...)");
-            }
-        }
-
-        async function callAI(topic) {
-            const systemPrompt = `Actúa como el editor creativo de Alan Ruiz Galicia (periodista mexicano irónico, crítico, filósofo urbano).
-            Estilo: Intelectual pero accesible, usa ironía, referencias a filósofos (Rorty, Schlegel) y metáforas urbanas de Guadalajara.
-            Tarea: Generar contenido para redes sociales.
-            IMPORTANTE: Devuelve SOLAMENTE JSON válido con estructura: {"title": "...", "content": [{"label": "...", "text": "..."}]}`;
+        async function callAI(topic, model) {
+            const systemPrompt = `Actúa como el editor creativo de Alan Ruiz Galicia.
+            Estilo: Periodista mexicano irónico, crítico, filósofo urbano, elegante.
+            Referencias: Rorty, Schlegel, Gentrificación, Guadalajara.
+            IMPORTANTE: Devuelve SOLAMENTE JSON válido con estructura: {"title": "...", "content": [{"label": "...", "text": "..."}]}. No uses markdown code blocks.`;
 
             let userPrompt = getPromptForFormat(currentFormat, topic);
 
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${ACTIVE_KEY}`,
-                    "HTTP-Referer": window.location.href,
-                    "X-Title": "Editor Ironico App"
-                },
-                body: JSON.stringify({
-                    model: MODEL,
-                    messages: [
-                        { role: "system", content: systemPrompt },
-                        { role: "user", content: userPrompt }
-                    ],
-                    temperature: 0.7
-                })
-            });
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 segundos timeout por modelo
 
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                const errMsg = errData.error?.message || response.statusText;
-                throw new Error(`${response.status} ${errMsg}`);
-            }
-
-            const data = await response.json();
-            
-            if (data.error) throw new Error(data.error.message); // OpenRouter a veces devuelve 200 pero con error en body
-
-            const aiContent = data.choices[0].message.content;
-            
             try {
-                const cleanJson = aiContent.replace(/```json/g, '').replace(/```/g, '').trim();
-                const parsedResult = JSON.parse(cleanJson);
-                renderResult(parsedResult, "Inteligencia Artificial");
-            } catch (e) {
-                // Fallback si el JSON falla
-                renderResult({
-                    title: "Borrador IA (Texto Directo)",
-                    content: [{ label: "CONTENIDO", text: aiContent }]
-                }, "Inteligencia Artificial");
-            }
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${API_KEY}`,
+                        "HTTP-Referer": window.location.href,
+                        "X-Title": "Editor Ironico App"
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: userPrompt }
+                        ],
+                        temperature: 0.7
+                    }),
+                    signal: controller.signal
+                });
 
-            document.getElementById('loadingState').classList.add('hidden');
-            document.getElementById('resultState').classList.remove('hidden');
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    // Si falla (ej 429), lanzamos error para que el fallback lo capture
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error.message);
+
+                const aiContent = data.choices[0].message.content;
+                
+                // Parseo y Renderizado
+                try {
+                    const cleanJson = aiContent.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const parsedResult = JSON.parse(cleanJson);
+                    
+                    // Actualizar crédito del modelo
+                    const modelName = model.split('/')[1].split(':')[0];
+                    renderResult(parsedResult, `IA (${modelName})`);
+                } catch (e) {
+                    const modelName = model.split('/')[1].split(':')[0];
+                    renderResult({
+                        title: "Borrador Generado",
+                        content: [{ label: "CONTENIDO", text: aiContent }]
+                    }, `IA (${modelName})`);
+                }
+
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('resultState').classList.remove('hidden');
+
+            } catch (error) {
+                clearTimeout(timeoutId);
+                throw error; // Re-lanzar para que el sistema de fallback lo maneje
+            }
         }
 
         function getPromptForFormat(format, topic) {
             if (format === 'reel') {
-                return `Crea un guion de Reel sobre "${topic}". Estructura: VISUAL, TEXTO PANTALLA, AUDIO (HOOK), AUDIO (CUERPO), CIERRE.`;
+                return `Guion Reel sobre "${topic}". Estructura: VISUAL, TEXTO PANTALLA, AUDIO (HOOK), AUDIO (CUERPO), CIERRE. Tono irónico.`;
             } else if (format === 'carousel') {
-                return `Crea estructura de Carrusel (7 slides) sobre "${topic}". Frases cortas y contundentes.`;
+                return `Estructura Carrusel (7 slides) sobre "${topic}". Frases cortas y contundentes.`;
             } else if (format === 'chronicle') {
-                return `Escribe una Crónica Sonora (Voz en off) sobre "${topic}". Tono melancólico y observacional.`;
+                return `Crónica Sonora (Voz en off) sobre "${topic}". Tono melancólico y observacional.`;
             } else {
-                return `Define "${topic}" para un Glosario Irónico. Incluye Definición, Ejemplo y Nota al pie.`;
+                return `Definición para Glosario Irónico de "${topic}". Incluye Definición, Ejemplo y Nota al pie.`;
             }
         }
 
         function renderResult(data, sourceName) {
             document.getElementById('resultTitle').innerText = data.title || "Resultado Generado";
+            document.getElementById('modelCredit').innerText = sourceName;
+            
             const container = document.getElementById('resultContent');
             container.innerHTML = '';
             currentContent = data;
