@@ -30,36 +30,9 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        /* Modal Overlay */
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-        }
     </style>
 </head>
 <body class="text-gray-800 selection:bg-red-200 min-h-screen flex flex-col relative">
-
-    <!-- Modal de Emergencia (Oculto por defecto) -->
-    <div id="keyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
-        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 border border-red-200">
-            <div class="flex items-center gap-3 text-red-600 mb-4">
-                <i class="ph-bold ph-warning-circle text-3xl"></i>
-                <h3 class="text-lg font-bold font-serif">Acceso Caducado</h3>
-            </div>
-            <p class="text-sm text-gray-600 mb-4 leading-relaxed">
-                La llave de conexión con la IA ha dejado de funcionar (Error 401). Esto suele pasar cuando expira el acceso gratuito.
-            </p>
-            <div class="bg-gray-50 p-3 rounded border border-gray-200 mb-4">
-                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Nueva API Key de OpenRouter</label>
-                <input type="password" id="newKeyInput" placeholder="sk-or-v1-..." class="w-full bg-white border border-gray-300 text-sm p-2 rounded focus:border-black outline-none font-mono">
-            </div>
-            <button onclick="saveNewKey()" class="w-full bg-black text-white font-bold py-3 rounded hover:bg-gray-800 transition-colors shadow-lg">
-                Guardar y Reconectar
-            </button>
-            <p class="text-[10px] text-center text-gray-400 mt-3">La nueva llave se guardará en tu dispositivo.</p>
-        </div>
-    </div>
 
     <!-- Header -->
     <header class="border-b border-gray-300 bg-white sticky top-0 z-10 shadow-sm">
@@ -74,9 +47,9 @@
                 </div>
             </div>
             
-            <div class="flex items-center gap-2 text-xs text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-200" id="statusIndicator">
-                <div id="statusDot" class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span id="statusText">IA Lista</span>
+            <div class="flex items-center gap-2 text-xs text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200" id="statusIndicator">
+                <div id="statusDot" class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                <span id="statusText">Red Pollinations</span>
             </div>
         </div>
     </header>
@@ -119,14 +92,11 @@
                 <button
                     onclick="generateContent()"
                     id="generateBtn"
-                    class="mt-8 w-full flex items-center justify-center gap-2 px-4 py-4 rounded-md font-bold uppercase tracking-wider text-xs transition-all bg-red-700 hover:bg-red-800 text-white shadow-lg transform active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+                    class="mt-8 w-full flex items-center justify-center gap-2 px-4 py-4 rounded-md font-bold uppercase tracking-wider text-xs transition-all bg-blue-700 hover:bg-blue-800 text-white shadow-lg transform active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
                 >
-                    <i class="ph-bold ph-sparkle"></i> Generar Ideas Reales
+                    <i class="ph-bold ph-sparkle"></i> Generar con Pollinations AI
                 </button>
             </div>
-            
-            <!-- Consola de red para ver el intento en tiempo real -->
-            <div id="networkLog" class="hidden mt-2 p-3 bg-gray-900 text-green-400 font-mono text-[10px] rounded border border-gray-700 h-24 overflow-y-auto shadow-inner"></div>
         </div>
 
         <!-- Columna Derecha: Resultado -->
@@ -134,11 +104,11 @@
             <!-- Estado Vacío -->
             <div id="emptyState" class="h-full flex flex-col items-center justify-center bg-white/50 rounded-lg border-2 border-dashed border-gray-300 p-10 text-center min-h-[400px]">
                 <div class="bg-white p-4 rounded-full mb-4 shadow-sm">
-                    <i class="ph-duotone ph-brain text-4xl text-gray-300"></i>
+                    <i class="ph-duotone ph-magic-wand text-4xl text-gray-300"></i>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">IA Lista para pensar</h3>
+                <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">IA Lista (Sin Keys)</h3>
                 <p class="text-gray-500 text-sm max-w-xs mx-auto leading-relaxed">
-                    Introduce un tema. La aplicación buscará el mejor servidor gratuito disponible en tiempo real.
+                    Introduce un tema. La aplicación usará la red pública de Pollinations para generar el contenido.
                 </p>
             </div>
 
@@ -146,17 +116,17 @@
             <div id="loadingState" class="hidden h-full flex flex-col items-center justify-center bg-white/50 rounded-lg border border-gray-200 p-10 text-center min-h-[400px]">
                 <div class="relative">
                     <i class="ph-bold ph-arrows-clockwise text-5xl text-gray-200 animate-spin mb-4 absolute top-0 left-0"></i>
-                    <i class="ph-bold ph-arrows-clockwise text-5xl text-red-700 animate-spin mb-4 relative z-10" style="animation-duration: 1s;"></i>
+                    <i class="ph-bold ph-arrows-clockwise text-5xl text-blue-700 animate-spin mb-4 relative z-10" style="animation-duration: 1s;"></i>
                 </div>
-                <h3 class="text-lg font-serif font-bold text-gray-800 mt-4" id="loadingText">Conectando...</h3>
-                <p class="text-xs text-gray-500 mt-2 font-mono bg-gray-100 px-3 py-1 rounded border border-gray-200" id="loadingSubtext">Iniciando...</p>
+                <h3 class="text-lg font-serif font-bold text-gray-800 mt-4" id="loadingText">Pensando...</h3>
+                <p class="text-xs text-gray-500 mt-2 font-mono bg-gray-100 px-3 py-1 rounded border border-gray-200" id="loadingSubtext">Conectando a Pollinations.ai</p>
             </div>
 
             <!-- Resultado -->
             <div id="resultState" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col h-full fade-in">
                 <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                     <h2 class="font-serif text-lg font-bold text-gray-800 flex items-center gap-2">
-                        <i class="ph-fill ph-pen-nib text-red-700"></i>
+                        <i class="ph-fill ph-pen-nib text-blue-700"></i>
                         <span id="resultTitle">Resultado</span>
                     </h2>
                     <button onclick="copyToClipboard()" class="p-2 text-gray-500 hover:text-black hover:bg-gray-200 rounded-full transition-colors tooltip" title="Copiar todo">
@@ -167,7 +137,7 @@
                     <div id="resultContent" class="max-w-prose mx-auto space-y-8"></div>
                     <div class="mt-12 pt-6 border-t border-gray-200 text-center">
                         <p class="text-xs text-gray-400 italic font-serif">
-                            Generado por <span id="modelCredit" class="font-bold text-gray-800">IA</span>
+                            Generado vía <span id="modelCredit" class="font-bold text-gray-800">Pollinations.ai</span>
                         </p>
                     </div>
                 </div>
@@ -177,30 +147,15 @@
 
     <script>
         // ==========================================
-        // CONFIGURACIÓN DE ACCESO
+        // CONFIGURACIÓN POLLINATIONS (SIN KEY)
         // ==========================================
-        // NOTA: Esta llave parece haber expirado. 
-        // El sistema usará la guardada en localStorage si existe.
-        const DEFAULT_KEY = "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";
-        const API_URL = "https://openrouter.ai/api/v1/chat/completions";
-
-        // LISTA DE MODELOS ROBUSTA (IDs actualizados)
-        // Se probarán en orden secuencial.
-        const MODEL_CHAIN = [
-            "google/gemini-2.0-flash-exp:free",
-            "meta-llama/llama-3.2-3b-instruct:free",
-            "microsoft/phi-3-medium-128k-instruct:free",
-            "google/gemini-2.0-flash-thinking-exp:free",
-            "qwen/qwen-2.5-vl-72b-instruct:free",
-            "huggingfaceh4/zephyr-7b-beta:free"
-        ];
+        // Usamos la API pública de texto de Pollinations.
+        // No requiere autenticación.
+        const POLLINATIONS_URL = "https://text.pollinations.ai/";
 
         let currentFormat = 'reel';
         let currentContent = null;
         
-        // Recuperar llave del usuario si ya la corrigió antes
-        let activeKey = localStorage.getItem('alan_ai_key') || DEFAULT_KEY;
-
         function selectFormat(format) {
             currentFormat = format;
             document.querySelectorAll('.format-btn').forEach(btn => {
@@ -223,169 +178,81 @@
             document.getElementById('generateBtn').disabled = true;
             document.getElementById('generateBtn').classList.add('opacity-50');
             
-            const log = document.getElementById('networkLog');
-            log.classList.remove('hidden');
-            log.innerHTML = `> Iniciando sesión...<br>`;
-            
-            // Iniciar Cascada
-            await tryModelChain(topic, 0);
-        }
-
-        async function tryModelChain(topic, index) {
-            // Si ya probamos todos
-            if (index >= MODEL_CHAIN.length) {
-                resetUI("fail");
-                alert("Todos los servidores están ocupados temporalmente (Error 429). Por favor intenta en 1 minuto.");
-                return;
-            }
-
-            const modelId = MODEL_CHAIN[index];
-            const modelName = modelId.split('/')[1].split(':')[0]; 
-
-            // Actualizar UI
-            document.getElementById('loadingText').innerText = "Buscando servidor...";
-            document.getElementById('loadingSubtext').innerText = `Intento ${index + 1}/${MODEL_CHAIN.length}: ${modelName}`;
-            
-            const log = document.getElementById('networkLog');
-            log.innerHTML += `> Conectando a [${modelName}]... `;
-
             try {
-                await callAI(topic, modelId);
-                // Éxito
-                log.innerHTML += `<span class="text-white font-bold">OK 200</span><br>> Generando respuesta...`;
+                await callPollinations(topic);
+            } catch (error) {
+                alert("Error al conectar con Pollinations: " + error.message);
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('emptyState').classList.remove('hidden');
+            } finally {
                 document.getElementById('generateBtn').disabled = false;
                 document.getElementById('generateBtn').classList.remove('opacity-50');
-                return;
-
-            } catch (error) {
-                // Manejo de errores
-                const errStr = error.message;
-                log.innerHTML += `<span class="text-red-500">ERROR ${errStr}</span><br>`;
-
-                // CRÍTICO: Si el error es 401 (Unauthorized), la llave está muerta.
-                // No tiene sentido seguir probando modelos. Hay que pedir llave nueva.
-                if (errStr.includes("401")) {
-                    resetUI("auth_fail");
-                    showKeyModal();
-                    return;
-                }
-
-                // Si es otro error (429, 503, 404), probamos el siguiente modelo
-                await new Promise(r => setTimeout(r, 500)); // Breve pausa
-                await tryModelChain(topic, index + 1);
             }
         }
 
-        async function callAI(topic, model) {
-            const systemPrompt = `Actúa como el editor creativo de Alan Ruiz Galicia.
-            Estilo: Periodista mexicano irónico, crítico, filósofo urbano, elegante.
-            Referencias obligatorias: Rorty, Schlegel, Gentrificación, Guadalajara.
-            IMPORTANTE: Devuelve SOLAMENTE un JSON válido. No incluyas texto antes ni después.
-            Estructura JSON: {"title": "Título", "content": [{"label": "ETIQUETA", "text": "Contenido"}]}`;
+        async function callPollinations(topic) {
+            // Construimos un mega-prompt porque Pollinations es "stateless" (sin memoria de conversación en modo simple)
+            const prompt = `
+                Instrucción del Sistema:
+                Actúa como el editor creativo de Alan Ruiz Galicia.
+                Perfil: Periodista mexicano irónico, crítico, filósofo urbano (estilo Rorty/Schlegel), elegante, enfocado en Guadalajara y la gentrificación.
+                Objetivo: Generar contenido estructurado para redes sociales.
+                
+                Instrucción de Formato:
+                RESPONDE ÚNICAMENTE CON UN JSON VÁLIDO. NO ESCRIBAS NADA FUERA DEL JSON.
+                Estructura: {"title": "Título", "content": [{"label": "ETIQUETA", "text": "Contenido"}]}
 
-            let userPrompt = getPromptForFormat(currentFormat, topic);
+                Instrucción del Usuario:
+                ${getPromptForFormat(currentFormat, topic)}
+                
+                Respuesta JSON:
+            `.trim();
+
+            // Llamada POST a Pollinations
+            // Nota: Pollinations acepta texto plano en el body y devuelve texto
+            const response = await fetch(POLLINATIONS_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/plain",
+                },
+                body: prompt
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP Error ${response.status}`);
+            }
+
+            const textResponse = await response.text();
             
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
-
+            // Procesamiento de la respuesta (Intento de extraer JSON)
+            let parsedResult;
             try {
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${activeKey}`,
-                        "HTTP-Referer": window.location.href,
-                        "X-Title": "Editor Ironico App"
-                    },
-                    body: JSON.stringify({
-                        model: model,
-                        messages: [
-                            { role: "system", content: systemPrompt },
-                            { role: "user", content: userPrompt }
-                        ],
-                        temperature: 0.7
-                    }),
-                    signal: controller.signal
-                });
-
-                clearTimeout(timeoutId);
-
-                // Si hay error HTTP, lanzarlo para que el catch lo capture
-                if (!response.ok) {
-                    throw new Error(`${response.status}`);
-                }
-
-                const data = await response.json();
-                if (data.error) throw new Error(data.error.message); // OpenRouter a veces devuelve 200 con error body
-
-                const aiContent = data.choices[0].message.content;
-                
-                // Parseo JSON resiliente
-                let parsedResult;
-                try {
-                    const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
-                    const cleanJson = jsonMatch ? jsonMatch[0] : aiContent;
-                    parsedResult = JSON.parse(cleanJson);
-                } catch (e) {
-                    parsedResult = { 
-                        title: "Borrador (IA sin formato)", 
-                        content: [{ label: "CONTENIDO", text: aiContent }] 
-                    };
-                }
-                
-                renderResult(parsedResult, model.split('/')[1]);
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('resultState').classList.remove('hidden');
-
-            } catch (error) {
-                clearTimeout(timeoutId);
-                throw error;
+                const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
+                const cleanJson = jsonMatch ? jsonMatch[0] : textResponse;
+                parsedResult = JSON.parse(cleanJson);
+            } catch (e) {
+                console.warn("No se pudo parsear JSON, mostrando texto crudo");
+                parsedResult = { 
+                    title: "Borrador (Texto Plano)", 
+                    content: [{ label: "RESPUESTA IA", text: textResponse }] 
+                };
             }
-        }
-
-        // --- SISTEMA DE RECUPERACIÓN DE LLAVE ---
-        function showKeyModal() {
-            document.getElementById('keyModal').classList.remove('hidden');
-        }
-
-        function saveNewKey() {
-            const input = document.getElementById('newKeyInput');
-            const newKey = input.value.trim();
-            if (newKey && newKey.startsWith("sk-or-")) {
-                activeKey = newKey;
-                localStorage.setItem('alan_ai_key', newKey);
-                document.getElementById('keyModal').classList.add('hidden');
-                alert("Llave guardada correctamente. Intenta generar de nuevo.");
-                // Opcional: Reintentar automáticamente
-                // generateContent(); 
-            } else {
-                alert("La llave debe empezar con 'sk-or-...'");
-            }
-        }
-
-        function resetUI(reason) {
-            document.getElementById('loadingState').classList.add('hidden');
-            document.getElementById('emptyState').classList.remove('hidden');
-            document.getElementById('generateBtn').disabled = false;
-            document.getElementById('generateBtn').classList.remove('opacity-50');
-            const log = document.getElementById('networkLog');
             
-            if (reason === "auth_fail") {
-                log.innerHTML += `<br><span class="text-red-500 font-bold">FALLO DE AUTENTICACIÓN</span>`;
-            }
+            renderResult(parsedResult);
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('resultState').classList.remove('hidden');
         }
 
         // --- UTILS ---
         function getPromptForFormat(format, topic) {
-            if (format === 'reel') return `Guion Reel sobre "${topic}". Estructura JSON requerida.`;
-            else if (format === 'carousel') return `Estructura Carrusel (7 slides) sobre "${topic}". Frases cortas.`;
-            else if (format === 'chronicle') return `Crónica Sonora sobre "${topic}". Tono melancólico.`;
-            else return `Definición Glosario Irónico de "${topic}".`;
+            if (format === 'reel') return `Crea un guion de Reel sobre "${topic}". Estructura JSON con etiquetas: VISUAL, TEXTO PANTALLA, AUDIO (HOOK), AUDIO (CUERPO), CIERRE. Tono irónico.`;
+            else if (format === 'carousel') return `Crea estructura de Carrusel (7 slides) sobre "${topic}". Frases cortas y contundentes.`;
+            else if (format === 'chronicle') return `Escribe una Crónica Sonora sobre "${topic}". Tono melancólico y observacional.`;
+            else return `Define "${topic}" para un Glosario Irónico. Incluye Definición, Ejemplo y Nota al pie.`;
         }
 
-        function renderResult(data, sourceName) {
+        function renderResult(data) {
             document.getElementById('resultTitle').innerText = data.title || "Resultado Generado";
-            document.getElementById('modelCredit').innerText = sourceName;
             
             const container = document.getElementById('resultContent');
             container.innerHTML = '';
