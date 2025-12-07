@@ -106,9 +106,9 @@
                 <div class="bg-white p-4 rounded-full mb-4 shadow-sm">
                     <i class="ph-duotone ph-magic-wand text-4xl text-gray-300"></i>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">IA Lista (Gratis)</h3>
+                <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">IA Lista (Sin Keys)</h3>
                 <p class="text-gray-500 text-sm max-w-xs mx-auto leading-relaxed">
-                    Introduce un tema. Usando el servidor público de Pollinations (Modelo OpenAI Genérico).
+                    Introduce un tema. La aplicación usará la red pública de Pollinations para generar el contenido.
                 </p>
             </div>
 
@@ -149,7 +149,8 @@
         // ==========================================
         // CONFIGURACIÓN POLLINATIONS (CORREGIDA)
         // ==========================================
-        const POLLINATIONS_URL = "https://text.pollinations.ai/openai"; 
+        // Usamos la URL raíz que es más tolerante a parámetros
+        const POLLINATIONS_URL = "https://text.pollinations.ai/"; 
 
         let currentFormat = 'reel';
         let currentContent = null;
@@ -204,33 +205,45 @@
 
             const userPrompt = getPromptForFormat(currentFormat, topic);
 
-            // LLAMADA CORREGIDA: Modelo genérico "openai"
+            // LLAMADA CORREGIDA: Eliminamos 'seed' y otros parámetros conflictivos
             const response = await fetch(POLLINATIONS_URL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    model: "openai", // CAMBIO CRÍTICO: Usamos el alias genérico que nunca falla
                     messages: [
                         { role: "system", content: systemPrompt },
                         { role: "user", content: userPrompt }
                     ],
-                    seed: Math.floor(Math.random() * 1000), // Semilla aleatoria para variedad
-                    temperature: 0.7
+                    model: "openai", // Alias genérico para enrutamiento automático
+                    jsonMode: true   // Flag específico de Pollinations para asegurar JSON
                 })
             });
 
             if (!response.ok) {
+                // Intentamos leer el error del cuerpo si existe
                 const errText = await response.text();
                 throw new Error(`HTTP Error ${response.status}: ${errText.slice(0, 100)}`);
             }
 
-            const data = await response.json();
-            const aiContent = data.choices[0].message.content;
+            const data = await response.json(); // Pollinations devuelve directo el texto en algunos endpoints, pero aqui esperamos la estructura openai si jsonMode funciona
             
+            // Pollinations en root endpoint a veces devuelve texto plano directo, a veces formato OpenAI.
+            // Adaptamos la lectura:
+            let aiContent = "";
+            if (data.choices && data.choices[0] && data.choices[0].message) {
+                aiContent = data.choices[0].message.content;
+            } else if (typeof data === 'string') {
+                aiContent = data;
+            } else {
+                aiContent = JSON.stringify(data);
+            }
+            
+            // Procesamiento de la respuesta (Intento de extraer JSON)
             let parsedResult;
             try {
+                // Limpieza agresiva de markdown por si acaso
                 const cleanJson = aiContent.replace(/```json/g, '').replace(/```/g, '').trim();
                 const jsonMatch = cleanJson.match(/\{[\s\S]*\}/);
                 const finalJsonStr = jsonMatch ? jsonMatch[0] : cleanJson;
