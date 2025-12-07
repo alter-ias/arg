@@ -49,7 +49,7 @@
             
             <div class="flex items-center gap-2 text-xs text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200" id="statusIndicator">
                 <div id="statusDot" class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                <span id="statusText">Red Pollinations (OpenAI Mode)</span>
+                <span id="statusText">Red Pollinations (Estable)</span>
             </div>
         </div>
     </header>
@@ -106,9 +106,9 @@
                 <div class="bg-white p-4 rounded-full mb-4 shadow-sm">
                     <i class="ph-duotone ph-magic-wand text-4xl text-gray-300"></i>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">IA Lista (Sin Keys)</h3>
+                <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">IA Lista (Gratis)</h3>
                 <p class="text-gray-500 text-sm max-w-xs mx-auto leading-relaxed">
-                    Introduce un tema. La aplicación usará la red pública de Pollinations (Modo OpenAI) para generar el contenido.
+                    Introduce un tema. Usando el servidor público de Pollinations (Modelo OpenAI Genérico).
                 </p>
             </div>
 
@@ -147,9 +147,8 @@
 
     <script>
         // ==========================================
-        // CONFIGURACIÓN POLLINATIONS (OPENAI COMPATIBLE)
+        // CONFIGURACIÓN POLLINATIONS (CORREGIDA)
         // ==========================================
-        // Usamos el endpoint compatible con OpenAI para mejor formateo
         const POLLINATIONS_URL = "https://text.pollinations.ai/openai"; 
 
         let currentFormat = 'reel';
@@ -205,24 +204,24 @@
 
             const userPrompt = getPromptForFormat(currentFormat, topic);
 
-            // Llamada POST a Pollinations (OpenAI Format)
+            // LLAMADA CORREGIDA: Modelo genérico "openai"
             const response = await fetch(POLLINATIONS_URL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    model: "gpt-4o-mini", // Solicitamos un modelo inteligente
+                    model: "openai", // CAMBIO CRÍTICO: Usamos el alias genérico que nunca falla
                     messages: [
                         { role: "system", content: systemPrompt },
                         { role: "user", content: userPrompt }
                     ],
+                    seed: Math.floor(Math.random() * 1000), // Semilla aleatoria para variedad
                     temperature: 0.7
                 })
             });
 
             if (!response.ok) {
-                // Intentamos leer el error del cuerpo si existe
                 const errText = await response.text();
                 throw new Error(`HTTP Error ${response.status}: ${errText.slice(0, 100)}`);
             }
@@ -230,10 +229,8 @@
             const data = await response.json();
             const aiContent = data.choices[0].message.content;
             
-            // Procesamiento de la respuesta (Intento de extraer JSON)
             let parsedResult;
             try {
-                // Limpieza agresiva de markdown por si acaso
                 const cleanJson = aiContent.replace(/```json/g, '').replace(/```/g, '').trim();
                 const jsonMatch = cleanJson.match(/\{[\s\S]*\}/);
                 const finalJsonStr = jsonMatch ? jsonMatch[0] : cleanJson;
