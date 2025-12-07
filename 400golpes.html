@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlterLabGen - Generador de Narrativas</title>
+    
+    <!-- Tailwind CSS (Estilos) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Iconos (Phosphor Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Estilos específicos para las tarjetas de selección */
+        .style-card.selected {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+            color: #1e3a8a;
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col relative selection:bg-blue-200">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-20 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-2 rounded-lg shadow-lg">
+                    <i class="ph-bold ph-lightning text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-gray-900 leading-none">AlterLabGen</h1>
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-widest mt-1">Generador de Narrativas Digitales</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span id="statusText">Modelo Libre Activo</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full flex-grow">
+        
+        <!-- Columna Izquierda: Configuración (4 columnas) -->
+        <div class="lg:col-span-4 space-y-6">
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                
+                <!-- 1. TEMA -->
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">
+                    1. ¿Sobre qué quieres hablar hoy?
+                </label>
+                <input
+                    type="text"
+                    id="topicInput"
+                    placeholder="Ej. Mi rutina de mañana, Marketing Digital, Un viaje..."
+                    class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-lg font-medium rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-4 mb-6 transition-all outline-none placeholder-gray-400"
+                />
+
+                <!-- 2. ESTILO NARRATIVO -->
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">
+                    2. Elige tu Personalidad
+                </label>
+                <div class="grid grid-cols-1 gap-2 mb-6">
+                    <button onclick="selectStyle('poetico')" id="style-poetico" class="style-card flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-all text-left group">
+                        <div class="bg-purple-100 text-purple-600 p-2 rounded-md group-hover:scale-110 transition-transform"><i class="ph-fill ph-feather"></i></div>
+                        <div>
+                            <div class="text-sm font-bold">El Poético</div>
+                            <div class="text-[10px] text-gray-500">Emotivo, sensorial y profundo.</div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="selectStyle('barrio')" id="style-barrio" class="style-card flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-all text-left group">
+                        <div class="bg-orange-100 text-orange-600 p-2 rounded-md group-hover:scale-110 transition-transform"><i class="ph-fill ph-fire"></i></div>
+                        <div>
+                            <div class="text-sm font-bold">Popular de Barrio</div>
+                            <div class="text-[10px] text-gray-500">Cercano, con slang y mucha energía.</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectStyle('elegante')" id="style-elegante" class="style-card flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-all text-left group">
+                        <div class="bg-slate-100 text-slate-600 p-2 rounded-md group-hover:scale-110 transition-transform"><i class="ph-fill ph-diamond"></i></div>
+                        <div>
+                            <div class="text-sm font-bold">El Elegante</div>
+                            <div class="text-[10px] text-gray-500">Sofisticado, premium y minimalista.</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectStyle('datos')" id="style-datos" class="style-card flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-all text-left group">
+                        <div class="bg-blue-100 text-blue-600 p-2 rounded-md group-hover:scale-110 transition-transform"><i class="ph-fill ph-chart-bar"></i></div>
+                        <div>
+                            <div class="text-sm font-bold">Riguroso (Datos)</div>
+                            <div class="text-[10px] text-gray-500">Objetivo, científico y educativo.</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectStyle('ironico')" id="style-ironico" class="style-card flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-all text-left group selected">
+                        <div class="bg-red-100 text-red-600 p-2 rounded-md group-hover:scale-110 transition-transform"><i class="ph-fill ph-mask-happy"></i></div>
+                        <div>
+                            <div class="text-sm font-bold">El Irónico</div>
+                            <div class="text-[10px] text-gray-500">Crítico, sarcástico e inteligente.</div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- 3. FORMATO -->
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">
+                    3. Formato
+                </label>
+                <div class="grid grid-cols-2 gap-2 mb-6">
+                    <button onclick="selectFormat('reel')" id="fmt-reel" class="fmt-btn bg-black text-white py-2 rounded-md text-xs font-bold shadow-md">Reel (Guion)</button>
+                    <button onclick="selectFormat('carousel')" id="fmt-carousel" class="fmt-btn bg-gray-100 text-gray-600 py-2 rounded-md text-xs font-bold hover:bg-gray-200">Carrusel</button>
+                    <button onclick="selectFormat('chronicle')" id="fmt-chronicle" class="fmt-btn bg-gray-100 text-gray-600 py-2 rounded-md text-xs font-bold hover:bg-gray-200">Voz en Off</button>
+                    <button onclick="selectFormat('caption')" id="fmt-caption" class="fmt-btn bg-gray-100 text-gray-600 py-2 rounded-md text-xs font-bold hover:bg-gray-200">Caption Post</button>
+                </div>
+
+                <button
+                    onclick="generateContent()"
+                    id="generateBtn"
+                    class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transform active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <i class="ph-bold ph-sparkle text-xl"></i> CREAR NARRATIVA
+                </button>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Resultado (8 columnas) -->
+        <div class="lg:col-span-8 h-full min-h-[500px]">
+            
+            <!-- Estado Vacío -->
+            <div id="emptyState" class="h-full flex flex-col items-center justify-center bg-white rounded-xl border-2 border-dashed border-gray-300 p-10 text-center">
+                <div class="bg-gray-50 p-6 rounded-full mb-6">
+                    <i class="ph-duotone ph-film-strip text-5xl text-gray-300"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Tu lienzo creativo está vacío</h3>
+                <p class="text-gray-500 max-w-sm mx-auto">
+                    Selecciona una personalidad y un tema para generar guiones únicos adaptados a tu audiencia.
+                </p>
+            </div>
+
+            <!-- Estado Cargando -->
+            <div id="loadingState" class="hidden h-full flex flex-col items-center justify-center bg-white rounded-xl border border-gray-200 p-10 text-center">
+                <div class="relative mb-6">
+                    <div class="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="ph-fill ph-brain text-blue-600 text-xl animate-pulse"></i>
+                    </div>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800" id="loadingText">Invocando a la musa...</h3>
+                <p class="text-sm text-gray-500 mt-2 bg-gray-50 px-3 py-1 rounded-full border border-gray-100" id="loadingSubtext">Conectando con AlterLabGen</p>
+            </div>
+
+            <!-- Resultado -->
+            <div id="resultState" class="hidden bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden flex flex-col h-full fade-in">
+                <!-- Toolbar del resultado -->
+                <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div id="resultIcon" class="bg-blue-100 text-blue-600 p-1.5 rounded-md">
+                            <i class="ph-bold ph-file-text"></i>
+                        </div>
+                        <h2 class="font-bold text-gray-800" id="resultTitle">Guion Generado</h2>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="copyToClipboard()" class="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-md text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-black transition-colors shadow-sm">
+                            <i class="ph-bold ph-copy"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contenido Scrollable -->
+                <div class="p-8 flex-1 overflow-y-auto bg-white">
+                    <div id="resultContent" class="max-w-2xl mx-auto space-y-8"></div>
+                    
+                    <div class="mt-16 pt-8 border-t border-gray-100 text-center">
+                        <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">
+                            Creado por el Modelo Libre de AlterLabGen
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // CONFIGURACIÓN CENTRAL
+        // ==========================================
+        const POLLINATIONS_URL = "https://text.pollinations.ai/openai"; 
+
+        // ESTADO DE LA APP
+        let currentStyle = 'ironico';
+        let currentFormat = 'reel';
+        let currentContent = null;
+
+        // DEFINICIÓN DE PERSONALIDADES (SYSTEM PROMPTS)
+        const PERSONAS = {
+            poetico: {
+                role: "Eres un poeta visual y narrador cinematográfico.",
+                tone: "Melancólico, contemplativo, usa metáforas sensoriales (luz, textura, sonido). Tu lenguaje es bello pero accesible.",
+                focus: "La belleza oculta en lo cotidiano, las emociones sutiles.",
+                icon: "ph-feather"
+            },
+            barrio: {
+                role: "Eres un creador de contenido urbano, 'de la calle', auténtico.",
+                tone: "Coloquial, energético, directo, usas slang popular (neutro o mexicano), hablas de 'tú a tú'. Sin formalismos.",
+                focus: "La realidad cruda, el humor del día a día, consejos directos.",
+                icon: "ph-fire"
+            },
+            elegante: {
+                role: "Eres un consultor de lujo y estilo de vida premium.",
+                tone: "Sofisticado, minimalista, vocabulario elevado pero claro. Calmado y seguro de sí mismo.",
+                focus: "La exclusividad, la calidad, el 'mindset' de éxito, la estética.",
+                icon: "ph-diamond"
+            },
+            datos: {
+                role: "Eres un divulgador científico y analista de datos riguroso.",
+                tone: "Objetivo, preciso, educativo. Usas frases como 'Según estudios...', 'Los datos indican...'. Sin adornos emocionales.",
+                focus: "La verdad verificable, estadísticas, desmentir mitos, eficiencia.",
+                icon: "ph-chart-bar"
+            },
+            ironico: {
+                role: "Eres un crítico cultural cínico e inteligente (estilo Alan Ruiz Galicia).",
+                tone: "Sarcástico, agudo, usas paradojas. Cuestionas lo que todos aceptan como normal.",
+                focus: "La hipocresía social, las contradicciones modernas, la filosofía urbana.",
+                icon: "ph-mask-happy"
+            }
+        };
+
+        // --- INTERFAZ ---
+
+        function selectStyle(style) {
+            currentStyle = style;
+            // Visual update
+            document.querySelectorAll('.style-card').forEach(el => el.classList.remove('selected'));
+            document.getElementById(`style-${style}`).classList.add('selected');
+        }
+
+        function selectFormat(format) {
+            currentFormat = format;
+            // Visual update
+            document.querySelectorAll('.fmt-btn').forEach(btn => {
+                btn.classList.remove('bg-black', 'text-white', 'shadow-md');
+                btn.classList.add('bg-gray-100', 'text-gray-600');
+            });
+            const activeBtn = document.getElementById(`fmt-${format}`);
+            activeBtn.classList.remove('bg-gray-100', 'text-gray-600');
+            activeBtn.classList.add('bg-black', 'text-white', 'shadow-md');
+        }
+
+        // --- GENERACIÓN ---
+
+        async function generateContent() {
+            const topic = document.getElementById('topicInput').value.trim();
+            if (!topic) return alert("¡Escribe un tema para empezar!");
+
+            // UI Changes
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('resultState').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('generateBtn').disabled = true;
+            
+            try {
+                await callAlterLabGen(topic);
+            } catch (error) {
+                console.error(error);
+                alert("Hubo un error de conexión. Intenta de nuevo.");
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('emptyState').classList.remove('hidden');
+            } finally {
+                document.getElementById('generateBtn').disabled = false;
+            }
+        }
+
+        async function callAlterLabGen(topic) {
+            const persona = PERSONAS[currentStyle];
+            
+            const systemPrompt = `
+                ${persona.role}
+                Tu Tono es: ${persona.tone}
+                Tu Enfoque es: ${persona.focus}
+                
+                OBJETIVO: Generar un guion o texto para redes sociales.
+                
+                REGLAS DE FORMATO (CRÍTICO):
+                1. Responde ÚNICAMENTE con un JSON válido.
+                2. No escribas texto introductorio ni markdown (\`\`\`). Solo el JSON raw.
+                3. Estructura JSON requerida: 
+                   {
+                     "title": "Un título atractivo y corto",
+                     "content": [
+                       {"label": "VISUAL/ESCENA", "text": "Descripción de lo que se ve"},
+                       {"label": "AUDIO/TEXTO", "text": "Lo que se dice o se lee"}
+                     ]
+                   }
+            `.trim();
+
+            const userPrompt = getPromptForFormat(currentFormat, topic);
+
+            // Llamada a Pollinations (Usando endpoint OpenAI compatible)
+            // No se usa Seed para evitar errores 400 con proveedores Azure
+            const response = await fetch(POLLINATIONS_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: userPrompt }
+                    ],
+                    model: "openai", // Router automático inteligente
+                    jsonMode: true
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP Error ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            // Parseo robusto
+            let aiContent = "";
+            if (data.choices && data.choices[0]) {
+                aiContent = data.choices[0].message.content;
+            } else {
+                aiContent = JSON.stringify(data);
+            }
+
+            let parsedResult;
+            try {
+                // Limpiar posibles bloques de código markdown
+                const cleanJson = aiContent.replace(/```json/g, '').replace(/```/g, '').trim();
+                const jsonStart = cleanJson.indexOf('{');
+                const jsonEnd = cleanJson.lastIndexOf('}');
+                if (jsonStart !== -1 && jsonEnd !== -1) {
+                    parsedResult = JSON.parse(cleanJson.substring(jsonStart, jsonEnd + 1));
+                } else {
+                    throw new Error("JSON no encontrado");
+                }
+            } catch (e) {
+                console.warn("JSON fallido, mostrando texto raw", e);
+                parsedResult = {
+                    title: "Borrador Generado",
+                    content: [{ label: "CONTENIDO", text: aiContent }]
+                };
+            }
+
+            renderResult(parsedResult);
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('resultState').classList.remove('hidden');
+        }
+
+        function getPromptForFormat(format, topic) {
+            if (format === 'reel') {
+                return `Crea un guion de Reel de 30-60 segundos sobre: "${topic}". 
+                Usa etiquetas como: GANCHO VISUAL, TEXTO EN PANTALLA, VOZ, CIERRE. 
+                Hazlo muy dinámico.`;
+            } else if (format === 'carousel') {
+                return `Crea la estructura de un Carrusel de 5 slides sobre: "${topic}". 
+                Cada slide debe tener poco texto pero muy impactante.`;
+            } else if (format === 'chronicle') {
+                return `Escribe un guion para un video con Voz en Off (Voiceover) sobre: "${topic}". 
+                Describe el ambiente visual sugerido y el texto a narrar.`;
+            } else {
+                return `Escribe un Caption (pie de foto) para Instagram sobre: "${topic}". 
+                Incluye un gancho al inicio y hashtags al final.`;
+            }
+        }
+
+        function renderResult(data) {
+            document.getElementById('resultTitle').innerText = data.title || "Resultado";
+            const container = document.getElementById('resultContent');
+            container.innerHTML = '';
+            currentContent = data;
+
+            // Mapeo de estilos visuales según la etiqueta
+            data.content.forEach(block => {
+                let cardClass = "bg-white border-l-4 border-gray-800 shadow-sm";
+                let labelClass = "text-gray-500";
+                let textClass = "font-serif text-gray-800 text-lg leading-relaxed";
+
+                const l = block.label ? block.label.toUpperCase() : "TEXTO";
+                
+                if (l.includes("VISUAL") || l.includes("ESCENA") || l.includes("AMBIENTE")) {
+                    cardClass = "bg-blue-50 border-l-4 border-blue-500 border-t border-r border-b border-blue-100";
+                    labelClass = "text-blue-600 font-bold";
+                    textClass = "font-sans text-blue-800 text-base italic";
+                } else if (l.includes("GANCHO") || l.includes("TITULO")) {
+                    cardClass = "bg-yellow-50 border-l-4 border-yellow-400";
+                    labelClass = "text-yellow-700 font-bold";
+                    textClass = "font-bold text-gray-900 text-xl";
+                }
+
+                container.innerHTML += `
+                    <div class="${cardClass} p-6 rounded-r-lg mb-6 relative group hover:shadow-md transition-shadow">
+                        <div class="text-[10px] uppercase tracking-widest mb-2 ${labelClass}">${block.label}</div>
+                        <div class="${textClass}">${block.text}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function copyToClipboard() {
+            if (!currentContent) return;
+            // Formatear texto bonito para portapapeles
+            const text = currentContent.content.map(b => `[${b.label}]\n${b.text}`).join('\n\n');
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('button[onclick="copyToClipboard()"]');
+                const original = btn.innerHTML;
+                btn.innerHTML = `<i class="ph-bold ph-check"></i> ¡Listo!`;
+                setTimeout(() => btn.innerHTML = original, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
