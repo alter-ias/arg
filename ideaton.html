@@ -49,7 +49,7 @@
             
             <div class="flex items-center gap-2 text-xs text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200" id="statusIndicator">
                 <div id="statusDot" class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                <span id="statusText">Red Pollinations</span>
+                <span id="statusText">Red Pollinations (OpenAI Mode)</span>
             </div>
         </div>
     </header>
@@ -108,7 +108,7 @@
                 </div>
                 <h3 class="text-lg font-medium text-gray-900 mb-2 font-serif">IA Lista (Sin Keys)</h3>
                 <p class="text-gray-500 text-sm max-w-xs mx-auto leading-relaxed">
-                    Introduce un tema. La aplicación usará la red pública de Pollinations para generar el contenido.
+                    Introduce un tema. La aplicación usará la red pública de Pollinations (Modo OpenAI) para generar el contenido.
                 </p>
             </div>
 
@@ -147,11 +147,10 @@
 
     <script>
         // ==========================================
-        // CONFIGURACIÓN POLLINATIONS (SIN KEY)
+        // CONFIGURACIÓN POLLINATIONS (OPENAI COMPATIBLE)
         // ==========================================
-        // Usamos la API pública de texto de Pollinations.
-        // No requiere autenticación.
-        const POLLINATIONS_URL = "https://text.pollinations.ai/";
+        // Usamos el endpoint compatible con OpenAI para mejor formateo
+        const POLLINATIONS_URL = "https://text.pollinations.ai/openai"; 
 
         let currentFormat = 'reel';
         let currentContent = null;
@@ -181,6 +180,7 @@
             try {
                 await callPollinations(topic);
             } catch (error) {
+                console.error(error);
                 alert("Error al conectar con Pollinations: " + error.message);
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('emptyState').classList.remove('hidden');
@@ -191,50 +191,59 @@
         }
 
         async function callPollinations(topic) {
-            // Construimos un mega-prompt porque Pollinations es "stateless" (sin memoria de conversación en modo simple)
-            const prompt = `
-                Instrucción del Sistema:
+            const systemPrompt = `
                 Actúa como el editor creativo de Alan Ruiz Galicia.
                 Perfil: Periodista mexicano irónico, crítico, filósofo urbano (estilo Rorty/Schlegel), elegante, enfocado en Guadalajara y la gentrificación.
                 Objetivo: Generar contenido estructurado para redes sociales.
                 
-                Instrucción de Formato:
-                RESPONDE ÚNICAMENTE CON UN JSON VÁLIDO. NO ESCRIBAS NADA FUERA DEL JSON.
-                Estructura: {"title": "Título", "content": [{"label": "ETIQUETA", "text": "Contenido"}]}
-
-                Instrucción del Usuario:
-                ${getPromptForFormat(currentFormat, topic)}
-                
-                Respuesta JSON:
+                IMPORTANTE: 
+                - RESPONDE ÚNICAMENTE CON UN JSON VÁLIDO. 
+                - NO ESCRIBAS NADA FUERA DEL JSON.
+                - NO USES BLOQUES DE CÓDIGO MARKDOWN (\`\`\`json).
+                Estructura requerida: {"title": "Título", "content": [{"label": "ETIQUETA", "text": "Contenido"}]}
             `.trim();
 
-            // Llamada POST a Pollinations
-            // Nota: Pollinations acepta texto plano en el body y devuelve texto
+            const userPrompt = getPromptForFormat(currentFormat, topic);
+
+            // Llamada POST a Pollinations (OpenAI Format)
             const response = await fetch(POLLINATIONS_URL, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "text/plain",
+                    "Content-Type": "application/json",
                 },
-                body: prompt
+                body: JSON.stringify({
+                    model: "gpt-4o-mini", // Solicitamos un modelo inteligente
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: userPrompt }
+                    ],
+                    temperature: 0.7
+                })
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP Error ${response.status}`);
+                // Intentamos leer el error del cuerpo si existe
+                const errText = await response.text();
+                throw new Error(`HTTP Error ${response.status}: ${errText.slice(0, 100)}`);
             }
 
-            const textResponse = await response.text();
+            const data = await response.json();
+            const aiContent = data.choices[0].message.content;
             
             // Procesamiento de la respuesta (Intento de extraer JSON)
             let parsedResult;
             try {
-                const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
-                const cleanJson = jsonMatch ? jsonMatch[0] : textResponse;
-                parsedResult = JSON.parse(cleanJson);
+                // Limpieza agresiva de markdown por si acaso
+                const cleanJson = aiContent.replace(/```json/g, '').replace(/```/g, '').trim();
+                const jsonMatch = cleanJson.match(/\{[\s\S]*\}/);
+                const finalJsonStr = jsonMatch ? jsonMatch[0] : cleanJson;
+                
+                parsedResult = JSON.parse(finalJsonStr);
             } catch (e) {
-                console.warn("No se pudo parsear JSON, mostrando texto crudo");
+                console.warn("No se pudo parsear JSON, mostrando texto crudo", e);
                 parsedResult = { 
                     title: "Borrador (Texto Plano)", 
-                    content: [{ label: "RESPUESTA IA", text: textResponse }] 
+                    content: [{ label: "RESPUESTA IA", text: aiContent }] 
                 };
             }
             
