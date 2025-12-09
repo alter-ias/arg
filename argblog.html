@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>ARG - El Archivo</title>
+    <title>ARG - Archivo Líquido</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Poppins:wght@200;300;400&display=swap" rel="stylesheet">
     <style>
-        /* --- ESTÉTICA GENERAL --- */
-        body {
-            background-color: #050505;
-            color: #e5e5e5;
+        /* --- ESTILOS BASE --- */
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #050505; color: #e5e5e5;
             font-family: 'Poppins', sans-serif;
-            overflow: hidden; /* Importante: evitamos el scroll nativo del body */
-            cursor: none; /* Ocultamos cursor nativo para usar el custom */
+            overflow: hidden;
+            /* CURSOR ORIGINAL (El que te gustaba) */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
-        /* Tipografía */
         .font-serif { font-family: 'Cormorant Garamond', serif; }
         .font-sans { font-family: 'Poppins', sans-serif; }
 
@@ -26,77 +26,29 @@
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Efecto Vidrio (Glassmorphism) */
+        /* Efecto Vidrio para las tarjetas */
         .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.4s ease-out;
+            background: rgba(20, 20, 20, 0.4); /* Más oscuro para resaltar el fondo iluminado */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        /* Cursores Personalizados */
-        #cursor-dot, #cursor-outline {
-            position: fixed;
-            top: 0;
-            left: 0;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            z-index: 9999;
-            pointer-events: none;
-        }
-        #cursor-dot { width: 8px; height: 8px; background-color: white; }
-        #cursor-outline {
-            width: 40px; height: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
-        }
-        
-        /* Estado Hover del Cursor */
-        body.hovering #cursor-outline {
-            width: 60px; height: 60px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: white;
-            backdrop-filter: blur(2px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-20px);
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
         /* Animación de carga */
-        .loader-line {
-            width: 0%; height: 1px; background: white;
-            animation: load 2s ease-in-out infinite;
-        }
-        @keyframes load { 0% { width: 0%; opacity: 0; } 50% { width: 100%; opacity: 1; } 100% { width: 0%; right: 0; opacity: 0; } }
+        .loader-pulse { animation: pulse-opacity 1.5s ease-in-out infinite; }
+        @keyframes pulse-opacity { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
     </style>
 </head>
 <body>
     <div id="root"></div>
-
-    <div id="cursor-dot"></div>
-    <div id="cursor-outline"></div>
-
-    <script>
-        // Lógica simple del cursor fuera de React para rendimiento
-        const dot = document.getElementById('cursor-dot');
-        const outline = document.getElementById('cursor-outline');
-        window.addEventListener('mousemove', (e) => {
-            dot.style.left = e.clientX + 'px';
-            dot.style.top = e.clientY + 'px';
-            
-            // Un poco de lag para el círculo exterior (efecto fluido)
-            outline.animate({
-                left: e.clientX + 'px',
-                top: e.clientY + 'px'
-            }, { duration: 500, fill: "forwards" });
-        });
-    </script>
 
     <script type="module">
         import React from 'https://esm.sh/react@18.3.1';
@@ -104,7 +56,7 @@
 
         const { useRef, useEffect, useState } = React;
 
-        // --- ASSETS ---
+        // --- IMÁGENES ---
         const BG_DARK = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380713/arg01_ft9glg.png';
         const BG_REVEAL = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380719/arg02_o9yqpm.png';
 
@@ -119,37 +71,36 @@
             if (!post) return null;
 
             return React.createElement('div', {
-                className: "fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm transition-all duration-500 animate-fadeIn",
+                className: "fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md transition-opacity duration-500",
                 onClick: (e) => e.target === e.currentTarget && onClose()
             },
                 React.createElement('div', {
-                    className: "w-full h-full md:max-w-4xl md:h-[90vh] bg-[#0a0a0a] md:border md:border-white/10 md:rounded-lg overflow-y-auto relative flex flex-col"
+                    className: "w-full h-full md:max-w-5xl md:h-[95vh] bg-[#050505] md:border md:border-white/10 overflow-y-auto relative flex flex-col shadow-2xl"
                 },
-                    // Imagen Hero
+                    // Header Imagen
                     post.image && React.createElement('div', { 
-                        className: "w-full h-64 md:h-80 bg-cover bg-center shrink-0 relative",
+                        className: "w-full h-[40vh] bg-cover bg-center shrink-0 relative",
                         style: { backgroundImage: `url(${post.image})` }
                     },
-                        React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent" })
-                    ),
-                    
-                    // Contenido
-                    React.createElement('div', { className: "p-8 md:p-12 max-w-2xl mx-auto w-full" },
+                        React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" }),
                         React.createElement('button', { 
                             onClick: onClose,
-                            className: "mb-8 text-xs tracking-[0.2em] text-gray-400 hover:text-white transition-colors uppercase"
-                        }, "← Volver al Archivo"),
-
-                        React.createElement('h1', { className: "font-serif text-4xl md:text-5xl mb-4 text-white leading-tight" }, post.title),
+                            className: "absolute top-8 right-8 text-white text-4xl font-serif hover:scale-110 transition-transform"
+                        }, "×")
+                    ),
+                    
+                    // Cuerpo Texto
+                    React.createElement('div', { className: "px-8 py-12 md:px-20 md:py-16 max-w-3xl mx-auto w-full" },
+                        React.createElement('h1', { className: "font-serif text-5xl md:text-6xl mb-6 text-white leading-[0.9]" }, post.title),
                         
-                        React.createElement('div', { className: "flex gap-4 mb-12 border-b border-white/10 pb-4" },
-                            React.createElement('span', { className: "text-xs font-mono text-gray-500" }, post.date || "FECHA DESCONOCIDA"),
-                            post.tags && post.tags.map(t => React.createElement('span', { key: t, className: "text-xs font-mono text-white/60" }, `#${t}`))
+                        React.createElement('div', { className: "flex items-center gap-6 mb-16 border-b border-white/10 pb-6" },
+                            React.createElement('span', { className: "text-xs font-mono tracking-widest text-gray-400" }, post.date || "FECHA DESCONOCIDA"),
+                            post.tags && post.tags.map(t => React.createElement('span', { key: t, className: "text-xs font-mono text-white bg-white/10 px-2 py-1 rounded" }, t))
                         ),
 
-                        React.createElement('div', { className: "prose prose-invert prose-lg font-light text-gray-300 leading-loose" },
+                        React.createElement('div', { className: "prose prose-invert prose-xl font-serif text-gray-300 leading-relaxed" },
                             post.content.split('\n').map((p, i) => 
-                                p.trim() && React.createElement('p', { key: i, className: "mb-6" }, p)
+                                p.trim() && React.createElement('p', { key: i, className: "mb-8 opacity-90" }, p)
                             )
                         )
                     )
@@ -164,11 +115,12 @@
             const [loading, setLoading] = useState(true);
             const [selectedPost, setSelectedPost] = useState(null);
 
-            // 1. EFECTO FÍSICA (LINTERNA)
+            // --- 1. MOTOR DE FÍSICA LÍQUIDA (Restaurado del Código 1) ---
             useEffect(() => {
                 const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                // Valores originales para el efecto líquido
                 const TRAIL_LENGTH = isMobile ? 5 : 8; 
-                const BASE_RADIUS = isMobile ? 120 : 180;
+                const BASE_RADIUS = isMobile ? 130 : 190;
                 
                 const points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
                 let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -181,30 +133,47 @@
                 };
 
                 window.addEventListener('mousemove', handleMove);
-                window.addEventListener('touchmove', handleMove);
+                window.addEventListener('touchmove', handleMove, { passive: false });
 
                 let animationFrameId;
-                const loop = () => {
-                    // Física del rastro (Leader-Follower)
-                    points[0].x += (mouse.x - points[0].x) * 0.15;
-                    points[0].y += (mouse.y - points[0].y) * 0.15;
 
+                const loop = () => {
+                    // Física del líder (Mouse)
+                    const leaderEasing = 0.15; // Suavizado original
+                    points[0] = {
+                        x: points[0].x + (mouse.x - points[0].x) * leaderEasing,
+                        y: points[0].y + (mouse.y - points[0].y) * leaderEasing
+                    };
+
+                    // Física de la estela (Seguidores) - Esto crea el efecto "gusano/líquido"
+                    const trailEasing = 0.25; 
                     for (let i = 1; i < TRAIL_LENGTH; i++) {
-                        points[i].x += (points[i-1].x - points[i].x) * 0.25;
-                        points[i].y += (points[i-1].y - points[i].y) * 0.25;
+                        const leader = points[i - 1];
+                        const follower = points[i];
+                        points[i] = {
+                            x: follower.x + (leader.x - follower.x) * trailEasing,
+                            y: follower.y + (leader.y - follower.y) * trailEasing
+                        };
                     }
 
+                    // Renderizado de la máscara
                     if (revealedLayerRef.current) {
                         const gradients = points.map((p, i) => {
-                            const size = BASE_RADIUS * (1 - (i / TRAIL_LENGTH) * 0.6);
-                            return `radial-gradient(circle ${size}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
+                            // Escala decreciente para la cola del cometa
+                            const scale = 1 - (i / TRAIL_LENGTH) * 0.6;
+                            const radius = BASE_RADIUS * scale;
+                            return `radial-gradient(circle ${radius}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
                         });
-                        const mask = gradients.join(', ');
-                        revealedLayerRef.current.style.maskImage = mask;
-                        revealedLayerRef.current.style.webkitMaskImage = mask;
+                        
+                        const maskString = gradients.join(', ');
+                        
+                        revealedLayerRef.current.style.maskImage = maskString;
+                        revealedLayerRef.current.style.webkitMaskImage = maskString;
                     }
+                    
                     animationFrameId = requestAnimationFrame(loop);
                 };
+                
                 loop();
 
                 return () => {
@@ -214,7 +183,7 @@
                 };
             }, []);
 
-            // 2. CARGAR DATOS
+            // --- 2. CARGA DE DATOS (GitHub Issues) ---
             useEffect(() => {
                 const load = async () => {
                     try {
@@ -231,90 +200,91 @@
                 load();
             }, []);
 
-            // Handlers para cursores
-            const hoverStart = () => document.body.classList.add('hovering');
-            const hoverEnd = () => document.body.classList.remove('hovering');
-
             return React.createElement(React.Fragment, null,
                 
-                // --- FONDO INTERACTIVO (Detrás de todo) ---
-                React.createElement('div', { className: "fixed inset-0 z-0 pointer-events-none" },
-                    React.createElement('div', { 
-                        className: "absolute inset-0 bg-cover bg-center opacity-40 grayscale contrast-125",
-                        style: { backgroundImage: `url(${BG_DARK})` } 
-                    }),
-                    React.createElement('div', {
-                        ref: revealedLayerRef,
-                        className: "absolute inset-0 bg-cover bg-center",
-                        style: { backgroundImage: `url(${BG_REVEAL})`, maskImage: 'none' } // La máscara se aplica por JS
-                    })
-                ),
+                // --- CAPAS DE FONDO (Sistema ARG original) ---
+                // Capa Oscura (Base)
+                React.createElement('div', { 
+                    className: "fixed inset-0 z-0 bg-cover bg-center transition-transform duration-1000",
+                    style: { backgroundImage: `url(${BG_DARK})` } 
+                }),
 
-                // --- UI SUPERIOR (Fija) ---
-                React.createElement('nav', { className: "fixed top-0 left-0 w-full p-8 z-30 flex justify-between items-start pointer-events-none" },
-                    React.createElement('div', { className: "pointer-events-auto" },
-                        React.createElement('a', { 
-                            href: "https://alter-ias.github.io/arg/argx.html",
-                            className: "font-serif text-4xl text-white tracking-widest mix-blend-difference hover:opacity-70 transition-opacity",
-                            onMouseEnter: hoverStart, onMouseLeave: hoverEnd
-                        }, "ARG")
-                    ),
-                    React.createElement('div', { className: "text-right hidden md:block mix-blend-overlay opacity-50" },
-                        React.createElement('p', { className: "text-xs tracking-widest" }, "SISTEMA DE ARCHIVO v2.4"),
-                        React.createElement('p', { className: "text-xs tracking-widest" }, "ESTADO: ONLINE")
+                // Capa Revelada (Máscara Líquida)
+                React.createElement('div', {
+                    ref: revealedLayerRef,
+                    className: "fixed inset-0 z-10 bg-cover bg-center pointer-events-none",
+                    style: { 
+                        backgroundImage: `url(${BG_REVEAL})`,
+                        WebkitMaskImage: 'none',
+                        maskImage: 'none',
+                    }
+                }),
+
+                // Capa de Ruido/Textura sutil para unificar
+                React.createElement('div', { className: "fixed inset-0 z-10 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150" }),
+
+                // --- UI FLOTANTE ---
+                // Header Fijo
+                React.createElement('nav', { className: "fixed top-0 left-0 w-full p-8 md:p-12 z-40 flex justify-between items-start pointer-events-none" },
+                    React.createElement('a', { 
+                        href: "https://alter-ias.github.io/arg/argx.html",
+                        className: "pointer-events-auto font-serif text-5xl text-white tracking-widest mix-blend-difference hover:opacity-70 transition-opacity"
+                    }, "ARG"),
+                    
+                    React.createElement('div', { className: "hidden md:block text-right font-mono text-[10px] text-white/40 tracking-widest" },
+                        React.createElement('p', null, "COLECTIVO ALTERLAB"),
+                        React.createElement('p', null, "CONEXIÓN: GITHUB_API_V3")
                     )
                 ),
 
-                // --- ÁREA DE CONTENIDO PRINCIPAL (Galería Horizontal) ---
-                React.createElement('main', { className: "fixed inset-0 z-20 flex flex-col justify-end pb-12 md:pb-24 pointer-events-none" },
+                // --- GALERÍA HORIZONTAL ---
+                React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col justify-end pb-12 pointer-events-none" },
                     
                     loading ? 
-                        React.createElement('div', { className: "w-full flex flex-col items-center justify-center mb-32" },
-                            React.createElement('div', { className: "w-24 h-px bg-white/20 relative" },
-                                React.createElement('div', { className: "absolute top-0 left-0 h-full bg-white loader-line" })
-                            ),
-                            React.createElement('p', { className: "mt-4 text-xs tracking-widest text-gray-500 animate-pulse" }, "DESCIFRANDO DATOS...")
+                        React.createElement('div', { className: "w-full text-center mb-32 loader-pulse" },
+                            React.createElement('p', { className: "font-mono text-xs tracking-[0.5em] text-white/50" }, "CARGANDO ARCHIVO...")
                         ) 
                     :
-                        React.createElement('div', { className: "w-full pointer-events-auto pl-8 md:pl-24" },
-                            React.createElement('h2', { className: "text-xs font-mono text-gray-400 mb-6 tracking-[0.3em] uppercase ml-1" }, "Entradas Recientes"),
+                        React.createElement('div', { className: "w-full pointer-events-auto pl-6 md:pl-20" },
+                            // Título de sección
+                            React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-8 tracking-[0.3em] uppercase ml-1" }, "Seleccione un registro"),
                             
-                            // CONTENEDOR DE SCROLL HORIZONTAL
-                            React.createElement('div', { className: "flex gap-6 overflow-x-auto hide-scroll pr-24 pb-10 items-end" },
+                            // Scroll Horizontal
+                            React.createElement('div', { className: "flex gap-8 overflow-x-auto hide-scroll pr-20 pb-12 items-end" },
                                 posts.map((post, idx) => 
                                     React.createElement('div', {
                                         key: idx,
                                         onClick: () => setSelectedPost(post),
-                                        onMouseEnter: hoverStart,
-                                        onMouseLeave: hoverEnd,
-                                        className: "glass-card shrink-0 w-[280px] h-[350px] md:w-[320px] md:h-[420px] rounded-sm p-6 flex flex-col justify-end relative overflow-hidden group cursor-none select-none"
+                                        className: "glass-card shrink-0 w-[260px] h-[380px] md:w-[300px] md:h-[450px] p-8 flex flex-col justify-between relative overflow-hidden group cursor-pointer"
                                     },
-                                        // Imagen de fondo de la tarjeta (se revela sutilmente al hover)
-                                        post.image && React.createElement('div', {
-                                            className: "absolute inset-0 bg-cover bg-center transition-all duration-700 opacity-20 group-hover:opacity-60 group-hover:scale-110 grayscale group-hover:grayscale-0",
-                                            style: { backgroundImage: `url(${post.image})` }
-                                        }),
-                                        // Gradiente para texto
-                                        React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80" }),
-
-                                        // Contenido Tarjeta
-                                        React.createElement('div', { className: "relative z-10 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500" },
-                                            React.createElement('span', { className: "text-[10px] font-mono border border-white/20 px-2 py-1 rounded-full text-gray-400 mb-3 inline-block" }, 
-                                                post.date || "N/A"
-                                            ),
-                                            React.createElement('h3', { className: "font-serif text-2xl md:text-3xl text-gray-100 leading-none mb-2 group-hover:text-white" }, post.title),
-                                            React.createElement('p', { className: "text-xs text-gray-500 line-clamp-2 font-light opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100" }, post.excerpt)
+                                        // Número índice
+                                        React.createElement('span', { className: "font-mono text-[10px] text-white/20" }, 
+                                            idx < 9 ? `0${idx + 1}` : idx + 1
                                         ),
 
-                                        // Decoración esquina
-                                        React.createElement('div', { className: "absolute top-4 right-4 text-[10px] font-mono text-white/20" }, `0${idx + 1}`)
+                                        // Contenido
+                                        React.createElement('div', { className: "relative z-10" },
+                                            React.createElement('div', { className: "w-8 h-[1px] bg-white/50 mb-4 group-hover:w-16 transition-all duration-500" }),
+                                            React.createElement('h3', { className: "font-serif text-3xl text-gray-200 leading-[0.9] mb-2 group-hover:text-white transition-colors" }, post.title),
+                                            React.createElement('p', { className: "text-[10px] font-mono text-white/40 mt-3 tracking-widest uppercase" }, 
+                                                post.date || "---"
+                                            )
+                                        ),
+
+                                        // Imagen Background al Hover (Sutil)
+                                        post.image && React.createElement('div', {
+                                            className: "absolute inset-0 bg-cover bg-center opacity-0 group-hover:opacity-40 transition-all duration-700 grayscale group-hover:grayscale-0 transform scale-110 group-hover:scale-100",
+                                            style: { backgroundImage: `url(${post.image})` }
+                                        }),
+                                        // Gradiente para legibilidad
+                                        React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" })
                                     )
                                 )
                             )
                         )
                 ),
 
-                // --- MODAL ---
+                // --- MODAL DETALLE ---
                 selectedPost && React.createElement(PostModal, { post: selectedPost, onClose: () => setSelectedPost(null) })
             );
         };
