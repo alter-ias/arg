@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRONIUS - La Verdad (aunque duela)</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Chomsky&family=Prata&family=Roboto+Mono:wght@400;700&family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #f4f1ea; /* Color papel viejo */
+            background-image: radial-gradient(#d1d1d1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .font-headline {
+            font-family: 'Prata', serif;
+        }
+        .font-tabloid {
+            font-family: 'Oswald', sans-serif;
+        }
+        .paper-shadow {
+            box-shadow: 10px 10px 0px 0px rgba(0,0,0,1);
+            border: 2px solid black;
+        }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Estilos selección */
+        .style-card.selected {
+            background-color: #fef08a; /* Amarillo post-it */
+            border-color: #000;
+            transform: translate(-4px, -4px);
+            box-shadow: 4px 4px 0px 0px #000;
+        }
+        .style-card {
+            transition: all 0.2s;
+        }
+    </style>
+</head>
+<body class="text-black min-h-screen flex flex-col relative selection:bg-yellow-300">
+
+    <header class="bg-black text-white border-b-4 border-black sticky top-0 z-20">
+        <div class="bg-yellow-400 text-black text-xs font-bold py-1 overflow-hidden whitespace-nowrap border-b-2 border-black">
+            <div class="inline-block animate-marquee px-4 uppercase tracking-widest">
+                🚨 ÚLTIMA HORA: Científicos confirman que la quincena dura menos cada mes — El gato del vecino planea dominar el mundo — Se prohíbe estar triste en horario laboral —
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-white text-black p-2 border-2 border-black rotate-3">
+                    <i class="ph-fill ph-newspaper-clipping text-4xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-5xl md:text-6xl font-headline tracking-tighter leading-none">IRONIUS</h1>
+                    <p class="text-xs md:text-sm text-gray-400 font-mono uppercase tracking-widest mt-1">"Verdad ácida para gente dulce"</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-end">
+                <div class="text-xs font-bold bg-red-600 text-white px-2 py-1 rotate-[-2deg] mb-1">EDICIÓN GRATUITA</div>
+                <div class="text-[10px] font-mono text-gray-400">VOL. 666 | PRECIO: TU ALMA</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full flex-grow">
+        
+        <div class="lg:col-span-4 space-y-6">
+            
+            <div class="bg-white p-6 paper-shadow">
+                
+                <label class="block text-sm font-black font-tabloid uppercase mb-2 bg-black text-white inline-block px-2 transform -rotate-1">
+                    1. ¿Cuál es el chisme hoy?
+                </label>
+                <textarea
+                    id="topicInput"
+                    rows="3"
+                    placeholder="Ej. Los políticos se subieron el sueldo, Mi ex volvió con su ex, El precio del limón..."
+                    class="w-full bg-gray-100 border-2 border-black text-black text-lg font-mono p-4 mb-6 focus:bg-yellow-50 focus:outline-none focus:ring-0 placeholder-gray-500 resize-none"
+                ></textarea>
+
+                <label class="block text-sm font-black font-tabloid uppercase mb-3 bg-black text-white inline-block px-2 transform rotate-1">
+                    2. Elige al Redactor
+                </label>
+                <div class="grid grid-cols-1 gap-3 mb-6">
+                    
+                    <button onclick="selectStyle('barrio')" id="style-barrio" class="style-card flex items-center gap-3 p-3 border-2 border-gray-300 hover:border-black text-left group selected">
+                        <div class="bg-black text-white p-2 border border-black"><i class="ph-fill ph-speaker-high"></i></div>
+                        <div>
+                            <div class="text-sm font-bold font-tabloid uppercase">El Ñero (Barrio)</div>
+                            <div class="text-[10px] font-mono">Lenguaje florido, directo y sin filtro.</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectStyle('satira')" id="style-satira" class="style-card flex items-center gap-3 p-3 border-2 border-gray-300 hover:border-black text-left group">
+                        <div class="bg-black text-white p-2 border border-black"><i class="ph-fill ph-mask-happy"></i></div>
+                        <div>
+                            <div class="text-sm font-bold font-tabloid uppercase">El Sátira Política</div>
+                            <div class="text-[10px] font-mono">Cínico, intelectualoide y amargado.</div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="selectStyle('tia')" id="style-tia" class="style-card flex items-center gap-3 p-3 border-2 border-gray-300 hover:border-black text-left group">
+                        <div class="bg-black text-white p-2 border border-black"><i class="ph-fill ph-whatsapp-logo"></i></div>
+                        <div>
+                            <div class="text-sm font-bold font-tabloid uppercase">La Tía del Whats</div>
+                            <div class="text-[10px] font-mono">Alarmista, religiosa y llena de emojis.</div>
+                        </div>
+                    </button>
+
+                    <button onclick="selectStyle('nota_roja')" id="style-nota_roja" class="style-card flex items-center gap-3 p-3 border-2 border-gray-300 hover:border-black text-left group">
+                        <div class="bg-black text-white p-2 border border-black"><i class="ph-fill ph-siren"></i></div>
+                        <div>
+                            <div class="text-sm font-bold font-tabloid uppercase">La Nota Roja</div>
+                            <div class="text-[10px] font-mono">Sensacionalista, TRÁGICO y exagerado.</div>
+                        </div>
+                    </button>
+                </div>
+
+                <button
+                    onclick="generateContent()"
+                    id="generateBtn"
+                    class="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-black font-tabloid tracking-widest text-xl py-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <i class="ph-bold ph-printer"></i> ¡IMPRIMIR BASURA!
+                </button>
+            </div>
+        </div>
+
+        <div class="lg:col-span-8">
+            
+            <div id="emptyState" class="h-full min-h-[500px] flex flex-col items-center justify-center bg-white paper-shadow p-10 text-center opacity-80" style="background-image: url('https://www.transparenttextures.com/patterns/dust.png');">
+                <div class="bg-gray-100 p-6 rounded-full mb-6 border-2 border-dashed border-gray-400">
+                    <i class="ph-duotone ph-article text-5xl text-gray-400"></i>
+                </div>
+                <h3 class="text-2xl font-headline font-bold mb-2">Página en Blanco</h3>
+                <p class="font-mono text-sm text-gray-500 max-w-sm mx-auto">
+                    La rotativa está detenida. Danos un chisme sabroso para empezar a tirar veneno.
+                </p>
+            </div>
+
+            <div id="loadingState" class="hidden h-full min-h-[500px] flex flex-col items-center justify-center bg-yellow-50 paper-shadow p-10 text-center">
+                <div class="relative mb-6">
+                    <div class="w-20 h-20 border-8 border-black border-t-yellow-500 rounded-full animate-spin"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="ph-fill ph-pencil-simple-slash text-black text-2xl animate-bounce"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold font-tabloid uppercase tracking-wider" id="loadingText">Inventando los hechos...</h3>
+                <p class="text-xs font-mono mt-2 text-gray-600">Consultando a nuestras fuentes (o sea, Wikipedia y Twitter)</p>
+            </div>
+
+            <div id="resultState" class="hidden bg-[#fffdf5] paper-shadow flex flex-col min-h-[600px] fade-in relative">
+                <div class="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center overflow-hidden">
+                    <span class="text-[150px] font-black -rotate-45">IRONIUS</span>
+                </div>
+
+                <div class="bg-black text-white px-4 py-2 flex justify-between items-center border-b-2 border-black">
+                    <div class="font-mono text-xs text-yellow-400">SECCIÓN: <span id="sectionLabel">OPINIÓN</span></div>
+                    <button onclick="copyToClipboard()" class="text-xs font-bold hover:text-yellow-400 flex items-center gap-1">
+                        <i class="ph-bold ph-copy"></i> COPIAR TEXTO
+                    </button>
+                </div>
+
+                <div class="p-8 md:p-12 relative z-10">
+                    <div class="border-b-4 border-black pb-4 mb-6">
+                        <h2 class="font-headline text-4xl md:text-5xl font-bold leading-tight mb-4" id="resultTitle">
+                            TITULAR SENSACIONALISTA AQUÍ
+                        </h2>
+                        <div class="flex justify-between items-center text-xs font-mono text-gray-500 border-t border-gray-300 pt-2">
+                            <span>POR: LA IA RESENTIDA</span>
+                            <span>FECHA: HOY (CREO)</span>
+                        </div>
+                    </div>
+                    
+                    <div id="resultContent" class="space-y-6">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-black text-gray-500 text-center py-6 mt-8 font-mono text-xs">
+        <p>IRONIUS © 2024. Cualquier parecido con la realidad es mera coincidencia (y mala suerte).</p>
+    </footer>
+
+    <script>
+        // ==========================================
+        // LÓGICA DE IRONIUS
+        // ==========================================
+        const POLLINATIONS_URL = "https://text.pollinations.ai/openai"; 
+        
+        let currentStyle = 'barrio';
+
+        // DEFINICIÓN DE REDACTORES (PERSONAS CÓMICAS)
+        const PERSONAS = {
+            barrio: {
+                name: "EL ÑERO",
+                role: "Eres un cronista de barrio bravo mexicano.",
+                tone: "Usas mucho slang (qué pachó, simón, chale, cámara), eres dicharachero, usas albures ligeros. Te burlas de la 'gente fresa'. Eres la voz del pueblo.",
+                instruction: "Transforma la noticia en un chisme de vecindad. Exagera todo."
+            },
+            satira: {
+                name: "EL POLÍTICO",
+                role: "Eres un crítico político amargado y sarcástico.",
+                tone: "Usas ironía fina, palabras rimbombantes para insultar, referencias a la corrupción, al 'sistema' y a la incompetencia. Eres pesimista.",
+                instruction: "Haz una sátira política. Culpa al gobierno o a la oposición de todo, aunque sea absurdo."
+            },
+            tia: {
+                name: "LA TÍA PANISTA",
+                role: "Eres una tía conservadora enviando cadenas de WhatsApp.",
+                tone: "Alarmista, usas MUCHOS EMOJIS, escribes en MAYÚSCULAS a veces. Todo es culpa del 'degenere social' o del comunismo. Bendiciones al final.",
+                instruction: "Convierte la noticia en una cadena de oración o una advertencia apocalíptica absurda."
+            },
+            nota_roja: {
+                name: "EL ALARMA",
+                role: "Eres un redactor de periódico amarillista sangriento (estilo El Alarma!).",
+                tone: "SENSACIONALISTA. Usas títulos como '¡MACABRO HALLAZGO!'. Eres morboso pero con humor negro involuntario.",
+                instruction: "Haz que la noticia parezca una tragedia griega pero cutre."
+            }
+        };
+
+        // --- INTERFAZ ---
+
+        function selectStyle(style) {
+            currentStyle = style;
+            document.querySelectorAll('.style-card').forEach(el => el.classList.remove('selected'));
+            document.getElementById(`style-${style}`).classList.add('selected');
+        }
+
+        // --- GENERACIÓN ---
+
+        async function generateContent() {
+            const topic = document.getElementById('topicInput').value.trim();
+            if (!topic) return alert("¡Escribe algo, no soy adivino!");
+
+            // UI Changes
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('resultState').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('generateBtn').innerText = "ESPERA, ESTOY PENSANDO...";
+            
+            try {
+                await callIroniusAI(topic);
+            } catch (error) {
+                console.error(error);
+                alert("Se cayó el sistema (como en el 88). Intenta de nuevo.");
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('emptyState').classList.remove('hidden');
+            } finally {
+                const btn = document.getElementById('generateBtn');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ph-bold ph-printer"></i> ¡IMPRIMIR BASURA!';
+            }
+        }
+
+        async function callIroniusAI(topic) {
+            const persona = PERSONAS[currentStyle];
+            document.getElementById('sectionLabel').innerText = persona.name;
+
+            const systemPrompt = `
+                ${persona.role}
+                TU TONO: ${persona.tone}
+                INSTRUCCIÓN: ${persona.instruction}
+                
+                OBJETIVO: Escribir un artículo corto y muy gracioso para el periódico satírico 'IRONIUS'.
+                
+                REGLAS ESTRICTAS DE JSON:
+                1. Responde SOLO con JSON válido.
+                2. Estructura:
+                   {
+                     "title": "Un titular MUY LLAMATIVO, GRACIOSO y SARCÁSTICO",
+                     "body": [
+                       {"type": "p", "content": "Párrafo de texto narrativo"},
+                       {"type": "quote", "content": "Una cita inventada y ridícula de alguien involucrado"},
+                       {"type": "p", "content": "Conclusión irónica o remate cómico"}
+                     ]
+                   }
+                3. Sé breve (máximo 150 palabras en total).
+                4. Usa humor mexicano/latino.
+            `.trim();
+
+            const userPrompt = `La noticia o tema es: "${topic}". ¡Destrúyelo con humor!`;
+
+            const response = await fetch(POLLINATIONS_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: userPrompt }
+                    ],
+                    model: "openai",
+                    jsonMode: true,
+                    seed: Math.floor(Math.random() * 1000)
+                })
+            });
+
+            if (!response.ok) throw new Error(`Error ${response.status}`);
+            
+            const data = await response.json();
+            const aiContent = data.choices[0].message.content;
+
+            // Parseo seguro
+            let parsedResult;
+            try {
+                const cleanJson = aiContent.replace(/```json/g, '').replace(/```/g, '').trim();
+                parsedResult = JSON.parse(cleanJson);
+            } catch (e) {
+                // Fallback si la IA falla el JSON
+                parsedResult = {
+                    title: "¡LA IA SE VOLVIÓ LOCA!",
+                    body: [
+                        { type: "p", content: aiContent }
+                    ]
+                };
+            }
+
+            renderResult(parsedResult);
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('resultState').classList.remove('hidden');
+        }
+
+        function renderResult(data) {
+            document.getElementById('resultTitle').innerText = data.title;
+            const container = document.getElementById('resultContent');
+            container.innerHTML = '';
+            
+            // Texto para copiar
+            let copyText = `${data.title}\n\n`;
+
+            data.body.forEach(block => {
+                copyText += `${block.content}\n\n`;
+
+                if (block.type === 'quote') {
+                    // Estilo de Cita Destacada
+                    container.innerHTML += `
+                        <div class="my-6 border-l-4 border-yellow-400 pl-4 py-2 bg-gray-50 italic font-headline text-xl text-gray-800">
+                            "${block.content}"
+                        </div>
+                    `;
+                } else {
+                    // Párrafo normal con letra capital simulada si es el primero
+                    container.innerHTML += `
+                        <p class="font-mono text-lg leading-relaxed text-gray-800 mb-4 first-letter:text-5xl first-letter:font-bold first-letter:text-black first-letter:mr-2 first-letter:float-left">
+                            ${block.content}
+                        </p>
+                    `;
+                }
+            });
+
+            // Guardamos el texto limpio para el botón de copiar
+            window.currentCopyText = copyText + "\nLeído en IRONIUS.";
+        }
+
+        function copyToClipboard() {
+            if (!window.currentCopyText) return;
+            navigator.clipboard.writeText(window.currentCopyText).then(() => {
+                alert("¡Copiado! Ahora pégalo en Twitter o mándaselo a tu tía.");
+            });
+        }
+    </script>
+</body>
+</html>
