@@ -15,6 +15,7 @@
             background-color: #050505; color: #e5e5e5;
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
+            touch-action: none; /* Vital para la fluidez en móviles */
             /* CURSOR ORIGINAL */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
@@ -22,11 +23,11 @@
         .font-serif { font-family: 'Cormorant Garamond', serif; }
         .font-sans { font-family: 'Poppins', sans-serif; }
 
-        /* Scrollbar oculta para la galería */
+        /* Scrollbar oculta */
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Efecto Vidrio para las tarjetas */
+        /* Efecto Vidrio */
         .glass-card {
             background: rgba(20, 20, 20, 0.4);
             backdrop-filter: blur(5px);
@@ -56,64 +57,42 @@
 
         const { useRef, useEffect, useState } = React;
 
-        // --- URL DE DATOS (Google Sheets CSV) ---
+        // --- CONFIGURACIÓN ---
         const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuvGrwwaLeci2LXz5pjNiZ4EuKaqVTP8yGiOw2fYLVN1OIPo672tZHiLQoNuQ_25alhuGeFdOpJ5Up/pub?output=csv';
-
-        // --- IMÁGENES DE FONDO ---
         const BG_DARK = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380713/arg01_ft9glg.png';
         const BG_REVEAL = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380719/arg02_o9yqpm.png';
 
-        // --- HELPER: PARSER CSV ROBUSTO ---
-        // Maneja comillas, comas dentro de textos y saltos de línea
+        // --- PARSER CSV ---
         const parseCSV = (text) => {
             const rows = [];
             let currentRow = [];
             let currentCell = '';
             let insideQuotes = false;
-            
             for (let i = 0; i < text.length; i++) {
                 const char = text[i];
                 const nextChar = text[i + 1];
-
                 if (char === '"') {
-                    if (insideQuotes && nextChar === '"') {
-                        currentCell += '"'; // Comilla escapada
-                        i++;
-                    } else {
-                        insideQuotes = !insideQuotes;
-                    }
+                    if (insideQuotes && nextChar === '"') { currentCell += '"'; i++; } 
+                    else { insideQuotes = !insideQuotes; }
                 } else if (char === ',' && !insideQuotes) {
-                    currentRow.push(currentCell.trim());
-                    currentCell = '';
+                    currentRow.push(currentCell.trim()); currentCell = '';
                 } else if ((char === '\r' || char === '\n') && !insideQuotes) {
                     if (char === '\r' && nextChar === '\n') i++;
-                    if (currentCell || currentRow.length > 0) {
-                        currentRow.push(currentCell.trim());
-                        rows.push(currentRow);
-                        currentRow = [];
-                        currentCell = '';
-                    }
-                } else {
-                    currentCell += char;
-                }
+                    if (currentCell || currentRow.length > 0) { currentRow.push(currentCell.trim()); rows.push(currentRow); currentRow = []; currentCell = ''; }
+                } else { currentCell += char; }
             }
-            if (currentCell || currentRow.length > 0) {
-                currentRow.push(currentCell.trim());
-                rows.push(currentRow);
-            }
+            if (currentCell || currentRow.length > 0) { currentRow.push(currentCell.trim()); rows.push(currentRow); }
             return rows;
         };
 
-        // --- COMPONENTE: MODAL LECTURA ---
+        // --- COMPONENTE MODAL ---
         const PostModal = ({ post, onClose }) => {
             useEffect(() => {
                 const handleEsc = (e) => e.key === 'Escape' && onClose();
                 window.addEventListener('keydown', handleEsc);
                 return () => window.removeEventListener('keydown', handleEsc);
             }, [onClose]);
-
             if (!post) return null;
-
             return React.createElement('div', {
                 className: "fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md transition-opacity duration-500",
                 onClick: (e) => e.target === e.currentTarget && onClose()
@@ -121,7 +100,6 @@
                 React.createElement('div', {
                     className: "w-full h-full md:max-w-5xl md:h-[95vh] bg-[#050505] md:border md:border-white/10 overflow-y-auto relative flex flex-col shadow-2xl"
                 },
-                    // Header Imagen
                     post.image && React.createElement('div', { 
                         className: "w-full h-[40vh] bg-cover bg-center shrink-0 relative",
                         style: { backgroundImage: `url(${post.image})` }
@@ -132,19 +110,13 @@
                             className: "absolute top-8 right-8 text-white text-4xl font-serif hover:scale-110 transition-transform drop-shadow-lg"
                         }, "×")
                     ),
-                    
-                    // Cuerpo Texto
                     React.createElement('div', { className: "px-8 py-12 md:px-20 md:py-16 max-w-3xl mx-auto w-full" },
                         React.createElement('h1', { className: "font-serif text-5xl md:text-6xl mb-6 text-white leading-[0.9]" }, post.title),
-                        
                         React.createElement('div', { className: "flex items-center gap-6 mb-16 border-b border-white/10 pb-6" },
                             React.createElement('span', { className: "text-xs font-mono tracking-widest text-gray-400" }, post.date || "S/F"),
                             post.tag && React.createElement('span', { className: "text-xs font-mono text-white bg-white/10 px-2 py-1 rounded" }, post.tag)
                         ),
-
-                        React.createElement('div', { className: "prose prose-invert prose-xl font-serif text-gray-300 leading-relaxed whitespace-pre-wrap" },
-                            post.content
-                        )
+                        React.createElement('div', { className: "prose prose-invert prose-xl font-serif text-gray-300 leading-relaxed whitespace-pre-wrap" }, post.content)
                     )
                 )
             );
@@ -157,51 +129,68 @@
             const [loading, setLoading] = useState(true);
             const [selectedPost, setSelectedPost] = useState(null);
 
-            // 1. MOTOR DE FÍSICA LÍQUIDA
+            // --- FÍSICA MEJORADA (MÁS ORGÁNICA) ---
             useEffect(() => {
                 const isMobile = window.matchMedia("(max-width: 768px)").matches;
-                const TRAIL_LENGTH = isMobile ? 5 : 8; 
-                const BASE_RADIUS = isMobile ? 130 : 190;
                 
+                // AJUSTES DE FLUIDEZ:
+                // Más puntos = cola más larga y suave
+                const TRAIL_LENGTH = isMobile ? 6 : 12; 
+                // Radio base un poco más grande
+                const BASE_RADIUS = isMobile ? 140 : 200; 
+
                 const points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
                 let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
                 const handleMove = (e) => {
-                    mouse = { 
-                        x: e.touches ? e.touches[0].clientX : e.clientX, 
-                        y: e.touches ? e.touches[0].clientY : e.clientY 
-                    };
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    mouse = { x: clientX, y: clientY };
                 };
 
+                // Event Listeners directos (sin React Synthetic Events para max performance)
                 window.addEventListener('mousemove', handleMove);
                 window.addEventListener('touchmove', handleMove, { passive: false });
 
                 let animationFrameId;
+
                 const loop = () => {
-                    const leaderEasing = 0.15;
+                    // Física del LÍDER (Mouse) - Respuesta rápida
+                    const leaderEasing = 0.15; 
                     points[0] = {
                         x: points[0].x + (mouse.x - points[0].x) * leaderEasing,
                         y: points[0].y + (mouse.y - points[0].y) * leaderEasing
                     };
 
-                    const trailEasing = 0.25; 
+                    // Física de la ESTELA - Respuesta más lenta ("Lazy/Liquid")
+                    // Bajamos el easing a 0.20 para que sea más viscoso
+                    const trailEasing = 0.20; 
                     for (let i = 1; i < TRAIL_LENGTH; i++) {
-                        points[i].x += (points[i - 1].x - points[i].x) * trailEasing;
-                        points[i].y += (points[i - 1].y - points[i].y) * trailEasing;
+                        const leader = points[i - 1];
+                        const follower = points[i];
+                        points[i] = {
+                            x: follower.x + (leader.x - follower.x) * trailEasing,
+                            y: follower.y + (leader.y - follower.y) * trailEasing
+                        };
                     }
 
                     if (revealedLayerRef.current) {
                         const gradients = points.map((p, i) => {
-                            const scale = 1 - (i / TRAIL_LENGTH) * 0.6;
+                            const scale = 1 - (i / TRAIL_LENGTH) * 0.7; // Decay un poco más agresivo al final
                             const radius = BASE_RADIUS * scale;
                             return `radial-gradient(circle ${radius}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
                         });
+                        
                         const maskString = gradients.join(', ');
+                        
+                        // Aplicación directa al DOM
                         revealedLayerRef.current.style.maskImage = maskString;
                         revealedLayerRef.current.style.webkitMaskImage = maskString;
                     }
+                    
                     animationFrameId = requestAnimationFrame(loop);
                 };
+                
                 loop();
 
                 return () => {
@@ -211,52 +200,48 @@
                 };
             }, []);
 
-            // 2. CARGA DE DATOS (GOOGLE SHEETS CSV)
+            // --- CARGA DE DATOS ---
             useEffect(() => {
                 const load = async () => {
                     try {
                         const res = await fetch(SHEET_CSV_URL);
                         const text = await res.text();
                         const rows = parseCSV(text);
-                        
-                        // Asumimos que la primera fila es encabezado, la saltamos
-                        // Estructura: A(0)=titulo, B(1)=imagen, C(2)=texto, D(3)=fecha, E(4)=etiqueta
                         const validPosts = rows.slice(1).map(row => {
-                            if (row.length < 3) return null; // Filtro filas vacías
-                            return {
-                                title: row[0],
-                                image: row[1],
-                                content: row[2],
-                                date: row[3],
-                                tag: row[4]
-                            };
-                        }).filter(Boolean); // Elimina nulos
-
+                            if (row.length < 3) return null;
+                            return { title: row[0], image: row[1], content: row[2], date: row[3], tag: row[4] };
+                        }).filter(Boolean);
                         setPosts(validPosts);
-                    } catch (e) { 
-                        console.error("Error cargando Sheets:", e); 
-                    } finally { 
-                        setLoading(false); 
-                    }
+                    } catch (e) { console.error("Error CSV:", e); } 
+                    finally { setLoading(false); }
                 };
                 load();
             }, []);
 
             return React.createElement(React.Fragment, null,
-                
-                // FONDO + CAPA LÍQUIDA
+                // CAPA 1: FONDO OSCURO
                 React.createElement('div', { 
                     className: "fixed inset-0 z-0 bg-cover bg-center",
                     style: { backgroundImage: `url(${BG_DARK})` } 
                 }),
+                
+                // CAPA 2: REVELADO (Con optimización 'will-change')
                 React.createElement('div', {
                     ref: revealedLayerRef,
                     className: "fixed inset-0 z-10 bg-cover bg-center pointer-events-none",
-                    style: { backgroundImage: `url(${BG_REVEAL})`, WebkitMaskImage: 'none', maskImage: 'none' }
+                    style: { 
+                        backgroundImage: `url(${BG_REVEAL})`, 
+                        WebkitMaskImage: 'none', 
+                        maskImage: 'none',
+                        willChange: 'mask-image', // OPTIMIZACIÓN CLAVE
+                        transform: 'translateZ(0)' // OPTIMIZACIÓN CLAVE
+                    }
                 }),
+
+                // CAPA 3: TEXTURA DE GRANO (Estética)
                 React.createElement('div', { className: "fixed inset-0 z-10 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150" }),
 
-                // HEADER
+                // CAPA 4: INTERFAZ
                 React.createElement('nav', { className: "fixed top-0 left-0 w-full p-8 md:p-12 z-40 flex justify-between items-start pointer-events-none" },
                     React.createElement('a', { 
                         href: "https://alter-ias.github.io/arg/argx.html",
@@ -268,15 +253,14 @@
                     )
                 ),
 
-                // GALERÍA
                 React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col justify-end pb-12 pointer-events-none" },
                     loading ? 
                         React.createElement('div', { className: "w-full text-center mb-32 loader-pulse" },
-                            React.createElement('p', { className: "font-mono text-xs tracking-[0.5em] text-white/50" }, "SINCRONIZANDO DATOS...")
+                            React.createElement('p', { className: "font-mono text-xs tracking-[0.5em] text-white/50" }, "CONECTANDO NODOS...")
                         ) 
                     :
                         React.createElement('div', { className: "w-full pointer-events-auto pl-6 md:pl-20" },
-                            React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-8 tracking-[0.3em] uppercase ml-1" }, "Entradas Recientes"),
+                            React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-8 tracking-[0.3em] uppercase ml-1" }, "Archivo Central"),
                             
                             React.createElement('div', { className: "flex gap-8 overflow-x-auto hide-scroll pr-20 pb-12 items-end" },
                                 posts.map((post, idx) => 
@@ -286,13 +270,11 @@
                                         className: "glass-card shrink-0 w-[260px] h-[380px] md:w-[300px] md:h-[450px] p-8 flex flex-col justify-between relative overflow-hidden group cursor-pointer"
                                     },
                                         React.createElement('span', { className: "font-mono text-[10px] text-white/20" }, idx < 9 ? `0${idx + 1}` : idx + 1),
-                                        
                                         React.createElement('div', { className: "relative z-10" },
                                             React.createElement('div', { className: "w-8 h-[1px] bg-white/50 mb-4 group-hover:w-16 transition-all duration-500" }),
                                             React.createElement('h3', { className: "font-serif text-3xl text-gray-200 leading-[0.9] mb-2 group-hover:text-white transition-colors" }, post.title),
                                             React.createElement('p', { className: "text-[10px] font-mono text-white/40 mt-3 tracking-widest uppercase" }, post.date || "---")
                                         ),
-
                                         post.image && React.createElement('div', {
                                             className: "absolute inset-0 bg-cover bg-center opacity-0 group-hover:opacity-40 transition-all duration-700 grayscale group-hover:grayscale-0 transform scale-110 group-hover:scale-100",
                                             style: { backgroundImage: `url(${post.image})` }
@@ -303,8 +285,6 @@
                             )
                         )
                 ),
-
-                // MODAL
                 selectedPost && React.createElement(PostModal, { post: selectedPost, onClose: () => setSelectedPost(null) })
             );
         };
