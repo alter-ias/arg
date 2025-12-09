@@ -1,321 +1,347 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Archivo - Jardín Digital</title>
-    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>El Archivo - ARG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --main-gap: 2rem;
-            --font-serif: 'Cormorant Garamond', serif;
-            --font-sans: 'Poppins', sans-serif;
-            --color-light: #f8f9fa;
-
-            --gradient-cool: linear-gradient(-45deg, #2c3e50, #4a6da7, #34495e, #22577a);
-            --gradient-sunset: linear-gradient(-45deg, #ee7752, #e73c7e, #8c2a5c, #4c0e2f);
-            --gradient-dark: linear-gradient(-45deg, #2c3e50, #95a5a6, #1c1c1c, #34495e);
-            
-            --active-gradient: var(--gradient-cool);
-            --filter-opacity: 1.0;
+        /* --- ESTILOS BASE Y CURSORES (Fuente 1) --- */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0a0a0a;
+            color: #FFFFFF;
+            font-family: 'Poppins', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            /* Cursor base */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
-        * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body { margin: 0; font-family: var(--font-sans); color: var(--color-light); background-color: #1a1a1a; overflow-x: hidden; }
+        /* Estilos de Scrollbar minimalista */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
 
-        @keyframes gradient-horizontal { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        
-        body::before {
-            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1;
-            background: var(--active-gradient);
-            opacity: var(--filter-opacity);
-            background-size: 400% 400%; animation: gradient-horizontal 25s ease infinite;
-            transition: opacity 0.5s ease;
-        }
-        
-        header { 
-            padding: 1.5rem var(--main-gap); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem;
-        }
-        .header-logo a { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: var(--color-light); }
-        
-        .controls-container {
-            background-color: transparent;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
-        }
-        .filter-controls { display: flex; gap: 0.5rem; }
-        .filter-btn-style { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--color-light); cursor: pointer; transition: transform 0.2s; }
-        .filter-btn-style:hover { transform: scale(1.1); }
-        .filter-btn-style.is-active { border-width: 4px; }
-        #filter-cool { background: var(--gradient-cool); }
-        #filter-sunset { background: var(--gradient-sunset); }
-        #filter-dark { background: var(--gradient-dark); }
-        
-        .opacity-control { width: 150px; }
-        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 2px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; outline: none; cursor: pointer; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; background: var(--color-light); border-radius: 50%; border: 2px solid #1a1a1a; }
-        
-        main {
-            padding-top: 25vh; /* Espacio para el header fijo */
-        }
-        
-        #blog-hero { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding-bottom: 2rem; }
-        .content-overlay { position: relative; z-index: 2; padding: var(--main-gap); max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); transition: opacity 0.2s linear; }
-        .content-overlay p { font-size: 1.1rem; margin: 0 auto 1.5rem auto; }
-        
-        #filter-container { margin-top: 2rem; }
-        .filter-btn, .tag-btn { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--color-light); padding: 0.5rem 1rem; margin: 0.25rem; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease; }
-        .filter-btn:hover, .tag-btn:hover { background-color: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
-        .filter-btn.is-active { background-color: rgba(255, 255, 255, 0.25); border-color: var(--color-light); box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
+        .font-sans { font-family: 'Poppins', sans-serif; }
 
-        #postsContainer { padding: 2rem; max-width: 800px; margin: 0 auto; }
-        .post-entry { text-align: center; margin-bottom: 4rem; transition: opacity 0.2s linear; }
-        .post-entry h2 { font-family: var(--font-serif); font-size: 2.5rem; }
-        .post-date { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
-        .post-image-window { width: 100%; height: 250px; overflow: hidden; position: relative; border-radius: 8px; margin: 1rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .post-image-window img { width: 100%; height: 200%; object-fit: cover; position: absolute; top: 0; left: 0; will-change: transform; }
-        .post-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
-        .tag { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; }
-        .btn { display: inline-block; padding: 0.8rem 1.8rem; border: 2px solid var(--color-light); color: var(--color-light); background-color: transparent; text-decoration: none; transition: all 0.3s; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 50px; }
-        .btn:hover { background-color: var(--color-light); color: #1a1a1a; }
-        
-        .post-modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
-        .post-modal-container.is-active { opacity: 1; pointer-events: auto; }
-        .post-modal-content-wrapper { position: relative; max-width: 90%; width: 800px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.5s ease; border-radius: 8px; }
-        .post-modal-container.is-active .post-modal-content-wrapper { transform: scale(1); }
-        .post-modal-content-wrapper { background-repeat: no-repeat, no-repeat; background-size: 400% 400%, cover; background-position: 0% 50%, center; background-attachment: local, scroll; animation: gradient-horizontal 25s ease infinite; }
-        .post-modal-content-wrapper { -ms-overflow-style: none; scrollbar-width: none; }
-        .post-modal-content-wrapper::-webkit-scrollbar { display: none; }
-        .post-modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2.5rem; cursor: pointer; color: var(--color-light); z-index: 10; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-        .post-modal-text { padding: 3rem; position: relative; z-index: 2; }
-        #post-modal-title { font-family: var(--font-serif); font-size: 2.5rem; margin-top: 0; margin-bottom: 1rem; }
-        #post-modal-date { font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem; }
-        #post-modal-tags { margin-bottom: 2rem; }
-        #post-modal-body { font-size: 1.1rem; line-height: 1.8; } #post-modal-body p { margin-bottom: 1.5rem; }
-        .loading, .error { text-align: center; padding: 40px; }
-        .spinner { border: 4px solid rgba(255,255,255, 0.2); border-left-color: var(--color-light); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        /* Cursores interactivos */
+        .interactive-hover:hover {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
+        }
+
+        /* Animación de carga */
+        .spinner {
+            border: 4px solid rgba(255,255,255, 0.2);
+            border-left-color: #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .scroll-top-btn { position: fixed; bottom: 20px; right: 20px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem; cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; }
-        .scroll-top-btn.is-visible { opacity: 1; pointer-events: auto; }
-        .scroll-top-btn:hover { transform: scale(1.1); }
+
+        /* Clases utilitarias para el contenido del blog */
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
 <body>
-    <header>
-        <!-- CORRECCIÓN #1: Enlace a index.html -->
-        <div class="header-logo"><a href="https://alter-ias.github.io/arg/argx.html">ARG</a></div>
-        <div class="controls-container">
-            <div class="filter-controls">
-                <button class="filter-btn-style" id="filter-cool" data-palette="cool" title="Filtro Frío"></button>
-                <button class="filter-btn-style" id="filter-sunset" data-palette="sunset" title="Filtro Cálido"></button>
-                <button class="filter-btn-style" id="filter-dark" data-palette="dark" title="Filtro Oscuro"></button>
-            </div>
-            <div class="opacity-control">
-                 <input type="range" id="opacity-slider" min="0" max="100" value="100" title="Opacidad del filtro">
-            </div>
-        </div>
-    </header>
+    <div id="root"></div>
+    <script type="module">
+        import React from 'https://esm.sh/react@18.3.1';
+        import ReactDOM from 'https://esm.sh/react-dom@18.3.1/client';
 
-    <main>
-        <section id="blog-hero">
-            <div class="content-overlay">
-                <p>"La ilustración necesita encarnase para que la verdad sea otra vez una excitante insinuación"</p>
-                <div id="filter-container"></div>
-            </div>
-        </section>
-        
-        <div id="postsContainer">
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Cargando entradas...</p>
-            </div>
-        </div>
-    </main>
-    
-    <div id="post-modal-container" class="post-modal-container">
-        <div class="post-modal-content-wrapper">
-            <span class="post-modal-close">&times;</span>
-            <div class="post-modal-text">
-                <h2 id="post-modal-title"></h2>
-                <span id="post-modal-date"></span>
-                <div id="post-modal-tags" class="post-tags"></div>
-                <div id="post-modal-body"></div>
-            </div>
-        </div>
-    </div>
-    
-    <button id="scrollTopBtn" class="scroll-top-btn">↑</button>
+        const { useRef, useEffect, useState } = React;
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- LÓGICA DE CONTROL DE FILTROS Y ESTILOS (sin cambios) ---
-            const styleFilterButtons = document.querySelectorAll('.filter-btn-style');
-            const opacitySlider = document.getElementById('opacity-slider');
-            const root = document.documentElement;
-            let currentPalette = 'cool';
+        // --- IMÁGENES DE FONDO (Fuente 1) ---
+        const BG_DARK = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380713/arg01_ft9glg.png';
+        const BG_REVEAL = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380719/arg02_o9yqpm.png';
 
-            function applySettings(palette, opacity) {
-                root.style.setProperty('--filter-opacity', opacity / 100);
-                const gradient = getComputedStyle(root).getPropertyValue(`--gradient-${palette}`);
-                root.style.setProperty('--active-gradient', gradient);
-                styleFilterButtons.forEach(btn => btn.classList.toggle('is-active', btn.dataset.palette === palette));
-                opacitySlider.value = opacity;
-                currentPalette = palette;
-            }
-            function saveSettings(palette, opacity) {
-                localStorage.setItem('argBlogPalette', palette);
-                localStorage.setItem('argBlogOpacity', opacity);
-            }
-            const savedPalette = localStorage.getItem('argBlogPalette') || 'cool';
-            const savedOpacity = localStorage.getItem('argBlogOpacity') || '100';
-            applySettings(savedPalette, savedOpacity);
+        // --- COMPONENTE: MODAL DE POST (Lógica de lectura) ---
+        const PostModal = ({ post, onClose }) => {
+            if (!post) return null;
 
-            styleFilterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const newPalette = button.dataset.palette;
-                    applySettings(newPalette, opacitySlider.value);
-                    saveSettings(newPalette, opacitySlider.value);
-                });
-            });
-            opacitySlider.addEventListener('input', () => {
-                applySettings(currentPalette, opacitySlider.value);
-                saveSettings(currentPalette, opacitySlider.value);
-            });
+            useEffect(() => {
+                const handleEsc = (e) => e.key === 'Escape' && onClose();
+                window.addEventListener('keydown', handleEsc);
+                document.body.style.overflow = 'hidden'; // Bloquear scroll del body
+                return () => {
+                    window.removeEventListener('keydown', handleEsc);
+                    document.body.style.overflow = '';
+                };
+            }, [onClose]);
 
-            // --- LÓGICA DEL BLOG (con funciones pegadas) ---
-            const config = { repoOwner: 'alter-ias', repoName: 'argblog-datos' };
-            const postsContainer = document.getElementById('postsContainer');
-            const filterContainer = document.getElementById('filter-container');
-            const loadingElement = document.getElementById('loading');
-            const scrollTopBtn = document.getElementById('scrollTopBtn');
-            const modalContainer = document.getElementById('post-modal-container');
-            const modalWrapper = modalContainer.querySelector('.post-modal-content-wrapper');
-            let allPosts = [];
-            let activeFilter = 'all';
+            // Parsear contenido simple (saltos de línea a párrafos)
+            const contentParagraphs = post.content.split('\n').filter(p => p.trim() !== '');
 
-            function openPostModal(post) { /* ... sin cambios ... */ }
-            function closePostModal() { /* ... sin cambios ... */ }
+            return React.createElement('div', {
+                className: "fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 transition-opacity duration-300",
+                onClick: (e) => e.target === e.currentTarget && onClose()
+            },
+                React.createElement('div', {
+                    className: "relative w-full max-w-4xl max-h-[90vh] overflow-y-auto glass-panel rounded-xl p-8 md:p-12 interactive-hover"
+                },
+                    // Botón Cerrar
+                    React.createElement('button', {
+                        onClick: onClose,
+                        className: "absolute top-4 right-6 text-4xl font-serif text-white/70 hover:text-white hover:scale-110 transition-all"
+                    }, "×"),
 
-            async function fetchBlogPosts() {
-                try {
-                    const response = await fetch(`https://api.github.com/repos/${config.repoOwner}/${config.repoName}/issues?labels=blog-post&state=open`);
-                    if (!response.ok) throw new Error(`Error: ${response.status}`);
-                    const issues = await response.json();
-                    return issues.map(issue => ({ ...JSON.parse(issue.body), createdAt: issue.created_at }));
-                } catch (error) { console.error('Error al obtener entradas:', error); return []; }
-            }
+                    // Header del Post
+                    React.createElement('h2', { className: "font-serif text-4xl md:text-5xl mb-4 leading-tight text-white" }, post.title),
+                    React.createElement('div', { className: "flex gap-4 text-sm text-gray-400 mb-8 font-sans uppercase tracking-widest" },
+                        React.createElement('span', null, post.date || new Date(post.createdAt).toLocaleDateString('es-ES')),
+                        post.tags && post.tags.map(tag => React.createElement('span', { key: tag, className: "border border-white/20 px-2 rounded-full" }, tag))
+                    ),
 
-            function displayPosts(postsToRender) {
-                postsContainer.innerHTML = '';
-                if (postsToRender.length === 0) { postsContainer.innerHTML = '<p class="error">No hay entradas para esta categoría.</p>'; return; }
-                postsToRender.forEach(post => {
-                    const postElement = document.createElement('div');
-                    postElement.className = 'post-entry';
-                    let tagsHTML = post.tags && Array.isArray(post.tags) ? `<div class="post-tags">${post.tags.map(tag => `<button class="tag-btn" data-tag="${tag}">${tag}</button>`).join('')}</div>` : '';
-                    postElement.innerHTML = `<h2>${post.title}</h2><div class="post-image-window"><img src="${post.image || ''}" alt="${post.title}"></div><div class="post-date">${post.date || new Date(post.createdAt).toLocaleDateString('es-ES')}</div><p>${post.excerpt || ''}</p>${tagsHTML}<button class="btn read-more-btn">Leer más</button>`;
-                    postElement.querySelector('.read-more-btn').addEventListener('click', () => openPostModal(post));
-                    postsContainer.appendChild(postElement);
-                });
-                document.querySelectorAll('.tag-btn').forEach(button => button.addEventListener('click', () => filterByTag(button.dataset.tag)));
-                initializeScrollEffects();
-            }
+                    // Imagen Principal
+                    post.image && React.createElement('img', {
+                        src: post.image,
+                        alt: post.title,
+                        className: "w-full h-64 md:h-96 object-cover rounded-lg mb-8 opacity-90"
+                    }),
 
-            function renderFilterButtons() {
-                const allTags = new Set(allPosts.flatMap(post => post.tags || []));
-                filterContainer.innerHTML = `<button class="filter-btn ${activeFilter === 'all' ? 'is-active' : ''}" data-tag="all">Mostrar Todos</button>`;
-                allTags.forEach(tag => { filterContainer.innerHTML += `<button class="filter-btn ${activeFilter === tag ? 'is-active' : ''}" data-tag="${tag}">${tag}</button>`; });
-                document.querySelectorAll('#filter-container .filter-btn').forEach(button => button.addEventListener('click', () => filterByTag(button.dataset.tag)));
-            }
+                    // Cuerpo del texto
+                    React.createElement('div', { className: "prose prose-invert prose-lg max-w-none font-sans font-light leading-relaxed text-gray-200" },
+                        contentParagraphs.map((p, idx) => React.createElement('p', { key: idx, className: "mb-6" }, p))
+                    )
+                )
+            );
+        };
 
-            function filterByTag(tag) {
-                activeFilter = tag;
-                let filteredPosts = (tag === 'all') ? allPosts : allPosts.filter(post => post.tags && post.tags.includes(tag));
-                displayPosts(filteredPosts);
-                renderFilterButtons();
-            }
+        // --- COMPONENTE PRINCIPAL ---
+        const App = () => {
+            const revealedLayerRef = useRef(null);
             
-            async function initializeBlog() {
-                loadingElement.style.display = 'block';
-                allPosts = await fetchBlogPosts();
-                allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                loadingElement.style.display = 'none';
-                renderFilterButtons();
-                displayPosts(allPosts);
-            }
+            // Estado para el blog
+            const [posts, setPosts] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [selectedPost, setSelectedPost] = useState(null);
+            const [filter, setFilter] = useState('all');
 
-            openPostModal = function(post) {
-                if (modalContainer.classList.contains('is-active')) return;
-                const opacity = (localStorage.getItem('argBlogOpacity') || '100') / 100;
-                const palette = localStorage.getItem('argBlogPalette') || 'cool';
-                const gradientVar = getComputedStyle(root).getPropertyValue(`--gradient-${palette}`);
-                const transparentGradient = gradientVar.replace(/rgb/g, 'rgba').replace(/\)/g, `, ${opacity * 0.85})`);
-                modalWrapper.style.backgroundImage = `${transparentGradient}, url('${post.image || ''}')`;
-                document.getElementById('post-modal-title').textContent = post.title;
-                document.getElementById('post-modal-date').textContent = post.date || new Date(post.createdAt).toLocaleDateString('es-ES');
-                const contentBody = document.getElementById('post-modal-body');
-                contentBody.innerHTML = post.content.split('\n').filter(p => p.trim() !== '').map(pText => `<p>${pText}</p>`).join('');
-                const tagsContainer = document.getElementById('post-modal-tags');
-                tagsContainer.innerHTML = post.tags && Array.isArray(post.tags) ? post.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : '';
-                modalContainer.classList.add('is-active');
-                document.body.style.overflow = 'hidden';
-                history.pushState({ modal: 'post' }, '', '#post');
-            }
-            closePostModal = function() {
-                if (!modalContainer.classList.contains('is-active')) return;
-                modalContainer.classList.remove('is-active');
-                document.body.style.overflow = '';
-            }
+            // --- LÓGICA DE FÍSICA / BACKGROUND (Fuente 1) ---
+            const isMobile = window.matchMedia("(max-width: 768px)").matches;
+            const TRAIL_LENGTH = isMobile ? 5 : 8; 
+            const BASE_RADIUS = isMobile ? 150 : 220; // Ligeramente más grande para leer mejor
             
-            // --- CORRECCIÓN #2: LÓGICA DE DESVANECIMIENTO ---
-            function initializeScrollEffects() {
-                const elementsToFade = document.querySelectorAll('#blog-hero, .post-entry');
-                const windowHeight = window.innerHeight;
-                let ticking = false;
+            const points = useRef(Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 }));
+            const mouse = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
 
-                function updateFadeAndParallax() {
-                    elementsToFade.forEach(entry => {
-                        const rect = entry.getBoundingClientRect();
-                        const fadeOutZone = 300;
-                        const opacity = Math.max(0, Math.min(1, rect.top / fadeOutZone));
-                        entry.style.opacity = opacity;
-
-                        const media = entry.querySelector('.post-image-window img');
-                        if (media && rect.top < windowHeight && rect.bottom > 0) {
-                            const progress = (rect.top + entry.offsetHeight) / (windowHeight + entry.offsetHeight);
-                            const clampedProgress = 1 - Math.max(0, Math.min(1, progress));
-                            const travelRange = media.offsetHeight - entry.querySelector('.post-image-window').offsetHeight;
-                            const translateY = -travelRange * clampedProgress;
-                            media.style.transform = `translateY(${translateY}px)`;
-                        }
-                    });
-
-                    if (window.scrollY > windowHeight / 2) {
-                        scrollTopBtn.classList.add('is-visible');
+            useEffect(() => {
+                const handleMove = (e) => {
+                    let clientX, clientY;
+                    if (e.touches && e.touches.length > 0) {
+                        clientX = e.touches[0].clientX;
+                        clientY = e.touches[0].clientY;
                     } else {
-                        scrollTopBtn.classList.remove('is-visible');
+                        clientX = e.clientX;
+                        clientY = e.clientY;
                     }
-                    ticking = false;
-                }
+                    mouse.current = { x: clientX, y: clientY };
+                };
 
-                window.addEventListener('scroll', () => { if (!ticking) { window.requestAnimationFrame(updateFadeAndParallax); ticking = true; } });
-                updateFadeAndParallax(); // Initial call
-            }
+                window.addEventListener('mousemove', handleMove);
+                window.addEventListener('touchstart', handleMove, { passive: false });
+                window.addEventListener('touchmove', handleMove, { passive: false });
 
-            initializeBlog();
-            
-            document.querySelector('.post-modal-close').addEventListener('click', () => history.back());
-            modalContainer.addEventListener('click', e => { if (e.target === e.currentTarget) history.back(); });
-            document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalContainer.classList.contains('is-active')) history.back(); });
-            window.addEventListener('popstate', () => { if (modalContainer.classList.contains('is-active')) { closePostModal(); } });
-            scrollTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
-        });
+                let animationFrameId;
+
+                const loop = () => {
+                    const currentPoints = [...points.current];
+                    const leaderEasing = 0.15;
+                    // Líder sigue al mouse
+                    currentPoints[0] = {
+                        x: currentPoints[0].x + (mouse.current.x - currentPoints[0].x) * leaderEasing,
+                        y: currentPoints[0].y + (mouse.current.y - currentPoints[0].y) * leaderEasing
+                    };
+
+                    const trailEasing = 0.25; 
+                    for (let i = 1; i < TRAIL_LENGTH; i++) {
+                        const leader = currentPoints[i - 1];
+                        const follower = currentPoints[i];
+                        currentPoints[i] = {
+                            x: follower.x + (leader.x - follower.x) * trailEasing,
+                            y: follower.y + (leader.y - follower.y) * trailEasing
+                        };
+                    }
+                    
+                    points.current = currentPoints;
+
+                    if (revealedLayerRef.current) {
+                        const gradients = currentPoints.map((p, i) => {
+                            const scale = 1 - (i / TRAIL_LENGTH) * 0.6;
+                            const radius = BASE_RADIUS * scale;
+                            return `radial-gradient(circle ${radius}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
+                        });
+                        
+                        const maskString = gradients.join(', ');
+                        
+                        // Aplicar máscara para revelar la capa "Light"
+                        revealedLayerRef.current.style.maskImage = maskString;
+                        revealedLayerRef.current.style.webkitMaskImage = maskString;
+                    }
+                    
+                    animationFrameId = requestAnimationFrame(loop);
+                };
+                
+                loop();
+
+                return () => {
+                    window.removeEventListener('mousemove', handleMove);
+                    window.removeEventListener('touchstart', handleMove);
+                    window.removeEventListener('touchmove', handleMove);
+                    cancelAnimationFrame(animationFrameId);
+                };
+            }, [isMobile]);
+
+            // --- LÓGICA DE DATOS (Fuente 2 - API GitHub) ---
+            useEffect(() => {
+                const fetchPosts = async () => {
+                    try {
+                        const response = await fetch(`https://api.github.com/repos/alter-ias/argblog-datos/issues?labels=blog-post&state=open`);
+                        if (!response.ok) throw new Error('Error al cargar');
+                        const issues = await response.json();
+                        
+                        const parsedPosts = issues.map(issue => {
+                            try {
+                                return { ...JSON.parse(issue.body), createdAt: issue.created_at };
+                            } catch (e) { return null; }
+                        }).filter(p => p !== null);
+
+                        // Ordenar por fecha
+                        parsedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                        setPosts(parsedPosts);
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+                fetchPosts();
+            }, []);
+
+            // Filtrado
+            const allTags = [...new Set(posts.flatMap(p => p.tags || []))];
+            const filteredPosts = filter === 'all' ? posts : posts.filter(p => p.tags && p.tags.includes(filter));
+
+            // --- RENDER ---
+            return React.createElement(React.Fragment, null,
+                
+                // 1. CAPA DE FONDO (OSCURA/ESTÁTICA)
+                React.createElement('div', { 
+                    className: "fixed inset-0 z-0 bg-cover bg-center", 
+                    style: { backgroundImage: `url(${BG_DARK})` } 
+                }),
+
+                // 2. CAPA REVELADA (LUZ/MÁSCARA) - Funciona solo visualmente detrás del contenido
+                React.createElement('div', {
+                    ref: revealedLayerRef,
+                    className: "fixed inset-0 z-10 bg-cover bg-center pointer-events-none",
+                    style: { 
+                        backgroundImage: `url(${BG_REVEAL})`,
+                        WebkitMaskImage: 'none',
+                        maskImage: 'none',
+                    }
+                }),
+
+                // 3. CAPA DE CONTENIDO (SCROLLABLE - Z-INDEX ALTO)
+                React.createElement('div', { className: "relative z-20 w-full min-h-screen flex flex-col items-center" },
+                    
+                    // HEADER
+                    React.createElement('header', { className: "w-full p-8 flex justify-center items-center mt-8 mb-12" },
+                        React.createElement('a', { 
+                            href: "https://alter-ias.github.io/arg/argx.html", 
+                            className: "font-serif text-5xl font-bold text-white tracking-widest hover:scale-105 transition-transform interactive-hover" 
+                        }, "ARG")
+                    ),
+
+                    // FRASE HERO
+                    React.createElement('div', { className: "text-center max-w-2xl px-6 mb-16" },
+                        React.createElement('p', { className: "font-serif text-2xl md:text-3xl italic text-gray-300" },
+                            "\"La ilustración necesita encarnarse para que la verdad sea otra vez una excitante insinuación\""
+                        )
+                    ),
+
+                    // FILTROS
+                    !loading && React.createElement('div', { className: "flex flex-wrap justify-center gap-3 mb-12 px-4" },
+                        React.createElement('button', {
+                            onClick: () => setFilter('all'),
+                            className: `px-4 py-1 rounded-full border transition-all text-sm uppercase tracking-wide interactive-hover ${filter === 'all' ? 'bg-white text-black border-white' : 'bg-transparent text-gray-400 border-gray-600 hover:border-white hover:text-white'}`
+                        }, "Todos"),
+                        allTags.map(tag => 
+                            React.createElement('button', {
+                                key: tag,
+                                onClick: () => setFilter(tag),
+                                className: `px-4 py-1 rounded-full border transition-all text-sm uppercase tracking-wide interactive-hover ${filter === tag ? 'bg-white text-black border-white' : 'bg-transparent text-gray-400 border-gray-600 hover:border-white hover:text-white'}`
+                            }, tag)
+                        )
+                    ),
+
+                    // GRID DE POSTS
+                    React.createElement('div', { className: "w-full max-w-4xl px-6 pb-24 grid grid-cols-1 gap-16" },
+                        loading ? 
+                            React.createElement('div', { className: "flex flex-col items-center justify-center py-20" },
+                                React.createElement('div', { className: "spinner mb-4" }),
+                                React.createElement('p', { className: "text-gray-400" }, "Recuperando archivos...")
+                            ) :
+                            filteredPosts.map((post, index) => 
+                                React.createElement('div', { 
+                                    key: index, 
+                                    className: "flex flex-col items-center text-center group" 
+                                },
+                                    // Título
+                                    React.createElement('h2', { className: "font-serif text-4xl md:text-5xl mb-4 text-white group-hover:text-gray-200 transition-colors" }, post.title),
+                                    
+                                    // Imagen (Efecto ventana simple)
+                                    React.createElement('div', { 
+                                        className: "w-full h-64 md:h-80 overflow-hidden rounded-sm mb-6 border border-white/10 relative cursor-pointer interactive-hover",
+                                        onClick: () => setSelectedPost(post)
+                                    },
+                                        post.image ? 
+                                            React.createElement('img', { 
+                                                src: post.image, 
+                                                alt: post.title, 
+                                                className: "w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100" 
+                                            }) : 
+                                            React.createElement('div', { className: "w-full h-full bg-gray-900 flex items-center justify-center text-gray-600" }, "Sin imagen")
+                                    ),
+
+                                    // Meta info
+                                    React.createElement('div', { className: "text-gray-400 text-sm mb-4 font-sans tracking-wider" }, 
+                                        post.date || new Date(post.createdAt).toLocaleDateString('es-ES')
+                                    ),
+
+                                    // Extracto
+                                    React.createElement('p', { className: "text-gray-300 max-w-2xl mb-6 font-light leading-relaxed" }, post.excerpt),
+
+                                    // Botón Leer más
+                                    React.createElement('button', {
+                                        onClick: () => setSelectedPost(post),
+                                        className: "border border-white/40 text-white px-8 py-2 rounded-full uppercase text-xs tracking-widest hover:bg-white hover:text-black transition-all interactive-hover"
+                                    }, "Leer Entrada")
+                                )
+                            )
+                    )
+                ),
+
+                // 4. MODAL
+                selectedPost && React.createElement(PostModal, { post: selectedPost, onClose: () => setSelectedPost(null) })
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App, null));
     </script>
 </body>
 </html>
