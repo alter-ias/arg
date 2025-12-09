@@ -176,39 +176,29 @@
         </div>
     </main>
 
-    <script>
-        const POLLINATIONS_URL = "https://text.pollinations.ai/openai"; 
+   <script>
+        // ==========================================
+        // CONFIGURACIÓN DE IRONÍA (VERSION BLINDADA)
+        // ==========================================
+        const POLLINATIONS_URL = "https://text.pollinations.ai/"; 
+        
         let currentStyle = 'el_deforma';
 
-        // AQUÍ ESTÁ LA MAGIA CÓMICA: INSTRUCCIONES DE SÁTIRA PURA
         const PERSONAS = {
             el_deforma: {
                 label: "NACIONAL",
                 tone: "Tu tono es SERIO en la forma, pero COMPLETAMENTE ESTÚPIDO en el contenido. (Estilo The Onion / El Deforma).",
-                instruction: `
-                    OBJETIVO: Hacer reír mediante el "Deadpan" (seriedad absurda).
-                    TÉCNICA 1: "Reductio ad absurdum". Lleva la premisa del usuario al extremo lógico más idiota posible.
-                    TÉCNICA 2: "Trata lo pequeño como gigante". Si el tema es el calor, trátalo como una guerra intergaláctica contra el Sol.
-                    TÉCNICA 3: Citas de autoridades inútiles. Inventa voceros que digan obviedades o cosas terribles con lenguaje burocrático.
-                `
+                instruction: "OBJETIVO: Hacer reír mediante el 'Deadpan' (seriedad absurda). TÉCNICA: Lleva la premisa del usuario al extremo lógico más idiota posible."
             },
             black_mirror: {
                 label: "TECNOLOGÍA Y SOCIEDAD",
                 tone: "Cínico, deprimido, desesperanzado pero gracioso por lo real que suena.",
-                instruction: `
-                    OBJETIVO: Sátira social oscura.
-                    TÉCNICA: Identifica una verdad incómoda sobre el tema (ej. somos adictos al celular) y crea una noticia donde eso se vuelve ley o religión.
-                    TÉCNICA: El humor viene de la resignación. Los personajes en la noticia aceptan su destino horrible con normalidad.
-                `
+                instruction: "OBJETIVO: Sátira social oscura. TÉCNICA: Identifica una verdad incómoda sobre el tema y crea una noticia donde eso se vuelve ley o religión."
             },
             teoria_conspirativa: {
                 label: "LA VERDAD OCULTA",
                 tone: "Paranoico, frenético, conectando puntos que no existen.",
-                instruction: `
-                    OBJETIVO: Burlarse de la lógica conspirativa.
-                    TÉCNICA: Causa y Efecto Roto. "Llovió porque tú compraste ese paraguas azul, el gobierno te vigila".
-                    TÉCNICA: Inventa estudios científicos falsos de la "Universidad de la Vida".
-                `
+                instruction: "OBJETIVO: Burlarse de la lógica conspirativa. TÉCNICA: Causa y Efecto Roto. Inventa estudios científicos falsos."
             }
         };
 
@@ -222,11 +212,11 @@
             const topic = document.getElementById('topicInput').value.trim();
             if (!topic) return alert("¡Escribe algo! No soy adivino.");
 
-            // UI Feedback
+            // Feedback visual
             const btn = document.getElementById('generateBtn');
             const originalBtnText = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = "🧠 PENSANDO IDIOTECES..."; // Feedback cómico
+            btn.innerHTML = '<span class="animate-pulse">🧠 PENSANDO IDIOTECES...</span>';
             
             document.getElementById('emptyState').classList.add('hidden');
             document.getElementById('resultState').classList.add('hidden');
@@ -235,8 +225,8 @@
             try {
                 await callIroniusAI(topic);
             } catch (error) {
-                console.error(error);
-                alert("La IA se ofendió y no quiso trabajar. Intenta de nuevo.");
+                console.error("Error grave:", error);
+                alert("La IA está en huelga (Error de conexión). Intenta con otro tema.");
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('emptyState').classList.remove('hidden');
             } finally {
@@ -249,104 +239,123 @@
             const persona = PERSONAS[currentStyle];
             document.getElementById('sectionLabel').innerText = persona.label;
 
-            // SYSTEM PROMPT DISEÑADO PARA COMEDIA, NO SOLO REDACCIÓN
+            // PROMPT SIMPLIFICADO PARA EVITAR ERRORES
             const systemPrompt = `
-                ACTÚA COMO: Un redactor satírico de clase mundial (Nivel The Onion, El Mundo Today, El Deforma).
-                TU MISIÓN: Escribir una noticia FALSA y DIVERTIDA sobre el tema: "${topic}".
+                Eres un redactor de noticias satíricas (Fake News de comedia).
                 
-                LAS REGLAS DEL JUEGO (SI NO ES GRACIOSO, FALLAS):
-                1. ${persona.tone}
-                2. ${persona.instruction}
-                3. ESTRUCTURA PERIODÍSTICA: Usa el formato de noticia (Titular, Bajada, Lugar, Cuerpo) para darle "autoridad" a la estupidez. El contraste entre la forma seria y el contenido ridículo ES el chiste.
-                4. NO uses "jaja", ni emoticonos en el texto, ni digas "es broma". Mantén el personaje hasta la muerte.
+                TU TAREA: Escribir una noticia sobre: "${topic}".
+                ESTILO: ${persona.tone}
+                INSTRUCCIÓN: ${persona.instruction}
+
+                IMPORTANTE: DEBES RESPONDER ÚNICAMENTE CON UN JSON VÁLIDO. NO ESCRIBAS NADA ANTES NI DESPUÉS DEL JSON.
                 
-                FORMATO DE SALIDA (JSON OBLIGATORIO):
+                Estructura del JSON:
                 {
-                    "headline": "Titular hilarante y exagerado (Máx 15 palabras)",
-                    "subtitle": "Subtítulo que remata el chiste del titular",
-                    "location": "Ciudad de México (o lugar relevante)",
-                    "author": "Nombre gracioso (ej. 'Armando Broncas', 'El Becario', 'Susana Distancia')",
+                    "headline": "Titular gracioso y exagerado",
+                    "subtitle": "Subtítulo irónico",
+                    "location": "Ciudad",
+                    "author": "Nombre gracioso del reportero",
                     "body": [
-                        {"type": "p", "content": "Lead: Presenta el hecho absurdo como una verdad absoluta."},
-                        {"type": "p", "content": "Desarrollo: Exagera las consecuencias. Datos inventados (ej. 'El 140% de los encuestados...')."},
-                        {"type": "quote", "speaker": "Nombre Ridículo", "role": "Cargo Inventado (ej. Vicepresidente de Asuntos Sin Importancia)", "text": "Declaración oficial que confirma la estupidez con palabras elegantes."},
-                        {"type": "p", "content": "Conclusión: Un remate cínico o una predicción catastrófica."},
-                        {"type": "p", "content": "Cierre breve."}
+                        {"type": "p", "content": "Párrafo 1: El hecho absurdo."},
+                        {"type": "p", "content": "Párrafo 2: Datos inventados."},
+                        {"type": "quote", "speaker": "Nombre Ridículo", "role": "Cargo Falso", "text": "Cita textual absurda."},
+                        {"type": "p", "content": "Párrafo 3: Conclusión catastrófica."}
                     ]
                 }
             `.trim();
 
+            // Usamos una petición más simple (GET) que suele fallar menos en la capa gratuita
+            // Ojo: Codificamos el prompt en la URL para evitar el error 500 del POST body
+            const seed = Math.floor(Math.random() * 100000);
+            const finalPrompt = `${systemPrompt} \n\n Tema: ${topic}. \n Seed: ${seed}`;
+            
+            // Usamos POST pero sin jsonMode y con modelo 'openai' genérico que es más robusto
             const response = await fetch(POLLINATIONS_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     messages: [
                         { role: "system", content: systemPrompt },
-                        { role: "user", content: `El tema es: ${topic}. Hazme reír.` } // Instrucción directa
+                        { role: "user", content: `Hazme reír con el tema: ${topic}` }
                     ],
-                    model: "openai",
-                    jsonMode: true,
-                    seed: Math.floor(Math.random() * 100000)
+                    model: "openai", // Modelo genérico más estable
+                    seed: seed
                 })
             });
 
-            if (!response.ok) throw new Error("Error API");
-            const data = await response.json();
+            if (!response.ok) throw new Error(`Error API: ${response.status}`);
             
-            // Parseo seguro
-            let parsedContent;
+            // Leemos como texto plano para evitar crash si no es JSON perfecto
+            const textResponse = await response.text();
+            console.log("Respuesta cruda:", textResponse); // Para depurar
+
+            // LIMPIEZA QUIRÚRGICA: Extraer el JSON aunque la IA añada texto extra
+            let cleanJson;
             try {
-                const raw = data.choices[0].message.content.replace(/```json/g, '').replace(/```/g, '').trim();
-                parsedContent = JSON.parse(raw);
+                // Buscamos el primer '{' y el último '}'
+                const firstBracket = textResponse.indexOf('{');
+                const lastBracket = textResponse.lastIndexOf('}');
+                
+                if (firstBracket !== -1 && lastBracket !== -1) {
+                    const jsonString = textResponse.substring(firstBracket, lastBracket + 1);
+                    cleanJson = JSON.parse(jsonString);
+                } else {
+                    throw new Error("No se encontró JSON en la respuesta");
+                }
             } catch (e) {
-                // Fallback cómico si falla el JSON
-                parsedContent = {
-                    headline: "LA IA FALLÓ AL INTENTAR SER GRACIOSA",
-                    subtitle: "Científicos confirman que pedirle humor a un robot fue mala idea.",
-                    location: "Internet",
-                    author: "Error 404",
+                console.error("Fallo al parsear JSON:", e);
+                // Fallback de emergencia si la IA alucina
+                cleanJson = {
+                    headline: "LA IA SE COMIÓ TU NOTICIA",
+                    subtitle: "Al parecer el tema era tan absurdo que el algoritmo colapsó.",
+                    location: "INTERNET",
+                    author: "ERROR 500",
                     body: [
-                        {type: "p", content: "Lo sentimos, el modelo de lenguaje se trabó intentando procesar tu solicitud. Probablemente el tema era demasiado aburrido o demasiado bueno."},
-                        {type: "quote", speaker: "La IA", role: "Cullpable", text: "Beep boop, no entendí el chiste."}
+                        {type: "p", content: "Lo sentimos, hubo un error técnico interpretando la sátira. Por favor intenta de nuevo."},
+                        {type: "quote", speaker: "El Desarrollador", role: "Culpable", text: "Prometo arreglar esto pronto."}
                     ]
                 };
             }
 
-            renderNews(parsedContent);
+            renderNews(cleanJson);
             document.getElementById('loadingState').classList.add('hidden');
             document.getElementById('resultState').classList.remove('hidden');
         }
 
         function renderNews(data) {
-            document.getElementById('resultTitle').innerText = data.headline;
-            document.getElementById('resultSubtitle').innerText = data.subtitle;
+            document.getElementById('resultTitle').innerText = data.headline || "Sin Titular";
+            document.getElementById('resultSubtitle').innerText = data.subtitle || "";
             document.getElementById('resultLocation').innerText = (data.location || "MÉXICO").toUpperCase();
             document.getElementById('resultAuthor').innerText = (data.author || "STAFF").toUpperCase();
 
             const container = document.getElementById('resultContent');
             container.innerHTML = '';
             
-            data.body.forEach((block, index) => {
-                if (block.type === 'quote') {
-                    container.innerHTML += `
-                        <div class="my-8 relative pl-8 before:content-['“'] before:absolute before:left-0 before:top-0 before:text-6xl before:text-yellow-400 before:font-serif before:leading-[0.5]">
-                            <p class="font-headline text-2xl md:text-3xl text-black font-bold mb-2 italic leading-tight">
-                                ${block.text}
+            if (data.body && Array.isArray(data.body)) {
+                data.body.forEach((block, index) => {
+                    if (block.type === 'quote') {
+                        container.innerHTML += `
+                            <div class="my-8 relative pl-6 border-l-8 border-yellow-400 bg-white p-4 shadow-sm">
+                                <p class="font-headline text-2xl md:text-3xl text-black font-bold mb-2 italic leading-tight">
+                                    "${block.text}"
+                                </p>
+                                <p class="font-mono text-xs font-bold text-gray-500 uppercase tracking-widest mt-2">
+                                    — ${block.speaker}, <span class="bg-yellow-200 text-black px-1">${block.role}</span>
+                                </p>
+                            </div>
+                        `;
+                    } else {
+                        const dropCapClass = index === 0 ? "drop-cap" : "";
+                        container.innerHTML += `
+                            <p class="${dropCapClass} mb-6 text-gray-800 font-serif text-lg md:text-xl leading-relaxed">
+                                ${block.content}
                             </p>
-                            <p class="font-mono text-xs font-bold text-gray-500 uppercase tracking-widest mt-4">
-                                — ${block.speaker}, <span class="bg-yellow-200 text-black px-1">${block.role}</span>
-                            </p>
-                        </div>
-                    `;
-                } else {
-                    const dropCapClass = index === 0 ? "drop-cap" : "";
-                    container.innerHTML += `
-                        <p class="${dropCapClass} mb-6 text-gray-800 font-serif text-lg md:text-xl leading-relaxed">
-                            ${block.content}
-                        </p>
-                    `;
-                }
-            });
+                        `;
+                    }
+                });
+            } else {
+                container.innerHTML = "<p>Error de formato en la noticia.</p>";
+            }
         }
     </script>
 </body>
