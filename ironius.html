@@ -7,7 +7,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Chomsky&family=Prata&family=Roboto+Mono:wght@400;700&family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chomsky&family=Prata&family=Roboto+Mono:wght@400;700&family=Oswald:wght@300;500;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
     
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
@@ -21,54 +21,68 @@
         .font-headline {
             font-family: 'Prata', serif;
         }
+        .font-body {
+            font-family: 'Merriweather', serif;
+        }
         .font-tabloid {
             font-family: 'Oswald', sans-serif;
         }
         .paper-shadow {
-            box-shadow: 10px 10px 0px 0px rgba(0,0,0,1);
+            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
             border: 2px solid black;
         }
-        .fade-in { animation: fadeIn 0.5s ease-in; }
+        .fade-in { animation: fadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         /* Estilos selección */
         .style-card.selected {
-            background-color: #fef08a;
+            background-color: #fef08a; /* yellow-200 */
             border-color: #000;
-            transform: translate(-4px, -4px);
+            transform: translate(-2px, -2px);
             box-shadow: 4px 4px 0px 0px #000;
         }
         .style-card {
             transition: all 0.2s;
         }
+        /* Decoración de texto periodístico */
+        .drop-cap::first-letter {
+            float: left;
+            font-family: 'Chomsky', serif;
+            font-size: 4.5rem;
+            line-height: 0.8;
+            padding-right: 12px;
+            padding-top: 4px;
+            color: #000;
+        }
     </style>
 </head>
-<body class="text-black min-h-screen flex flex-col relative selection:bg-yellow-300">
+<body class="text-black min-h-screen flex flex-col relative selection:bg-black selection:text-white">
 
-    <header class="bg-black text-white border-b-4 border-black sticky top-0 z-20">
+    <header class="bg-black text-white border-b-4 border-black sticky top-0 z-30">
         <div class="bg-yellow-400 text-black text-xs font-bold py-1 overflow-hidden whitespace-nowrap border-b-2 border-black">
-            <div class="inline-block animate-marquee px-4 uppercase tracking-widest">
-                🚨 MERCADOS: El valor de la dignidad cae 3 puntos — CLIMA: Se pronostican lluvias de lágrimas de oficinistas — CULTURA: Leer los términos y condiciones ahora cuenta como novela de terror —
+            <div class="inline-block animate-marquee px-4 uppercase tracking-widest font-mono">
+                🚨 ÚLTIMA HORA: ESTUDIO REVELA QUE EL 90% DE LAS ESTADÍSTICAS SON INVENTADAS EN EL MOMENTO — ECONOMÍA: MILLENNIALS ARRUINAN LA INDUSTRIA DE LAS SERVILLETAS DE TELA — CIENCIA: DESCUBREN QUE DORMIR ES LA ÚNICA FORMA DE NO GASTAR DINERO —
             </div>
         </div>
 
         <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-                <div class="bg-white text-black p-2 border-2 border-black rotate-3">
-                    <i class="ph-fill ph-newspaper-clipping text-4xl"></i>
+                <div class="bg-white text-black p-2 border-2 border-black rotate-[-2deg] shadow-[4px_4px_0px_white]">
+                    <i class="ph-fill ph-newspaper text-4xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-5xl md:text-6xl font-headline tracking-tighter leading-none">IRONIUS</h1>
-                    <p class="text-xs md:text-sm text-gray-400 font-mono uppercase tracking-widest mt-1">"Información real, contexto imaginario"</p>
+                    <h1 class="text-5xl md:text-7xl font-headline tracking-tighter leading-none">IRONIUS</h1>
+                    <p class="text-xs md:text-sm text-gray-400 font-mono uppercase tracking-widest mt-1">Periodismo de Alta Fidelidad (Baja Realidad)</p>
                 </div>
             </div>
             
-            <div class="flex flex-col items-end">
-                <div class="text-xs font-bold bg-red-600 text-white px-2 py-1 rotate-[-2deg] mb-1">PREMIO NACIONAL DE PERIODISMO (ROBADO)</div>
-                <div class="text-[10px] font-mono text-gray-400">VOL. 404 | EDICIÓN FINAL</div>
+            <div class="flex flex-col items-end text-right border-l-2 border-gray-800 pl-4">
+                <div class="text-[10px] font-mono text-gray-400 uppercase">Fundado en 1894 (Mentira)</div>
+                <div class="text-xs font-bold text-yellow-500 uppercase mt-1">Precio: Tu Atención</div>
+                <div class="text-[10px] font-mono text-gray-500">Vol. CDIV | No. 001</div>
             </div>
         </div>
     </header>
@@ -77,44 +91,47 @@
         
         <div class="lg:col-span-4 space-y-6">
             
-            <div class="bg-white p-6 paper-shadow">
-                
+            <div class="bg-white p-6 paper-shadow relative">
+                <div class="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rotate-12 border border-black z-10 shadow-sm">
+                    SISTEMA PATENTADO
+                </div>
+
                 <label class="block text-sm font-black font-tabloid uppercase mb-2 bg-black text-white inline-block px-2 transform -rotate-1">
-                    1. Tema / Víctima
+                    1. El Hecho (o la Víctima)
                 </label>
                 <textarea
                     id="topicInput"
                     rows="3"
-                    placeholder="Ej. El SAT, Ticketmaster, Los baches de la ciudad, La Selección Mexicana..."
-                    class="w-full bg-gray-100 border-2 border-black text-black text-lg font-mono p-4 mb-6 focus:bg-yellow-50 focus:outline-none focus:ring-0 placeholder-gray-500 resize-none"
+                    placeholder="Ej. La fila del SAT, Los precios de la gentrificación, El nuevo iPhone 25..."
+                    class="w-full bg-gray-50 border-2 border-black text-black text-lg font-mono p-4 mb-6 focus:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-black placeholder-gray-400 resize-none"
                 ></textarea>
 
                 <label class="block text-sm font-black font-tabloid uppercase mb-3 bg-black text-white inline-block px-2 transform rotate-1">
-                    2. Enfoque Editorial
+                    2. Lente Editorial
                 </label>
                 <div class="grid grid-cols-1 gap-3 mb-6">
                     
-                    <button onclick="selectStyle('deforma')" id="style-deforma" class="style-card flex items-center gap-3 p-3 border-2 border-gray-300 hover:border-black text-left group selected">
-                        <div class="bg-black text-white p-2 border border-black"><i class="ph-fill ph-article"></i></div>
+                    <button onclick="selectStyle('institucional')" id="style-institucional" class="style-card flex items-center gap-3 p-3 border-2 border-gray-200 hover:border-black text-left group selected cursor-pointer">
+                        <div class="bg-black text-white p-2 border border-black min-w-[40px] text-center"><i class="ph-bold ph-bank"></i></div>
                         <div>
-                            <div class="text-sm font-bold font-tabloid uppercase">Estilo "Deforma"</div>
-                            <div class="text-[10px] font-mono">Formalidad absoluta para noticias absurdas.</div>
+                            <div class="text-sm font-bold font-tabloid uppercase">Institucional Absurdo</div>
+                            <div class="text-[10px] font-mono leading-tight text-gray-600">La burocracia llevada al extremo lógico. Tono oficialista.</div>
                         </div>
                     </button>
                     
-                    <button onclick="selectStyle('barrio')" id="style-barrio" class="style-card flex items-center gap-3 p-3 border-2 border-gray-300 hover:border-black text-left group">
-                        <div class="bg-black text-white p-2 border border-black"><i class="ph-fill ph-speaker-high"></i></div>
+                    <button onclick="selectStyle('costumbrista')" id="style-costumbrista" class="style-card flex items-center gap-3 p-3 border-2 border-gray-200 hover:border-black text-left group cursor-pointer">
+                        <div class="bg-black text-white p-2 border border-black min-w-[40px] text-center"><i class="ph-bold ph-users-three"></i></div>
                         <div>
-                            <div class="text-sm font-bold font-tabloid uppercase">Realismo Mágico Urbano</div>
-                            <div class="text-[10px] font-mono">Crónica seria de problemas cotidianos.</div>
+                            <div class="text-sm font-bold font-tabloid uppercase">Tragedia Cotidiana</div>
+                            <div class="text-[10px] font-mono leading-tight text-gray-600">Dramatizar problemas del primer mundo. Tono melodramático.</div>
                         </div>
                     </button>
 
-                    <button onclick="selectStyle('conspiracion')" id="style-conspiracion" class="style-card flex items-center gap-3 p-3 border-2 border-gray-300 hover:border-black text-left group">
-                        <div class="bg-black text-white p-2 border border-black"><i class="ph-fill ph-eye-closed"></i></div>
+                    <button onclick="selectStyle('cientifico')" id="style-cientifico" class="style-card flex items-center gap-3 p-3 border-2 border-gray-200 hover:border-black text-left group cursor-pointer">
+                        <div class="bg-black text-white p-2 border border-black min-w-[40px] text-center"><i class="ph-bold ph-flask"></i></div>
                         <div>
-                            <div class="text-sm font-bold font-tabloid uppercase">La Verdad Oculta</div>
-                            <div class="text-[10px] font-mono">Lógica paranoica irrefutable.</div>
+                            <div class="text-sm font-bold font-tabloid uppercase">Estudio Científico</div>
+                            <div class="text-[10px] font-mono leading-tight text-gray-600">Datos duros inventados y correlaciones falsas.</div>
                         </div>
                     </button>
                 </div>
@@ -122,112 +139,137 @@
                 <button
                     onclick="generateContent()"
                     id="generateBtn"
-                    class="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-black font-tabloid tracking-widest text-xl py-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white font-black font-tabloid tracking-widest text-xl py-4 border-2 border-transparent shadow-[4px_4px_0px_0px_#fbbf24] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    <i class="ph-bold ph-lightning"></i> PUBLICAR NOTICIA
+                    <i class="ph-bold ph-printer"></i> IMPRIMIR VERDAD
                 </button>
             </div>
             
-            <div class="bg-gray-100 p-4 paper-shadow text-center opacity-90 border-dashed border-2 border-gray-400">
-                <p class="text-[9px] font-bold uppercase mb-2 text-gray-400">Espacio Patrocinado</p>
-                <h4 class="font-headline font-bold text-lg leading-tight">Curso: "Cómo culpar al gobierno de tus malas decisiones"</h4>
-                <p class="font-mono text-[10px] mt-2 text-gray-600">Incluye módulo de Twitter avanzado.</p>
+            <div class="bg-[#e5e5e5] p-4 paper-shadow text-center opacity-80 border-dashed border-2 border-gray-400">
+                <p class="text-[9px] font-bold uppercase mb-2 text-gray-500 tracking-widest">Publicidad</p>
+                <h4 class="font-headline font-bold text-lg leading-tight">VENDO OPEL CORSA '98</h4>
+                <p class="font-mono text-[10px] mt-2 text-gray-600">"Hace ruidos raros pero tiene personalidad."</p>
+                <p class="font-mono text-[10px] text-gray-600">Trato serio.</p>
             </div>
         </div>
 
         <div class="lg:col-span-8">
             
-            <div id="emptyState" class="h-full min-h-[500px] flex flex-col items-center justify-center bg-white paper-shadow p-10 text-center opacity-80" style="background-image: url('https://www.transparenttextures.com/patterns/dust.png');">
-                <div class="bg-gray-100 p-6 rounded-full mb-6 border-2 border-dashed border-gray-400">
-                    <i class="ph-duotone ph-pencil-simple-slash text-5xl text-gray-400"></i>
+            <div id="emptyState" class="h-full min-h-[500px] flex flex-col items-center justify-center bg-white paper-shadow p-12 text-center opacity-90 relative overflow-hidden">
+                <div class="absolute inset-0 opacity-[0.05] pointer-events-none" style="background-image: url('https://www.transparenttextures.com/patterns/lined-paper.png');"></div>
+                
+                <div class="bg-gray-50 p-6 rounded-full mb-6 border-2 border-dashed border-gray-300">
+                    <i class="ph-duotone ph-typewriter text-6xl text-gray-400"></i>
                 </div>
-                <h3 class="text-2xl font-headline font-bold mb-2">Sala de Redacción</h3>
-                <p class="font-mono text-sm text-gray-500 max-w-sm mx-auto">
-                    Los reporteros están esperando instrucciones. Escribe un tema (ej: "SAT") y veremos qué inventan.
+                <h3 class="text-3xl font-headline font-bold mb-3">Redacción Vacía</h3>
+                <p class="font-mono text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
+                    Nuestros redactores están procrastinando. Dales un tema (ej: <span class="bg-yellow-200 px-1 text-black font-bold">"El tráfico"</span>) para obligarlos a trabajar usando nuestra estricta metodología de ironía estructural.
                 </p>
             </div>
 
-            <div id="loadingState" class="hidden h-full min-h-[500px] flex flex-col items-center justify-center bg-yellow-50 paper-shadow p-10 text-center">
-                <div class="relative mb-6">
-                    <div class="w-20 h-20 border-8 border-black border-t-yellow-500 rounded-full animate-spin"></div>
+            <div id="loadingState" class="hidden h-full min-h-[500px] flex flex-col items-center justify-center bg-[#fffdf5] paper-shadow p-10 text-center relative border-t-8 border-yellow-400">
+                <div class="relative mb-8">
+                    <div class="w-24 h-24 border-8 border-gray-200 border-t-black rounded-full animate-spin"></div>
                     <div class="absolute inset-0 flex items-center justify-center">
-                        <i class="ph-fill ph-magnifying-glass text-black text-2xl animate-bounce"></i>
+                        <i class="ph-fill ph-pencil-simple text-black text-3xl animate-pulse"></i>
                     </div>
                 </div>
-                <h3 class="text-xl font-bold font-tabloid uppercase tracking-wider" id="loadingText">Investigando...</h3>
-                <p class="text-xs font-mono mt-2 text-gray-600">Verificando fuentes dudosas...</p>
+                <h3 class="text-2xl font-bold font-tabloid uppercase tracking-widest mb-2" id="loadingText">Inventando Hechos...</h3>
+                <div class="text-xs font-mono text-gray-500 space-y-1">
+                    <p>Consultando fuentes inexistentes...</p>
+                    <p>Tergiversando declaraciones...</p>
+                    <p>Ajustando la realidad...</p>
+                </div>
             </div>
 
             <div id="resultState" class="hidden bg-[#fffdf5] paper-shadow flex flex-col min-h-[600px] fade-in relative">
-                <div class="absolute inset-0 opacity-[0.03] pointer-events-none flex items-center justify-center overflow-hidden">
-                    <i class="ph-fill ph-newspaper-clipping text-[400px]"></i>
+                
+                <div class="border-b border-black p-1 flex justify-between items-center bg-gray-100">
+                    <div class="font-mono text-[10px] uppercase tracking-widest px-2 text-gray-500">Sección: <span id="sectionLabel" class="text-black font-bold">NACIONAL</span></div>
+                    <div class="font-mono text-[10px] uppercase px-2 text-gray-400">Lectura: 3 min</div>
                 </div>
 
-                <div class="bg-black text-white px-4 py-2 flex justify-between items-center border-b-2 border-black relative z-20">
-                    <div class="font-mono text-xs text-yellow-400">SECCIÓN: <span id="sectionLabel">NACIONAL</span></div>
-                    <div class="flex gap-2">
-                         <span class="text-[10px] bg-white text-black px-2 py-0.5 font-bold uppercase tracking-wider">Exclusiva</span>
-                    </div>
-                </div>
-
-                <div class="p-8 md:p-12 relative z-10">
-                    <div class="border-b-4 border-black pb-6 mb-8">
-                        <h2 class="font-headline text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] mb-5 tracking-tight text-gray-900" id="resultTitle">
-                            TITULAR
+                <div class="p-8 md:p-16 relative z-10 font-body">
+                    
+                    <header class="mb-10 text-center">
+                        <h2 class="font-headline text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05] mb-6 text-gray-900 tracking-tight" id="resultTitle">
+                            TITULAR DE LA NOTICIA
                         </h2>
-                        <h3 class="font-mono text-lg md:text-xl text-gray-600 leading-snug mb-5 border-l-4 border-yellow-400 pl-4" id="resultSubtitle">
-                            Subtítulo
-                        </h3>
-                        <div class="flex flex-wrap items-center text-xs font-mono text-gray-500 border-t-2 border-gray-200 pt-3 gap-4">
-                            <span class="font-bold uppercase text-black flex items-center gap-1"><i class="ph-bold ph-map-pin"></i> <span id="resultLocation">CDMX</span></span>
-                            <span class="flex items-center gap-1"><i class="ph-bold ph-user"></i> <span class="font-bold" id="resultAuthor">Redacción</span></span>
-                            <span class="flex items-center gap-1"><i class="ph-bold ph-clock"></i> Hace 2 horas</span>
+                        
+                        <div class="flex justify-center mb-6">
+                            <div class="w-24 h-1 bg-black"></div>
                         </div>
+
+                        <h3 class="font-sans text-lg md:text-xl text-gray-600 leading-normal max-w-2xl mx-auto italic" id="resultSubtitle">
+                            Subtítulo que amplía la ironía y prepara el terreno para el absurdo.
+                        </h3>
+                    </header>
+
+                    <div class="flex items-center justify-between text-xs font-mono text-gray-500 border-y border-gray-200 py-3 mb-8">
+                        <span class="font-bold text-black uppercase flex items-center gap-1">
+                            <i class="ph-bold ph-map-pin"></i> <span id="resultLocation">CDMX</span>
+                        </span>
+                        <span class="uppercase tracking-wider">Por <span class="font-bold text-black border-b border-black" id="resultAuthor">Staff</span></span>
+                        <span>Hace 2 horas</span>
                     </div>
                     
-                    <div id="resultContent" class="space-y-6">
-                        </div>
+                    <article id="resultContent" class="space-y-6 text-gray-800 leading-relaxed text-lg">
+                        </article>
+
+                    <div class="mt-12 pt-8 border-t-2 border-black flex items-center justify-center gap-4 opacity-50">
+                        <i class="ph-fill ph-share-network text-2xl"></i>
+                        <span class="font-mono text-xs uppercase">Compartir esta desinformación</span>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="bg-black text-gray-500 text-center py-8 mt-8 font-mono text-xs border-t-4 border-yellow-400">
-        <p class="mb-2">IRONIUS MEDIA GROUP.</p>
-        <p class="text-[10px] opacity-50">Cualquier parecido con la realidad es culpa de la realidad, no nuestra.</p>
+    <footer class="bg-black text-gray-400 py-12 mt-8 font-mono text-xs border-t-8 border-yellow-400">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <h2 class="text-2xl font-headline text-white mb-4">IRONIUS MEDIA GROUP</h2>
+            <p class="mb-6 max-w-md mx-auto">"Dedicados a la noble tarea de confundir a la opinión pública con verdades que deberían ser mentiras y viceversa."</p>
+            <div class="flex justify-center gap-6 mb-8 text-white">
+                <a href="#" class="hover:text-yellow-400 underline decoration-dotted">Términos de Servicio (Nadie los lee)</a>
+                <a href="#" class="hover:text-yellow-400 underline decoration-dotted">Política de Privacidad (Inexistente)</a>
+                <a href="#" class="hover:text-yellow-400 underline decoration-dotted">Contáctanos (No respondemos)</a>
+            </div>
+            <p class="text-[10px] opacity-30">© 2024 Ironius. Todos los derechos reservados por nadie.</p>
+        </div>
     </footer>
 
     <script>
         // ==========================================
-        // LÓGICA DE SATIRA SERIA (DEADPAN)
+        // CONFIGURACIÓN DE IRONÍA ESTRUCTURAL
         // ==========================================
         const POLLINATIONS_URL = "https://text.pollinations.ai/openai"; 
         
-        let currentStyle = 'deforma';
+        let currentStyle = 'institucional';
 
-        // PROMPTS REFINADOS: ENFOQUE EN REALIDAD DISTORSIONADA, NO FANTASÍA
+        // DEFINICIÓN DE PERSONAS BASADAS EN EL DOCUMENTO GUÍA
+        // Clave: Mantener la seriedad (Deadpan) y la lógica interna absurda.
         const PERSONAS = {
-            deforma: {
-                name: "EL DEFORMA",
-                role: "Eres un periodista senior de un medio satírico (estilo El Deforma / The Onion).",
-                tone: "Tu tono es SERIO, PROFESIONAL, PERIODÍSTICO y OBJETIVO. NUNCA usas 'jaja' ni rompes el personaje. NUNCA admites que es broma.",
-                instruction: "Usa entidades REALES (SAT, CFE, Gobierno, IMSS, Ticketmaster). NO inventes 'Universidad de la Vida'. La comedia viene de aplicar lógica absurda a instituciones reales. Escribe como si fuera una noticia de primera plana del New York Times, pero sobre una estupidez."
+            institucional: {
+                label: "BUROCRACIA",
+                role: "Eres un redactor senior de política económica. Tu especialidad es explicar el caos burocrático como si fuera un plan maestro brillante.",
+                tone: "Formal, técnico, condescendiente y extremadamente serio. Usas lenguaje corporativo para justificar locuras.",
+                instruction: "Regla 1: Valida el absurdo con una institución real (SAT, IMSS, Gobierno). Regla 2: Cita a un 'Vocero Oficial' que dé una excusa ridículamente lógica. Regla 3: El problema no es el sistema, es el usuario."
             },
-            barrio: {
-                name: "LA JORNADA URBANA",
-                role: "Eres un reportero de crónica urbana, muy serio pero con lenguaje coloquial natural.",
-                tone: "No es una parodia exagerada, es una crónica detallada. Usas slang (banda, varo, chamba) pero como parte natural del reporte.",
-                instruction: "Toma el tema y conviértelo en un problema social gravísimo que afecta a la colonia. Entrevista a vecinos 'reales'. Trata el tema con la gravedad de un documental."
+            costumbrista: {
+                label: "SOCIEDAD",
+                role: "Eres un antropólogo social deprimido que escribe crónicas urbanas.",
+                tone: "Melancólico, observador detallista, trágico. Tratas una molestia menor (tráfico, lluvia, internet lento) como una crisis humanitaria.",
+                instruction: "Regla 1: Exagera las consecuencias emocionales (ej. 'la pérdida de esperanza al ver el metro lleno'). Regla 2: Entrevista a una 'víctima' en la calle que diga algo obvio pero profundo. Regla 3: Usa metáforas apocalípticas."
             },
-            conspiracion: {
-                name: "EXPEDIENTE X",
-                role: "Eres un investigador independiente que 'ha despertado'.",
-                tone: "Analítico, conectas puntos invisibles. No suenas loco, suenas a alguien que sabe demasiado.",
-                instruction: "No digas 'esto es una conspiración'. Dilo como un HECHO. Usa términos técnicos, menciona leyes reales o tratados internacionales y tuércelos para justificar tu teoría absurda sobre el tema."
+            cientifico: {
+                label: "CIENCIA Y SALUD",
+                role: "Eres un divulgador científico que malinterpreta todos los estudios.",
+                tone: "Analítico, basado en datos (falsos), alarmista pero con vocabulario académico.",
+                instruction: "Regla 1: Inventa un porcentaje específico (ej. 'El 87.4% de los mexicanos...'). Regla 2: Establece una correlación falsa (Causa -> Efecto absurdo). Regla 3: Cita a la 'Universidad de [Lugar Random]' para dar autoridad."
             }
         };
 
-        // --- INTERFAZ ---
+        // --- UI LOGIC ---
 
         function selectStyle(style) {
             currentStyle = style;
@@ -235,66 +277,67 @@
             document.getElementById(`style-${style}`).classList.add('selected');
         }
 
-        // --- GENERACIÓN ---
-
         async function generateContent() {
             const topic = document.getElementById('topicInput').value.trim();
-            if (!topic) return alert("Escribe un tema. La hoja en blanco nos da ansiedad.");
+            if (!topic) {
+                alert("⚠️ Error de Capa 8: El usuario no ingresó un tema.");
+                return;
+            }
 
-            // UI Changes
+            // UI State Transition
             document.getElementById('emptyState').classList.add('hidden');
             document.getElementById('resultState').classList.add('hidden');
             document.getElementById('loadingState').classList.remove('hidden');
-            document.getElementById('generateBtn').disabled = true;
-            document.getElementById('generateBtn').innerText = "REDACTANDO...";
+            
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> PROCESANDO MENTIRAS...';
             
             try {
                 await callIroniusAI(topic);
             } catch (error) {
                 console.error(error);
-                alert("Error en la matrix. Intenta de nuevo.");
+                alert("Nuestros servidores están en huelga. Intenta de nuevo.");
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('emptyState').classList.remove('hidden');
             } finally {
-                const btn = document.getElementById('generateBtn');
                 btn.disabled = false;
-                btn.innerHTML = '<i class="ph-bold ph-lightning"></i> PUBLICAR NOTICIA';
+                btn.innerHTML = '<i class="ph-bold ph-printer"></i> IMPRIMIR VERDAD';
             }
         }
 
         async function callIroniusAI(topic) {
             const persona = PERSONAS[currentStyle];
-            document.getElementById('sectionLabel').innerText = persona.name;
+            document.getElementById('sectionLabel').innerText = persona.label;
 
             const systemPrompt = `
-                ${persona.role}
-                TONO OBLIGATORIO: ${persona.tone}
-                INSTRUCCIÓN CLAVE: ${persona.instruction}
+                ROL: ${persona.role}
+                TONO: ${persona.tone}
+                REGLAS DE ORO: ${persona.instruction}
                 
-                OBJETIVO: Escribir una NOTICIA SATÍRICA EXTENSA (Deadpan Humor).
+                OBJETIVO: Escribir una NOTICIA SATÍRICA (Estilo The Onion / El Deforma).
+                CLAVE DEL ÉXITO: La noticia debe parecer 100% real en su estructura y redacción. El humor viene de que el contenido es lógicamente posible pero moral o prácticamente absurdo. NO uses "jaja", NO rompas la cuarta pared.
                 
-                REGLAS DE FORMATO (JSON STRICT):
-                1. Responde SOLO con JSON válido.
-                2. Estructura:
-                   {
-                     "headline": "Titular serio pero absurdo (Sin signos de admiración excesivos)",
-                     "subtitle": "Bajada periodística que explica el conflicto ridículo",
-                     "location": "Ciudad real (CDMX, Monterrey, Guadalajara, etc.)",
-                     "author": "Nombre de reportero (ej. 'Armando Broncas', 'Staff Editorial')",
-                     "body": [
-                       {"type": "p", "content": "Lead periodístico serio (Quién, qué, cuándo, dónde) sobre el absurdo."},
-                       {"type": "p", "content": "Contexto usando instituciones reales (INEGI, PROFECO, etc.) con datos falsos."},
-                       {"type": "quote", "speaker": "Nombre normal (ej. Juan Pérez)", "role": "Cargo real (ej. Usuario del Metro)", "text": "Cita que valide el absurdo con seriedad."},
-                       {"type": "p", "content": "Consecuencias sociales o políticas exageradas del tema."},
-                       {"type": "quote", "speaker": "Funcionario Ficticio de Entidad Real", "role": "Vocero del SAT/Gobierno", "text": "Declaración oficial justificando lo injustificable."},
-                       {"type": "p", "content": "Cierre pesimista o irónico."}
-                     ]
-                   }
-                3. EXTENSIÓN: Mínimo 450 palabras. Detalla mucho.
-                4. IDIOMA: Español de México.
+                FORMATO DE RESPUESTA (JSON PURO):
+                {
+                   "headline": "Titular impactante y serio (Max 12 palabras)",
+                   "subtitle": "Bajada que explica la premisa irónica",
+                   "location": "Ciudad de México / Monterrey / Guadalajara (o relevante al tema)",
+                   "author": "Nombre y Cargo Ficticio (ej. 'Lic. Valeriano, Corresponsal de Baches')",
+                   "body": [
+                       {"type": "p", "content": "Párrafo introductorio (Lead). Quién, qué, dónde, cuándo. Establece la premisa absurda como un hecho irrefutable."},
+                       {"type": "p", "content": "Contexto o datos duros inventados. Usa porcentajes o nombres de leyes ficticias que suenen reales."},
+                       {"type": "quote", "speaker": "Nombre de Autoridad/Víctima", "role": "Cargo rimbombante", "text": "Una cita textual que confirme la locura de la noticia con total seriedad."},
+                       {"type": "p", "content": "Desarrollo de las consecuencias. ¿Cómo afecta esto a la sociedad? Exageración lógica."},
+                       {"type": "p", "content": "Conclusión pesimista o circular."}
+                   ]
+                }
+                
+                IDIOMA: Español de México (Neutro pero con modismos si el contexto lo pide).
+                LONGITUD: Sé descriptivo. Mínimo 400 palabras de contenido total.
             `.trim();
 
-            const userPrompt = `El tema es: "${topic}". Escribe la nota satírica actuando como si fuera 100% real.`;
+            const userPrompt = `Tema de la noticia: "${topic}". Escribe la nota ahora.`;
 
             const response = await fetch(POLLINATIONS_URL, {
                 method: "POST",
@@ -306,74 +349,48 @@
                     ],
                     model: "openai",
                     jsonMode: true,
-                    seed: Math.floor(Math.random() * 100000)
+                    seed: Math.floor(Math.random() * 1000000)
                 })
             });
 
-            if (!response.ok) throw new Error(`Error ${response.status}`);
+            if (!response.ok) throw new Error("Error en la API");
             
             const data = await response.json();
-            const aiContent = data.choices[0].message.content;
+            const content = data.choices[0].message.content;
+            
+            // Limpieza básica de JSON por si la IA añade markdown
+            const cleanJson = content.replace(/```json/g, '').replace(/```/g, '').trim();
+            const parsedData = JSON.parse(cleanJson);
 
-            let parsedResult;
-            try {
-                const cleanJson = aiContent.replace(/```json/g, '').replace(/```/g, '').trim();
-                parsedResult = JSON.parse(cleanJson);
-            } catch (e) {
-                // Fallback por si la IA alucina texto plano
-                parsedResult = {
-                    headline: "ÚLTIMA HORA: La IA se negó a trabajar hoy",
-                    subtitle: "Sindicato de algoritmos exige mejores condiciones eléctricas.",
-                    location: "Silicon Valley",
-                    author: "Error 500",
-                    body: [{ type: "p", content: "No pudimos generar el formato correcto. Intenta con otro tema." }]
-                };
-            }
-
-            renderResult(parsedResult);
+            renderNews(parsedData);
+            
             document.getElementById('loadingState').classList.add('hidden');
             document.getElementById('resultState').classList.remove('hidden');
         }
 
-        function renderResult(data) {
-            document.getElementById('resultTitle').innerText = data.headline || "Sin Titular";
-            document.getElementById('resultSubtitle').innerText = data.subtitle || "";
-            document.getElementById('resultLocation').innerText = (data.location || "MÉXICO").toUpperCase();
-            document.getElementById('resultAuthor').innerText = data.author || "Redacción";
+        function renderNews(data) {
+            document.getElementById('resultTitle').innerText = data.headline;
+            document.getElementById('resultSubtitle').innerText = data.subtitle;
+            document.getElementById('resultLocation').innerText = data.location.toUpperCase();
+            document.getElementById('resultAuthor').innerText = data.author;
 
             const container = document.getElementById('resultContent');
             container.innerHTML = '';
             
-            if(data.body && Array.isArray(data.body)) {
-                data.body.forEach((block, index) => {
-                    if (block.type === 'quote') {
-                        // Diseño de Cita Periodística Seria
-                        container.innerHTML += `
-                            <div class="my-8 py-2 border-y border-gray-200">
-                                <p class="font-headline text-xl md:text-2xl text-black leading-tight mb-2">
-                                    "${block.text}"
-                                </p>
-                                <p class="font-mono text-xs text-gray-500 uppercase text-right">
-                                    — ${block.speaker}, <span class="font-bold text-gray-700">${block.role}</span>
-                                </p>
-                            </div>
-                        `;
-                    } else {
-                        // Párrafo Periodístico (Columns effect simulated via narrow max-width in generic css, here just text)
-                        // Capital letter for first paragraph
-                        const isFirst = index === 0;
-                        const dropCap = isFirst 
-                            ? "first-letter:text-5xl first-letter:font-headline first-letter:font-bold first-letter:mr-2 first-letter:float-left first-letter:leading-none" 
-                            : "";
-                        
-                        container.innerHTML += `
-                            <p class="font-serif text-lg leading-relaxed text-gray-900 mb-5 text-justify ${dropCap}">
-                                ${block.content}
-                            </p>
-                        `;
-                    }
-                });
-            }
+            data.body.forEach((block, index) => {
+                if (block.type === 'quote') {
+                    container.innerHTML += `
+                        <div class="my-8 pl-6 border-l-4 border-yellow-400 italic bg-gray-50 p-4 rounded-r-lg">
+                            <p class="font-headline text-xl md:text-2xl text-black mb-2">"${block.text}"</p>
+                            <p class="font-sans text-xs font-bold text-gray-500 uppercase tracking-wider">— ${block.speaker}, <span class="text-gray-400 font-normal">${block.role}</span></p>
+                        </div>
+                    `;
+                } else {
+                    // Dropcap para el primer párrafo
+                    const classes = index === 0 ? "drop-cap mb-6" : "mb-6";
+                    container.innerHTML += `<p class="${classes}">${block.content}</p>`;
+                }
+            });
         }
     </script>
 </body>
