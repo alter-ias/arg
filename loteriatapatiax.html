@@ -21,7 +21,10 @@
             --text-color: #FFFFFF;
         }
         
-        /* Cursor personalizado */
+        /* 
+           CURSOR POR DEFECTO (FONDO/CUERPO): 
+           Ahora es NEGRO (stroke="black") para contrastar con la "luz" del efecto líquido.
+        */
         html, body { 
             margin: 0; 
             padding: 0; 
@@ -31,11 +34,18 @@
             color: var(--text-color); 
             font-family: 'Poppins', sans-serif; 
             overflow-x: hidden;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
+            
+            /* SVG con stroke="black" */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
+        /* 
+           CURSOR AL SELECCIONAR (LINKS, BOTONES, CARTAS):
+           Ahora es BLANCO LUMINOSO (stroke="white") para indicar interacción.
+        */
         a, button, .postal-card {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), pointer;
+            /* SVG con stroke="white" */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), pointer;
         }
 
         /* --- FONDOS LÍQUIDOS --- */
@@ -115,42 +125,35 @@
             margin-bottom: 1.5rem; 
             object-fit: contain;
             
-            /* TRUCO: Convierte cualquier imagen a una silueta blanca plana */
+            /* Fuerza el logo a ser silueta blanca plana */
             filter: brightness(0) invert(1);
             
-            /* Animación suave como en el video */
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         
-        /* Lógica al pasar el cursor sobre el link del logo */
+        /* Hover Logo */
         #postal-selection-view a:hover .logo {
-            transform: scale(1.15); /* Efecto "pop" */
+            transform: scale(1.15);
         }
 
         /* TEXTO SUBTÍTULO */
         #postal-selection-view .subtitle { 
             font-family: 'Poppins', sans-serif; 
             font-size: 1.1rem; 
-            
-            /* Blanco puro, sin sombras */
             color: #FFFFFF; 
             text-shadow: none; 
             font-weight: 400; 
-            
             margin-top: 10px; 
             max-width: 650px; 
             line-height: 1.7; 
             margin-left: auto; 
             margin-right: auto;
-            
-            /* Sin fondo (estilo flotante) */
             background: transparent;
         }
         
         /* Navegación */
         #navigation-controls { display: flex; justify-content: center; align-items: center; gap: 60px; margin: 30px 0; width: 100%; }
         .nav-arrow { 
-            /* Estilo minimalista blanco */
             background-color: transparent; 
             border: 1px solid rgba(255, 255, 255, 0.5); 
             color: white; 
@@ -165,7 +168,7 @@
         }
         .nav-arrow:hover { 
             background-color: white; 
-            color: black; /* Invertir color al hover para efecto solido */
+            color: black; 
             transform: scale(1.1); 
             border-color: white;
         }
@@ -180,14 +183,14 @@
             transition: transform 0.5s ease, box-shadow 0.5s ease, opacity 0.4s ease; 
             transform-style: preserve-3d; 
             
-            /* Transparencia por defecto */
+            /* Transparencia por defecto (se ve el líquido debajo) */
             opacity: 0.6; 
         }
 
         .postal-card:hover { 
             transform: translateY(-10px) scale(1.02); 
             box-shadow: 0 15px 30px rgba(0,0,0,0.5); 
-            /* Solidez al pasar el cursor */
+            /* Sólido al hover */
             opacity: 1; 
         }
 
@@ -245,12 +248,12 @@
         <div id="postal-selection-view" class="view-container">
             <header class="header flex flex-col items-center z-10">
                 
-                <!-- LOGO BLANCO PURO con Enlace -->
+                <!-- Logo con Link a argx.html -->
                 <a href="argx.html" class="inline-block" title="Volver al inicio">
                     <img src="./assets/img/logo00.png" alt="Lotería Tapatía Logo" class="logo">
                 </a>
 
-                <!-- TEXTO BLANCO PURO -->
+                <!-- Subtítulo -->
                 <p class="subtitle text-center">La Lotería Tapatía es un proyecto literario que explora y celebra la identidad de Guadalajara a través de viñetas breves y evocadoras...</p>
             </header>
             
