@@ -13,7 +13,7 @@
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     
     <style>
@@ -108,38 +108,79 @@
         #postal-selection-view { position: relative; justify-content: flex-start; padding-top: 40px; }
         .view-container.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        /* Tipografías */
-        #postal-selection-view .subtitle { font-family: 'Poppins', sans-serif; font-size: 1rem; color: var(--secondary-text-color); font-weight: 300; margin-top: 10px; max-width: 600px; line-height: 1.6; margin-left: auto; margin-right: auto; }
+        /* --- ESTILOS MEJORADOS PARA LOGO Y TEXTO --- */
+        
+        /* LOGO */
+        #postal-selection-view .logo { 
+            height: 13rem; /* Tamaño ajustado */
+            width: auto; 
+            margin-bottom: 1.5rem; 
+            object-fit: contain;
+            
+            /* Efecto de resplandor blanco fuerte */
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6)) brightness(1.1);
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+        
+        /* Hover en el logo */
+        #postal-selection-view a:hover .logo {
+            transform: scale(1.05);
+            /* Más brillo al pasar el mouse */
+            filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9)) brightness(1.2);
+        }
+
+        /* SUBTÍTULO */
+        #postal-selection-view .subtitle { 
+            font-family: 'Poppins', sans-serif; 
+            font-size: 1.1rem; /* Un poco más grande */
+            
+            /* Color blanco puro */
+            color: #FFFFFF; 
+            font-weight: 400; /* Letra un poco más gruesa */
+            
+            margin-top: 10px; 
+            max-width: 650px; 
+            line-height: 1.7; 
+            margin-left: auto; 
+            margin-right: auto;
+            
+            /* Sombra negra para contraste con el texto */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5);
+            
+            /* Fondo semitransparente (Glassmorphism) para resaltar sobre el líquido */
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px 25px;
+            border-radius: 12px;
+            backdrop-filter: blur(3px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
         
         /* Navegación */
         #navigation-controls { display: flex; justify-content: center; align-items: center; gap: 60px; margin: 30px 0; width: 100%; }
         .nav-arrow { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 1.5rem; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(5px); }
-        .nav-arrow:hover { background-color: rgba(255, 255, 255, 0.3); transform: scale(1.1); }
+        .nav-arrow:hover { background-color: rgba(255, 255, 255, 0.3); transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.4); }
         .nav-arrow.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        /* --- ESTILOS DE LAS CARTAS (MODIFICADOS) --- */
+        /* --- ESTILOS DE LAS CARTAS --- */
         #postal-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; max-width: 900px; perspective: 1000px; padding-bottom: 40px; }
         
         .postal-card { 
             width: 100%; 
             aspect-ratio: 2 / 3; 
-            /* Transición añadida para opacidad */
             transition: transform 0.5s ease, box-shadow 0.5s ease, opacity 0.4s ease; 
             transform-style: preserve-3d; 
             
-            /* MODIFICACIÓN: Transparencia por defecto */
+            /* Transparencia por defecto */
             opacity: 0.6; 
         }
 
         .postal-card:hover { 
             transform: translateY(-10px) scale(1.02); 
             box-shadow: 0 15px 30px rgba(0,0,0,0.5); 
-            
-            /* MODIFICACIÓN: Solidez al pasar el cursor */
+            /* Solidez al pasar el cursor */
             opacity: 1; 
         }
 
-        /* MODIFICACIÓN: Si la carta está volteada (activa), también se vuelve sólida */
         .postal-card.is-flipping {
             opacity: 1;
         }
@@ -171,7 +212,8 @@
             #postal-container { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             #poem-title { font-size: 2.2rem; }
             #poem-text-display { font-size: 1.25rem; }
-            #postal-selection-view .logo { height: 150px; }
+            #postal-selection-view .logo { height: 100px; }
+            #postal-selection-view .subtitle { font-size: 0.95rem; padding: 10px 15px; }
         }
     </style>
 </head>
@@ -191,14 +233,15 @@
 
     <div class="page-wrapper">
         <div id="postal-selection-view" class="view-container">
-            <header class="header flex flex-col items-center">
+            <header class="header flex flex-col items-center z-10">
                 
-                <!-- MODIFICACIÓN: Logo con Link a argx.html -->
-                <a href="argx.html" class="transition-transform duration-300 hover:scale-105 inline-block" title="Volver al inicio">
-                    <img src="./assets/img/logo00.png" alt="Lotería Tapatía Logo" class="logo h-48 w-auto mb-6 object-contain drop-shadow-lg">
+                <!-- Logo con Link a argx.html y clase 'logo' estilizada -->
+                <a href="argx.html" class="inline-block" title="Volver al inicio">
+                    <img src="./assets/img/logo00.png" alt="Lotería Tapatía Logo" class="logo">
                 </a>
 
-                <p class="subtitle text-center px-4">La Lotería Tapatía es un proyecto literario que explora y celebra la identidad de Guadalajara a través de viñetas breves y evocadoras...</p>
+                <!-- Subtítulo con estilos de resalte -->
+                <p class="subtitle text-center">La Lotería Tapatía es un proyecto literario que explora y celebra la identidad de Guadalajara a través de viñetas breves y evocadoras...</p>
             </header>
             
             <div id="navigation-controls">
