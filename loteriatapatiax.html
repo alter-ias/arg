@@ -2,317 +2,198 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lotería Tapatía</title>
     
     <link rel="icon" type="image/png" href="./assets/img/logo00.png">
     
+    <!-- Tailwind CSS (para facilitar estilos rápidos visuales del ejemplo ARG) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Poppins:wght@200;300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     
     <style>
         :root {
-            --bg-dark: #050505;
-            --text-color: #EAEAEA;
-            --secondary-text-color: #b3b3b3;
-            --card-border: rgba(255, 255, 255, 0.15);
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --font-serif: 'Cormorant Garamond', serif;
-            --font-sans: 'Poppins', sans-serif;
-            --text-shadow: 0px 4px 12px rgba(0, 0, 0, 0.9);
+            --text-color: #FFFFFF;
+            --secondary-text-color: #d4d4d4;
+            --text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.9);
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        html, body {
-            width: 100%;
-            min-height: 100vh;
-            background-color: var(--bg-dark);
-            color: var(--text-color);
-            font-family: var(--font-sans);
+        /* Cursor personalizado del estilo ARG */
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            min-height: 100%; 
+            background-color: #0a0a0a;
+            color: var(--text-color); 
+            font-family: 'Poppins', sans-serif; 
             overflow-x: hidden;
-            overflow-y: auto; /* Scroll permitido como pediste */
-            /* Cursor personalizado del diseño B */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
-        /* --- FONDOS LÍQUIDOS (Estilo visual B) --- */
-        #liquid-bg-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none;
+        /* Enlaces e interactivos con cursor hover */
+        a, button, .postal-card {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), pointer;
+        }
+
+        /* --- FONDOS LÍQUIDOS --- */
+        #bg-layer-dark, #bg-layer-reveal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 0.7s ease-in-out;
+            z-index: 0;
         }
         
-        .bg-layer {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center;
-        }
-        
-        /* Fondo Oscuro Base */
-        #bg-base {
-            background-image: url('https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_5ec2mv5ec2mv5ec2_cpwcmt.png');
+        #bg-layer-reveal {
             z-index: 1;
+            /* La máscara se aplicará vía JS */
+            will-change: mask-image; 
+            transform: translateZ(0);
         }
 
-        /* Fondo Revelado (Mascara) */
-        #bg-reveal {
-            background-image: url('https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_xuzf5qxuzf5qxuzf_evqmyn.png');
+        /* Overlay oscuro para legibilidad general */
+        .content-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
             z-index: 2;
-            mask-image: none; -webkit-mask-image: none;
-        }
-
-        #noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-            opacity: 0.05; z-index: -1; pointer-events: none;
-        }
-
-        /* --- VIDEO DE LA CARTA (Lógica A) --- */
-        #background-video { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: -1; object-fit: cover; 
-            transition: opacity 0.5s ease-in-out; opacity: 0; 
-        }
-        /* Cuando se activa, sube el z-index para tapar el fondo líquido */
-        #background-video.is-active { opacity: 1; z-index: 50; } 
-
-        /* --- ESTRUCTURA --- */
-        .page-wrapper { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 2; }
-        
-        .view-container { 
-            width: 100%; min-height: 100vh; 
-            position: absolute; top: 0; left: 0; 
-            display: flex; flex-direction: column; 
-            justify-content: flex-start; align-items: center; 
-            padding: 20px; 
-            opacity: 1; visibility: visible; 
-            transition: opacity 0.7s ease-in-out, visibility 0.7s ease-in-out; 
-        }
-        
-        .view-container.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
-        /* --- VISTA SELECCIÓN (TABLA) --- */
-        #postal-selection-view { padding-top: 40px; }
-        #postal-selection-view .logo { height: 160px; width: auto; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); transition: opacity 0.3s; }
-        #postal-selection-view .logo:hover { opacity: 0.8; }
-        #postal-selection-view .subtitle { 
-            font-size: 0.9rem; color: var(--secondary-text-color); 
-            font-weight: 300; letter-spacing: 1px;
-            max-width: 600px; text-align: center; margin-bottom: 20px;
-        }
-        
-        #navigation-controls { display: flex; justify-content: center; align-items: center; gap: 40px; margin: 20px 0; width: 100%; }
-        .nav-arrow { 
-            background-color: transparent; border: 1px solid rgba(255, 255, 255, 0.3); 
-            color: white; font-size: 1.5rem; cursor: pointer; 
-            width: 50px; height: 50px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            transition: all 0.3s ease; 
-        }
-        .nav-arrow:hover { background-color: rgba(255, 255, 255, 0.1); transform: scale(1.1); border-color: white; }
-        .nav-arrow.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        
-        /* --- GRILLA Y CARTAS (Lógica A + Estilo B) --- */
-        #postal-container { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 20px; 
-            width: 100%; max-width: 1100px; 
-            padding-bottom: 50px;
-            perspective: 1200px; /* Para el efecto 3D */
-        }
-
-        .postal-card { 
-            width: 100%; 
-            aspect-ratio: 2 / 3; /* Formato vertical obligado */
-            cursor: pointer; 
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            transform-style: preserve-3d; /* Esencial para el flip */
-            position: relative;
-        }
-        
-        .postal-card:hover { transform: translateY(-8px) scale(1.02); z-index: 10; }
-
-        .postal-card .card-inner { 
-            position: relative; width: 100%; height: 100%; 
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            transform-style: preserve-3d; 
-            border-radius: 12px;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Esta clase aplica el volteo y se mantiene si hay persistencia */
-        .postal-card.is-flipping .card-inner { transform: rotateY(180deg); }
-        
-        .card-face { 
-            position: absolute; width: 100%; height: 100%; 
-            -webkit-backface-visibility: hidden; backface-visibility: hidden; 
-            border-radius: 12px; overflow: hidden; 
-            border: 1px solid var(--card-border); 
-            background: var(--glass-bg);
-            backdrop-filter: blur(5px);
-        }
-        
-        /* Cara Frontal (Imagen) */
-        .card-front img { 
-            width: 100%; height: 100%; object-fit: cover; 
-            transition: filter 0.5s, transform 0.5s;
-        }
-        .postal-card:hover .card-front img {
-            filter: brightness(1.15) contrast(1.1);
-            transform: scale(1.05);
-        }
-        
-        /* Cara Trasera (Info) - Estilo Glassmorphism ARG */
-        .card-back { 
-            background-color: #111; 
-            transform: rotateY(180deg); 
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center; 
-            text-align: center; padding: 15px; 
-            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
-        }
-        
-        .card-back::after {
-            content: ''; position: absolute; inset: 5px;
-            border: 1px dashed rgba(255,255,255,0.2); border-radius: 8px;
             pointer-events: none;
         }
 
-        .card-back p { 
-            font-family: var(--font-serif);
-            font-weight: 700; font-size: 1.5rem; 
-            color: white; text-transform: uppercase; letter-spacing: 2px;
-            margin-bottom: 5px;
+        /* Video específico (oculto por defecto, aparece sobre los fondos líquidos) */
+        #background-video { 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            width: 100vw; 
+            height: 100vh; 
+            min-width: 100%; 
+            min-height: 100%; 
+            z-index: 5; /* Encima de los fondos líquidos */
+            transform: translateX(-50%) translateY(-50%); 
+            object-fit: cover; 
+            transition: opacity 0.5s ease-in-out; 
+            opacity: 0; 
+            display: none; /* Oculto inicialmente */
         }
-        .card-back span {
-            font-family: var(--font-sans);
-            font-size: 0.7rem; color: #888; letter-spacing: 1px;
-        }
-        
-        /* Número de carta flotante */
-        .card-number {
-            position: absolute; top: 8px; left: 8px;
-            font-family: 'Montserrat', monospace; font-size: 0.8rem;
-            background: rgba(0,0,0,0.6); color: white;
-            padding: 2px 6px; border-radius: 4px;
-            z-index: 5; pointer-events: none;
-            backdrop-filter: blur(2px);
+        #background-video.is-active { 
+            opacity: 1; 
+            display: block; 
         }
 
-        /* --- VISTA POEMA (MODAL) --- */
-        #poem-display-view { 
+        /* --- UI LOTERÍA --- */
+        .page-wrapper { 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            position: relative; 
+            z-index: 10; /* Encima de todo */
+        }
+        
+        .view-container { 
+            width: 100%; 
+            min-height: 100vh; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            display: flex; 
+            flex-direction: column; 
             justify-content: center; 
-            background-color: #000;
-            z-index: 100;
+            align-items: center; 
+            padding: 20px; 
+            opacity: 1; 
+            visibility: visible; 
+            transition: opacity 0.7s ease-in-out, visibility 0.7s ease-in-out; 
         }
         
-        /* Fondo para cuando no hay video (imagen estática) */
-        #poem-bg-image {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover; background-position: center;
-            opacity: 0.4; z-index: -1;
-            transition: background-image 0.5s ease;
-        }
-
-        #poem-content { 
-            text-align: center; width: 90%; max-width: 900px; 
-            display: flex; flex-direction: column; 
-            padding: 40px; 
-            position: relative; z-index: 2;
-        }
+        #postal-selection-view { position: relative; justify-content: flex-start; padding-top: 40px; }
+        .view-container.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        #poem-title { 
-            font-family: var(--font-serif); font-size: 3.5rem; 
-            font-weight: 700; margin-bottom: 30px; 
-            text-shadow: var(--text-shadow); 
-            opacity: 0; transform: translateY(30px);
-            animation: fadeUp 0.8s forwards 0.2s;
-        }
+        /* Tipografías actualizadas */
+        #postal-selection-view .title { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 700; letter-spacing: 3px; text-shadow: var(--text-shadow); }
+        #postal-selection-view .subtitle { font-family: 'Poppins', sans-serif; font-size: 1rem; color: var(--secondary-text-color); font-weight: 300; margin-top: 10px; max-width: 600px; line-height: 1.6; margin-left: auto; margin-right: auto; }
         
-        #poem-text-display { 
-            font-family: var(--font-serif); font-size: 2rem; 
-            line-height: 1.6; color: var(--text-color); 
-            text-shadow: 0 2px 4px rgba(0,0,0,1); 
-            text-align: center; 
-            max-height: 60vh; overflow-y: auto; 
-            padding: 0 20px;
-        }
-        #poem-text-display::-webkit-scrollbar { width: 6px; }
-        #poem-text-display::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 3px; }
+        /* Navegación */
+        #navigation-controls { display: flex; justify-content: center; align-items: center; gap: 60px; margin: 30px 0; width: 100%; }
+        .nav-arrow { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 1.5rem; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(5px); }
+        .nav-arrow:hover { background-color: rgba(255, 255, 255, 0.3); transform: scale(1.1); }
+        .nav-arrow.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        #poem-text-display p { 
-            margin-bottom: 1.5rem; opacity: 0; 
-            transform: translateY(20px); 
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out; 
-        }
+        /* Grid de Cartas */
+        #postal-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; max-width: 900px; perspective: 1000px; padding-bottom: 40px; }
+        .postal-card { width: 100%; aspect-ratio: 2 / 3; transition: transform 0.5s ease, box-shadow 0.5s ease; transform-style: preserve-3d; }
+        .postal-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .postal-card .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
+        .postal-card.is-flipping .card-inner { transform: rotateY(180deg); }
+        
+        .card-face { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .card-front img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .card-back { background-color: #111; transform: rotateY(180deg); display: flex; align-items: center; justify-content: center; text-align: center; padding: 15px; isolation: isolate; }
+        .card-back::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: var(--card-bg-image); background-size: cover; background-position: center; filter: brightness(0.25) blur(2px); z-index: -1; }
+        .card-back p { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.5rem; color: white; letter-spacing: 1px; }
+        
+        /* Vista de Poema */
+        #poem-display-view { justify-content: center; touch-action: none; position: fixed; background-size: cover; background-position: center center; transition: background-image 0.5s ease-in-out; z-index: 20; }
+        #poem-content { text-align: center; width: 90%; max-width: 800px; display: flex; flex-direction: column; background-color: rgba(10, 10, 10, 0.75); padding: 40px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        #poem-title { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 700; margin-bottom: 25px; text-shadow: var(--text-shadow); line-height: 1; }
+        #poem-text-display { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-style: italic; line-height: 1.6; color: var(--text-color); text-shadow: var(--text-shadow); text-align: center; max-height: 60vh; overflow-y: auto; scrollbar-width: none; padding: 0 15px; }
+        #poem-text-display::-webkit-scrollbar { display: none; }
+        #poem-text-display p { margin-bottom: 1.5rem; opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
         #poem-text-display.is-visible p { opacity: 1; transform: translateY(0); }
         
-        .close-btn {
-            position: fixed; top: 30px; right: 30px;
-            font-size: 3rem; color: white; cursor: pointer;
-            z-index: 200; opacity: 0.7; transition: 0.3s;
-            mix-blend-mode: difference;
-        }
-        .close-btn:hover { opacity: 1; transform: rotate(90deg); }
-
-        /* Loader */
-        .spinner { display: inline-block; width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        .spinner { display: inline-block; width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #loading-message { font-family: 'Poppins', sans-serif; font-size: 0.9rem; color: var(--secondary-text-color); margin-top: 20px; letter-spacing: 1px; }
         
-        #loading-message { font-family: 'Montserrat', monospace; letter-spacing: 3px; font-size: 0.8rem; opacity: 0.7; }
-
-        @media (max-width: 900px) {
-            #postal-container { grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        }
-        @media (max-width: 600px) {
-            #postal-container { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        @media (max-width: 768px) {
+            #postal-container { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             #poem-title { font-size: 2.2rem; }
-            #poem-text-display { font-size: 1.3rem; }
-            .postal-card:hover { transform: none; }
+            #poem-text-display { font-size: 1.25rem; }
+            #postal-selection-view .logo { height: 150px; }
         }
     </style>
 </head>
 <body>
-    <!-- Capas de Fondo Líquido (Visual B) -->
-    <div id="liquid-bg-container">
-        <div id="bg-base" class="bg-layer"></div>
-        <div id="bg-reveal" class="bg-layer"></div>
-    </div>
-    <div id="noise-overlay"></div>
 
-    <!-- Elementos Funcionales A (Video/Audio) -->
-    <video autoplay muted loop playsinline id="background-video"></video>
-    <audio id="audio-player"></audio>
+    <!-- FONDOS LÍQUIDOS (Estilo Visual ARG) -->
+    <div id="bg-layer-dark"></div>
+    <div id="bg-layer-reveal">
+        <div style="position: absolute; inset: 0; background: black; opacity: 0.4; pointer-events: none;"></div>
+    </div>
     
+    <!-- Video de fondo específico (Solo se muestra si el poema tiene video) -->
+    <video muted loop playsinline id="background-video"></video>
+    
+    <!-- Audio -->
+    <audio id="audio-player"></audio>
+
     <div class="page-wrapper">
-        
-        <!-- VISTA DE TABLA -->
         <div id="postal-selection-view" class="view-container">
-            <header class="header">
-                <a href="argx.html">
-                    <img src="./assets/img/logo00.png" alt="Lotería Tapatía Logo" class="logo">
-                </a>
-                <p class="subtitle">La Lotería Tapatía es un proyecto literario que explora y celebra la identidad de Guadalajara a través de viñetas breves y evocadoras...</p>
+            <header class="header flex flex-col items-center">
+                <img src="./assets/img/logo00.png" alt="Lotería Tapatía Logo" class="logo h-48 w-auto mb-6 object-contain drop-shadow-lg">
+                <p class="subtitle text-center px-4">La Lotería Tapatía es un proyecto literario que explora y celebra la identidad de Guadalajara a través de viñetas breves y evocadoras...</p>
             </header>
             
             <div id="navigation-controls">
-                <button id="prev-tabla" class="nav-arrow is-hidden"><i class="bi bi-chevron-left"></i></button>
-                <button id="next-tabla" class="nav-arrow is-hidden"><i class="bi bi-chevron-right"></i></button>
+                <button id="prev-tabla" class="nav-arrow is-hidden"><i class="bi bi-arrow-left"></i></button>
+                <button id="next-tabla" class="nav-arrow is-hidden"><i class="bi bi-arrow-right"></i></button>
             </div>
             
             <main id="postal-container"></main>
-            
-            <footer style="margin-top: 20px; font-family: monospace; font-size: 0.7rem; color: rgba(255,255,255,0.4); text-align: center;">
-                SCROLL PARA VER MÁS &bull; CLICK PARA VOLTEAR
-            </footer>
         </div>
         
-        <!-- VISTA DE POEMA (MODAL) -->
         <div id="poem-display-view" class="view-container is-hidden">
-            <div id="poem-bg-image"></div> <!-- Imagen estática si no hay video -->
-            <div class="close-btn" id="close-poem">&times;</div>
             <div id="poem-content">
                 <h2 id="poem-title"></h2>
                 <div id="poem-text-display"></div>
@@ -322,8 +203,84 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+
+    /* =========================================
+       1. EFECTO VISUAL "LÍQUIDO" (ARG Style)
+       ========================================= */
+    const bgDark = document.getElementById('bg-layer-dark');
+    const bgReveal = document.getElementById('bg-layer-reveal');
     
-    // --- REFERENCIAS DOM (Lógica A) ---
+    // Imágenes del set ARG
+    const BG_IMG = 'https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_5ec2mv5ec2mv5ec2_cpwcmt.png';
+    const REV_IMG = 'https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_xuzf5qxuzf5qxuzf_evqmyn.png';
+    
+    bgDark.style.backgroundImage = `url(${BG_IMG})`;
+    bgReveal.style.backgroundImage = `url(${REV_IMG})`;
+
+    // Configuración de física
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const TRAIL_LENGTH = isMobile ? 6 : 12;
+    const BASE_RADIUS = isMobile ? 140 : 200;
+    
+    let points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+    let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+    // Manejo de eventos del mouse/touch
+    const handleMove = (e) => {
+        let clientX, clientY;
+        if (e.touches && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+        mouse = { x: clientX, y: clientY };
+    };
+
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('touchstart', handleMove, { passive: false });
+    window.addEventListener('touchmove', handleMove, { passive: false });
+
+    // Loop de animación
+    function animateFluid() {
+        // Líder (puntero)
+        const leaderEasing = 0.15;
+        points[0] = {
+            x: points[0].x + (mouse.x - points[0].x) * leaderEasing,
+            y: points[0].y + (mouse.y - points[0].y) * leaderEasing
+        };
+
+        // Estela
+        const trailEasing = 0.20;
+        for (let i = 1; i < TRAIL_LENGTH; i++) {
+            const leader = points[i - 1];
+            const follower = points[i];
+            points[i] = {
+                x: follower.x + (leader.x - follower.x) * trailEasing,
+                y: follower.y + (leader.y - follower.y) * trailEasing
+            };
+        }
+
+        // Crear la máscara de gradientes
+        const gradients = points.map((p, i) => {
+            const scale = 1 - (i / TRAIL_LENGTH) * 0.7;
+            const radius = BASE_RADIUS * scale;
+            return `radial-gradient(circle ${radius}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
+        });
+
+        const maskString = gradients.join(', ');
+        bgReveal.style.maskImage = maskString;
+        bgReveal.style.webkitMaskImage = maskString;
+
+        requestAnimationFrame(animateFluid);
+    }
+    
+    animateFluid();
+
+    /* =========================================
+       2. LÓGICA DE LOTERÍA TAPATÍA
+       ========================================= */
     const postalSelectionView = document.getElementById('postal-selection-view');
     const poemDisplayView = document.getElementById('poem-display-view');
     const postalContainer = document.getElementById('postal-container');
@@ -331,13 +288,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const poemTextDisplayEl = document.getElementById('poem-text-display');
     const audioPlayer = document.getElementById('audio-player');
     const backgroundVideo = document.getElementById('background-video');
-    const poemBgImage = document.getElementById('poem-bg-image');
     const prevTablaBtn = document.getElementById('prev-tabla');
     const nextTablaBtn = document.getElementById('next-tabla');
-    const closeBtn = document.getElementById('close-poem');
 
-    // --- VARIABLES DE ESTADO (Lógica A) ---
     const dataUrl = './data/datos.json';
+
     let allPoems = [];
     let currentPoemIndex = -1;
     let isPoemViewOpen = false;
@@ -345,64 +300,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentTabla = 0;
     const cardsPerTabla = 16;
     let totalTablas = 0;
-    
-    // Persistencia
+
     let flippedCardIndices = new Set();
     const storageKey = 'loteriaTapatia_flippedCards';
 
-    // --- EFECTO LÍQUIDO (SCRIPT VISUAL DE B ADAPTADO) ---
-    const revealedLayer = document.getElementById('bg-reveal');
-    const TRAIL_LENGTH = 12;
-    const points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
-    let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-
-    document.addEventListener('mousemove', (e) => {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-    });
-    
-    // Soporte Touch
-    document.addEventListener('touchmove', (e) => {
-        mouse.x = e.touches[0].clientX;
-        mouse.y = e.touches[0].clientY;
-    }, { passive: true });
-
-    function animateLiquid() {
-        // Física del rastro
-        points[0] = {
-            x: points[0].x + (mouse.x - points[0].x) * 0.15,
-            y: points[0].y + (mouse.y - points[0].y) * 0.15
-        };
-
-        for (let i = 1; i < TRAIL_LENGTH; i++) {
-            const leader = points[i - 1];
-            const follower = points[i];
-            points[i] = {
-                x: follower.x + (leader.x - follower.x) * 0.2,
-                y: follower.y + (leader.y - follower.y) * 0.2
-            };
-        }
-
-        // Crear la máscara CSS
-        const baseRadius = window.innerWidth < 768 ? 120 : 180;
-        const gradients = points.map((p, i) => {
-            const radius = baseRadius * (1 - (i / TRAIL_LENGTH) * 0.8);
-            return `radial-gradient(circle ${radius}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
-        });
-        
-        const maskString = gradients.join(', ');
-        revealedLayer.style.webkitMaskImage = maskString;
-        revealedLayer.style.maskImage = maskString;
-
-        requestAnimationFrame(animateLiquid);
-    }
-    animateLiquid(); // Iniciar animación visual
-
-    // --- LÓGICA DE LOTERÍA (LÓGICA A ORIGINAL) ---
-
     const loadFlippedState = () => {
         const savedState = localStorage.getItem(storageKey);
-        if (savedState) flippedCardIndices = new Set(JSON.parse(savedState));
+        if (savedState) {
+            flippedCardIndices = new Set(JSON.parse(savedState));
+        }
     };
 
     const saveFlippedState = () => {
@@ -417,39 +323,35 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function loadPoemsData() {
-        postalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; margin-top: 50px;"><div class="spinner"></div><p id="loading-message">BARAJANDO CARTAS...</p></div>`;
+        postalContainer.innerHTML = `<div class="spinner"></div><p id="loading-message">Construyendo los universos...</p>`;
 
         fetch(dataUrl)
             .then(response => {
-                if (!response.ok) throw new Error("Error de red");
+                if (!response.ok) throw new Error(`Error de red: ${response.statusText}`);
                 return response.json();
             })
             .then(data => {
-                allPoems = data.map((row, index) => {
+                allPoems = data.map((row, originalIndex) => {
                     if (!row) return null;
                     const title = row.TITULO ? String(row.TITULO).trim() : '';
                     const poemText = row.POEMA ? String(row.POEMA).trim() : '';
+                    const soundUrl = row.SONIDO_ID ? String(row.SONIDO_ID).trim() : '';
+                    const videoUrl = row.VIDEO_ID ? String(row.VIDEO_ID).trim() : '';
                     const imageUrl = row.IMAGEN_POSTAL_ID ? String(row.IMAGEN_POSTAL_ID).trim() : '';
                     
                     if (!title || !poemText || !imageUrl) return null;
-                    
-                    return { 
-                        title, 
-                        poemText, 
-                        soundUrl: row.SONIDO_ID ? String(row.SONIDO_ID).trim() : '',
-                        videoUrl: row.VIDEO_ID ? String(row.VIDEO_ID).trim() : '',
-                        imageUrl,
-                        originalIndex: index // Identificador único
-                    };
+                    return { title, poemText, soundUrl, videoUrl, imageUrl, originalIndex };
                 }).filter(p => p !== null);
 
+                if (allPoems.length === 0) throw new Error("No se encontraron cartas válidas.");
+                
                 shuffleArray(allPoems);
                 totalTablas = Math.ceil(allPoems.length / cardsPerTabla);
                 renderTabla();
             })
             .catch(error => {
-                console.error(error);
-                postalContainer.innerHTML = `<p>Error cargando datos.</p>`;
+                console.error('Error al cargar la Lotería:', error);
+                postalContainer.innerHTML = `<p style="text-align:center; color: #ff8a80;">Error: ${error.message}</p>`;
             });
     }
 
@@ -459,36 +361,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const endIndex = startIndex + cardsPerTabla;
         const poemsForThisTabla = allPoems.slice(startIndex, endIndex);
 
-        poemsForThisTabla.forEach((poem, idx) => {
+        poemsForThisTabla.forEach((poem) => {
             const card = document.createElement('div');
             card.className = 'postal-card';
             card.dataset.poemIndex = poem.originalIndex;
             
-            // Si está en localStorage, añade la clase para que aparezca volteada
             if (flippedCardIndices.has(poem.originalIndex)) {
                 card.classList.add('is-flipping');
             }
             
-            // Número global de la carta
-            const globalNum = startIndex + idx + 1;
-
+            const postalImageUrl = poem.imageUrl; 
+            card.style.setProperty('--card-bg-image', `url('${postalImageUrl}')`);
             card.innerHTML = `
-                <span class="card-number">${globalNum}</span>
                 <div class="card-inner">
-                    <div class="card-face card-front">
-                        <img src="${poem.imageUrl}" alt="${poem.title}" loading="lazy">
-                    </div>
-                    <div class="card-face card-back">
-                        <p>${poem.title}</p>
-                        <span>CLICK PARA LEER</span>
-                    </div>
-                </div>
-            `;
+                    <div class="card-face card-front"><img src="${postalImageUrl}" alt="${poem.title}" loading="lazy"></div>
+                    <div class="card-face card-back"><p>${poem.title}</p></div>
+                </div>`;
             postalContainer.appendChild(card);
         });
-        
-        // Scroll al top al cambiar tabla
-        window.scrollTo({ top: 0, behavior: 'smooth' });
         updateArrowVisibility();
     }
 
@@ -497,18 +387,16 @@ document.addEventListener('DOMContentLoaded', () => {
         nextTablaBtn.classList.toggle('is-hidden', currentTabla >= totalTablas - 1);
     }
     
-    function displayPoem(originalIndex) {
-        const currentPoem = allPoems.find(p => p.originalIndex === originalIndex);
+    function displayPoem(poemIndex) {
+        const currentPoem = allPoems.find(p => p.originalIndex === poemIndex);
         if (!currentPoem) return;
         currentPoemIndex = allPoems.indexOf(currentPoem);
 
-        // Resetear vista
         poemTextDisplayEl.scrollTop = 0;
         poemTitleEl.textContent = currentPoem.title;
         poemTextDisplayEl.innerHTML = '';
         poemTextDisplayEl.classList.remove('is-visible');
         
-        // Procesar párrafos
         const paragraphs = (currentPoem.poemText || '').split(/\n/g).filter(p => p.trim() !== '');
         paragraphs.forEach(pText => {
             const p = document.createElement('p');
@@ -516,7 +404,6 @@ document.addEventListener('DOMContentLoaded', () => {
             poemTextDisplayEl.appendChild(p);
         });
 
-        // Animación de texto
         const triggerTextAnimation = () => {
             const pElements = poemTextDisplayEl.querySelectorAll('p');
             pElements.forEach((p, index) => { p.style.transitionDelay = `${index * 150}ms`; });
@@ -524,107 +411,113 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (!isPoemViewOpen) {
-            history.pushState({ modal: true }, "");
+            history.pushState({ poem: currentPoem.title }, "");
             postalSelectionView.classList.add('is-hidden');
             poemDisplayView.classList.remove('is-hidden');
-            document.body.style.overflow = 'hidden'; // Bloquear scroll body
+            document.body.style.overflow = 'hidden';
             isPoemViewOpen = true;
         }
 
-        // Audio
         if (currentPoem.soundUrl) {
             audioPlayer.src = currentPoem.soundUrl;
-            audioPlayer.volume = 0.8;
             audioPlayer.loop = true;
-            audioPlayer.play().catch(e => console.log("Audio autoplay block:", e));
-        } else {
-            audioPlayer.pause();
+            audioPlayer.play().catch(e => console.error("Error audio:", e));
         }
         
-        // Video o Imagen
-        const hasValidVideo = currentPoem.videoUrl && currentPoem.videoUrl.trim().length > 5;
+        // Manejo de video vs imagen vs fondo líquido
+        // Reset background image of poem view to avoid flashing old images
+        poemDisplayView.style.backgroundImage = 'none'; 
         
-        if (hasValidVideo) {
-            poemBgImage.style.display = 'none';
-            backgroundVideo.classList.remove('is-active');
-            
-            backgroundVideo.src = currentPoem.videoUrl;
-            backgroundVideo.load();
-            
-            // Un pequeño timeout para asegurar que carga un poco antes de mostrar
-            setTimeout(() => {
-                backgroundVideo.play().catch(()=>{});
-                backgroundVideo.classList.add('is-active');
-                triggerTextAnimation();
-            }, 300);
+        const hasValidVideo = currentPoem.videoUrl && currentPoem.videoUrl.trim().length > 5;
 
-        } else {
-            // Si no hay video, usar la imagen de la postal como fondo borroso/oscuro
+        if (hasValidVideo) {
+            // Si hay video específico, lo mostramos
             backgroundVideo.classList.remove('is-active');
-            setTimeout(() => { backgroundVideo.pause(); backgroundVideo.src = ""; }, 500);
+            setTimeout(() => {
+                backgroundVideo.style.display = 'block';
+                backgroundVideo.src = currentPoem.videoUrl;
+                backgroundVideo.load();
+                backgroundVideo.oncanplaythrough = () => {
+                    backgroundVideo.play();
+                    backgroundVideo.classList.add('is-active');
+                    triggerTextAnimation();
+                    backgroundVideo.oncanplaythrough = null;
+                };
+            }, 300);
+        } else {
+            // Si no hay video, ocultamos el elemento de video para ver los Fondos Líquidos
+            backgroundVideo.classList.remove('is-active');
+            setTimeout(() => {
+                backgroundVideo.pause();
+                backgroundVideo.style.display = 'none';
+            }, 500);
             
-            poemBgImage.style.display = 'block';
-            poemBgImage.style.backgroundImage = `url('${currentPoem.imageUrl}')`;
-            setTimeout(triggerTextAnimation, 100);
+            // Opcional: Poner la imagen de la postal como fondo difuso si se desea, 
+            // pero el requerimiento pide los fondos líquidos. 
+            // Dejamos que se vean los fondos líquidos a través del poem-view transparente.
+            triggerTextAnimation();
         }
     }
     
     function closePoemView() {
         if (!isPoemViewOpen) return;
-        
         audioPlayer.pause();
         audioPlayer.src = '';
         
+        // Ocultar video específico
         backgroundVideo.classList.remove('is-active');
-        setTimeout(() => { backgroundVideo.pause(); backgroundVideo.src = ""; }, 500);
+        setTimeout(() => {
+            backgroundVideo.pause();
+            backgroundVideo.style.display = 'none';
+        }, 500);
 
         poemDisplayView.classList.add('is-hidden');
         postalSelectionView.classList.remove('is-hidden');
-        document.body.style.overflow = 'auto'; // Restaurar scroll
+        document.body.style.overflow = 'auto';
         isPoemViewOpen = false;
+        currentPoemIndex = -1;
     }
 
-    // --- EVENT LISTENERS ---
+    function playNextPoem() { displayPoem(allPoems[(currentPoemIndex + 1) % allPoems.length].originalIndex); }
+    function playPrevPoem() { displayPoem(allPoems[(currentPoemIndex - 1 + allPoems.length) % allPoems.length].originalIndex); }
 
     nextTablaBtn.addEventListener('click', () => { if (currentTabla < totalTablas - 1) { currentTabla++; renderTabla(); } });
     prevTablaBtn.addEventListener('click', () => { if (currentTabla > 0) { currentTabla--; renderTabla(); } });
     
-    closeBtn.addEventListener('click', () => {
-        if (isPoemViewOpen) history.back();
-    });
-
     postalContainer.addEventListener('click', (e) => {
         const card = e.target.closest('.postal-card');
         if (!card || isPoemViewOpen) return;
-        
         const poemIndex = parseInt(card.dataset.poemIndex, 10);
         
-        // Lógica de volteo
         if (card.classList.contains('is-flipping')) {
-            // Si YA está volteada, abrir directamente
-            displayPoem(poemIndex);
+            card.classList.remove('is-flipping');
+            flippedCardIndices.delete(poemIndex);
+            saveFlippedState();
         } else {
-            // Si NO está volteada, voltear primero, guardar y luego abrir
             card.classList.add('is-flipping');
             flippedCardIndices.add(poemIndex);
             saveFlippedState();
-            
-            // Retraso para ver la animación de la carta antes de abrir modal (0.8s = transición CSS)
-            setTimeout(() => {
-                displayPoem(poemIndex);
-            }, 800);
+            setTimeout(() => { displayPoem(poemIndex); }, 1500);
         }
     });
 
-    // Navegación modal
+    window.addEventListener('popstate', () => { if(isPoemViewOpen) closePoemView(); });
     document.addEventListener('keydown', (e) => { 
         if (!isPoemViewOpen) return; 
         if (e.key === 'Escape') history.back(); 
+        if (e.key === 'ArrowRight') playNextPoem(); 
+        if (e.key === 'ArrowLeft') playPrevPoem(); 
     });
-
-    window.addEventListener('popstate', () => { if(isPoemViewOpen) closePoemView(); });
     
-    // Inicialización
+    let touchStartX = 0;
+    poemDisplayView.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+    poemDisplayView.addEventListener('touchend', (e) => { 
+        const touchEndX = e.changedTouches[0].screenX; 
+        const swipeDistance = touchEndX - touchStartX; 
+        if (swipeDistance > 50) playPrevPoem(); 
+        else if (swipeDistance < -50) playNextPoem(); 
+    });
+    
     loadFlippedState();
     loadPoemsData();
 });
