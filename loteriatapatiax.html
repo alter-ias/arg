@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Lotería Tapatía - Archivos Líquidos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lotería Tapatía</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="./assets/img/logo00.png">
@@ -18,63 +18,102 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@200;300;400;700&family=Poppins:wght@200;300;400&display=swap" rel="stylesheet">
     
     <style>
-        /* --- ESTILOS BASE (Efecto Líquido) --- */
+        /* --- ESTILOS GENERALES --- */
+        :root {
+            --bg-dark: #050505;
+            --text-main: #EAEAEA;
+        }
+
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100%;
-            background-color: #050505;
-            color: #e5e5e5;
+            min-height: 100vh;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             font-family: 'Poppins', sans-serif;
-            overflow: hidden; /* Evita scroll en el body, lo manejamos dentro si es necesario */
-            touch-action: none;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            /* Scroll permitido, pero suave */
+            scroll-behavior: smooth;
             
-            /* CURSOR */
+            /* CURSOR PERSONALIZADO */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
         .font-serif { font-family: 'Cormorant Garamond', serif; }
         .font-sans { font-family: 'Montserrat', sans-serif; }
 
-        /* Glassmorphism para las cartas */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+        /* --- EFECTO DE VOLTEO DE CARTA (FLIP) --- */
+        .perspective-1000 { perspective: 1000px; }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .card-wrapper.is-flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            border-radius: 12px;
+            overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        .glass-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
-            z-index: 20;
-            cursor: pointer;
+        /* Cara Frontal (Imagen) */
+        .card-front {
+            background-color: #1a1a1a;
+        }
+        
+        /* Cara Trasera (Información / Reverso) */
+        .card-back {
+            background-color: #0f0f0f;
+            transform: rotateY(180deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png'); /* Textura sutil */
         }
 
-        /* Scrollbar oculta */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Efecto Hover en la Imagen */
+        .card-wrapper:hover .card-front img {
+            filter: brightness(1.1) contrast(1.1) saturate(1.1);
+            transform: scale(1.05);
+        }
+        .card-front img {
+            transition: transform 0.5s ease, filter 0.5s ease;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-        /* Animaciones */
+        /* --- REDUCCIÓN DE SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* --- ANIMACIONES DE TEXTO --- */
         .fade-in-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
         @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-        
-        .loader-spin { animation: spin 1s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
     </style>
 </head>
 
 <body>
     <div id="root"></div>
-    
-    <!-- React y ReactDOM -->
+
     <script type="module">
         import React from 'https://esm.sh/react@18.3.1';
         import ReactDOM from 'https://esm.sh/react-dom@18.3.1/client';
@@ -83,10 +122,14 @@
 
         // --- CONFIGURACIÓN ---
         const DATA_URL = './data/datos.json';
+        const CARDS_PER_PAGE = 16; 
+        const STORAGE_KEY = 'loteriaTapatia_flippedCards';
+        
+        // Imágenes de fondo para el efecto líquido
         const BG_DARK = 'https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_5ec2mv5ec2mv5ec2_cpwcmt.png';
         const BG_REVEAL = 'https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_xuzf5qxuzf5qxuzf_evqmyn.png';
 
-        // --- UTILIDADES ---
+        // --- UTILIDAD: Shuffle ---
         const shuffleArray = (array) => {
             const arr = [...array];
             for (let i = arr.length - 1; i > 0; i--) { 
@@ -96,12 +139,15 @@
             return arr;
         };
 
-        // --- COMPONENTE MODAL (Detalle Carta) ---
+        // --- COMPONENTE: MODAL DE POEMA (Pantalla Completa) ---
         const PoemModal = ({ poem, onClose }) => {
             const audioRef = useRef(null);
             const videoRef = useRef(null);
 
             useEffect(() => {
+                // Bloquear scroll del body cuando el modal está abierto
+                document.body.style.overflow = 'hidden';
+                
                 const handleEsc = (e) => e.key === 'Escape' && onClose();
                 window.addEventListener('keydown', handleEsc);
                 
@@ -113,7 +159,10 @@
                    videoRef.current.play().catch(e => console.log("Video autoplay prevented", e));
                 }
 
-                return () => window.removeEventListener('keydown', handleEsc);
+                return () => {
+                    document.body.style.overflow = 'auto'; // Restaurar scroll
+                    window.removeEventListener('keydown', handleEsc);
+                };
             }, [onClose, poem]);
 
             if (!poem) return null;
@@ -122,55 +171,107 @@
             const hasVideo = poem.videoUrl && poem.videoUrl.trim().length > 5;
 
             return React.createElement('div', {
-                className: "fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md transition-opacity duration-500",
-                onClick: (e) => e.target === e.currentTarget && onClose()
+                className: "fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md transition-opacity duration-500 fade-in-up",
+                // Z-index muy alto para tapar todo
+                style: { zIndex: 9999 }
             },
+                // Botón Cerrar Flotante
+                React.createElement('button', {
+                    onClick: onClose,
+                    className: "absolute top-6 right-6 text-white text-5xl hover:scale-110 transition-transform z-[100] drop-shadow-lg cursor-pointer"
+                }, "×"),
+
                 poem.soundUrl && React.createElement('audio', { ref: audioRef, src: poem.soundUrl, loop: true }),
 
-                React.createElement('div', {
-                    className: "w-full h-full md:max-w-5xl md:h-[90vh] bg-[#050505] md:border md:border-white/10 overflow-hidden relative flex flex-col shadow-2xl rounded-sm"
-                },
-                    // Header con Video o Imagen
-                    React.createElement('div', {
-                        className: "w-full h-[40vh] md:h-[45vh] bg-black relative shrink-0 overflow-hidden"
-                    },
-                        hasVideo 
-                            ? React.createElement('video', {
-                                ref: videoRef,
-                                src: poem.videoUrl,
-                                className: "w-full h-full object-cover opacity-90",
-                                muted: true, loop: true, playsInline: true
-                              })
-                            : React.createElement('div', {
-                                className: "w-full h-full bg-cover bg-center opacity-80",
-                                style: { backgroundImage: `url(${poem.imageUrl})` }
-                              }),
-                        React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" }),
-                        React.createElement('button', {
-                            onClick: onClose,
-                            className: "absolute top-4 right-4 text-white text-4xl hover:text-red-400 transition-colors z-50 mix-blend-difference"
-                        }, "×")
-                    ),
-                    // Texto
+                React.createElement('div', { className: "w-full h-full flex flex-col relative" },
+                    
+                    // --- FONDO (Video o Imagen) ---
+                    hasVideo ? 
+                        React.createElement('video', {
+                            ref: videoRef,
+                            src: poem.videoUrl,
+                            className: "absolute inset-0 w-full h-full object-cover opacity-60",
+                            muted: true, loop: true, playsInline: true
+                        }) :
+                        React.createElement('div', {
+                            className: "absolute inset-0 bg-cover bg-center opacity-40",
+                            style: { backgroundImage: `url(${poem.imageUrl})` }
+                        }),
+                    
+                    // Gradiente superpuesto para legibilidad
+                    React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" }),
+
+                    // --- CONTENIDO TEXTO ---
                     React.createElement('div', { 
-                        className: "flex-1 overflow-y-auto no-scrollbar px-6 py-8 md:px-24 max-w-4xl mx-auto w-full text-center" 
+                        className: "relative z-10 w-full h-full flex flex-col items-center justify-center overflow-y-auto px-6 py-12"
                     },
-                        React.createElement('h1', { 
-                            className: "font-serif text-4xl md:text-5xl mb-6 text-white tracking-wider text-[#EAEAEA] fade-in-up",
-                            style: { animationDelay: '0.1s' }
-                        }, poem.title),
-                        
-                        React.createElement('div', { className: "font-serif text-lg md:text-2xl text-[#b3b3b3] leading-relaxed space-y-6" },
-                            paragraphs.map((p, idx) => 
-                                React.createElement('p', { 
-                                    key: idx,
-                                    className: "fade-in-up",
-                                    style: { animationDelay: `${(idx * 0.15) + 0.3}s` }
-                                }, p)
+                        React.createElement('div', { className: "max-w-3xl w-full text-center mb-10 mt-auto md:mt-0" },
+                            React.createElement('h1', { 
+                                className: "font-serif text-5xl md:text-7xl mb-8 text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] fade-in-up" 
+                            }, poem.title),
+                            
+                            React.createElement('div', { 
+                                className: "font-serif text-xl md:text-3xl text-gray-200 leading-relaxed space-y-8 drop-shadow-[0_2px_2px_rgba(0,0,0,1)]" 
+                            },
+                                paragraphs.map((p, idx) => 
+                                    React.createElement('p', { 
+                                        key: idx,
+                                        className: "fade-in-up",
+                                        style: { animationDelay: `${(idx * 0.2) + 0.3}s` }
+                                    }, p)
+                                )
                             )
                         )
                     )
                 )
+            );
+        };
+
+        // --- COMPONENTE: CARTA DE LOTERÍA ---
+        const LoteriaCard = ({ poem, index, isFlipped, onFlip }) => {
+            const handleClick = () => {
+                if (isFlipped) {
+                    // Si ya está volteada, abrimos el modal directo (o no hacemos nada, según prefieras)
+                    onFlip(poem, true); 
+                } else {
+                    // Voltear primera vez
+                    onFlip(poem, false);
+                }
+            };
+
+            return React.createElement('div', {
+                className: "relative w-full aspect-[2/3] perspective-1000 cursor-pointer group",
+                onClick: handleClick
+            },
+                // Wrapper interno que rota
+                React.createElement('div', {
+                    className: `card-inner w-full h-full card-wrapper ${isFlipped ? 'is-flipped' : ''}`
+                },
+                    // --- CARA FRONTAL (Imagen) ---
+                    React.createElement('div', { className: "card-face card-front" },
+                        React.createElement('img', { 
+                            src: poem.imageUrl, 
+                            alt: poem.title,
+                            loading: "lazy"
+                        }),
+                        // Marco decorativo sutil
+                        React.createElement('div', { className: "absolute inset-1.5 border border-white/30 rounded-lg pointer-events-none opacity-50" })
+                    ),
+                    
+                    // --- CARA TRASERA (Reverso) ---
+                    React.createElement('div', { className: "card-face card-back" },
+                        React.createElement('div', { className: "absolute inset-2 border-2 border-dashed border-[#b3b3b3] rounded-lg opacity-30" }),
+                        React.createElement('div', { className: "flex flex-col items-center p-4" },
+                            React.createElement('img', { src: "./assets/img/logo00.png", className: "w-16 opacity-50 mb-2 grayscale" }),
+                            React.createElement('h3', { className: "font-serif text-xl text-white font-bold tracking-widest uppercase" }, poem.title),
+                            React.createElement('p', { className: "font-mono text-[10px] text-gray-400 mt-2" }, "CLICK PARA LEER")
+                        )
+                    )
+                ),
+                // Número de carta (flotante, fuera del giro)
+                React.createElement('div', { 
+                    className: "absolute top-2 left-2 z-20 bg-black/60 text-white font-mono text-xs px-2 py-1 rounded backdrop-blur-sm pointer-events-none" 
+                }, index + 1)
             );
         };
 
@@ -181,39 +282,33 @@
             const [loading, setLoading] = useState(true);
             const [selectedPoem, setSelectedPoem] = useState(null);
             const [currentPage, setCurrentPage] = useState(1);
+            const [flippedIDs, setFlippedIDs] = useState(new Set());
             
-            // Fija: 16 cartas por página para mantener la "Tabla"
-            const CARDS_PER_PAGE = 16; 
-
-            // Manejo del historial
+            // --- MANEJO DE ESTADO PERSISTENTE (localStorage) ---
             useEffect(() => {
-                const handlePopState = () => setSelectedPoem(null);
-                window.addEventListener('popstate', handlePopState);
-                return () => window.removeEventListener('popstate', handlePopState);
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    try {
+                        setFlippedIDs(new Set(JSON.parse(saved)));
+                    } catch (e) { console.error("Error parsing saved state", e); }
+                }
             }, []);
 
-            const openPoem = (poem) => {
-                window.history.pushState({ modalOpen: true }, '', '#carta');
-                setSelectedPoem(poem);
+            const saveFlippedState = (newSet) => {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify([...newSet]));
             };
 
-            const closePoem = () => {
-                if (selectedPoem) {
-                    window.history.state && window.history.state.modalOpen ? window.history.back() : setSelectedPoem(null);
-                }
-            };
-
-            // Efecto Líquido (Física)
+            // --- FÍSICA LÍQUIDA (Background) ---
             useEffect(() => {
-                const TRAIL_LENGTH = 10;
+                const TRAIL_LENGTH = 15; // Más largo para suavidad
                 const points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
                 let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
                 const handleMove = (e) => {
-                    mouse = { 
-                        x: e.touches ? e.touches[0].clientX : e.clientX, 
-                        y: e.touches ? e.touches[0].clientY : e.clientY 
-                    };
+                    // Detectar si es touch o mouse
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    mouse = { x: clientX, y: clientY };
                 };
                 
                 window.addEventListener('mousemove', handleMove);
@@ -221,23 +316,26 @@
 
                 let frameId;
                 const loop = () => {
-                    // Física suave para el puntero
+                    // Física: el punto 0 sigue al mouse
                     points[0] = {
                         x: points[0].x + (mouse.x - points[0].x) * 0.15,
                         y: points[0].y + (mouse.y - points[0].y) * 0.15
                     };
+                    // Los demás puntos siguen al anterior (efecto serpiente/líquido)
                     for (let i = 1; i < TRAIL_LENGTH; i++) {
                         points[i] = {
-                            x: points[i].x + (points[i-1].x - points[i].x) * 0.2,
-                            y: points[i].y + (points[i-1].y - points[i].y) * 0.2
+                            x: points[i].x + (points[i-1].x - points[i].x) * 0.25,
+                            y: points[i].y + (points[i-1].y - points[i].y) * 0.25
                         };
                     }
                     
                     if (revealedLayerRef.current) {
                         const gradients = points.map((p, i) => {
-                            const radius = (window.innerWidth < 768 ? 120 : 180) * (1 - (i / TRAIL_LENGTH) * 0.8);
+                            // Radio variable según el índice (cola se hace pequeña)
+                            const radius = (window.innerWidth < 768 ? 100 : 180) * (1 - (i / TRAIL_LENGTH) * 0.9);
                             return `radial-gradient(circle ${radius}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
                         });
+                        // Crear la máscara compuesta
                         const mask = gradients.join(', ');
                         revealedLayerRef.current.style.maskImage = mask;
                         revealedLayerRef.current.style.webkitMaskImage = mask;
@@ -252,7 +350,7 @@
                 };
             }, []);
 
-            // Carga de Datos
+            // --- CARGA DE DATOS ---
             useEffect(() => {
                 fetch(DATA_URL)
                     .then(res => res.json())
@@ -260,7 +358,7 @@
                         const cleanData = data.map((row, index) => {
                             if (!row || !row.TITULO || !row.IMAGEN_POSTAL_ID) return null;
                             return {
-                                id: index,
+                                originalId: index, // ID único para persistencia
                                 title: String(row.TITULO).trim(),
                                 poemText: String(row.POEMA).trim(),
                                 soundUrl: row.SONIDO_ID ? String(row.SONIDO_ID).trim() : '',
@@ -268,121 +366,100 @@
                                 imageUrl: String(row.IMAGEN_POSTAL_ID).trim()
                             };
                         }).filter(Boolean);
+                        
                         setAllPoems(shuffleArray(cleanData));
                         setLoading(false);
                     })
                     .catch(e => { console.error(e); setLoading(false); });
             }, []);
 
-            // Paginación
+            // --- LÓGICA DE INTERACCIÓN ---
+            const handleCardInteraction = (poem, alreadyFlipped) => {
+                if (!alreadyFlipped) {
+                    // 1. Marcar como volteada
+                    const newSet = new Set(flippedIDs);
+                    newSet.add(poem.originalId);
+                    setFlippedIDs(newSet);
+                    saveFlippedState(newSet);
+
+                    // 2. Esperar a que termine la animación de volteo para abrir el modal
+                    setTimeout(() => {
+                        setSelectedPoem(poem);
+                    }, 800); 
+                } else {
+                    // Si ya estaba volteada, abrir inmediatamente
+                    setSelectedPoem(poem);
+                }
+            };
+
+            const closeModal = () => setSelectedPoem(null);
+
+            // --- PAGINACIÓN ---
             const totalPages = Math.ceil(allPoems.length / CARDS_PER_PAGE);
             const currentPoems = allPoems.slice((currentPage - 1) * CARDS_PER_PAGE, currentPage * CARDS_PER_PAGE);
 
-            const nextPage = () => setCurrentPage(p => Math.min(p + 1, totalPages));
-            const prevPage = () => setCurrentPage(p => Math.max(p - 1, 1));
+            const nextPage = () => { if(currentPage < totalPages) { setCurrentPage(p => p + 1); window.scrollTo(0,0); }};
+            const prevPage = () => { if(currentPage > 1) { setCurrentPage(p => p - 1); window.scrollTo(0,0); }};
 
             return React.createElement(React.Fragment, null,
-                // Fondos
-                React.createElement('div', { className: "fixed inset-0 z-0 bg-cover bg-center", style: { backgroundImage: `url(${BG_DARK})` } }),
+                // --- CAPAS DE FONDO (Fixed) ---
+                React.createElement('div', { className: "fixed inset-0 z-0 bg-cover bg-center bg-no-repeat", style: { backgroundImage: `url(${BG_DARK})` } }),
                 React.createElement('div', {
                     ref: revealedLayerRef,
-                    className: "fixed inset-0 z-10 bg-cover bg-center pointer-events-none",
+                    className: "fixed inset-0 z-10 bg-cover bg-center bg-no-repeat pointer-events-none",
                     style: { backgroundImage: `url(${BG_REVEAL})`, WebkitMaskImage: 'none', maskImage: 'none' }
                 }),
-                React.createElement('div', { className: "fixed inset-0 z-10 opacity-[0.05] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] contrast-150" }),
+                // Ruido sutil
+                React.createElement('div', { className: "fixed inset-0 z-10 opacity-[0.04] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] contrast-150" }),
 
-                // Contenedor Principal (Scrollable si es necesario, pero intentando ajustar a pantalla)
-                React.createElement('main', { 
-                    className: "fixed inset-0 z-30 flex flex-col items-center justify-center pointer-events-none overflow-hidden" 
-                },
-                    loading ?
-                        React.createElement('div', { className: "flex flex-col items-center" },
-                            React.createElement('div', { className: "w-12 h-12 border-4 border-white border-t-transparent rounded-full loader-spin mb-4"}),
-                            React.createElement('p', { className: "font-mono text-xs tracking-[0.4em] text-white/60" }, "CONSTRUYENDO UNIVERSOS...")
+                // --- CONTENIDO SCROLLABLE (Z-30 para estar sobre el fondo) ---
+                React.createElement('div', { className: "relative z-30 min-h-screen flex flex-col items-center py-10 px-4" },
+                    
+                    // HEADER
+                    React.createElement('header', { className: "flex flex-col items-center mb-8 text-center max-w-2xl" },
+                        React.createElement('a', { href: "argx.html", className: "mb-4 hover:opacity-80 transition-opacity" },
+                            React.createElement('img', { src: "./assets/img/logo00.png", alt: "Lotería Tapatía", className: "h-24 md:h-32 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" })
+                        ),
+                        React.createElement('p', { className: "text-gray-300 font-sans text-sm md:text-base leading-relaxed opacity-80" }, 
+                            "La Lotería Tapatía es un proyecto literario que explora y celebra la identidad de Guadalajara a través de viñetas breves y evocadoras..."
+                        ),
+                        
+                        // Flechas de Navegación SUPERIOR
+                        React.createElement('div', { className: "flex gap-8 mt-6" },
+                            React.createElement('button', { onClick: prevPage, disabled: currentPage === 1, className: `text-white text-2xl w-10 h-10 border border-white/30 rounded-full flex items-center justify-center hover:bg-white/10 transition ${currentPage === 1 ? 'opacity-20 pointer-events-none' : ''}` }, "←"),
+                            React.createElement('button', { onClick: nextPage, disabled: currentPage === totalPages, className: `text-white text-2xl w-10 h-10 border border-white/30 rounded-full flex items-center justify-center hover:bg-white/10 transition ${currentPage === totalPages ? 'opacity-20 pointer-events-none' : ''}` }, "→")
                         )
-                        :
-                        React.createElement('div', { 
-                            className: "w-full h-full max-w-[1400px] flex flex-col justify-center px-4 md:px-10 py-2 md:py-6 pointer-events-auto" 
-                        },
-                            // HEADER
-                            React.createElement('header', { className: "flex flex-col items-center justify-center shrink-0 mb-2 md:mb-4" },
-                                React.createElement('a', { href: "argx.html", className: "hover:opacity-80 transition-opacity" },
-                                    React.createElement('img', { 
-                                        src: "./assets/img/logo00.png", 
-                                        alt: "Logo", 
-                                        className: "h-16 md:h-20 w-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" 
+                    ),
+
+                    // AREA DE CARGA O GRILLA
+                    loading ? 
+                        React.createElement('div', { className: "flex flex-col items-center mt-20" },
+                            React.createElement('div', { className: "w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mb-4" }),
+                            React.createElement('p', { className: "text-white/60 tracking-widest text-xs" }, "BARAJANDO CARTAS...")
+                        ) : 
+                        React.createElement('main', { className: "w-full max-w-5xl" },
+                            // --- GRILLA DE CARTAS ---
+                            React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 pb-10" },
+                                currentPoems.map((poem, idx) => 
+                                    React.createElement(LoteriaCard, {
+                                        key: poem.originalId,
+                                        poem: poem,
+                                        index: idx + ((currentPage - 1) * CARDS_PER_PAGE),
+                                        isFlipped: flippedIDs.has(poem.originalId),
+                                        onFlip: handleCardInteraction
                                     })
                                 )
                             ),
-
-                            // GRILLA DE CARTAS (AQUÍ ESTÁ EL CAMBIO CLAVE)
-                            // aspect-[4/5] ayuda a que el contenedor general intente mantener proporción de tabla, 
-                            // pero flex-1 permite que use el espacio disponible.
-                            React.createElement('div', {
-                                className: "grid grid-cols-4 gap-3 md:gap-5 w-full mx-auto max-h-[75vh] md:max-h-[80vh] aspect-[4/5] md:aspect-[16/10] justify-items-center content-center"
-                            },
-                                currentPoems.map((poem, idx) => 
-                                    React.createElement('div', {
-                                        key: poem.id,
-                                        onClick: () => openPoem(poem),
-                                        // CLAVE: aspect-[2/3] fuerza el formato vertical de naipe. w-full llena la celda de la grilla.
-                                        className: "glass-card relative w-full aspect-[2/3] rounded-lg md:rounded-xl overflow-hidden group"
-                                    },
-                                        // Imagen (Fondo completo)
-                                        React.createElement('div', {
-                                            className: "absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-110",
-                                            style: { backgroundImage: `url(${poem.imageUrl})` }
-                                        }),
-                                        
-                                        // Gradiente sutil abajo para texto
-                                        React.createElement('div', {
-                                            className: "absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/90 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-300"
-                                        }),
-
-                                        // Marco interno decorativo (opcional, le da toque de carta antigua)
-                                        React.createElement('div', { 
-                                            className: "absolute inset-1 md:inset-1.5 border border-white/20 rounded-md md:rounded-lg opacity-50 pointer-events-none" 
-                                        }),
-
-                                        // Título superpuesto (Limpio)
-                                        React.createElement('div', { 
-                                            className: "absolute bottom-0 left-0 right-0 p-2 md:p-3 text-center transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300" 
-                                        },
-                                            React.createElement('p', { 
-                                                className: "font-sans font-bold text-[8px] md:text-xs text-white tracking-widest uppercase drop-shadow-md truncate"
-                                            }, poem.title)
-                                        ),
-                                        
-                                        // Número
-                                        React.createElement('span', { 
-                                            className: "absolute top-2 left-2 font-mono text-[9px] md:text-[10px] text-white/90 bg-black/40 px-1.5 py-0.5 rounded backdrop-blur-sm" 
-                                        }, idx + ((currentPage-1)*16) + 1)
-                                    )
-                                )
-                            ),
-
-                            // CONTROLES DE NAVEGACIÓN
-                            React.createElement('div', { className: "flex justify-center items-center gap-12 mt-4 md:mt-6 shrink-0 h-10" },
-                                React.createElement('button', {
-                                    onClick: prevPage,
-                                    disabled: currentPage === 1,
-                                    className: `text-white border border-white/20 rounded-full w-10 h-10 flex items-center justify-center hover:bg-white/10 transition-all ${currentPage === 1 ? 'opacity-0' : ''}`
-                                }, "<"),
-                                
-                                React.createElement('span', { className: "font-mono text-[10px] md:text-xs tracking-widest text-white/50" },
-                                    `TABLA ${currentPage} / ${totalPages}`
-                                ),
-
-                                React.createElement('button', {
-                                    onClick: nextPage,
-                                    disabled: currentPage === totalPages,
-                                    className: `text-white border border-white/20 rounded-full w-10 h-10 flex items-center justify-center hover:bg-white/10 transition-all ${currentPage === totalPages ? 'opacity-0' : ''}`
-                                }, ">")
+                            
+                            // Navegación INFERIOR
+                            React.createElement('div', { className: "flex justify-center items-center gap-4 pb-10 text-white/50 text-xs tracking-widest font-mono" },
+                                React.createElement('span', null, `TABLA ${currentPage} DE ${totalPages}`)
                             )
                         )
                 ),
-                
-                selectedPoem && React.createElement(PoemModal, { poem: selectedPoem, onClose: closePoem })
+
+                // --- MODAL ---
+                selectedPoem && React.createElement(PoemModal, { poem: selectedPoem, onClose: closeModal })
             );
         };
 
