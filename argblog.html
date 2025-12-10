@@ -28,8 +28,16 @@
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
             
-            /* CURSOR ORIGINAL */
+            /* 1. CURSOR POR DEFECTO: BLANCO */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
+        }
+
+        /* 
+           2. CURSOR INTERACTIVO: AZUL NEÓN (#00FFFF)
+           Se aplica a enlaces, botones, tarjetas (glass-card) y elementos clickeables.
+        */
+        a, button, .cursor-pointer, .glass-card {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2300FFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), pointer;
         }
 
         .font-serif { font-family: 'Cormorant Garamond', serif; }
@@ -49,7 +57,8 @@
             background: rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 255, 255, 0.4);
             transform: translateY(-5px);
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2300FFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
+            /* Refuerzo del cursor azul neón al hover explícito */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2300FFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), pointer;
         }
 
         /* Animación de carga */
@@ -296,7 +305,6 @@
                 ),
 
                 // CONTENIDO PRINCIPAL
-                // Ajustado justify-end para que siempre busque estar abajo, pero con espacio arriba
                 React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col justify-end pb-6 md:pb-12 pointer-events-none" },
                     loading ?
                         React.createElement('div', { className: "w-full text-center mb-32 loader-pulse" },
@@ -328,7 +336,6 @@
                                         key: idx,
                                         'data-id': globalIndex,
                                         onClick: () => openPost(post),
-                                        // CAMBIO CLAVE AQUÍ: Reducción de altura en PC a h-[220px]
                                         className: `glass-card arg-card flex flex-col justify-between relative overflow-hidden group cursor-pointer p-4 md:p-6
                                             h-[155px] md:h-[220px] hover:scale-[1.02] active:scale-95 transition-all duration-300
                                             ${isActive ? 'is-active' : ''}`
@@ -341,7 +348,6 @@
                                                 ${isActive ? 'w-8 md:w-16' : 'group-hover:w-8 md:group-hover:w-16'}` 
                                             }),
                                             React.createElement('div', null,
-                                                // CAMBIO DE TIPOGRAFÍA: md:text-xl en lugar de 2xl para que quepa mejor
                                                 React.createElement('h3', { 
                                                     className: `font-serif text-sm md:text-xl text-gray-200 leading-[1.1] md:leading-[1.0] transition-colors line-clamp-3 md:line-clamp-3
                                                     ${isActive ? 'text-white' : 'group-hover:text-white'}`
