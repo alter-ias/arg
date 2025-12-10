@@ -12,7 +12,7 @@
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Poppins:wght@200;300;400&display=swap"
         rel="stylesheet">
     <style>
-        /* --- ESTILOS BASE (Idénticos al Blog) --- */
+        /* --- ESTILOS BASE (CONSISTENCIA TOTAL) --- */
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: #050505; color: #e5e5e5;
@@ -29,30 +29,33 @@
         .font-sans { font-family: 'Poppins', sans-serif; }
 
         /* Efecto Vidrio (Glassmorphism) */
-        .glass-card {
-            background: rgba(20, 20, 20, 0.5);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+        .glass-panel {
+            background: rgba(15, 15, 15, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: border-color 0.3s ease;
+        }
+        
+        .glass-panel:hover {
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Scrollbar personalizada para las listas de reproducción */
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        /* Scrollbar minimalista */
+        .custom-scroll::-webkit-scrollbar { width: 3px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
 
-        /* Animación de carga */
+        /* Animación Equalizer (Para el item activo) */
+        .eq-bar { animation: eq 1s ease-in-out infinite; }
+        .eq-bar:nth-child(2) { animation-delay: 0.2s; }
+        .eq-bar:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes eq { 0%, 100% { height: 30%; } 50% { height: 100%; } }
+
+        /* Loader */
         .loader-pulse { animation: pulse-opacity 1.5s ease-in-out infinite; }
         @keyframes pulse-opacity { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-
-        /* Item de lista activo */
-        .playlist-item.active {
-            background: rgba(255, 255, 255, 0.15);
-            border-left: 2px solid white;
-            padding-left: 14px; /* Compensar borde */
-        }
     </style>
 </head>
 
@@ -64,66 +67,132 @@
 
         const { useRef, useEffect, useState } = React;
 
-        // --- CONFIGURACIÓN Y DATOS ---
+        // --- CONFIGURACIÓN ---
+        // Hoja 2 del Sheet proporcionado
+        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuvGrwwaLeci2LXz5pjNiZ4EuKaqVTP8yGiOw2fYLVN1OIPo672tZHiLQoNuQ_25alhuGeFdOpJ5Up/pub?gid=707960725&single=true&output=csv';
+        
         const BG_DARK = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380713/arg01_ft9glg.png';
         const BG_REVEAL = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380719/arg02_o9yqpm.png';
 
-        // DATOS DE SPOTIFY (Los que proporcionaste)
-        const PODCASTS = [
-            { title: "Episodio 1: El inicio", src: "https://open.spotify.com/embed/episode/5yVkkKnfbegF7nkHdJ79b7?utm_source=generator" },
-            { title: "Episodio 2: Reflexiones", src: "https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" },
-            { title: "Episodio 3: La Caída", src: "https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator" },
-            { title: "Episodio 4: El Retorno", src: "https://open.spotify.com/embed/episode/1UNPu6kLKZJ3fHrCWB4yJg?utm_source=generator" }
-        ];
+        // --- PARSER CSV ROBUSTO ---
+        const parseCSV = (text) => {
+            const rows = [];
+            let currentRow = [];
+            let currentCell = '';
+            let insideQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const nextChar = text[i + 1];
+                if (char === '"') {
+                    if (insideQuotes && nextChar === '"') { currentCell += '"'; i++; } 
+                    else { insideQuotes = !insideQuotes; }
+                } else if (char === ',' && !insideQuotes) {
+                    currentRow.push(currentCell.trim()); currentCell = '';
+                } else if ((char === '\r' || char === '\n') && !insideQuotes) {
+                    if (char === '\r' && nextChar === '\n') i++;
+                    if (currentCell || currentRow.length > 0) { currentRow.push(currentCell.trim()); rows.push(currentRow); currentRow = []; currentCell = ''; }
+                } else { currentCell += char; }
+            }
+            if (currentCell || currentRow.length > 0) { currentRow.push(currentCell.trim()); rows.push(currentRow); }
+            return rows;
+        };
 
-        // DATOS DE VIDEO (Ejemplo placeholder - Puedes editar las URL de youtube aquí)
-        // Nota: Para youtube usa la estructura: https://www.youtube.com/embed/ID_DEL_VIDEO
-        const VIDEOS = [
-            { title: "¿Quién es Alan Ruíz?", src: "https://www.youtube.com/embed/dQw4w9WgXcQ?si=placeholder" }, 
-            { title: "En las Ruinas", src: "https://www.youtube.com/embed/M7lc1UVf-VE?si=placeholder" }
-        ];
+        // --- HELPER PARA URLS ---
+        const normalizeUrl = (url) => {
+            if (!url) return '';
+            // Si es YouTube normal, convertir a embed
+            if (url.includes('youtube.com/watch?v=')) {
+                return url.replace('watch?v=', 'embed/');
+            }
+            if (url.includes('youtu.be/')) {
+                return url.replace('youtu.be/', 'www.youtube.com/embed/');
+            }
+            return url;
+        };
 
-        // --- COMPONENTE DE SECCIÓN MULTIMEDIA ---
-        const MediaSection = ({ title, items, type }) => {
+        // --- COMPONENTE: EQUALIZER ANIMATION ---
+        const Equalizer = () => React.createElement('div', { className: "flex gap-[2px] h-3 items-end" },
+            React.createElement('div', { className: "w-[2px] bg-white eq-bar" }),
+            React.createElement('div', { className: "w-[2px] bg-white eq-bar" }),
+            React.createElement('div', { className: "w-[2px] bg-white eq-bar" })
+        );
+
+        // --- COMPONENTE: CONSOLA DE MEDIOS ---
+        const MediaConsole = ({ title, items, type }) => {
             const [currentIndex, setCurrentIndex] = useState(0);
+            
+            if (!items || items.length === 0) return null;
+            
             const currentItem = items[currentIndex];
 
-            return React.createElement('div', { className: "glass-card w-full h-full flex flex-col overflow-hidden rounded-xl" },
-                // Cabecera
-                React.createElement('div', { className: "p-4 md:p-6 border-b border-white/10" },
-                    React.createElement('h3', { className: "font-serif text-2xl md:text-3xl text-white tracking-wide" }, title)
+            return React.createElement('div', { className: "glass-panel w-full h-full flex flex-col rounded-sm overflow-hidden" },
+                // Header tipo "Etiqueta de archivo"
+                React.createElement('div', { className: "h-12 border-b border-white/10 flex items-center px-4 bg-white/5 justify-between" },
+                    React.createElement('h3', { className: "font-mono text-xs tracking-[0.2em] text-white/60 uppercase" }, title),
+                    React.createElement('div', { className: "flex gap-2" },
+                        React.createElement('div', { className: "w-2 h-2 rounded-full bg-red-500/50" }),
+                        React.createElement('div', { className: "w-2 h-2 rounded-full bg-yellow-500/50" }),
+                        React.createElement('div', { className: "w-2 h-2 rounded-full bg-green-500/50" })
+                    )
                 ),
                 
-                // Contenedor Reproductor + Lista
+                // Área Principal
                 React.createElement('div', { className: "flex flex-col h-full overflow-hidden" },
                     
-                    // REPRODUCTOR (Iframe)
-                    React.createElement('div', { className: `w-full shrink-0 bg-black/50 relative ${type === 'video' ? 'aspect-video' : 'h-[352px]'}` },
-                        React.createElement('iframe', {
-                            src: currentItem.src,
-                            width: "100%",
-                            height: "100%",
-                            frameBorder: "0",
-                            allowFullScreen: true,
-                            allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture",
-                            loading: "lazy",
-                            className: "absolute inset-0"
-                        })
+                    // REPRODUCTOR (Visualización Principal)
+                    React.createElement('div', { className: "relative bg-black shrink-0 border-b border-white/10 shadow-2xl z-10" },
+                        // Contenedor de aspecto para video, altura fija para podcast
+                        React.createElement('div', { 
+                            className: type === 'video' ? 'aspect-video w-full' : 'w-full h-[200px] md:h-[232px]' 
+                        },
+                            React.createElement('iframe', {
+                                key: currentItem.src, // Key fuerza re-render al cambiar src
+                                src: currentItem.src,
+                                width: "100%",
+                                height: "100%",
+                                frameBorder: "0",
+                                allowFullScreen: true,
+                                allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture",
+                                className: "w-full h-full"
+                            })
+                        ),
+                        // Overlay de "En reproducción"
+                        React.createElement('div', { className: "absolute top-0 left-0 bg-black/60 backdrop-blur-sm px-3 py-1 border-b border-r border-white/10 rounded-br-lg pointer-events-none" },
+                            React.createElement('span', { className: "font-mono text-[9px] text-white tracking-widest uppercase" }, "Now Playing")
+                        )
                     ),
 
-                    // LISTA DE REPRODUCCIÓN
-                    React.createElement('div', { className: "flex-1 overflow-y-auto custom-scroll bg-black/20" },
-                        items.map((item, idx) => 
-                            React.createElement('div', {
+                    // LISTA DE DATOS (Playlist estilo terminal)
+                    React.createElement('div', { className: "flex-1 overflow-y-auto custom-scroll bg-[#0a0a0a]" },
+                        items.map((item, idx) => {
+                            const isActive = idx === currentIndex;
+                            return React.createElement('div', {
                                 key: idx,
                                 onClick: () => setCurrentIndex(idx),
-                                className: `playlist-item p-4 border-b border-white/5 cursor-pointer hover:bg-white/5 transition-all
-                                    ${idx === currentIndex ? 'active' : ''}`
+                                className: `group relative p-4 cursor-pointer transition-all duration-300 border-b border-white/5
+                                    ${isActive ? 'bg-white/5' : 'hover:bg-white/5'}`
                             },
-                                React.createElement('p', { className: `font-serif text-sm md:text-lg leading-tight ${idx === currentIndex ? 'text-white' : 'text-gray-400'}` }, item.title),
-                                React.createElement('p', { className: "font-mono text-[9px] text-white/30 mt-1 uppercase tracking-widest" }, type === 'video' ? 'VIDEO' : 'PODCAST')
-                            )
-                        )
+                                // Indicador lateral
+                                isActive && React.createElement('div', { className: "absolute left-0 top-0 bottom-0 w-[3px] bg-white" }),
+                                
+                                React.createElement('div', { className: "flex justify-between items-center" },
+                                    React.createElement('div', { className: "flex-1 pr-4" },
+                                        React.createElement('div', { className: "flex items-center gap-2 mb-1" },
+                                            React.createElement('span', { className: "font-mono text-[9px] text-white/30" }, 
+                                                (idx + 1).toString().padStart(2, '0')
+                                            ),
+                                            isActive && React.createElement(Equalizer)
+                                        ),
+                                        React.createElement('p', { 
+                                            className: `font-serif text-lg leading-none transition-colors
+                                            ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-200'}` 
+                                        }, item.title)
+                                    ),
+                                    // Icono tipo play
+                                    React.createElement('div', { className: `text-xs ${isActive ? 'text-white' : 'text-white/10 group-hover:text-white/40'}` }, "▶")
+                                )
+                            );
+                        })
                     )
                 )
             );
@@ -132,10 +201,38 @@
         // --- APP PRINCIPAL ---
         const App = () => {
             const revealedLayerRef = useRef(null);
+            const [data, setData] = useState({ videos: [], podcasts: [] });
             const [loading, setLoading] = useState(true);
             const [isMobile, setIsMobile] = useState(window.matchMedia("(max-width: 768px)").matches);
 
-            // --- FÍSICA LÍQUIDA (Igual al Blog) ---
+            // --- CARGA DE DATOS ---
+            useEffect(() => {
+                const fetchData = async () => {
+                    try {
+                        const res = await fetch(SHEET_CSV_URL);
+                        const text = await res.text();
+                        const rows = parseCSV(text).slice(1); // Ignorar header
+
+                        // Mapear columnas: A(0)=VideoTitulo, B(1)=VideoUrl, C(2)=PodTitulo, D(3)=PodUrl
+                        const videos = rows
+                            .map(r => ({ title: r[0], src: normalizeUrl(r[1]) }))
+                            .filter(v => v.title && v.src); // Filtrar vacíos
+
+                        const podcasts = rows
+                            .map(r => ({ title: r[2], src: normalizeUrl(r[3]) }))
+                            .filter(p => p.title && p.src); // Filtrar vacíos
+
+                        setData({ videos, podcasts });
+                    } catch (e) {
+                        console.error("Error cargando Sheet:", e);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+                fetchData();
+            }, []);
+
+            // --- FÍSICA LÍQUIDA (Consistente) ---
             useEffect(() => {
                 const handleResize = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
                 window.addEventListener('resize', handleResize);
@@ -184,9 +281,6 @@
                 };
                 loop();
 
-                // Simulación de carga
-                setTimeout(() => setLoading(false), 800);
-
                 return () => {
                     window.removeEventListener('mousemove', handleMove);
                     window.removeEventListener('touchmove', handleMove);
@@ -196,12 +290,11 @@
             }, [isMobile]);
 
             return React.createElement(React.Fragment, null,
-                // CAPA 1: FONDO
+                // CAPAS DE FONDO
                 React.createElement('div', {
                     className: "fixed inset-0 z-0 bg-cover bg-center",
                     style: { backgroundImage: `url(${BG_DARK})` }
                 }),
-                // CAPA 2: REVELADO
                 React.createElement('div', {
                     ref: revealedLayerRef,
                     className: "fixed inset-0 z-10 bg-cover bg-center pointer-events-none",
@@ -213,50 +306,47 @@
                         transform: 'translateZ(0)'
                     }
                 }),
-                // CAPA 3: RUIDO
                 React.createElement('div', { className: "fixed inset-0 z-10 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150" }),
 
-                // NAVBAR (Créditos)
+                // NAVBAR Y CRÉDITOS
                 React.createElement('nav', { className: "fixed top-0 left-0 w-full p-6 md:p-12 z-40 flex justify-end items-start pointer-events-none" },
                     React.createElement('div', { className: "hidden md:block text-right font-mono text-[10px] text-white/40 tracking-widest" },
                         React.createElement('p', null, "COLECTIVO ALTERLAB"),
-                        React.createElement('p', null, "MEDIATECA DIGITAL")
+                        React.createElement('p', null, "FUENTE: GOOGLE SHEETS")
                     )
                 ),
 
                 // CONTENIDO PRINCIPAL
-                React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col overflow-hidden pointer-events-none" },
+                React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col pointer-events-none" },
+                    
                     loading ?
-                        React.createElement('div', { className: "w-full h-full flex items-center justify-center loader-pulse" },
-                            React.createElement('p', { className: "font-mono text-xs tracking-[0.5em] text-white/50" }, "CARGANDO MEDIOS...")
+                        React.createElement('div', { className: "w-full h-full flex flex-col items-center justify-center loader-pulse" },
+                             React.createElement('p', { className: "font-mono text-xs tracking-[0.5em] text-white/50" }, "SINCRONIZANDO DATA...")
                         )
                     :
                     React.createElement('div', { className: "w-full h-full pointer-events-auto flex flex-col" },
                         
-                        // CABECERA: Logo y Título
-                        React.createElement('div', { className: "pt-8 pb-4 md:pt-12 md:pb-6 text-center shrink-0" },
+                        // Header Flotante
+                        React.createElement('div', { className: "pt-8 pb-4 md:pt-10 md:pb-6 text-center shrink-0 relative z-50" },
                             React.createElement('a', {
                                 href: "https://alter-ias.github.io/arg/argx.html",
                                 className: "font-serif text-4xl md:text-5xl text-white tracking-widest mix-blend-difference hover:opacity-70 transition-opacity block mb-2"
                             }, "ARG"),
-                            React.createElement('h2', { className: "text-[10px] font-mono text-white/40 tracking-[0.4em] uppercase" }, "Archivo Audiovisual")
+                            React.createElement('h2', { className: "text-[10px] font-mono text-white/40 tracking-[0.4em] uppercase" }, "Mediateca Digital")
                         ),
 
-                        // ÁREA DE CONTENIDO (Scrollable si es necesario en móviles pequeños)
-                        React.createElement('div', { className: "flex-1 overflow-y-auto overflow-x-hidden custom-scroll px-4 md:px-20 pb-12" },
-                            React.createElement('div', { className: "max-w-[1600px] mx-auto h-full" },
-                                // LAYOUT GRID: 1 col móvil, 2 cols PC
-                                React.createElement('div', { className: "grid grid-cols-1 lg:grid-cols-2 gap-6 h-full lg:h-[75vh]" },
-                                    
-                                    // COLUMNA 1: VIDEO
-                                    React.createElement('div', { className: "h-[500px] lg:h-full" },
-                                        React.createElement(MediaSection, { title: "Archivo Visual", type: "video", items: VIDEOS })
-                                    ),
+                        // Contenedor de Consolas (Grid Asimétrica)
+                        React.createElement('div', { className: "flex-1 overflow-y-auto overflow-x-hidden custom-scroll px-4 md:px-12 pb-8" },
+                            React.createElement('div', { className: "max-w-[1600px] mx-auto h-full flex flex-col lg:flex-row gap-6 lg:gap-8 lg:h-[75vh]" },
+                                
+                                // CONSOLA VISUAL (Izquierda - Ocupa más en video)
+                                React.createElement('div', { className: "w-full lg:w-1/2 h-[500px] lg:h-full" },
+                                    React.createElement(MediaConsole, { title: "TRANSMISIÓN VISUAL [A-DATA]", items: data.videos, type: "video" })
+                                ),
 
-                                    // COLUMNA 2: PODCAST
-                                    React.createElement('div', { className: "h-[600px] lg:h-full" },
-                                        React.createElement(MediaSection, { title: "Archivo Sonoro", type: "audio", items: PODCASTS })
-                                    )
+                                // CONSOLA SONORA (Derecha)
+                                React.createElement('div', { className: "w-full lg:w-1/2 h-[500px] lg:h-full" },
+                                    React.createElement(MediaConsole, { title: "FRECUENCIA SONORA [B-DATA]", items: data.podcasts, type: "audio" })
                                 )
                             )
                         )
