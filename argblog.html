@@ -23,7 +23,11 @@
             color: #e5e5e5;
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
-            touch-action: none;
+            touch-action: none; /* Vital para evitar scroll nativo indeseado y zoom */
+            user-select: none; /* Evita que se seleccione texto al arrastrar el dedo */
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent; /* Quita el recuadro azul al tocar */
+            
             /* CURSOR ORIGINAL */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
@@ -42,9 +46,11 @@
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
         }
 
+        /* Estado Hover (PC) o Activo (Móvil) */
+        .glass-card.is-active,
         .glass-card:hover {
             background: rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 255, 255, 0.4);
@@ -102,7 +108,6 @@
 
         // --- COMPONENTE MODAL ---
         const PostModal = ({ post, onClose }) => {
-            // Manejo de la tecla ESC
             useEffect(() => {
                 const handleEsc = (e) => e.key === 'Escape' && onClose();
                 window.addEventListener('keydown', handleEsc);
@@ -113,21 +118,19 @@
 
             return React.createElement('div', {
                 className: "fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md transition-opacity duration-500",
-                // Solo cierra si se hace click en el fondo oscuro, no en el contenido
                 onClick: (e) => e.target === e.currentTarget && onClose()
             },
                 React.createElement('div', {
-                    className: "w-full h-full md:max-w-5xl md:h-[95vh] bg-[#050505] md:border md:border-white/10 overflow-y-auto relative flex flex-col shadow-2xl"
+                    className: "w-full h-full md:max-w-5xl md:h-[95vh] bg-[#050505] md:border md:border-white/10 overflow-y-auto relative flex flex-col shadow-2xl select-text" // select-text reactiva la selección dentro del modal
                 },
                     post.image && React.createElement('div', {
                         className: "w-full h-[30vh] md:h-[40vh] bg-cover bg-center shrink-0 relative",
                         style: { backgroundImage: `url(${post.image})` }
                     },
                         React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" }),
-                        // Botón cerrar visual
                         React.createElement('button', {
                             onClick: onClose,
-                            className: "absolute top-4 right-4 md:top-8 md:right-8 text-white text-3xl md:text-4xl font-serif hover:scale-110 transition-transform drop-shadow-lg z-50"
+                            className: "absolute top-4 right-4 md:top-8 md:right-8 text-white text-3xl md:text-4xl font-serif hover:scale-110 transition-transform drop-shadow-lg z-50 p-2"
                         }, "×")
                     ),
                     React.createElement('div', { className: "px-6 py-8 md:px-20 md:py-16 max-w-3xl mx-auto w-full" },
@@ -149,34 +152,29 @@
             const [loading, setLoading] = useState(true);
             const [selectedPost, setSelectedPost] = useState(null);
             
-            // Layout y Paginación
+            // Estado para rastrear qué tarjeta está siendo tocada
+            const [activeTouchId, setActiveTouchId] = useState(null);
+
             const [currentPage, setCurrentPage] = useState(1);
             const [isMobile, setIsMobile] = useState(window.matchMedia("(max-width: 768px)").matches);
-            const POSTS_PER_PAGE = 8; // 8 posts para ambas vistas (4x2 PC, 2x4 Móvil)
+            const POSTS_PER_PAGE = 8; 
 
-            // --- MANEJO DEL BOTÓN "ATRÁS" (HISTORY API) ---
+            // --- MANEJO DEL BOTÓN "ATRÁS" ---
             useEffect(() => {
                 const handlePopState = (event) => {
-                    // Si el usuario presiona "Atrás", cerramos el modal
                     setSelectedPost(null);
                 };
-
                 window.addEventListener('popstate', handlePopState);
                 return () => window.removeEventListener('popstate', handlePopState);
             }, []);
 
-            // Función para abrir post (empuja historial)
             const openPost = (post) => {
-                // Empuja un estado al historial para que el botón "Atrás" tenga algo que deshacer
                 window.history.pushState({ modalOpen: true }, '', '#post');
                 setSelectedPost(post);
             };
 
-            // Función para cerrar post (regresa historial)
             const closePost = () => {
                 if (selectedPost) {
-                    // Si el historial tiene nuestro estado, volvemos atrás. Esto dispara el 'popstate' de arriba.
-                    // Si no (ej. recarga directa), solo limpiamos el estado.
                     if (window.history.state && window.history.state.modalOpen) {
                         window.history.back();
                     } else {
@@ -185,28 +183,50 @@
                 }
             };
 
-            // --- DETECCIÓN DE MÓVIL ---
             useEffect(() => {
                 const handleResize = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
                 window.addEventListener('resize', handleResize);
                 return () => window.removeEventListener('resize', handleResize);
             }, []);
 
-            // --- FÍSICA LÍQUIDA ---
+            // --- FÍSICA LÍQUIDA + DETECCIÓN DE TOQUE ---
             useEffect(() => {
                 const TRAIL_LENGTH = isMobile ? 6 : 12;
                 const BASE_RADIUS = isMobile ? 140 : 200;
                 const points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
                 let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
+                // Esta función maneja tanto el movimiento visual como la detección de elementos
                 const handleMove = (e) => {
                     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                     mouse = { x: clientX, y: clientY };
+
+                    // LÓGICA DE "HOVER" TÁCTIL (Solo móvil)
+                    if (e.touches && isMobile) {
+                        // Detectamos qué elemento está bajo el dedo
+                        const elementUnderFinger = document.elementFromPoint(clientX, clientY);
+                        // Buscamos si ese elemento es una de nuestras tarjetas (marcadas con la clase 'arg-card')
+                        const card = elementUnderFinger?.closest('.arg-card');
+                        
+                        if (card) {
+                            // Si es una tarjeta, obtenemos su ID y actualizamos el estado
+                            const id = card.getAttribute('data-id');
+                            setActiveTouchId(id);
+                        } else {
+                            setActiveTouchId(null);
+                        }
+                    }
                 };
+                
+                // Limpiar el estado activo al levantar el dedo
+                const handleEnd = () => {
+                    if(isMobile) setActiveTouchId(null);
+                }
 
                 window.addEventListener('mousemove', handleMove);
                 window.addEventListener('touchmove', handleMove, { passive: false });
+                window.addEventListener('touchend', handleEnd);
 
                 let animationFrameId;
                 const loop = () => {
@@ -240,6 +260,7 @@
                 return () => {
                     window.removeEventListener('mousemove', handleMove);
                     window.removeEventListener('touchmove', handleMove);
+                    window.removeEventListener('touchend', handleEnd);
                     cancelAnimationFrame(animationFrameId);
                 };
             }, [isMobile]);
@@ -262,10 +283,9 @@
                 load();
             }, []);
 
-            // --- LÓGICA DE PAGINACIÓN ---
+            // --- PAGINACIÓN ---
             const indexOfLastPost = currentPage * POSTS_PER_PAGE;
             const indexOfFirstPost = indexOfLastPost - POSTS_PER_PAGE;
-            // AHORA APLICAMOS PAGINACIÓN EN TODOS LOS DISPOSITIVOS
             const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
             const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
 
@@ -314,47 +334,64 @@
                         React.createElement('div', { className: "w-full pointer-events-auto px-4 md:px-20 max-w-[1600px] mx-auto" },
                             React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-4 md:mb-8 tracking-[0.3em] uppercase ml-1" }, "Archivo Central"),
 
-                            // GRILLA (Responsive: 2 cols móvil, 4 cols desktop)
+                            // GRILLA
                             React.createElement('div', {
                                 className: "grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 w-full mb-4 md:mb-6"
                             },
                                 currentPosts.map((post, idx) => {
                                     const globalIndex = indexOfFirstPost + idx;
+                                    const isActive = activeTouchId === String(globalIndex); // Verificamos si este es el post tocado
+
                                     return React.createElement('div', {
                                         key: idx,
-                                        // Usamos openPost para manejar el historial
+                                        'data-id': globalIndex, // Identificador para el touch
                                         onClick: () => openPost(post),
-                                        // Clases condicionales para tamaño de caja
-                                        className: `glass-card flex flex-col justify-between relative overflow-hidden group cursor-pointer p-4 md:p-8
-                                            h-[160px] md:h-[280px] hover:scale-[1.02] transition-transform duration-500`
+                                        // Añadimos la clase 'arg-card' para identificarla en el DOM
+                                        // Añadimos 'is-active' si el dedo está encima
+                                        className: `glass-card arg-card flex flex-col justify-between relative overflow-hidden group cursor-pointer p-4 md:p-8
+                                            h-[160px] md:h-[280px] hover:scale-[1.02] active:scale-95 transition-all duration-300
+                                            ${isActive ? 'is-active' : ''}`
                                     },
                                         React.createElement('span', { className: "font-mono text-[8px] md:text-[10px] text-white/20" }, globalIndex < 9 ? `0${globalIndex + 1}` : globalIndex + 1),
                                         
                                         React.createElement('div', { className: "relative z-10 flex flex-col h-full justify-between" },
-                                            // Línea decorativa
-                                            React.createElement('div', { className: "w-4 md:w-8 h-[1px] bg-white/50 mt-1 md:mt-0 group-hover:w-8 md:group-hover:w-16 transition-all duration-500" }),
+                                            // Línea decorativa (Se expande si hover o active)
+                                            React.createElement('div', { 
+                                                className: `w-4 md:w-8 h-[1px] bg-white/50 mt-1 md:mt-0 transition-all duration-500
+                                                ${isActive ? 'w-8 md:w-16' : 'group-hover:w-8 md:group-hover:w-16'}` 
+                                            }),
                                             
                                             // Título y Fecha
                                             React.createElement('div', null,
-                                                React.createElement('h3', { className: "font-serif text-sm md:text-2xl text-gray-200 leading-[1.1] md:leading-[0.9] group-hover:text-white transition-colors line-clamp-3 md:line-clamp-2" }, post.title),
+                                                React.createElement('h3', { 
+                                                    className: `font-serif text-sm md:text-2xl text-gray-200 leading-[1.1] md:leading-[0.9] transition-colors line-clamp-3 md:line-clamp-2
+                                                    ${isActive ? 'text-white' : 'group-hover:text-white'}`
+                                                }, post.title),
                                                 React.createElement('p', { className: "text-[8px] md:text-[10px] font-mono text-white/40 mt-2 tracking-widest uppercase" }, post.date || "---")
                                             )
                                         ),
 
-                                        // Imagen de fondo (hover)
+                                        // IMAGEN DE FONDO
+                                        // Lógica: Se muestra si hay hover (PC) O si es el elemento activo por touch (Móvil)
                                         post.image && React.createElement('div', {
-                                            className: "absolute inset-0 bg-cover bg-center opacity-0 group-hover:opacity-40 transition-all duration-700 grayscale group-hover:grayscale-0 transform scale-110 group-hover:scale-100",
+                                            className: `absolute inset-0 bg-cover bg-center transition-all duration-500 transform scale-110
+                                            ${isActive 
+                                                ? 'opacity-60 scale-100 grayscale-0' // Estado Activo (Dedo encima)
+                                                : 'opacity-0 group-hover:opacity-40 group-hover:scale-100 grayscale group-hover:grayscale-0' // Estado Normal/Hover PC
+                                            }`,
                                             style: { backgroundImage: `url(${post.image})` }
                                         }),
                                         // Gradiente
-                                        React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" })
+                                        React.createElement('div', { 
+                                            className: `absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent transition-opacity duration-500
+                                            ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`
+                                        })
                                     );
                                 })
                             ),
 
-                            // CONTROLES DE PAGINACIÓN (Siempre visibles si hay >1 página)
+                            // PAGINACIÓN
                             totalPages > 1 && React.createElement('div', { className: "flex justify-center items-center gap-4 md:gap-6 mt-2 md:mt-4 h-8" },
-                                // Botón Anterior
                                 React.createElement('button', {
                                     onClick: prevPage,
                                     disabled: currentPage === 1,
@@ -364,7 +401,6 @@
                                         React.createElement('path', { d: "M15 18l-6-6 6-6" })
                                     )
                                 ),
-                                // Números
                                 Array.from({ length: totalPages }, (_, i) => i + 1).map(number =>
                                     React.createElement('button', {
                                         key: number,
@@ -375,7 +411,6 @@
                                                 : 'text-white/30 hover:text-white hover:bg-white/5'}`
                                     }, number)
                                 ),
-                                // Botón Siguiente
                                 React.createElement('button', {
                                     onClick: nextPage,
                                     disabled: currentPage === totalPages,
@@ -388,7 +423,6 @@
                             )
                         )
                 ),
-                // Usamos closePost para manejar el historial
                 selectedPost && React.createElement(PostModal, { post: selectedPost, onClose: closePost })
             );
         };
