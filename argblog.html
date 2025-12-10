@@ -296,6 +296,7 @@
                 ),
 
                 // CONTENIDO PRINCIPAL
+                // Ajustado justify-end para que siempre busque estar abajo, pero con espacio arriba
                 React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col justify-end pb-6 md:pb-12 pointer-events-none" },
                     loading ?
                         React.createElement('div', { className: "w-full text-center mb-32 loader-pulse" },
@@ -304,8 +305,8 @@
                         :
                         React.createElement('div', { className: "w-full pointer-events-auto px-4 md:px-20 max-w-[1600px] mx-auto flex flex-col" },
                             
-                            // --- LOGO ARG REUBICADO ---
-                            React.createElement('div', { className: "w-full flex justify-center mb-2 md:mb-4 pointer-events-auto" },
+                            // --- LOGO ARG ---
+                            React.createElement('div', { className: "w-full flex justify-center mb-2 md:mb-2 pointer-events-auto" },
                                 React.createElement('a', {
                                     href: "https://alter-ias.github.io/arg/argx.html",
                                     className: "font-serif text-4xl md:text-5xl text-white tracking-widest mix-blend-difference hover:opacity-70 transition-opacity"
@@ -313,11 +314,11 @@
                             ),
 
                             // Título Archivo
-                            React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-2 md:mb-4 tracking-[0.3em] uppercase ml-1" }, "Archivo Central"),
+                            React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-2 md:mb-3 tracking-[0.3em] uppercase ml-1" }, "Archivo Central"),
 
                             // GRILLA
                             React.createElement('div', {
-                                className: "grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 w-full mb-3 md:mb-6"
+                                className: "grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 w-full mb-3 md:mb-4"
                             },
                                 currentPosts.map((post, idx) => {
                                     const globalIndex = indexOfFirstPost + idx;
@@ -327,8 +328,9 @@
                                         key: idx,
                                         'data-id': globalIndex,
                                         onClick: () => openPost(post),
-                                        className: `glass-card arg-card flex flex-col justify-between relative overflow-hidden group cursor-pointer p-4 md:p-8
-                                            h-[155px] md:h-[280px] hover:scale-[1.02] active:scale-95 transition-all duration-300
+                                        // CAMBIO CLAVE AQUÍ: Reducción de altura en PC a h-[220px]
+                                        className: `glass-card arg-card flex flex-col justify-between relative overflow-hidden group cursor-pointer p-4 md:p-6
+                                            h-[155px] md:h-[220px] hover:scale-[1.02] active:scale-95 transition-all duration-300
                                             ${isActive ? 'is-active' : ''}`
                                     },
                                         React.createElement('span', { className: "font-mono text-[8px] md:text-[10px] text-white/20" }, globalIndex < 9 ? `0${globalIndex + 1}` : globalIndex + 1),
@@ -339,8 +341,9 @@
                                                 ${isActive ? 'w-8 md:w-16' : 'group-hover:w-8 md:group-hover:w-16'}` 
                                             }),
                                             React.createElement('div', null,
+                                                // CAMBIO DE TIPOGRAFÍA: md:text-xl en lugar de 2xl para que quepa mejor
                                                 React.createElement('h3', { 
-                                                    className: `font-serif text-sm md:text-2xl text-gray-200 leading-[1.1] md:leading-[0.9] transition-colors line-clamp-3 md:line-clamp-2
+                                                    className: `font-serif text-sm md:text-xl text-gray-200 leading-[1.1] md:leading-[1.0] transition-colors line-clamp-3 md:line-clamp-3
                                                     ${isActive ? 'text-white' : 'group-hover:text-white'}`
                                                 }, post.title),
                                                 React.createElement('p', { className: "text-[8px] md:text-[10px] font-mono text-white/40 mt-2 tracking-widest uppercase" }, post.date || "---")
