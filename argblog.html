@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -23,24 +24,18 @@
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
             touch-action: none;
-            /* Vital para la fluidez en móviles */
             /* CURSOR ORIGINAL */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
+
         .font-serif {
             font-family: 'Cormorant Garamond', serif;
         }
+
         .font-sans {
             font-family: 'Poppins', sans-serif;
         }
-        /* Scrollbar oculta */
-        .hide-scroll::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scroll {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+
         /* Efecto Vidrio */
         .glass-card {
             background: rgba(20, 20, 20, 0.4);
@@ -49,37 +44,39 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
+
         .glass-card:hover {
             background: rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(-20px);
+            transform: translateY(-5px);
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
+
         /* Animación de carga */
         .loader-pulse {
             animation: pulse-opacity 1.5s ease-in-out infinite;
         }
+
         @keyframes pulse-opacity {
-            0%,
-            100% {
-                opacity: 0.3;
-            }
-            50% {
-                opacity: 1;
-            }
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
     </style>
 </head>
+
 <body>
     <div id="root"></div>
     <script type="module">
         import React from 'https://esm.sh/react@18.3.1';
         import ReactDOM from 'https://esm.sh/react-dom@18.3.1/client';
+
         const { useRef, useEffect, useState } = React;
+
         // --- CONFIGURACIÓN ---
         const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuvGrwwaLeci2LXz5pjNiZ4EuKaqVTP8yGiOw2fYLVN1OIPo672tZHiLQoNuQ_25alhuGeFdOpJ5Up/pub?output=csv';
         const BG_DARK = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380713/arg01_ft9glg.png';
         const BG_REVEAL = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380719/arg02_o9yqpm.png';
+
         // --- PARSER CSV ---
         const parseCSV = (text) => {
             const rows = [];
@@ -102,87 +99,122 @@
             if (currentCell || currentRow.length > 0) { currentRow.push(currentCell.trim()); rows.push(currentRow); }
             return rows;
         };
+
         // --- COMPONENTE MODAL ---
         const PostModal = ({ post, onClose }) => {
+            // Manejo de la tecla ESC
             useEffect(() => {
                 const handleEsc = (e) => e.key === 'Escape' && onClose();
                 window.addEventListener('keydown', handleEsc);
                 return () => window.removeEventListener('keydown', handleEsc);
             }, [onClose]);
+
             if (!post) return null;
+
             return React.createElement('div', {
                 className: "fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md transition-opacity duration-500",
+                // Solo cierra si se hace click en el fondo oscuro, no en el contenido
                 onClick: (e) => e.target === e.currentTarget && onClose()
             },
                 React.createElement('div', {
                     className: "w-full h-full md:max-w-5xl md:h-[95vh] bg-[#050505] md:border md:border-white/10 overflow-y-auto relative flex flex-col shadow-2xl"
                 },
                     post.image && React.createElement('div', {
-                        className: "w-full h-[40vh] bg-cover bg-center shrink-0 relative",
+                        className: "w-full h-[30vh] md:h-[40vh] bg-cover bg-center shrink-0 relative",
                         style: { backgroundImage: `url(${post.image})` }
                     },
                         React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" }),
+                        // Botón cerrar visual
                         React.createElement('button', {
                             onClick: onClose,
-                            className: "absolute top-8 right-8 text-white text-4xl font-serif hover:scale-110 transition-transform drop-shadow-lg"
+                            className: "absolute top-4 right-4 md:top-8 md:right-8 text-white text-3xl md:text-4xl font-serif hover:scale-110 transition-transform drop-shadow-lg z-50"
                         }, "×")
                     ),
-                    React.createElement('div', { className: "px-8 py-12 md:px-20 md:py-16 max-w-3xl mx-auto w-full" },
-                        React.createElement('h1', { className: "font-serif text-5xl md:text-6xl mb-6 text-white leading-[0.9]" }, post.title),
-                        React.createElement('div', { className: "flex items-center gap-6 mb-16 border-b border-white/10 pb-6" },
-                            React.createElement('span', { className: "text-xs font-mono tracking-widest text-gray-400" }, post.date || "S/F"),
-                            post.tag && React.createElement('span', { className: "text-xs font-mono text-white bg-white/10 px-2 py-1 rounded" }, post.tag)
+                    React.createElement('div', { className: "px-6 py-8 md:px-20 md:py-16 max-w-3xl mx-auto w-full" },
+                        React.createElement('h1', { className: "font-serif text-3xl md:text-6xl mb-4 md:mb-6 text-white leading-[1.1] md:leading-[0.9]" }, post.title),
+                        React.createElement('div', { className: "flex items-center gap-4 md:gap-6 mb-8 md:mb-16 border-b border-white/10 pb-6" },
+                            React.createElement('span', { className: "text-[10px] md:text-xs font-mono tracking-widest text-gray-400" }, post.date || "S/F"),
+                            post.tag && React.createElement('span', { className: "text-[10px] md:text-xs font-mono text-white bg-white/10 px-2 py-1 rounded" }, post.tag)
                         ),
-                        React.createElement('div', { className: "prose prose-invert prose-xl font-serif text-gray-300 leading-relaxed whitespace-pre-wrap" }, post.content)
+                        React.createElement('div', { className: "prose prose-invert prose-base md:prose-xl font-serif text-gray-300 leading-relaxed whitespace-pre-wrap" }, post.content)
                     )
                 )
             );
         };
+
         // --- APP PRINCIPAL ---
         const App = () => {
             const revealedLayerRef = useRef(null);
             const [posts, setPosts] = useState([]);
             const [loading, setLoading] = useState(true);
             const [selectedPost, setSelectedPost] = useState(null);
-            // Estado para paginación y layout
+            
+            // Layout y Paginación
             const [currentPage, setCurrentPage] = useState(1);
             const [isMobile, setIsMobile] = useState(window.matchMedia("(max-width: 768px)").matches);
-            const POSTS_PER_PAGE = 8;
+            const POSTS_PER_PAGE = 8; // 8 posts para ambas vistas (4x2 PC, 2x4 Móvil)
+
+            // --- MANEJO DEL BOTÓN "ATRÁS" (HISTORY API) ---
+            useEffect(() => {
+                const handlePopState = (event) => {
+                    // Si el usuario presiona "Atrás", cerramos el modal
+                    setSelectedPost(null);
+                };
+
+                window.addEventListener('popstate', handlePopState);
+                return () => window.removeEventListener('popstate', handlePopState);
+            }, []);
+
+            // Función para abrir post (empuja historial)
+            const openPost = (post) => {
+                // Empuja un estado al historial para que el botón "Atrás" tenga algo que deshacer
+                window.history.pushState({ modalOpen: true }, '', '#post');
+                setSelectedPost(post);
+            };
+
+            // Función para cerrar post (regresa historial)
+            const closePost = () => {
+                if (selectedPost) {
+                    // Si el historial tiene nuestro estado, volvemos atrás. Esto dispara el 'popstate' de arriba.
+                    // Si no (ej. recarga directa), solo limpiamos el estado.
+                    if (window.history.state && window.history.state.modalOpen) {
+                        window.history.back();
+                    } else {
+                        setSelectedPost(null);
+                    }
+                }
+            };
+
             // --- DETECCIÓN DE MÓVIL ---
             useEffect(() => {
-                const handleResize = () => {
-                    setIsMobile(window.matchMedia("(max-width: 768px)").matches);
-                };
+                const handleResize = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
                 window.addEventListener('resize', handleResize);
                 return () => window.removeEventListener('resize', handleResize);
             }, []);
-            // --- FÍSICA MEJORADA (MÁS ORGÁNICA) ---
+
+            // --- FÍSICA LÍQUIDA ---
             useEffect(() => {
-                // AJUSTES DE FLUIDEZ:
-                // Más puntos = cola más larga y suave
                 const TRAIL_LENGTH = isMobile ? 6 : 12;
-                // Radio base un poco más grande
                 const BASE_RADIUS = isMobile ? 140 : 200;
                 const points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
                 let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
                 const handleMove = (e) => {
                     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                     mouse = { x: clientX, y: clientY };
                 };
-                // Event Listeners directos (sin React Synthetic Events para max performance)
+
                 window.addEventListener('mousemove', handleMove);
                 window.addEventListener('touchmove', handleMove, { passive: false });
+
                 let animationFrameId;
                 const loop = () => {
-                    // Física del LÍDER (Mouse) - Respuesta rápida
                     const leaderEasing = 0.15;
                     points[0] = {
                         x: points[0].x + (mouse.x - points[0].x) * leaderEasing,
                         y: points[0].y + (mouse.y - points[0].y) * leaderEasing
                     };
-                    // Física de la ESTELA - Respuesta más lenta ("Lazy/Liquid")
-                    // Bajamos el easing a 0.20 para que sea más viscoso
                     const trailEasing = 0.20;
                     for (let i = 1; i < TRAIL_LENGTH; i++) {
                         const leader = points[i - 1];
@@ -194,12 +226,11 @@
                     }
                     if (revealedLayerRef.current) {
                         const gradients = points.map((p, i) => {
-                            const scale = 1 - (i / TRAIL_LENGTH) * 0.7; // Decay un poco más agresivo al final
+                            const scale = 1 - (i / TRAIL_LENGTH) * 0.7;
                             const radius = BASE_RADIUS * scale;
                             return `radial-gradient(circle ${radius}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
                         });
                         const maskString = gradients.join(', ');
-                        // Aplicación directa al DOM
                         revealedLayerRef.current.style.maskImage = maskString;
                         revealedLayerRef.current.style.webkitMaskImage = maskString;
                     }
@@ -211,7 +242,8 @@
                     window.removeEventListener('touchmove', handleMove);
                     cancelAnimationFrame(animationFrameId);
                 };
-            }, [isMobile]); // Re-ejecutar si cambia isMobile para ajustar parámetros
+            }, [isMobile]);
+
             // --- CARGA DE DATOS ---
             useEffect(() => {
                 const load = async () => {
@@ -229,21 +261,24 @@
                 };
                 load();
             }, []);
+
             // --- LÓGICA DE PAGINACIÓN ---
             const indexOfLastPost = currentPage * POSTS_PER_PAGE;
             const indexOfFirstPost = indexOfLastPost - POSTS_PER_PAGE;
-            const currentPosts = isMobile ? posts : posts.slice(indexOfFirstPost, indexOfLastPost);
+            // AHORA APLICAMOS PAGINACIÓN EN TODOS LOS DISPOSITIVOS
+            const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
             const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+
             const paginate = (pageNumber) => setCurrentPage(pageNumber);
             const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
             const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+
             return React.createElement(React.Fragment, null,
-                // CAPA 1: FONDO OSCURO
+                // CAPAS DE FONDO
                 React.createElement('div', {
                     className: "fixed inset-0 z-0 bg-cover bg-center",
                     style: { backgroundImage: `url(${BG_DARK})` }
                 }),
-                // CAPA 2: REVELADO (Con optimización 'will-change')
                 React.createElement('div', {
                     ref: revealedLayerRef,
                     className: "fixed inset-0 z-10 bg-cover bg-center pointer-events-none",
@@ -251,80 +286,90 @@
                         backgroundImage: `url(${BG_REVEAL})`,
                         WebkitMaskImage: 'none',
                         maskImage: 'none',
-                        willChange: 'mask-image', // OPTIMIZACIÓN CLAVE
-                        transform: 'translateZ(0)' // OPTIMIZACIÓN CLAVE
+                        willChange: 'mask-image',
+                        transform: 'translateZ(0)'
                     }
                 }),
-                // CAPA 3: TEXTURA DE GRANO (Estética)
                 React.createElement('div', { className: "fixed inset-0 z-10 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150" }),
-                // CAPA 4: INTERFAZ
-                React.createElement('nav', { className: "fixed top-0 left-0 w-full p-8 md:p-12 z-40 flex justify-between items-start pointer-events-none" },
+
+                // NAVBAR
+                React.createElement('nav', { className: "fixed top-0 left-0 w-full p-6 md:p-12 z-40 flex justify-between items-start pointer-events-none" },
                     React.createElement('a', {
                         href: "https://alter-ias.github.io/arg/argx.html",
-                        className: "pointer-events-auto font-serif text-5xl text-white tracking-widest mix-blend-difference hover:opacity-70 transition-opacity"
+                        className: "pointer-events-auto font-serif text-4xl md:text-5xl text-white tracking-widest mix-blend-difference hover:opacity-70 transition-opacity"
                     }, "ARG"),
                     React.createElement('div', { className: "hidden md:block text-right font-mono text-[10px] text-white/40 tracking-widest" },
                         React.createElement('p', null, "COLECTIVO ALTERLAB"),
                         React.createElement('p', null, "FUENTE: GOOGLE SHEETS")
                     )
                 ),
-                React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col justify-end pb-12 pointer-events-none" },
+
+                // CONTENIDO PRINCIPAL
+                React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col justify-end pb-8 md:pb-12 pointer-events-none" },
                     loading ?
                         React.createElement('div', { className: "w-full text-center mb-32 loader-pulse" },
                             React.createElement('p', { className: "font-mono text-xs tracking-[0.5em] text-white/50" }, "CONECTANDO NODOS...")
                         )
                         :
-                        React.createElement('div', { className: "w-full pointer-events-auto pl-6 md:pl-20 pr-6 md:pr-20" },
-                            React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-8 tracking-[0.3em] uppercase ml-1" }, "Archivo Central"),
-                            // CONTENEDOR PRINCIPAL: Grid en Desktop, Flex/Scroll en Mobile
+                        React.createElement('div', { className: "w-full pointer-events-auto px-4 md:px-20 max-w-[1600px] mx-auto" },
+                            React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-4 md:mb-8 tracking-[0.3em] uppercase ml-1" }, "Archivo Central"),
+
+                            // GRILLA (Responsive: 2 cols móvil, 4 cols desktop)
                             React.createElement('div', {
-                                className: isMobile
-                                    ? "flex gap-8 overflow-x-auto hide-scroll pr-20 pb-12 items-end"
-                                    : "grid grid-cols-4 grid-rows-2 gap-6 pb-12 items-end w-full max-w-[1600px]"
+                                className: "grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 w-full mb-4 md:mb-6"
                             },
                                 currentPosts.map((post, idx) => {
-                                    // Ajuste de índice para mostrar el número correcto globalmente
-                                    const globalIndex = isMobile ? idx : indexOfFirstPost + idx;
+                                    const globalIndex = indexOfFirstPost + idx;
                                     return React.createElement('div', {
                                         key: idx,
-                                        onClick: () => setSelectedPost(post),
-                                        className: `glass-card shrink-0 p-8 flex flex-col justify-between relative overflow-hidden group cursor-pointer
-                                            ${isMobile
-                                                ? "w-[260px] h-[380px]"
-                                                : "w-full h-[280px] hover:scale-[1.02] transition-transform duration-500"}` // Altura reducida en desktop para caber 2 filas
+                                        // Usamos openPost para manejar el historial
+                                        onClick: () => openPost(post),
+                                        // Clases condicionales para tamaño de caja
+                                        className: `glass-card flex flex-col justify-between relative overflow-hidden group cursor-pointer p-4 md:p-8
+                                            h-[160px] md:h-[280px] hover:scale-[1.02] transition-transform duration-500`
                                     },
-                                        React.createElement('span', { className: "font-mono text-[10px] text-white/20" }, globalIndex < 9 ? `0${globalIndex + 1}` : globalIndex + 1),
-                                        React.createElement('div', { className: "relative z-10" },
-                                            React.createElement('div', { className: "w-8 h-[1px] bg-white/50 mb-4 group-hover:w-16 transition-all duration-500" }),
-                                            React.createElement('h3', { className: "font-serif text-2xl md:text-xl lg:text-2xl text-gray-200 leading-[0.9] mb-2 group-hover:text-white transition-colors line-clamp-2" }, post.title),
-                                            React.createElement('p', { className: "text-[10px] font-mono text-white/40 mt-3 tracking-widest uppercase" }, post.date || "---")
+                                        React.createElement('span', { className: "font-mono text-[8px] md:text-[10px] text-white/20" }, globalIndex < 9 ? `0${globalIndex + 1}` : globalIndex + 1),
+                                        
+                                        React.createElement('div', { className: "relative z-10 flex flex-col h-full justify-between" },
+                                            // Línea decorativa
+                                            React.createElement('div', { className: "w-4 md:w-8 h-[1px] bg-white/50 mt-1 md:mt-0 group-hover:w-8 md:group-hover:w-16 transition-all duration-500" }),
+                                            
+                                            // Título y Fecha
+                                            React.createElement('div', null,
+                                                React.createElement('h3', { className: "font-serif text-sm md:text-2xl text-gray-200 leading-[1.1] md:leading-[0.9] group-hover:text-white transition-colors line-clamp-3 md:line-clamp-2" }, post.title),
+                                                React.createElement('p', { className: "text-[8px] md:text-[10px] font-mono text-white/40 mt-2 tracking-widest uppercase" }, post.date || "---")
+                                            )
                                         ),
+
+                                        // Imagen de fondo (hover)
                                         post.image && React.createElement('div', {
                                             className: "absolute inset-0 bg-cover bg-center opacity-0 group-hover:opacity-40 transition-all duration-700 grayscale group-hover:grayscale-0 transform scale-110 group-hover:scale-100",
                                             style: { backgroundImage: `url(${post.image})` }
                                         }),
+                                        // Gradiente
                                         React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" })
                                     );
                                 })
                             ),
-                            // CONTROLES DE PAGINACIÓN (Solo Desktop y si hay más de una página)
-                            !isMobile && totalPages > 1 && React.createElement('div', { className: "flex justify-center items-center gap-6 mt-4 pb-4" },
+
+                            // CONTROLES DE PAGINACIÓN (Siempre visibles si hay >1 página)
+                            totalPages > 1 && React.createElement('div', { className: "flex justify-center items-center gap-4 md:gap-6 mt-2 md:mt-4 h-8" },
                                 // Botón Anterior
                                 React.createElement('button', {
                                     onClick: prevPage,
                                     disabled: currentPage === 1,
-                                    className: `text-white/50 hover:text-white transition-colors ${currentPage === 1 ? 'opacity-20 cursor-not-allowed' : ''}`
+                                    className: `text-white/50 hover:text-white transition-colors p-2 ${currentPage === 1 ? 'opacity-20 cursor-not-allowed' : ''}`
                                 },
-                                    React.createElement('svg', { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1" },
+                                    React.createElement('svg', { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1" },
                                         React.createElement('path', { d: "M15 18l-6-6 6-6" })
                                     )
                                 ),
-                                // Números de página
+                                // Números
                                 Array.from({ length: totalPages }, (_, i) => i + 1).map(number =>
                                     React.createElement('button', {
                                         key: number,
                                         onClick: () => paginate(number),
-                                        className: `font-mono text-xs w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300
+                                        className: `font-mono text-[10px] md:text-xs w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full transition-all duration-300
                                             ${currentPage === number
                                                 ? 'bg-white/10 text-white border border-white/20'
                                                 : 'text-white/30 hover:text-white hover:bg-white/5'}`
@@ -334,20 +379,23 @@
                                 React.createElement('button', {
                                     onClick: nextPage,
                                     disabled: currentPage === totalPages,
-                                    className: `text-white/50 hover:text-white transition-colors ${currentPage === totalPages ? 'opacity-20 cursor-not-allowed' : ''}`
+                                    className: `text-white/50 hover:text-white transition-colors p-2 ${currentPage === totalPages ? 'opacity-20 cursor-not-allowed' : ''}`
                                 },
-                                    React.createElement('svg', { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1" },
+                                    React.createElement('svg', { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1" },
                                         React.createElement('path', { d: "M9 18l6-6-6-6" })
                                     )
                                 )
                             )
                         )
                 ),
-                selectedPost && React.createElement(PostModal, { post: selectedPost, onClose: () => setSelectedPost(null) })
+                // Usamos closePost para manejar el historial
+                selectedPost && React.createElement(PostModal, { post: selectedPost, onClose: closePost })
             );
         };
+
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(React.createElement(App, null));
     </script>
 </body>
+
 </html>
