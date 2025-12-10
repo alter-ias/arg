@@ -7,7 +7,7 @@
     
     <link rel="icon" type="image/png" href="./assets/img/logo00.png">
     
-    <!-- Tailwind CSS (para facilitar estilos rápidos visuales del ejemplo ARG) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Fuentes -->
@@ -23,7 +23,7 @@
             --text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.9);
         }
         
-        /* Cursor personalizado del estilo ARG */
+        /* Cursor personalizado */
         html, body { 
             margin: 0; 
             padding: 0; 
@@ -36,7 +36,6 @@
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
-        /* Enlaces e interactivos con cursor hover */
         a, button, .postal-card {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), pointer;
         }
@@ -56,21 +55,11 @@
         
         #bg-layer-reveal {
             z-index: 1;
-            /* La máscara se aplicará vía JS */
             will-change: mask-image; 
             transform: translateZ(0);
         }
 
-        /* Overlay oscuro para legibilidad general */
-        .content-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        /* Video específico (oculto por defecto, aparece sobre los fondos líquidos) */
+        /* Video específico */
         #background-video { 
             position: fixed; 
             top: 50%; 
@@ -79,12 +68,12 @@
             height: 100vh; 
             min-width: 100%; 
             min-height: 100%; 
-            z-index: 5; /* Encima de los fondos líquidos */
+            z-index: 5; 
             transform: translateX(-50%) translateY(-50%); 
             object-fit: cover; 
             transition: opacity 0.5s ease-in-out; 
             opacity: 0; 
-            display: none; /* Oculto inicialmente */
+            display: none; 
         }
         #background-video.is-active { 
             opacity: 1; 
@@ -97,7 +86,7 @@
             flex-direction: column; 
             min-height: 100vh; 
             position: relative; 
-            z-index: 10; /* Encima de todo */
+            z-index: 10; 
         }
         
         .view-container { 
@@ -119,8 +108,7 @@
         #postal-selection-view { position: relative; justify-content: flex-start; padding-top: 40px; }
         .view-container.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        /* Tipografías actualizadas */
-        #postal-selection-view .title { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 700; letter-spacing: 3px; text-shadow: var(--text-shadow); }
+        /* Tipografías */
         #postal-selection-view .subtitle { font-family: 'Poppins', sans-serif; font-size: 1rem; color: var(--secondary-text-color); font-weight: 300; margin-top: 10px; max-width: 600px; line-height: 1.6; margin-left: auto; margin-right: auto; }
         
         /* Navegación */
@@ -129,10 +117,33 @@
         .nav-arrow:hover { background-color: rgba(255, 255, 255, 0.3); transform: scale(1.1); }
         .nav-arrow.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        /* Grid de Cartas */
+        /* --- ESTILOS DE LAS CARTAS (MODIFICADOS) --- */
         #postal-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; max-width: 900px; perspective: 1000px; padding-bottom: 40px; }
-        .postal-card { width: 100%; aspect-ratio: 2 / 3; transition: transform 0.5s ease, box-shadow 0.5s ease; transform-style: preserve-3d; }
-        .postal-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        
+        .postal-card { 
+            width: 100%; 
+            aspect-ratio: 2 / 3; 
+            /* Transición añadida para opacidad */
+            transition: transform 0.5s ease, box-shadow 0.5s ease, opacity 0.4s ease; 
+            transform-style: preserve-3d; 
+            
+            /* MODIFICACIÓN: Transparencia por defecto */
+            opacity: 0.6; 
+        }
+
+        .postal-card:hover { 
+            transform: translateY(-10px) scale(1.02); 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5); 
+            
+            /* MODIFICACIÓN: Solidez al pasar el cursor */
+            opacity: 1; 
+        }
+
+        /* MODIFICACIÓN: Si la carta está volteada (activa), también se vuelve sólida */
+        .postal-card.is-flipping {
+            opacity: 1;
+        }
+
         .postal-card .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
         .postal-card.is-flipping .card-inner { transform: rotateY(180deg); }
         
@@ -166,13 +177,13 @@
 </head>
 <body>
 
-    <!-- FONDOS LÍQUIDOS (Estilo Visual ARG) -->
+    <!-- FONDOS LÍQUIDOS -->
     <div id="bg-layer-dark"></div>
     <div id="bg-layer-reveal">
         <div style="position: absolute; inset: 0; background: black; opacity: 0.4; pointer-events: none;"></div>
     </div>
     
-    <!-- Video de fondo específico (Solo se muestra si el poema tiene video) -->
+    <!-- Video de fondo específico -->
     <video muted loop playsinline id="background-video"></video>
     
     <!-- Audio -->
@@ -181,7 +192,12 @@
     <div class="page-wrapper">
         <div id="postal-selection-view" class="view-container">
             <header class="header flex flex-col items-center">
-                <img src="./assets/img/logo00.png" alt="Lotería Tapatía Logo" class="logo h-48 w-auto mb-6 object-contain drop-shadow-lg">
+                
+                <!-- MODIFICACIÓN: Logo con Link a argx.html -->
+                <a href="argx.html" class="transition-transform duration-300 hover:scale-105 inline-block" title="Volver al inicio">
+                    <img src="./assets/img/logo00.png" alt="Lotería Tapatía Logo" class="logo h-48 w-auto mb-6 object-contain drop-shadow-lg">
+                </a>
+
                 <p class="subtitle text-center px-4">La Lotería Tapatía es un proyecto literario que explora y celebra la identidad de Guadalajara a través de viñetas breves y evocadoras...</p>
             </header>
             
@@ -205,19 +221,17 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     /* =========================================
-       1. EFECTO VISUAL "LÍQUIDO" (ARG Style)
+       1. EFECTO VISUAL "LÍQUIDO"
        ========================================= */
     const bgDark = document.getElementById('bg-layer-dark');
     const bgReveal = document.getElementById('bg-layer-reveal');
     
-    // Imágenes del set ARG
     const BG_IMG = 'https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_5ec2mv5ec2mv5ec2_cpwcmt.png';
     const REV_IMG = 'https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_xuzf5qxuzf5qxuzf_evqmyn.png';
     
     bgDark.style.backgroundImage = `url(${BG_IMG})`;
     bgReveal.style.backgroundImage = `url(${REV_IMG})`;
 
-    // Configuración de física
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
     const TRAIL_LENGTH = isMobile ? 6 : 12;
     const BASE_RADIUS = isMobile ? 140 : 200;
@@ -225,7 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
     let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
-    // Manejo de eventos del mouse/touch
     const handleMove = (e) => {
         let clientX, clientY;
         if (e.touches && e.touches.length > 0) {
@@ -242,16 +255,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('touchstart', handleMove, { passive: false });
     window.addEventListener('touchmove', handleMove, { passive: false });
 
-    // Loop de animación
     function animateFluid() {
-        // Líder (puntero)
         const leaderEasing = 0.15;
         points[0] = {
             x: points[0].x + (mouse.x - points[0].x) * leaderEasing,
             y: points[0].y + (mouse.y - points[0].y) * leaderEasing
         };
 
-        // Estela
         const trailEasing = 0.20;
         for (let i = 1; i < TRAIL_LENGTH; i++) {
             const leader = points[i - 1];
@@ -262,7 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
 
-        // Crear la máscara de gradientes
         const gradients = points.map((p, i) => {
             const scale = 1 - (i / TRAIL_LENGTH) * 0.7;
             const radius = BASE_RADIUS * scale;
@@ -424,14 +433,11 @@ document.addEventListener('DOMContentLoaded', () => {
             audioPlayer.play().catch(e => console.error("Error audio:", e));
         }
         
-        // Manejo de video vs imagen vs fondo líquido
-        // Reset background image of poem view to avoid flashing old images
         poemDisplayView.style.backgroundImage = 'none'; 
         
         const hasValidVideo = currentPoem.videoUrl && currentPoem.videoUrl.trim().length > 5;
 
         if (hasValidVideo) {
-            // Si hay video específico, lo mostramos
             backgroundVideo.classList.remove('is-active');
             setTimeout(() => {
                 backgroundVideo.style.display = 'block';
@@ -445,16 +451,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             }, 300);
         } else {
-            // Si no hay video, ocultamos el elemento de video para ver los Fondos Líquidos
             backgroundVideo.classList.remove('is-active');
             setTimeout(() => {
                 backgroundVideo.pause();
                 backgroundVideo.style.display = 'none';
             }, 500);
-            
-            // Opcional: Poner la imagen de la postal como fondo difuso si se desea, 
-            // pero el requerimiento pide los fondos líquidos. 
-            // Dejamos que se vean los fondos líquidos a través del poem-view transparente.
             triggerTextAnimation();
         }
     }
@@ -464,7 +465,6 @@ document.addEventListener('DOMContentLoaded', () => {
         audioPlayer.pause();
         audioPlayer.src = '';
         
-        // Ocultar video específico
         backgroundVideo.classList.remove('is-active');
         setTimeout(() => {
             backgroundVideo.pause();
