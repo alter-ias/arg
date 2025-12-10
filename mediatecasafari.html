@@ -1,289 +1,272 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mediateca - Jardín Digital</title>
-    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>ARG - Mediateca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Poppins:wght@200;300;400&display=swap"
+        rel="stylesheet">
     <style>
-        :root {
-            --font-serif: 'Cormorant Garamond', serif;
-            --font-sans: 'Poppins', sans-serif;
-            --color-light: #FFFFFF;
-            --color-dark: #1a1a1a;
+        /* --- ESTILOS BASE (Idénticos al Blog) --- */
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #050505; color: #e5e5e5;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
-        * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        
-        body { 
-            margin: 0; 
-            padding: 0;
-            font-family: var(--font-sans); 
-            background-color: #000;
-            color: var(--color-light);
-            overflow-x: hidden;
-            /* Fix Crítico para iOS: evita rebote y scroll accidental al mover la luz */
-            touch-action: none; 
-            width: 100%;
-            height: 100%;
-            -webkit-font-smoothing: antialiased;
-            cursor: default;
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
+        .font-sans { font-family: 'Poppins', sans-serif; }
+
+        /* Efecto Vidrio (Glassmorphism) */
+        .glass-card {
+            background: rgba(20, 20, 20, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
         }
 
-        a { cursor: pointer; }
+        /* Scrollbar personalizada para las listas de reproducción */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
 
-        /* --- CAPAS DEL EFECTO --- */
-        
-        /* 1. Capa Base (Fondo Estático) */
-        .layer-base {
-            position: fixed;
-            inset: 0;
-            background-size: cover;
-            background-position: center;
-            z-index: 0;
-        }
+        /* Animación de carga */
+        .loader-pulse { animation: pulse-opacity 1.5s ease-in-out infinite; }
+        @keyframes pulse-opacity { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* 2. Capa Revelada (La que tiene la máscara dinámica) */
-        .layer-masked {
-            position: fixed;
-            inset: 0;
-            background-size: cover;
-            background-position: center;
-            z-index: 10;
-            pointer-events: none; /* La luz no bloquea clicks */
-            
-            /* Optimización para Safari */
-            will-change: mask-image, -webkit-mask-image;
-            -webkit-mask-image: none; /* Se llena con JS */
-            mask-image: none;
+        /* Item de lista activo */
+        .playlist-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 2px solid white;
+            padding-left: 14px; /* Compensar borde */
         }
-        
-        /* Oscurecer un poco la capa revelada si es necesario */
-        .overlay-dim {
-            position: absolute;
-            inset: 0;
-            background-color: rgba(0,0,0, 0.3);
-        }
-
-        /* 3. Contenido (Interactuable) */
-        #main-content {
-            position: relative;
-            z-index: 50; /* Por encima de todo */
-            width: 100%;
-            height: 100%;
-            overflow-y: auto; /* El scroll interno del contenido */
-        }
-
-        header { 
-            padding: 1.5rem 2rem; 
-            position: absolute;
-            top: 0; left: 0; width: 100%; 
-            z-index: 100; 
-            display: flex;
-            justify-content: center; align-items: center;
-            pointer-events: auto;
-        }
-        .header-logo a { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; text-decoration: none; color: inherit; }
-        
-        main {
-             padding-top: 20vh;
-             padding-bottom: 10vh;
-        }
-
-        .archive-block { 
-            position: relative; width: 100%; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; padding: 4rem 2rem;
-            /* min-height: 80vh; Removido para permitir scroll natural en main-content */
-        }
-        
-        .content-wrapper { width: 100%; max-width: 700px; pointer-events: auto; }
-        .block-title { font-family: var(--font-serif); font-size: 2.5rem; margin-bottom: 2rem; text-align: center; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        
-        .player-container, .media-list-box {
-            background: rgba(20, 20, 20, 0.6); /* Un poco más oscuro para legibilidad */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px); /* Soporte Safari */
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            pointer-events: auto; /* Asegura clicks */
-        }
-        
-        .player-container { margin-bottom: 1rem; }
-        .video-wrapper { position: relative; padding-top: 56.25%; height: 0; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        #podcast-archive .player-container { height: 352px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        #podcast-archive .player-container iframe { width: 100%; height: 100%; border: none; }
-        
-        .media-list-box { height: 160px; overflow-y: auto; padding: 0.5rem; scrollbar-width: none; }
-        .media-list-box::-webkit-scrollbar { display: none; }
-        .media-list-box ul { list-style: none; padding: 0; margin: 0; }
-        .media-link { display: block; padding: 0.75rem; text-decoration: none; color: inherit; border-radius: 5px; margin-bottom: 0.25rem; transition: background-color 0.3s; border: 1px solid transparent; }
-        .media-link:hover { background-color: rgba(255, 255, 255, 0.1); }
-        .media-link.is-active { background-color: rgba(255, 255, 255, 0.2); border-color: currentColor; font-weight: bold; }
     </style>
 </head>
+
 <body>
+    <div id="root"></div>
+    <script type="module">
+        import React from 'https://esm.sh/react@18.3.1';
+        import ReactDOM from 'https://esm.sh/react-dom@18.3.1/client';
 
-    <div class="layer-base" id="background-layer"></div>
+        const { useRef, useEffect, useState } = React;
 
-    <div class="layer-masked" id="revealed-layer">
-        <div class="overlay-dim"></div>
-    </div>
+        // --- CONFIGURACIÓN Y DATOS ---
+        const BG_DARK = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380713/arg01_ft9glg.png';
+        const BG_REVEAL = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380719/arg02_o9yqpm.png';
 
-    <div id="main-content">
-        <header>
-            <div class="header-logo"><a href="https://alter-ias.github.io/arg/argx.html">ARG</a></div>
-        </header>
-        <main>
-            <section class="archive-block" id="video-archive">
-                <div class="content-wrapper">
-                    <h2 class="block-title">Archivo Visual</h2>
-                    <div class="player-container video-wrapper"><iframe id="youtube-player" src="" title="YouTube video player" allowfullscreen></iframe></div>
-                    <div class="media-list-box"><ul id="video-list-ul"></ul></div>
-                </div>
-            </section>
-            <section class="archive-block" id="podcast-archive">
-                <div class="content-wrapper">
-                    <h2 class="block-title">Archivo Sonoro</h2>
-                    <div class="player-container"><iframe id="spotify-player" src="" style="border-radius:12px" allowfullscreen></iframe></div>
-                    <div class="media-list-box"><ul id="podcast-list-ul"></ul></div>
-                </div>
-            </section>
-        </main>
-    </div>
-    
-    <div id="video-sources" style="display: none;">
-        <a data-src="https://www.youtube-nocookie.com/embed/-62GMuwZDG0?si=SAoW7X2dJ0N_NXYk">¿Quién es Alan Ruíz?</a>
-        <a data-src="https://www.youtube-nocookie.com/embed/rylzygPxio4?si=1fQd9Wf2f7q9mC6G">Ecos en las Ruinas</a>
-    </div>
-    <div id="podcast-sources" style="display: none;">
-        <a data-src="https://open.spotify.com/embed/episode/4uG8dveSrD08v2V0oxK5Oa?utm_source=generator&theme=0">Capítulo 4 - Los casiamigos</a>
-        <a data-src="https://open.spotify.com/embed/episode/0Jk90uJ0uK5Oa?utm_source=generator&theme=0">Capítulo 3 - Gentrificación</a>
-    </div>
+        // DATOS DE SPOTIFY (Los que proporcionaste)
+        const PODCASTS = [
+            { title: "Episodio 1: El inicio", src: "https://open.spotify.com/embed/episode/5yVkkKnfbegF7nkHdJ79b7?utm_source=generator" },
+            { title: "Episodio 2: Reflexiones", src: "https://open.spotify.com/embed/episode/1JhGMzFdHBgEvwGdBgSLFl?utm_source=generator" },
+            { title: "Episodio 3: La Caída", src: "https://open.spotify.com/embed/episode/5nWK7StlFJjrk45j6t8GOO?utm_source=generator" },
+            { title: "Episodio 4: El Retorno", src: "https://open.spotify.com/embed/episode/1UNPu6kLKZJ3fHrCWB4yJg?utm_source=generator" }
+        ];
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- CONFIGURACIÓN DE IMÁGENES ---
-            const BACKGROUND_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759382911/arg04_oiuk4t.png';
-            const REVEALED_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759382921/arg03_tviy6c.png';
-            
-            // Asignar imágenes a las capas
-            document.getElementById('background-layer').style.backgroundImage = `url(${BACKGROUND_IMAGE})`;
-            document.getElementById('revealed-layer').style.backgroundImage = `url(${REVEALED_IMAGE})`;
-            
-            // --- LÓGICA DE MÁSCARA LÍQUIDA (SNAKE TRAIL) ---
-            const revealedLayer = document.getElementById('revealed-layer');
-            const isMobile = window.matchMedia("(max-width: 768px)").matches;
-            
-            // Configuración Física
-            const TRAIL_LENGTH = isMobile ? 5 : 8; 
-            const BASE_RADIUS = isMobile ? 130 : 190;
-            
-            // Estado inicial
-            let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-            let points = Array(TRAIL_LENGTH).fill().map(() => ({ x: window.innerWidth / 2, y: window.innerHeight / 2 }));
-            
-            // Manejadores de eventos de puntero unificados
-            const handlePointerMove = (e) => {
-                let clientX, clientY;
-                if (e.touches && e.touches.length > 0) {
-                    clientX = e.touches[0].clientX;
-                    clientY = e.touches[0].clientY;
-                } else {
-                    clientX = e.clientX;
-                    clientY = e.clientY;
-                }
-                mouse.x = clientX;
-                mouse.y = clientY;
-            };
+        // DATOS DE VIDEO (Ejemplo placeholder - Puedes editar las URL de youtube aquí)
+        // Nota: Para youtube usa la estructura: https://www.youtube.com/embed/ID_DEL_VIDEO
+        const VIDEOS = [
+            { title: "¿Quién es Alan Ruíz?", src: "https://www.youtube.com/embed/dQw4w9WgXcQ?si=placeholder" }, 
+            { title: "En las Ruinas", src: "https://www.youtube.com/embed/M7lc1UVf-VE?si=placeholder" }
+        ];
 
-            window.addEventListener('mousemove', handlePointerMove);
-            window.addEventListener('touchstart', handlePointerMove, { passive: false });
-            window.addEventListener('touchmove', handlePointerMove, { passive: false });
+        // --- COMPONENTE DE SECCIÓN MULTIMEDIA ---
+        const MediaSection = ({ title, items, type }) => {
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const currentItem = items[currentIndex];
 
-            // Bucle de Animación
-            function animate() {
-                // 1. Física de la cabeza (sigue al mouse)
-                const leaderEasing = 0.15;
-                points[0].x += (mouse.x - points[0].x) * leaderEasing;
-                points[0].y += (mouse.y - points[0].y) * leaderEasing;
-
-                // 2. Física de la cola (Snake effect)
-                const trailEasing = 0.25;
-                for (let i = 1; i < TRAIL_LENGTH; i++) {
-                    const leader = points[i - 1];
-                    const follower = points[i];
-                    follower.x += (leader.x - follower.x) * trailEasing;
-                    follower.y += (leader.y - follower.y) * trailEasing;
-                }
-
-                // 3. Construcción de la máscara CSS (Gradientes múltiples)
-                if (revealedLayer) {
-                    const gradients = points.map((p, i) => {
-                        // Reducir tamaño progresivamente
-                        const scale = 1 - (i / TRAIL_LENGTH) * 0.6;
-                        const radius = BASE_RADIUS * scale;
-                        // Gradiente duro (black -> transparent) para mejor performance
-                        return `radial-gradient(circle ${radius}px at ${p.x.toFixed(1)}px ${p.y.toFixed(1)}px, black 100%, transparent 100%)`;
-                    });
-
-                    const maskString = gradients.join(', ');
-                    revealedLayer.style.webkitMaskImage = maskString;
-                    revealedLayer.style.maskImage = maskString;
-                }
-
-                requestAnimationFrame(animate);
-            }
-            
-            // Iniciar animación
-            animate();
-
-            // --- LÓGICA DE REPRODUCTORES MEDIA (Sin cambios funcionales) ---
-            function setupArchiveSection(sourcesDivId, listUlId, playerIframeId) {
-                const player = document.getElementById(playerIframeId);
-                const sourcesContainer = document.getElementById(sourcesDivId);
-                const listUl = document.getElementById(listUlId);
+            return React.createElement('div', { className: "glass-card w-full h-full flex flex-col overflow-hidden rounded-xl" },
+                // Cabecera
+                React.createElement('div', { className: "p-4 md:p-6 border-b border-white/10" },
+                    React.createElement('h3', { className: "font-serif text-2xl md:text-3xl text-white tracking-wide" }, title)
+                ),
                 
-                if (!player || !sourcesContainer || !listUl) return;
-                
-                const sourceLinks = sourcesContainer.querySelectorAll('a');
-                if (sourceLinks.length === 0) return;
-                
-                // Cargar primera fuente (placeholder si es spotify falso)
-                const initialSrc = sourceLinks[0].dataset.src;
-                // Corrección rápida para links de spotify de ejemplo en tu código original
-                if(!initialSrc.includes('googleusercontent')) {
-                     player.src = initialSrc;
-                }
+                // Contenedor Reproductor + Lista
+                React.createElement('div', { className: "flex flex-col h-full overflow-hidden" },
+                    
+                    // REPRODUCTOR (Iframe)
+                    React.createElement('div', { className: `w-full shrink-0 bg-black/50 relative ${type === 'video' ? 'aspect-video' : 'h-[352px]'}` },
+                        React.createElement('iframe', {
+                            src: currentItem.src,
+                            width: "100%",
+                            height: "100%",
+                            frameBorder: "0",
+                            allowFullScreen: true,
+                            allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture",
+                            loading: "lazy",
+                            className: "absolute inset-0"
+                        })
+                    ),
 
-                sourceLinks.forEach((link, index) => {
-                    const li = document.createElement('li');
-                    const newLink = document.createElement('a');
-                    newLink.className = 'media-link'; newLink.href = '#';
-                    newLink.dataset.src = link.dataset.src; newLink.textContent = link.textContent;
-                    if (index === 0) newLink.classList.add('is-active');
-                    li.appendChild(newLink);
-                    listUl.appendChild(li);
-                });
-                
-                listUl.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('media-link')) {
-                        e.preventDefault();
-                        listUl.querySelectorAll('.media-link').forEach(l => l.classList.remove('is-active'));
-                        e.target.classList.add('is-active');
-                        player.src = e.target.dataset.src;
+                    // LISTA DE REPRODUCCIÓN
+                    React.createElement('div', { className: "flex-1 overflow-y-auto custom-scroll bg-black/20" },
+                        items.map((item, idx) => 
+                            React.createElement('div', {
+                                key: idx,
+                                onClick: () => setCurrentIndex(idx),
+                                className: `playlist-item p-4 border-b border-white/5 cursor-pointer hover:bg-white/5 transition-all
+                                    ${idx === currentIndex ? 'active' : ''}`
+                            },
+                                React.createElement('p', { className: `font-serif text-sm md:text-lg leading-tight ${idx === currentIndex ? 'text-white' : 'text-gray-400'}` }, item.title),
+                                React.createElement('p', { className: "font-mono text-[9px] text-white/30 mt-1 uppercase tracking-widest" }, type === 'video' ? 'VIDEO' : 'PODCAST')
+                            )
+                        )
+                    )
+                )
+            );
+        };
+
+        // --- APP PRINCIPAL ---
+        const App = () => {
+            const revealedLayerRef = useRef(null);
+            const [loading, setLoading] = useState(true);
+            const [isMobile, setIsMobile] = useState(window.matchMedia("(max-width: 768px)").matches);
+
+            // --- FÍSICA LÍQUIDA (Igual al Blog) ---
+            useEffect(() => {
+                const handleResize = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+                window.addEventListener('resize', handleResize);
+
+                const TRAIL_LENGTH = isMobile ? 6 : 12;
+                const BASE_RADIUS = isMobile ? 140 : 200;
+                const points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+                let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+                const handleMove = (e) => {
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    mouse = { x: clientX, y: clientY };
+                };
+
+                window.addEventListener('mousemove', handleMove);
+                window.addEventListener('touchmove', handleMove, { passive: false });
+
+                let animationFrameId;
+                const loop = () => {
+                    const leaderEasing = 0.15;
+                    points[0] = {
+                        x: points[0].x + (mouse.x - points[0].x) * leaderEasing,
+                        y: points[0].y + (mouse.y - points[0].y) * leaderEasing
+                    };
+                    const trailEasing = 0.20;
+                    for (let i = 1; i < TRAIL_LENGTH; i++) {
+                        const leader = points[i - 1];
+                        const follower = points[i];
+                        points[i] = {
+                            x: follower.x + (leader.x - follower.x) * trailEasing,
+                            y: follower.y + (leader.y - follower.y) * trailEasing
+                        };
                     }
-                });
-            }
-            
-            setupArchiveSection('video-sources', 'video-list-ul', 'youtube-player');
-            setupArchiveSection('podcast-sources', 'podcast-list-ul', 'spotify-player');
-        });
+                    if (revealedLayerRef.current) {
+                        const gradients = points.map((p, i) => {
+                            const scale = 1 - (i / TRAIL_LENGTH) * 0.7;
+                            const radius = BASE_RADIUS * scale;
+                            return `radial-gradient(circle ${radius}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
+                        });
+                        const maskString = gradients.join(', ');
+                        revealedLayerRef.current.style.maskImage = maskString;
+                        revealedLayerRef.current.style.webkitMaskImage = maskString;
+                    }
+                    animationFrameId = requestAnimationFrame(loop);
+                };
+                loop();
+
+                // Simulación de carga
+                setTimeout(() => setLoading(false), 800);
+
+                return () => {
+                    window.removeEventListener('mousemove', handleMove);
+                    window.removeEventListener('touchmove', handleMove);
+                    window.removeEventListener('resize', handleResize);
+                    cancelAnimationFrame(animationFrameId);
+                };
+            }, [isMobile]);
+
+            return React.createElement(React.Fragment, null,
+                // CAPA 1: FONDO
+                React.createElement('div', {
+                    className: "fixed inset-0 z-0 bg-cover bg-center",
+                    style: { backgroundImage: `url(${BG_DARK})` }
+                }),
+                // CAPA 2: REVELADO
+                React.createElement('div', {
+                    ref: revealedLayerRef,
+                    className: "fixed inset-0 z-10 bg-cover bg-center pointer-events-none",
+                    style: {
+                        backgroundImage: `url(${BG_REVEAL})`,
+                        WebkitMaskImage: 'none',
+                        maskImage: 'none',
+                        willChange: 'mask-image',
+                        transform: 'translateZ(0)'
+                    }
+                }),
+                // CAPA 3: RUIDO
+                React.createElement('div', { className: "fixed inset-0 z-10 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150" }),
+
+                // NAVBAR (Créditos)
+                React.createElement('nav', { className: "fixed top-0 left-0 w-full p-6 md:p-12 z-40 flex justify-end items-start pointer-events-none" },
+                    React.createElement('div', { className: "hidden md:block text-right font-mono text-[10px] text-white/40 tracking-widest" },
+                        React.createElement('p', null, "COLECTIVO ALTERLAB"),
+                        React.createElement('p', null, "MEDIATECA DIGITAL")
+                    )
+                ),
+
+                // CONTENIDO PRINCIPAL
+                React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col overflow-hidden pointer-events-none" },
+                    loading ?
+                        React.createElement('div', { className: "w-full h-full flex items-center justify-center loader-pulse" },
+                            React.createElement('p', { className: "font-mono text-xs tracking-[0.5em] text-white/50" }, "CARGANDO MEDIOS...")
+                        )
+                    :
+                    React.createElement('div', { className: "w-full h-full pointer-events-auto flex flex-col" },
+                        
+                        // CABECERA: Logo y Título
+                        React.createElement('div', { className: "pt-8 pb-4 md:pt-12 md:pb-6 text-center shrink-0" },
+                            React.createElement('a', {
+                                href: "https://alter-ias.github.io/arg/argx.html",
+                                className: "font-serif text-4xl md:text-5xl text-white tracking-widest mix-blend-difference hover:opacity-70 transition-opacity block mb-2"
+                            }, "ARG"),
+                            React.createElement('h2', { className: "text-[10px] font-mono text-white/40 tracking-[0.4em] uppercase" }, "Archivo Audiovisual")
+                        ),
+
+                        // ÁREA DE CONTENIDO (Scrollable si es necesario en móviles pequeños)
+                        React.createElement('div', { className: "flex-1 overflow-y-auto overflow-x-hidden custom-scroll px-4 md:px-20 pb-12" },
+                            React.createElement('div', { className: "max-w-[1600px] mx-auto h-full" },
+                                // LAYOUT GRID: 1 col móvil, 2 cols PC
+                                React.createElement('div', { className: "grid grid-cols-1 lg:grid-cols-2 gap-6 h-full lg:h-[75vh]" },
+                                    
+                                    // COLUMNA 1: VIDEO
+                                    React.createElement('div', { className: "h-[500px] lg:h-full" },
+                                        React.createElement(MediaSection, { title: "Archivo Visual", type: "video", items: VIDEOS })
+                                    ),
+
+                                    // COLUMNA 2: PODCAST
+                                    React.createElement('div', { className: "h-[600px] lg:h-full" },
+                                        React.createElement(MediaSection, { title: "Archivo Sonoro", type: "audio", items: PODCASTS })
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App, null));
     </script>
 </body>
 </html>
