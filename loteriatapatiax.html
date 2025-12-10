@@ -34,69 +34,54 @@
             color: var(--text-color);
             font-family: var(--font-sans);
             overflow-x: hidden;
-            overflow-y: auto; /* Scroll permitido */
+            overflow-y: auto; /* Scroll permitido como pediste */
+            /* Cursor personalizado del diseño B */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
-        /* --- FONDOS LÍQUIDOS --- */
+        /* --- FONDOS LÍQUIDOS (Estilo visual B) --- */
         #liquid-bg-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none;
         }
         
         .bg-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center;
         }
         
+        /* Fondo Oscuro Base */
         #bg-base {
             background-image: url('https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_5ec2mv5ec2mv5ec2_cpwcmt.png');
             z-index: 1;
         }
 
+        /* Fondo Revelado (Mascara) */
         #bg-reveal {
             background-image: url('https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_xuzf5qxuzf5qxuzf_evqmyn.png');
             z-index: 2;
-            /* La máscara se aplicará vía JS */
-            mask-image: none;
-            -webkit-mask-image: none;
+            mask-image: none; -webkit-mask-image: none;
         }
 
         #noise-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-            opacity: 0.05;
-            z-index: -1;
-            pointer-events: none;
+            opacity: 0.05; z-index: -1; pointer-events: none;
         }
 
-        /* El video específico de la carta (oculto por defecto) */
+        /* --- VIDEO DE LA CARTA (Lógica A) --- */
         #background-video { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: -1; object-fit: cover; 
             transition: opacity 0.5s ease-in-out; opacity: 0; 
         }
-        #background-video.is-active { opacity: 1; z-index: 50; } /* Z-index alto cuando se activa para tapar el líquido */
+        /* Cuando se activa, sube el z-index para tapar el fondo líquido */
+        #background-video.is-active { opacity: 1; z-index: 50; } 
 
         /* --- ESTRUCTURA --- */
         .page-wrapper { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 2; }
         
         .view-container { 
-            width: 100%; 
-            min-height: 100vh; 
-            position: absolute; 
-            top: 0; left: 0; 
+            width: 100%; min-height: 100vh; 
+            position: absolute; top: 0; left: 0; 
             display: flex; flex-direction: column; 
             justify-content: flex-start; align-items: center; 
             padding: 20px; 
@@ -118,8 +103,7 @@
         
         #navigation-controls { display: flex; justify-content: center; align-items: center; gap: 40px; margin: 20px 0; width: 100%; }
         .nav-arrow { 
-            background-color: transparent; 
-            border: 1px solid rgba(255, 255, 255, 0.3); 
+            background-color: transparent; border: 1px solid rgba(255, 255, 255, 0.3); 
             color: white; font-size: 1.5rem; cursor: pointer; 
             width: 50px; height: 50px; border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; 
@@ -128,23 +112,22 @@
         .nav-arrow:hover { background-color: rgba(255, 255, 255, 0.1); transform: scale(1.1); border-color: white; }
         .nav-arrow.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        /* --- GRILLA Y CARTAS --- */
+        /* --- GRILLA Y CARTAS (Lógica A + Estilo B) --- */
         #postal-container { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
             gap: 20px; 
-            width: 100%; 
-            max-width: 1100px; 
+            width: 100%; max-width: 1100px; 
             padding-bottom: 50px;
-            perspective: 1200px; 
+            perspective: 1200px; /* Para el efecto 3D */
         }
 
         .postal-card { 
             width: 100%; 
-            aspect-ratio: 2 / 3; /* Formato vertical de carta */
+            aspect-ratio: 2 / 3; /* Formato vertical obligado */
             cursor: pointer; 
             transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            transform-style: preserve-3d; 
+            transform-style: preserve-3d; /* Esencial para el flip */
             position: relative;
         }
         
@@ -158,6 +141,7 @@
             box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
         }
         
+        /* Esta clase aplica el volteo y se mantiene si hay persistencia */
         .postal-card.is-flipping .card-inner { transform: rotateY(180deg); }
         
         .card-face { 
@@ -169,6 +153,7 @@
             backdrop-filter: blur(5px);
         }
         
+        /* Cara Frontal (Imagen) */
         .card-front img { 
             width: 100%; height: 100%; object-fit: cover; 
             transition: filter 0.5s, transform 0.5s;
@@ -178,7 +163,7 @@
             transform: scale(1.05);
         }
         
-        /* Estilo reverso de carta (estilo Glassmorphism ARG) */
+        /* Cara Trasera (Info) - Estilo Glassmorphism ARG */
         .card-back { 
             background-color: #111; 
             transform: rotateY(180deg); 
@@ -290,14 +275,14 @@
     </style>
 </head>
 <body>
-    <!-- Capas de Fondo Líquido -->
+    <!-- Capas de Fondo Líquido (Visual B) -->
     <div id="liquid-bg-container">
         <div id="bg-base" class="bg-layer"></div>
         <div id="bg-reveal" class="bg-layer"></div>
     </div>
     <div id="noise-overlay"></div>
 
-    <!-- Video para Modal (Lógica original) -->
+    <!-- Elementos Funcionales A (Video/Audio) -->
     <video autoplay muted loop playsinline id="background-video"></video>
     <audio id="audio-player"></audio>
     
@@ -338,7 +323,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- REFERENCIAS DOM ---
+    // --- REFERENCIAS DOM (Lógica A) ---
     const postalSelectionView = document.getElementById('postal-selection-view');
     const poemDisplayView = document.getElementById('poem-display-view');
     const postalContainer = document.getElementById('postal-container');
@@ -351,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextTablaBtn = document.getElementById('next-tabla');
     const closeBtn = document.getElementById('close-poem');
 
-    // --- VARIABLES DE ESTADO ---
+    // --- VARIABLES DE ESTADO (Lógica A) ---
     const dataUrl = './data/datos.json';
     let allPoems = [];
     let currentPoemIndex = -1;
@@ -365,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let flippedCardIndices = new Set();
     const storageKey = 'loteriaTapatia_flippedCards';
 
-    // --- EFECTO LÍQUIDO (SCRIPT VISUAL) ---
+    // --- EFECTO LÍQUIDO (SCRIPT VISUAL DE B ADAPTADO) ---
     const revealedLayer = document.getElementById('bg-reveal');
     const TRAIL_LENGTH = 12;
     const points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
@@ -383,13 +368,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     function animateLiquid() {
-        // El punto líder sigue al mouse
+        // Física del rastro
         points[0] = {
             x: points[0].x + (mouse.x - points[0].x) * 0.15,
             y: points[0].y + (mouse.y - points[0].y) * 0.15
         };
 
-        // Los seguidores siguen al punto anterior
         for (let i = 1; i < TRAIL_LENGTH; i++) {
             const leader = points[i - 1];
             const follower = points[i];
@@ -414,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     animateLiquid(); // Iniciar animación visual
 
-    // --- LÓGICA DE LOTERÍA (SCRIPT FUNCIONAL) ---
+    // --- LÓGICA DE LOTERÍA (LÓGICA A ORIGINAL) ---
 
     const loadFlippedState = () => {
         const savedState = localStorage.getItem(storageKey);
@@ -480,6 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'postal-card';
             card.dataset.poemIndex = poem.originalIndex;
             
+            // Si está en localStorage, añade la clase para que aparezca volteada
             if (flippedCardIndices.has(poem.originalIndex)) {
                 card.classList.add('is-flipping');
             }
@@ -624,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
             flippedCardIndices.add(poemIndex);
             saveFlippedState();
             
-            // Retraso para ver la animación de la carta antes de abrir modal
+            // Retraso para ver la animación de la carta antes de abrir modal (0.8s = transición CSS)
             setTimeout(() => {
                 displayPoem(poemIndex);
             }, 800);
