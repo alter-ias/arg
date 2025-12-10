@@ -38,6 +38,34 @@
         transform: scale(1.1);
         cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
       }
+      
+      /* Clase para los iconos sociales */
+      .social-link {
+        cursor: inherit;
+        opacity: 0.8;
+        transition: transform 0.2s ease-out, opacity 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .social-link:hover {
+        opacity: 1;
+        transform: scale(1.2);
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
+      }
+
+      /* Estilo para el botón ARG */
+      .arg-toggle {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        cursor: inherit;
+        transition: opacity 0.3s;
+      }
+      .arg-toggle:hover {
+        opacity: 0.7;
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
+      }
     </style>
 </head>
 <body>
@@ -46,36 +74,62 @@
       import React from 'https://esm.sh/react@18.3.1';
       import ReactDOM from 'https://esm.sh/react-dom@18.3.1/client';
 
-      const { useRef, useEffect } = React;
+      const { useRef, useEffect, useState } = React;
 
-      // --- ICONOS ---
+      // --- ICONOS DE SECCIONES ---
       const PergaminoIcon = (props) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 512 512", ...props }, React.createElement('path', { fill:"currentColor", d: "M40 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h32c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H40zm432 0c22.1 0 40-17.9 40-40V72c0-22.1-17.9-40-40-40h-32c-22.1 0-40 17.9-40 40v368c0 22.1 17.9 40 40 40h32zM160 480c-22.1 0-40-17.9-40-40V72c0-22.1 17.9-40 40-40h192c22.1 0 40 17.9 40 40v368c0 22.1-17.9 40-40 40H160z" }));
       const MediatecaIcon = (props) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 576 512", ...props }, React.createElement('path', { fill:"currentColor", d: "M0 128C0 92.7 28.7 64 64 64H512c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128zM192 192a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm96-32a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm-32 96a32 32 0 1 1 -64 0 32 32 0 1 1 64 0z" }));
       const LoteriaIcon = (props) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 512 512", ...props }, React.createElement('path', { fill:"currentColor", d: "M192 32c0 17.7 14.3 32 32 32c123.7 0 224 100.3 224 224c0 17.7 14.3 32 32 32s32-14.3 32-32C512 128.9 383.1 0 224 0c-17.7 0-32 14.3-32 32zM96 23.3c-11.2-5.4-24.3-3.4-33.5 5.1L10.3 75.1C3.8 82.2 0 91.2 0 100.7V411.3c0 9.5 3.8 18.5 10.3 25.6l52.2 46.7c9.2 8.5 22.3 10.5 33.5 5.1l352-169.8c11.3-5.5 18-16.5 18-28.5s-6.7-23-18-28.5L96 23.3z" }));
 
+      // --- ICONOS DE REDES SOCIALES ---
+      const TikTokIcon = (props) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 448 512", ...props }, React.createElement('path', { fill:"currentColor", d: "M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" }));
+      const InstagramIcon = (props) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 448 512", ...props }, React.createElement('path', { fill:"currentColor", d: "M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" }));
+      const SubstackIcon = (props) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 448 512", ...props }, React.createElement('path', { fill:"currentColor", d: "M0 0h448v62.533H0V0zm0 229.131h448V511.9l-224.106-127.42L0 511.9V229.131zm0-104.263h448v62.533H0v-62.533z" }));
+      const YoutubeIcon = (props) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 576 512", ...props }, React.createElement('path', { fill:"currentColor", d: "M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z" }));
+
       const sections = {
           home: { title: "" },
           pergamino: { title: "Pergamino", url: 'https://alter-ias.github.io/arg/argblog.html', icon: PergaminoIcon },
-          mediateca: { title: "Mediateca", url: 'https://alter-ias.github.io/arg/mediatecasafari.html', icon: MediatecaIcon },
-          loteria: { title: "Lotería", url: 'https://alter-ias.github.io/arg/loteriatapatiax.html', icon: LoteriaIcon },
+          mediateca: { title: "Mediateca", url: 'https://alter-ias.github.io/arg/mediateca.html', icon: MediatecaIcon },
+          loteria: { title: "Lotería", url: 'https://alter-ias.github.io/arg/loteriatapatia.html', icon: LoteriaIcon },
       };
       
-      const BACKGROUND_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380713/arg01_ft9glg.png';
-      const REVEALED_IMAGE = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380719/arg02_o9yqpm.png';
+      const socialLinks = [
+        { url: 'https://www.tiktok.com/@alan.ruiz.galicia', icon: TikTokIcon },
+        { url: 'https://www.instagram.com/alanruizgalicia/', icon: InstagramIcon },
+        { url: 'https://alanruizgalicia.substack.com/', icon: SubstackIcon },
+        { url: 'https://www.youtube.com/@alanruizgalicia', icon: YoutubeIcon },
+      ];
+        
+      // --- IMÁGENES (SETS) ---
+      const BG_SET_1 = 'https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_5ec2mv5ec2mv5ec2_cpwcmt.png';
+      const REV_SET_1 = 'https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_xuzf5qxuzf5qxuzf_evqmyn.png';
+
+      const BG_SET_2 = 'https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_5ec2mv5ec2mv5ec2_cpwcmt.png';
+      const REV_SET_2 = 'https://res.cloudinary.com/drwv2cq3e/image/upload/v1765337496/Gemini_Generated_Image_xuzf5qxuzf5qxuzf_evqmyn.png';
 
       // --- APP ---
       const App = () => {
           const revealedLayerRef = useRef(null);
-          
-          // CONFIGURACIÓN DE FÍSICA
+          const [bgIndex, setBgIndex] = useState(0); 
+           
+          // CONFIGURACIÓN DE FÍSICA MEJORADA (LÍQUIDA)
           const isMobile = window.matchMedia("(max-width: 768px)").matches;
-          const TRAIL_LENGTH = isMobile ? 5 : 8; // Cantidad de círculos en la cola
-          const BASE_RADIUS = isMobile ? 130 : 190;
-          
-          // Inicializamos los puntos (Cola de serpiente)
-          // Cada punto tiene x, y
+          // Estela más larga para efecto líquido
+          const TRAIL_LENGTH = isMobile ? 6 : 12; 
+          // Radio ligeramente mayor
+          const BASE_RADIUS = isMobile ? 140 : 200;
+           
           const points = useRef(Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 }));
           const mouse = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+
+          // Selección de imágenes según el estado
+          const currentBg = bgIndex === 0 ? BG_SET_1 : BG_SET_2;
+          const currentRev = bgIndex === 0 ? REV_SET_1 : REV_SET_2;
+
+          const toggleBackground = () => {
+            setBgIndex(prev => prev === 0 ? 1 : 0);
+          };
 
           useEffect(() => {
               const handleMove = (e) => {
@@ -97,26 +151,20 @@
               let animationFrameId;
 
               const loop = () => {
-                  // FÍSICA DE FLUIDOS (Snake Trail)
-                  // El punto 0 sigue al mouse, el punto 1 al 0, etc.
-                  
-                  // Clonamos el array actual para modificarlo
                   const currentPoints = [...points.current];
                   
-                  // Física para la cabeza (Punto 0)
-                  const leaderEasing = 0.15; // Qué tan rápido sigue el mouse
+                  // Líder (puntero) rápido
+                  const leaderEasing = 0.15;
                   currentPoints[0] = {
                       x: currentPoints[0].x + (mouse.current.x - currentPoints[0].x) * leaderEasing,
                       y: currentPoints[0].y + (mouse.current.y - currentPoints[0].y) * leaderEasing
                   };
 
-                  // Física para el cuerpo (Cola)
-                  const trailEasing = 0.25; // Qué tan rápido la cola sigue a la cabeza (mayor = más rígido, menor = más líquido)
-                  
+                  // Estela más suave (viscosidad)
+                  const trailEasing = 0.20; 
                   for (let i = 1; i < TRAIL_LENGTH; i++) {
                       const leader = currentPoints[i - 1];
                       const follower = currentPoints[i];
-                      
                       currentPoints[i] = {
                           x: follower.x + (leader.x - follower.x) * trailEasing,
                           y: follower.y + (leader.y - follower.y) * trailEasing
@@ -125,17 +173,14 @@
                   
                   points.current = currentPoints;
 
-                  // RENDERIZADO (Construir el string de gradientes múltiples)
                   if (revealedLayerRef.current) {
-                      // Generamos un gradiente por cada punto en la cola
                       const gradients = currentPoints.map((p, i) => {
-                          // Disminuir tamaño progresivamente para efecto "Gota"
-                          const scale = 1 - (i / TRAIL_LENGTH) * 0.6; // El último círculo es 40% del tamaño
+                          // Decaimiento optimizado para estelas largas
+                          const scale = 1 - (i / TRAIL_LENGTH) * 0.7;
                           const radius = BASE_RADIUS * scale;
                           return `radial-gradient(circle ${radius}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
                       });
                       
-                      // Unimos todos los gradientes con comas. CSS renderizará todos juntos.
                       const maskString = gradients.join(', ');
                       
                       revealedLayerRef.current.style.maskImage = maskString;
@@ -158,30 +203,41 @@
           return (
               React.createElement(React.Fragment, null,
                   
-                  // 1. CAPA OSCURA
+                  // 1. CAPA OSCURA (FONDO)
                   React.createElement('div', { 
-                      className: "fixed inset-0 z-0 bg-cover bg-center", 
-                      style: { backgroundImage: `url(${BACKGROUND_IMAGE})` } 
+                      className: "fixed inset-0 z-0 bg-cover bg-center transition-all duration-700 ease-in-out", 
+                      style: { backgroundImage: `url(${currentBg})` } 
                   }),
 
-                  // 2. CAPA CLARA (Revelada con Multiball Mask)
+                  // 2. CAPA CLARA (REVELADA - Con optimización de hardware)
                   React.createElement('div', {
                       ref: revealedLayerRef,
-                      className: "fixed inset-0 z-10 bg-cover bg-center flex flex-col items-center justify-center text-center p-8",
+                      className: "fixed inset-0 z-10 bg-cover bg-center flex flex-col items-center justify-center text-center p-8 transition-all duration-700 ease-in-out",
                       style: { 
-                          backgroundImage: `url(${REVEALED_IMAGE})`,
-                          // Inicializamos vacío
+                          backgroundImage: `url(${currentRev})`,
                           WebkitMaskImage: 'none',
                           maskImage: 'none',
-                          willChange: 'mask-image' // Optimización importante
+                          willChange: 'mask-image', // Optimización clave
+                          transform: 'translateZ(0)' // Forzar GPU
                       }
                   },
                       React.createElement('div', { className: "absolute inset-0 bg-black opacity-40 pointer-events-none" }),
                       
                       // CONTENIDO
                       React.createElement('div', { className: "relative z-20 flex flex-col items-center w-full h-full justify-center" },
+                          
+                          // BOTÓN DE CAMBIO DE IMAGEN "ARG"
+                          React.createElement('div', { 
+                            onClick: toggleBackground,
+                            className: "mb-8 cursor-pointer select-none arg-toggle",
+                          }, 
+                            React.createElement('h2', { className: "text-4xl md:text-5xl text-white" }, "ARG")
+                          ),
+                          
+                          // TITULO PRINCIPAL (VACÍO EN CONFIG)
                           React.createElement('h1', { className: "font-['Cormorant_Garamond'] font-bold leading-none text-white mb-8 select-none pointer-events-none", style: { fontSize: 'clamp(5rem, 15vw, 18rem)' } }, sections.home.title),
                           
+                          // MENU PRINCIPAL
                           React.createElement('div', { className: 'flex justify-center items-start gap-10 md:gap-24 mt-4' },
                               Object.keys(sections).filter(key => key !== 'home').map(key => { 
                                   const section = sections[key];
@@ -194,6 +250,21 @@
                                       React.createElement('span', { className: "text-lg md:text-xl" }, section.title)
                                   ); 
                               })
+                          ),
+
+                          // REDES SOCIALES
+                          React.createElement('div', { className: 'flex justify-center items-center gap-6 mt-24' },
+                              socialLinks.map((social, index) => (
+                                React.createElement('a', {
+                                  key: index,
+                                  href: social.url,
+                                  target: "_blank",
+                                  rel: "noopener noreferrer",
+                                  className: "social-link text-white p-4 rounded-full hover:bg-white/10 transition-all duration-300" 
+                                },
+                                  React.createElement(social.icon, { className: "w-7 h-7" })
+                                )
+                              ))
                           )
                       )
                   )
