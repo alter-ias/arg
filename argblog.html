@@ -23,22 +23,17 @@
             color: #e5e5e5;
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
-            touch-action: none; /* Vital para evitar scroll nativo indeseado y zoom */
-            user-select: none; /* Evita que se seleccione texto al arrastrar el dedo */
+            touch-action: none;
+            user-select: none;
             -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent; /* Quita el recuadro azul al tocar */
+            -webkit-tap-highlight-color: transparent;
             
             /* CURSOR ORIGINAL */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
-        .font-serif {
-            font-family: 'Cormorant Garamond', serif;
-        }
-
-        .font-sans {
-            font-family: 'Poppins', sans-serif;
-        }
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
+        .font-sans { font-family: 'Poppins', sans-serif; }
 
         /* Efecto Vidrio */
         .glass-card {
@@ -49,7 +44,6 @@
             transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
         }
 
-        /* Estado Hover (PC) o Activo (Móvil) */
         .glass-card.is-active,
         .glass-card:hover {
             background: rgba(255, 255, 255, 0.05);
@@ -59,14 +53,8 @@
         }
 
         /* Animación de carga */
-        .loader-pulse {
-            animation: pulse-opacity 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse-opacity {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
+        .loader-pulse { animation: pulse-opacity 1.5s ease-in-out infinite; }
+        @keyframes pulse-opacity { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
     </style>
 </head>
 
@@ -121,7 +109,7 @@
                 onClick: (e) => e.target === e.currentTarget && onClose()
             },
                 React.createElement('div', {
-                    className: "w-full h-full md:max-w-5xl md:h-[95vh] bg-[#050505] md:border md:border-white/10 overflow-y-auto relative flex flex-col shadow-2xl select-text" // select-text reactiva la selección dentro del modal
+                    className: "w-full h-full md:max-w-5xl md:h-[95vh] bg-[#050505] md:border md:border-white/10 overflow-y-auto relative flex flex-col shadow-2xl select-text"
                 },
                     post.image && React.createElement('div', {
                         className: "w-full h-[30vh] md:h-[40vh] bg-cover bg-center shrink-0 relative",
@@ -151,19 +139,19 @@
             const [posts, setPosts] = useState([]);
             const [loading, setLoading] = useState(true);
             const [selectedPost, setSelectedPost] = useState(null);
-            
-            // Estado para rastrear qué tarjeta está siendo tocada
             const [activeTouchId, setActiveTouchId] = useState(null);
-
+            
             const [currentPage, setCurrentPage] = useState(1);
+            // Detección inicial de móvil
             const [isMobile, setIsMobile] = useState(window.matchMedia("(max-width: 768px)").matches);
-            const POSTS_PER_PAGE = 8; 
+
+            // --- LÓGICA DINÁMICA DE ENTRADAS POR PÁGINA ---
+            // Si es móvil: 6 entradas (2 cols x 3 filas). Si es PC: 8 entradas (4 cols x 2 filas).
+            const POSTS_PER_PAGE = isMobile ? 6 : 8;
 
             // --- MANEJO DEL BOTÓN "ATRÁS" ---
             useEffect(() => {
-                const handlePopState = (event) => {
-                    setSelectedPost(null);
-                };
+                const handlePopState = (event) => { setSelectedPost(null); };
                 window.addEventListener('popstate', handlePopState);
                 return () => window.removeEventListener('popstate', handlePopState);
             }, []);
@@ -183,46 +171,37 @@
                 }
             };
 
+            // Detectar resize y actualizar isMobile
             useEffect(() => {
                 const handleResize = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
                 window.addEventListener('resize', handleResize);
                 return () => window.removeEventListener('resize', handleResize);
             }, []);
 
-            // --- FÍSICA LÍQUIDA + DETECCIÓN DE TOQUE ---
+            // --- FÍSICA Y TOUCH ---
             useEffect(() => {
                 const TRAIL_LENGTH = isMobile ? 6 : 12;
                 const BASE_RADIUS = isMobile ? 140 : 200;
                 const points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
                 let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
-                // Esta función maneja tanto el movimiento visual como la detección de elementos
                 const handleMove = (e) => {
                     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                     mouse = { x: clientX, y: clientY };
 
-                    // LÓGICA DE "HOVER" TÁCTIL (Solo móvil)
                     if (e.touches && isMobile) {
-                        // Detectamos qué elemento está bajo el dedo
                         const elementUnderFinger = document.elementFromPoint(clientX, clientY);
-                        // Buscamos si ese elemento es una de nuestras tarjetas (marcadas con la clase 'arg-card')
                         const card = elementUnderFinger?.closest('.arg-card');
-                        
                         if (card) {
-                            // Si es una tarjeta, obtenemos su ID y actualizamos el estado
-                            const id = card.getAttribute('data-id');
-                            setActiveTouchId(id);
+                            setActiveTouchId(card.getAttribute('data-id'));
                         } else {
                             setActiveTouchId(null);
                         }
                     }
                 };
                 
-                // Limpiar el estado activo al levantar el dedo
-                const handleEnd = () => {
-                    if(isMobile) setActiveTouchId(null);
-                }
+                const handleEnd = () => { if(isMobile) setActiveTouchId(null); }
 
                 window.addEventListener('mousemove', handleMove);
                 window.addEventListener('touchmove', handleMove, { passive: false });
@@ -325,37 +304,36 @@
                 ),
 
                 // CONTENIDO PRINCIPAL
-                React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col justify-end pb-8 md:pb-12 pointer-events-none" },
+                React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col justify-end pb-6 md:pb-12 pointer-events-none" },
                     loading ?
                         React.createElement('div', { className: "w-full text-center mb-32 loader-pulse" },
                             React.createElement('p', { className: "font-mono text-xs tracking-[0.5em] text-white/50" }, "CONECTANDO NODOS...")
                         )
                         :
                         React.createElement('div', { className: "w-full pointer-events-auto px-4 md:px-20 max-w-[1600px] mx-auto" },
-                            React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-4 md:mb-8 tracking-[0.3em] uppercase ml-1" }, "Archivo Central"),
+                            React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-3 md:mb-8 tracking-[0.3em] uppercase ml-1" }, "Archivo Central"),
 
-                            // GRILLA
+                            // GRILLA (Responsive: 2 cols x 3 filas móvil | 4 cols x 2 filas desktop)
                             React.createElement('div', {
-                                className: "grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 w-full mb-4 md:mb-6"
+                                className: "grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 w-full mb-3 md:mb-6"
                             },
                                 currentPosts.map((post, idx) => {
                                     const globalIndex = indexOfFirstPost + idx;
-                                    const isActive = activeTouchId === String(globalIndex); // Verificamos si este es el post tocado
+                                    const isActive = activeTouchId === String(globalIndex);
 
                                     return React.createElement('div', {
                                         key: idx,
-                                        'data-id': globalIndex, // Identificador para el touch
+                                        'data-id': globalIndex,
                                         onClick: () => openPost(post),
-                                        // Añadimos la clase 'arg-card' para identificarla en el DOM
-                                        // Añadimos 'is-active' si el dedo está encima
+                                        // Ajuste de altura en móvil: h-[155px] para que quepan 3 filas cómodamente
                                         className: `glass-card arg-card flex flex-col justify-between relative overflow-hidden group cursor-pointer p-4 md:p-8
-                                            h-[160px] md:h-[280px] hover:scale-[1.02] active:scale-95 transition-all duration-300
+                                            h-[155px] md:h-[280px] hover:scale-[1.02] active:scale-95 transition-all duration-300
                                             ${isActive ? 'is-active' : ''}`
                                     },
                                         React.createElement('span', { className: "font-mono text-[8px] md:text-[10px] text-white/20" }, globalIndex < 9 ? `0${globalIndex + 1}` : globalIndex + 1),
                                         
                                         React.createElement('div', { className: "relative z-10 flex flex-col h-full justify-between" },
-                                            // Línea decorativa (Se expande si hover o active)
+                                            // Línea decorativa
                                             React.createElement('div', { 
                                                 className: `w-4 md:w-8 h-[1px] bg-white/50 mt-1 md:mt-0 transition-all duration-500
                                                 ${isActive ? 'w-8 md:w-16' : 'group-hover:w-8 md:group-hover:w-16'}` 
@@ -372,12 +350,11 @@
                                         ),
 
                                         // IMAGEN DE FONDO
-                                        // Lógica: Se muestra si hay hover (PC) O si es el elemento activo por touch (Móvil)
                                         post.image && React.createElement('div', {
                                             className: `absolute inset-0 bg-cover bg-center transition-all duration-500 transform scale-110
                                             ${isActive 
-                                                ? 'opacity-60 scale-100 grayscale-0' // Estado Activo (Dedo encima)
-                                                : 'opacity-0 group-hover:opacity-40 group-hover:scale-100 grayscale group-hover:grayscale-0' // Estado Normal/Hover PC
+                                                ? 'opacity-60 scale-100 grayscale-0' // Dedo encima
+                                                : 'opacity-0 group-hover:opacity-40 group-hover:scale-100 grayscale group-hover:grayscale-0' // Normal
                                             }`,
                                             style: { backgroundImage: `url(${post.image})` }
                                         }),
@@ -391,7 +368,7 @@
                             ),
 
                             // PAGINACIÓN
-                            totalPages > 1 && React.createElement('div', { className: "flex justify-center items-center gap-4 md:gap-6 mt-2 md:mt-4 h-8" },
+                            totalPages > 1 && React.createElement('div', { className: "flex justify-center items-center gap-4 md:gap-6 mt-1 md:mt-4 h-8" },
                                 React.createElement('button', {
                                     onClick: prevPage,
                                     disabled: currentPage === 1,
