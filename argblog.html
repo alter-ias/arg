@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Poppins:wght@200;300;400&display=swap" rel="stylesheet">
+    
     <style>
         /* --- ESTILOS BASE --- */
         html, body {
@@ -16,6 +17,7 @@
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
             touch-action: none; /* Vital para la fluidez en móviles */
+            
             /* CURSOR ORIGINAL */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
@@ -39,13 +41,20 @@
         .glass-card:hover {
             background: rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(-20px);
+            transform: translateY(-10px); /* Reducido un poco para que no choque en grilla */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
         /* Animación de carga */
         .loader-pulse { animation: pulse-opacity 1.5s ease-in-out infinite; }
         @keyframes pulse-opacity { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        
+        /* Animación de paginación */
+        .fade-in-grid { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Estilo para botón de paginación activo */
+        .pagination-btn.active { background: rgba(255,255,255,0.2); color: white; border-color: rgba(255,255,255,0.5); }
     </style>
 </head>
 <body>
@@ -122,21 +131,46 @@
             );
         };
 
+        // --- COMPONENTE TARJETA (Reutilizable) ---
+        const Card = ({ post, idx, onClick, isGrid }) => {
+            // isGrid determina si estamos en PC (estilos más compactos) o Mobile (estilos fijos)
+            const dimensions = isGrid 
+                ? "w-full h-full aspect-[3/4] p-6" // PC: Fluido
+                : "shrink-0 w-[260px] h-[380px] p-8"; // Mobile: Fijo
+
+            return React.createElement('div', {
+                onClick: onClick,
+                className: `glass-card ${dimensions} flex flex-col justify-between relative overflow-hidden group cursor-pointer`
+            },
+                React.createElement('span', { className: "font-mono text-[10px] text-white/20" }, idx < 9 ? `0${idx + 1}` : idx + 1),
+                React.createElement('div', { className: "relative z-10" },
+                    React.createElement('div', { className: "w-8 h-[1px] bg-white/50 mb-4 group-hover:w-16 transition-all duration-500" }),
+                    React.createElement('h3', { className: "font-serif text-2xl md:text-3xl text-gray-200 leading-[0.95] mb-2 group-hover:text-white transition-colors" }, post.title),
+                    React.createElement('p', { className: "text-[10px] font-mono text-white/40 mt-3 tracking-widest uppercase" }, post.date || "---")
+                ),
+                post.image && React.createElement('div', {
+                    className: "absolute inset-0 bg-cover bg-center opacity-0 group-hover:opacity-40 transition-all duration-700 grayscale group-hover:grayscale-0 transform scale-110 group-hover:scale-100",
+                    style: { backgroundImage: `url(${post.image})` }
+                }),
+                React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" })
+            );
+        };
+
         // --- APP PRINCIPAL ---
         const App = () => {
             const revealedLayerRef = useRef(null);
             const [posts, setPosts] = useState([]);
             const [loading, setLoading] = useState(true);
             const [selectedPost, setSelectedPost] = useState(null);
+            
+            // PAGINACIÓN (Para PC)
+            const [currentPage, setCurrentPage] = useState(1);
+            const POSTS_PER_PAGE = 8; // 2 filas de 4
 
-            // --- FÍSICA MEJORADA (MÁS ORGÁNICA) ---
+            // --- FÍSICA LÍQUIDA ---
             useEffect(() => {
                 const isMobile = window.matchMedia("(max-width: 768px)").matches;
-                
-                // AJUSTES DE FLUIDEZ:
-                // Más puntos = cola más larga y suave
                 const TRAIL_LENGTH = isMobile ? 6 : 12; 
-                // Radio base un poco más grande
                 const BASE_RADIUS = isMobile ? 140 : 200; 
 
                 const points = Array(TRAIL_LENGTH).fill({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
@@ -148,22 +182,17 @@
                     mouse = { x: clientX, y: clientY };
                 };
 
-                // Event Listeners directos (sin React Synthetic Events para max performance)
                 window.addEventListener('mousemove', handleMove);
                 window.addEventListener('touchmove', handleMove, { passive: false });
 
                 let animationFrameId;
-
                 const loop = () => {
-                    // Física del LÍDER (Mouse) - Respuesta rápida
                     const leaderEasing = 0.15; 
                     points[0] = {
                         x: points[0].x + (mouse.x - points[0].x) * leaderEasing,
                         y: points[0].y + (mouse.y - points[0].y) * leaderEasing
                     };
 
-                    // Física de la ESTELA - Respuesta más lenta ("Lazy/Liquid")
-                    // Bajamos el easing a 0.20 para que sea más viscoso
                     const trailEasing = 0.20; 
                     for (let i = 1; i < TRAIL_LENGTH; i++) {
                         const leader = points[i - 1];
@@ -176,18 +205,15 @@
 
                     if (revealedLayerRef.current) {
                         const gradients = points.map((p, i) => {
-                            const scale = 1 - (i / TRAIL_LENGTH) * 0.7; // Decay un poco más agresivo al final
+                            const scale = 1 - (i / TRAIL_LENGTH) * 0.7; 
                             const radius = BASE_RADIUS * scale;
                             return `radial-gradient(circle ${radius}px at ${p.x}px ${p.y}px, black 100%, transparent 100%)`;
                         });
                         
                         const maskString = gradients.join(', ');
-                        
-                        // Aplicación directa al DOM
                         revealedLayerRef.current.style.maskImage = maskString;
                         revealedLayerRef.current.style.webkitMaskImage = maskString;
                     }
-                    
                     animationFrameId = requestAnimationFrame(loop);
                 };
                 
@@ -218,6 +244,18 @@
                 load();
             }, []);
 
+            // Lógica Paginación
+            const indexOfLastPost = currentPage * POSTS_PER_PAGE;
+            const indexOfFirstPost = indexOfLastPost - POSTS_PER_PAGE;
+            const currentPostsPC = posts.slice(indexOfFirstPost, indexOfLastPost);
+            const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+
+            const changePage = (pageNumber) => {
+                if(pageNumber >= 1 && pageNumber <= totalPages) {
+                    setCurrentPage(pageNumber);
+                }
+            }
+
             return React.createElement(React.Fragment, null,
                 // CAPA 1: FONDO OSCURO
                 React.createElement('div', { 
@@ -225,7 +263,7 @@
                     style: { backgroundImage: `url(${BG_DARK})` } 
                 }),
                 
-                // CAPA 2: REVELADO (Con optimización 'will-change')
+                // CAPA 2: REVELADO (Optimizado)
                 React.createElement('div', {
                     ref: revealedLayerRef,
                     className: "fixed inset-0 z-10 bg-cover bg-center pointer-events-none",
@@ -233,16 +271,16 @@
                         backgroundImage: `url(${BG_REVEAL})`, 
                         WebkitMaskImage: 'none', 
                         maskImage: 'none',
-                        willChange: 'mask-image', // OPTIMIZACIÓN CLAVE
-                        transform: 'translateZ(0)' // OPTIMIZACIÓN CLAVE
+                        willChange: 'mask-image',
+                        transform: 'translateZ(0)'
                     }
                 }),
 
-                // CAPA 3: TEXTURA DE GRANO (Estética)
+                // CAPA 3: TEXTURA
                 React.createElement('div', { className: "fixed inset-0 z-10 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150" }),
 
-                // CAPA 4: INTERFAZ
-                React.createElement('nav', { className: "fixed top-0 left-0 w-full p-8 md:p-12 z-40 flex justify-between items-start pointer-events-none" },
+                // CAPA 4: NAVBAR
+                React.createElement('nav', { className: "fixed top-0 left-0 w-full p-8 md:p-10 z-40 flex justify-between items-start pointer-events-none" },
                     React.createElement('a', { 
                         href: "https://alter-ias.github.io/arg/argx.html",
                         className: "pointer-events-auto font-serif text-5xl text-white tracking-widest mix-blend-difference hover:opacity-70 transition-opacity"
@@ -253,38 +291,78 @@
                     )
                 ),
 
-                React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col justify-end pb-12 pointer-events-none" },
+                // CAPA 5: CONTENIDO PRINCIPAL
+                React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col justify-end pointer-events-none h-full w-full" },
                     loading ? 
                         React.createElement('div', { className: "w-full text-center mb-32 loader-pulse" },
                             React.createElement('p', { className: "font-mono text-xs tracking-[0.5em] text-white/50" }, "CONECTANDO NODOS...")
                         ) 
                     :
-                        React.createElement('div', { className: "w-full pointer-events-auto pl-6 md:pl-20" },
-                            React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-8 tracking-[0.3em] uppercase ml-1" }, "Archivo Central"),
+                        React.createElement('div', { className: "w-full h-full flex flex-col justify-end pointer-events-auto" },
                             
-                            React.createElement('div', { className: "flex gap-8 overflow-x-auto hide-scroll pr-20 pb-12 items-end" },
-                                posts.map((post, idx) => 
-                                    React.createElement('div', {
-                                        key: idx,
-                                        onClick: () => setSelectedPost(post),
-                                        className: "glass-card shrink-0 w-[260px] h-[380px] md:w-[300px] md:h-[450px] p-8 flex flex-col justify-between relative overflow-hidden group cursor-pointer"
-                                    },
-                                        React.createElement('span', { className: "font-mono text-[10px] text-white/20" }, idx < 9 ? `0${idx + 1}` : idx + 1),
-                                        React.createElement('div', { className: "relative z-10" },
-                                            React.createElement('div', { className: "w-8 h-[1px] bg-white/50 mb-4 group-hover:w-16 transition-all duration-500" }),
-                                            React.createElement('h3', { className: "font-serif text-3xl text-gray-200 leading-[0.9] mb-2 group-hover:text-white transition-colors" }, post.title),
-                                            React.createElement('p', { className: "text-[10px] font-mono text-white/40 mt-3 tracking-widest uppercase" }, post.date || "---")
+                            React.createElement('div', { className: "pl-6 md:pl-0 md:container md:mx-auto md:max-w-7xl md:h-[85vh] flex flex-col justify-center" },
+                                React.createElement('h2', { className: "text-[10px] font-mono text-white/30 mb-4 md:mb-8 tracking-[0.3em] uppercase ml-1" }, "Archivo Central"),
+                                
+                                /* --- OPCIÓN 1: MÓVIL (Carrusel Original) --- */
+                                React.createElement('div', { className: "md:hidden flex gap-8 overflow-x-auto hide-scroll pr-20 pb-12 items-end" },
+                                    posts.map((post, idx) => 
+                                        React.createElement(Card, { 
+                                            key: idx, 
+                                            post: post, 
+                                            idx: idx, 
+                                            isGrid: false,
+                                            onClick: () => setSelectedPost(post) 
+                                        })
+                                    )
+                                ),
+
+                                /* --- OPCIÓN 2: PC (Grilla 4x2 Simétrica) --- */
+                                React.createElement('div', { className: "hidden md:flex flex-col w-full h-full justify-center" },
+                                    
+                                    // GRID CONTAINER
+                                    React.createElement('div', { className: "grid grid-cols-4 grid-rows-2 gap-6 w-full fade-in-grid mb-6" },
+                                        currentPostsPC.map((post, idx) => {
+                                            const realIndex = indexOfFirstPost + idx;
+                                            return React.createElement(Card, { 
+                                                key: realIndex, 
+                                                post: post, 
+                                                idx: realIndex, 
+                                                isGrid: true,
+                                                onClick: () => setSelectedPost(post) 
+                                            });
+                                        })
+                                    ),
+
+                                    // PAGINATION CONTROLS (Solo visible si hay más de 1 página)
+                                    totalPages > 1 && React.createElement('div', { className: "flex justify-center items-center gap-4 mt-2 font-mono text-xs text-white/50" },
+                                        // Flecha Izquierda
+                                        React.createElement('button', { 
+                                            onClick: () => changePage(currentPage - 1),
+                                            disabled: currentPage === 1,
+                                            className: `hover:text-white transition-colors ${currentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`
+                                        }, "<"),
+                                        
+                                        // Números
+                                        Array.from({ length: totalPages }, (_, i) => i + 1).map(number => 
+                                            React.createElement('button', {
+                                                key: number,
+                                                onClick: () => changePage(number),
+                                                className: `w-6 h-6 flex items-center justify-center rounded-full border border-transparent transition-all pagination-btn ${currentPage === number ? 'active' : 'hover:border-white/20'}`
+                                            }, number)
                                         ),
-                                        post.image && React.createElement('div', {
-                                            className: "absolute inset-0 bg-cover bg-center opacity-0 group-hover:opacity-40 transition-all duration-700 grayscale group-hover:grayscale-0 transform scale-110 group-hover:scale-100",
-                                            style: { backgroundImage: `url(${post.image})` }
-                                        }),
-                                        React.createElement('div', { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" })
+
+                                        // Flecha Derecha
+                                        React.createElement('button', { 
+                                            onClick: () => changePage(currentPage + 1),
+                                            disabled: currentPage === totalPages,
+                                            className: `hover:text-white transition-colors ${currentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`
+                                        }, ">")
                                     )
                                 )
                             )
                         )
                 ),
+
                 selectedPost && React.createElement(PostModal, { post: selectedPost, onClose: () => setSelectedPost(null) })
             );
         };
