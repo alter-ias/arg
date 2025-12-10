@@ -12,7 +12,7 @@
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Poppins:wght@200;300;400&display=swap"
         rel="stylesheet">
     <style>
-        /* --- ESTILOS BASE (CONSISTENCIA TOTAL) --- */
+        /* --- ESTILOS BASE --- */
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: #050505; color: #e5e5e5;
@@ -28,26 +28,21 @@
         .font-serif { font-family: 'Cormorant Garamond', serif; }
         .font-sans { font-family: 'Poppins', sans-serif; }
 
-        /* Efecto Vidrio (Glassmorphism) */
+        /* Efecto Vidrio Transparente y Elegante */
         .glass-panel {
-            background: rgba(15, 15, 15, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            transition: border-color 0.3s ease;
+            background: rgba(0, 0, 0, 0.25); /* Mucho más transparente */
+            backdrop-filter: blur(12px); /* Blur intenso */
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15); /* Borde sutil */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
         }
         
-        .glass-panel:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-        }
+        /* Scrollbar invisible pero funcional */
+        .custom-scroll::-webkit-scrollbar { width: 0px; background: transparent; }
+        .custom-scroll { scrollbar-width: none; }
 
-        /* Scrollbar minimalista */
-        .custom-scroll::-webkit-scrollbar { width: 3px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
-
-        /* Animación Equalizer (Para el item activo) */
+        /* Animación Equalizer */
         .eq-bar { animation: eq 1s ease-in-out infinite; }
         .eq-bar:nth-child(2) { animation-delay: 0.2s; }
         .eq-bar:nth-child(3) { animation-delay: 0.4s; }
@@ -68,13 +63,11 @@
         const { useRef, useEffect, useState } = React;
 
         // --- CONFIGURACIÓN ---
-        // Hoja 2 del Sheet proporcionado
         const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuvGrwwaLeci2LXz5pjNiZ4EuKaqVTP8yGiOw2fYLVN1OIPo672tZHiLQoNuQ_25alhuGeFdOpJ5Up/pub?gid=707960725&single=true&output=csv';
-        
         const BG_DARK = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380713/arg01_ft9glg.png';
         const BG_REVEAL = 'https://res.cloudinary.com/dahrwkdzd/image/upload/v1759380719/arg02_o9yqpm.png';
 
-        // --- PARSER CSV ROBUSTO ---
+        // --- PARSER CSV ---
         const parseCSV = (text) => {
             const rows = [];
             let currentRow = [];
@@ -97,20 +90,36 @@
             return rows;
         };
 
-        // --- HELPER PARA URLS ---
-        const normalizeUrl = (url) => {
-            if (!url) return '';
-            // Si es YouTube normal, convertir a embed
-            if (url.includes('youtube.com/watch?v=')) {
-                return url.replace('watch?v=', 'embed/');
+        // --- HELPER PARA URLS INTELIGENTE ---
+        const normalizeUrl = (input) => {
+            if (!input) return '';
+            
+            // CASO 1: Si el usuario pegó el código iframe completo <iframe src="...">
+            if (input.includes('<iframe')) {
+                const match = input.match(/src="([^"]+)"/);
+                return match ? match[1] : ''; // Extrae solo la URL
             }
-            if (url.includes('youtu.be/')) {
-                return url.replace('youtu.be/', 'www.youtube.com/embed/');
+
+            // CASO 2: Spotify Link Normal (convertir a embed)
+            if (input.includes('open.spotify.com/episode') && !input.includes('/embed/')) {
+                // Eliminar parámetros extra (?si=...) y agregar /embed/
+                let cleanUrl = input.split('?')[0]; 
+                return cleanUrl.replace('/episode/', '/embed/episode/');
             }
-            return url;
+
+            // CASO 3: YouTube Link Normal (convertir a embed)
+            if (input.includes('youtube.com/watch?v=')) {
+                return input.replace('watch?v=', 'embed/');
+            }
+            if (input.includes('youtu.be/')) {
+                return input.replace('youtu.be/', 'www.youtube.com/embed/');
+            }
+
+            // CASO 4: Ya es un link correcto o limpio
+            return input;
         };
 
-        // --- COMPONENTE: EQUALIZER ANIMATION ---
+        // --- COMPONENTE: EQUALIZER ---
         const Equalizer = () => React.createElement('div', { className: "flex gap-[2px] h-3 items-end" },
             React.createElement('div', { className: "w-[2px] bg-white eq-bar" }),
             React.createElement('div', { className: "w-[2px] bg-white eq-bar" }),
@@ -122,31 +131,31 @@
             const [currentIndex, setCurrentIndex] = useState(0);
             
             if (!items || items.length === 0) return null;
-            
             const currentItem = items[currentIndex];
 
-            return React.createElement('div', { className: "glass-panel w-full h-full flex flex-col rounded-sm overflow-hidden" },
-                // Header tipo "Etiqueta de archivo"
-                React.createElement('div', { className: "h-12 border-b border-white/10 flex items-center px-4 bg-white/5 justify-between" },
-                    React.createElement('h3', { className: "font-mono text-xs tracking-[0.2em] text-white/60 uppercase" }, title),
-                    React.createElement('div', { className: "flex gap-2" },
-                        React.createElement('div', { className: "w-2 h-2 rounded-full bg-red-500/50" }),
-                        React.createElement('div', { className: "w-2 h-2 rounded-full bg-yellow-500/50" }),
-                        React.createElement('div', { className: "w-2 h-2 rounded-full bg-green-500/50" })
+            return React.createElement('div', { 
+                // AQUÍ ESTÁN LAS CURVAS (rounded-3xl) Y LA TRANSPARENCIA
+                className: "glass-panel w-full h-full flex flex-col rounded-3xl overflow-hidden shadow-2xl" 
+            },
+                // Header Transparente
+                React.createElement('div', { className: "h-14 border-b border-white/10 flex items-center px-6 justify-between shrink-0" },
+                    React.createElement('h3', { className: "font-mono text-xs tracking-[0.2em] text-white/80 uppercase font-semibold" }, title),
+                    React.createElement('div', { className: "flex gap-2 opacity-50" },
+                        React.createElement('div', { className: "w-2 h-2 rounded-full bg-white/50" }),
+                        React.createElement('div', { className: "w-2 h-2 rounded-full bg-white/30" })
                     )
                 ),
                 
                 // Área Principal
                 React.createElement('div', { className: "flex flex-col h-full overflow-hidden" },
                     
-                    // REPRODUCTOR (Visualización Principal)
-                    React.createElement('div', { className: "relative bg-black shrink-0 border-b border-white/10 shadow-2xl z-10" },
-                        // Contenedor de aspecto para video, altura fija para podcast
+                    // REPRODUCTOR
+                    React.createElement('div', { className: "relative bg-black/40 shrink-0 border-b border-white/10" },
                         React.createElement('div', { 
                             className: type === 'video' ? 'aspect-video w-full' : 'w-full h-[200px] md:h-[232px]' 
                         },
                             React.createElement('iframe', {
-                                key: currentItem.src, // Key fuerza re-render al cambiar src
+                                key: currentItem.src,
                                 src: currentItem.src,
                                 width: "100%",
                                 height: "100%",
@@ -155,41 +164,34 @@
                                 allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture",
                                 className: "w-full h-full"
                             })
-                        ),
-                        // Overlay de "En reproducción"
-                        React.createElement('div', { className: "absolute top-0 left-0 bg-black/60 backdrop-blur-sm px-3 py-1 border-b border-r border-white/10 rounded-br-lg pointer-events-none" },
-                            React.createElement('span', { className: "font-mono text-[9px] text-white tracking-widest uppercase" }, "Now Playing")
                         )
                     ),
 
-                    // LISTA DE DATOS (Playlist estilo terminal)
-                    React.createElement('div', { className: "flex-1 overflow-y-auto custom-scroll bg-[#0a0a0a]" },
+                    // LISTA DE REPRODUCCIÓN (Transparente)
+                    React.createElement('div', { className: "flex-1 overflow-y-auto custom-scroll p-2" },
                         items.map((item, idx) => {
                             const isActive = idx === currentIndex;
                             return React.createElement('div', {
                                 key: idx,
                                 onClick: () => setCurrentIndex(idx),
-                                className: `group relative p-4 cursor-pointer transition-all duration-300 border-b border-white/5
-                                    ${isActive ? 'bg-white/5' : 'hover:bg-white/5'}`
+                                // CURVAS EN LOS ITEMS DE LA LISTA
+                                className: `group relative p-4 cursor-pointer transition-all duration-300 rounded-xl mb-1
+                                    ${isActive ? 'bg-white/10 backdrop-blur-md' : 'hover:bg-white/5'}`
                             },
-                                // Indicador lateral
-                                isActive && React.createElement('div', { className: "absolute left-0 top-0 bottom-0 w-[3px] bg-white" }),
-                                
                                 React.createElement('div', { className: "flex justify-between items-center" },
                                     React.createElement('div', { className: "flex-1 pr-4" },
                                         React.createElement('div', { className: "flex items-center gap-2 mb-1" },
-                                            React.createElement('span', { className: "font-mono text-[9px] text-white/30" }, 
+                                            React.createElement('span', { className: "font-mono text-[9px] text-white/40" }, 
                                                 (idx + 1).toString().padStart(2, '0')
                                             ),
                                             isActive && React.createElement(Equalizer)
                                         ),
                                         React.createElement('p', { 
                                             className: `font-serif text-lg leading-none transition-colors
-                                            ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-200'}` 
+                                            ${isActive ? 'text-white font-medium' : 'text-gray-300 group-hover:text-white'}` 
                                         }, item.title)
                                     ),
-                                    // Icono tipo play
-                                    React.createElement('div', { className: `text-xs ${isActive ? 'text-white' : 'text-white/10 group-hover:text-white/40'}` }, "▶")
+                                    React.createElement('div', { className: `text-xs ${isActive ? 'text-white' : 'text-white/10 group-hover:text-white/40'}` }, "●")
                                 )
                             );
                         })
@@ -205,22 +207,20 @@
             const [loading, setLoading] = useState(true);
             const [isMobile, setIsMobile] = useState(window.matchMedia("(max-width: 768px)").matches);
 
-            // --- CARGA DE DATOS ---
             useEffect(() => {
                 const fetchData = async () => {
                     try {
                         const res = await fetch(SHEET_CSV_URL);
                         const text = await res.text();
-                        const rows = parseCSV(text).slice(1); // Ignorar header
+                        const rows = parseCSV(text).slice(1);
 
-                        // Mapear columnas: A(0)=VideoTitulo, B(1)=VideoUrl, C(2)=PodTitulo, D(3)=PodUrl
                         const videos = rows
                             .map(r => ({ title: r[0], src: normalizeUrl(r[1]) }))
-                            .filter(v => v.title && v.src); // Filtrar vacíos
+                            .filter(v => v.title && v.src);
 
                         const podcasts = rows
                             .map(r => ({ title: r[2], src: normalizeUrl(r[3]) }))
-                            .filter(p => p.title && p.src); // Filtrar vacíos
+                            .filter(p => p.title && p.src);
 
                         setData({ videos, podcasts });
                     } catch (e) {
@@ -232,7 +232,6 @@
                 fetchData();
             }, []);
 
-            // --- FÍSICA LÍQUIDA (Consistente) ---
             useEffect(() => {
                 const handleResize = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
                 window.addEventListener('resize', handleResize);
@@ -290,7 +289,6 @@
             }, [isMobile]);
 
             return React.createElement(React.Fragment, null,
-                // CAPAS DE FONDO
                 React.createElement('div', {
                     className: "fixed inset-0 z-0 bg-cover bg-center",
                     style: { backgroundImage: `url(${BG_DARK})` }
@@ -308,7 +306,6 @@
                 }),
                 React.createElement('div', { className: "fixed inset-0 z-10 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150" }),
 
-                // NAVBAR Y CRÉDITOS
                 React.createElement('nav', { className: "fixed top-0 left-0 w-full p-6 md:p-12 z-40 flex justify-end items-start pointer-events-none" },
                     React.createElement('div', { className: "hidden md:block text-right font-mono text-[10px] text-white/40 tracking-widest" },
                         React.createElement('p', null, "COLECTIVO ALTERLAB"),
@@ -316,9 +313,7 @@
                     )
                 ),
 
-                // CONTENIDO PRINCIPAL
                 React.createElement('main', { className: "fixed inset-0 z-30 flex flex-col pointer-events-none" },
-                    
                     loading ?
                         React.createElement('div', { className: "w-full h-full flex flex-col items-center justify-center loader-pulse" },
                              React.createElement('p', { className: "font-mono text-xs tracking-[0.5em] text-white/50" }, "SINCRONIZANDO DATA...")
@@ -326,7 +321,6 @@
                     :
                     React.createElement('div', { className: "w-full h-full pointer-events-auto flex flex-col" },
                         
-                        // Header Flotante
                         React.createElement('div', { className: "pt-8 pb-4 md:pt-10 md:pb-6 text-center shrink-0 relative z-50" },
                             React.createElement('a', {
                                 href: "https://alter-ias.github.io/arg/argx.html",
@@ -335,17 +329,14 @@
                             React.createElement('h2', { className: "text-[10px] font-mono text-white/40 tracking-[0.4em] uppercase" }, "Mediateca Digital")
                         ),
 
-                        // Contenedor de Consolas (Grid Asimétrica)
                         React.createElement('div', { className: "flex-1 overflow-y-auto overflow-x-hidden custom-scroll px-4 md:px-12 pb-8" },
-                            React.createElement('div', { className: "max-w-[1600px] mx-auto h-full flex flex-col lg:flex-row gap-6 lg:gap-8 lg:h-[75vh]" },
+                            React.createElement('div', { className: "max-w-[1600px] mx-auto h-full flex flex-col lg:flex-row gap-6 lg:gap-12 lg:h-[75vh]" },
                                 
-                                // CONSOLA VISUAL (Izquierda - Ocupa más en video)
                                 React.createElement('div', { className: "w-full lg:w-1/2 h-[500px] lg:h-full" },
                                     React.createElement(MediaConsole, { title: "TRANSMISIÓN VISUAL [A-DATA]", items: data.videos, type: "video" })
                                 ),
 
-                                // CONSOLA SONORA (Derecha)
-                                React.createElement('div', { className: "w-full lg:w-1/2 h-[500px] lg:h-full" },
+                                React.createElement('div', { className: "w-full lg:w-1/2 h-[550px] lg:h-full" },
                                     React.createElement(MediaConsole, { title: "FRECUENCIA SONORA [B-DATA]", items: data.podcasts, type: "audio" })
                                 )
                             )
