@@ -33,7 +33,7 @@
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
-        /* 2. CURSOR AL SELECCIONAR (NARANJA LUMINOSO - CYAN EN ESTE CASO SEGÚN CÓDIGO PREVIO) */
+        /* 2. CURSOR AL SELECCIONAR (CYAN/AZUL LUMINOSO) */
         a, button, .postal-card {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2300FFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), pointer;
         }
@@ -334,8 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevTablaBtn = document.getElementById('prev-tabla');
     const nextTablaBtn = document.getElementById('next-tabla');
 
-    // URL directa al CSV publicado de Google Sheets
-    // Esta URL se genera a partir del ID en el link público que proporcionaste.
+    // URL DEL CSV PÚBLICO
     const dataUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRHdenGvzR7M1gFEEjoEYsOHyBrBtkPtjF7OXLkCInCqI8RpnF13L198mls0B9VqMYhDbo_--pW68DB/pub?output=csv';
 
     let allPoems = [];
@@ -367,58 +366,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Función simple para parsear CSV a Array de Objetos
+    // FUNCIÓN PARA PARSEAR CSV A JSON
+    // Maneja comillas y saltos de línea dentro de celdas típico de Google Sheets
     function csvToJSON(csvText) {
-        const lines = csvText.split(/\r?\n/);
-        if (lines.length < 2) return [];
+        const rows = [];
+        let currentRow = [];
+        let currentCell = '';
+        let inQuotes = false;
         
-        // Asumimos que la primera línea son los headers
-        const headers = lines[0].split(',').map(h => h.trim());
+        for (let i = 0; i < csvText.length; i++) {
+            const char = csvText[i];
+            const nextChar = csvText[i + 1];
+            
+            if (char === '"') {
+                if (inQuotes && nextChar === '"') {
+                    // Doble comilla dentro de comillas -> comilla literal
+                    currentCell += '"';
+                    i++; 
+                } else {
+                    // Iniciar o terminar comillas
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                // Fin de celda
+                currentRow.push(currentCell);
+                currentCell = '';
+            } else if ((char === '\r' || char === '\n') && !inQuotes) {
+                // Fin de línea
+                // Manejo de \r\n
+                if (char === '\r' && nextChar === '\n') {
+                    i++;
+                }
+                currentRow.push(currentCell);
+                rows.push(currentRow);
+                currentRow = [];
+                currentCell = '';
+            } else {
+                currentCell += char;
+            }
+        }
+        // Añadir última fila si existe algo
+        if (currentRow.length > 0 || currentCell !== '') {
+            currentRow.push(currentCell);
+            rows.push(currentRow);
+        }
+
+        if (rows.length < 2) return [];
+
+        // Asumimos headers en la primera fila
+        const headers = rows[0].map(h => h.trim());
         const result = [];
 
-        for (let i = 1; i < lines.length; i++) {
-            const line = lines[i];
-            if (!line.trim()) continue;
-            
-            // Manejo básico de CSV (respetando comas dentro de comillas si las hubiera)
-            // Para simplicidad en Sheets públicos, esto suele funcionar si no hay comas complejas en el texto.
-            // Si el texto tiene comas, Google las entrecomilla. Esta RegEx maneja eso:
-            const matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || line.split(',');
-            
-            // Una versión más robusta para celdas de texto largo con comas de Sheets:
-            let obj = {};
-            let currentLineData = [];
-            let inQuotes = false;
-            let currentValue = '';
-            
-            // Parser manual carácter por carácter para máxima compatibilidad con Sheets
-            for(let charIndex = 0; charIndex < line.length; charIndex++) {
-                let char = line[charIndex];
-                if(char === '"') {
-                    if(inQuotes && line[charIndex+1] === '"') { // Comilla escapada
-                        currentValue += '"';
-                        charIndex++;
-                    } else {
-                        inQuotes = !inQuotes;
-                    }
-                } else if(char === ',' && !inQuotes) {
-                    currentLineData.push(currentValue);
-                    currentValue = '';
-                } else {
-                    currentValue += char;
-                }
-            }
-            currentLineData.push(currentValue); // Añadir el último valor
+        for (let i = 1; i < rows.length; i++) {
+            const rowData = rows[i];
+            // Si la fila está vacía o tiene menos columnas de las críticas, ignorar con cuidado
+            if (rowData.length === 1 && rowData[0].trim() === '') continue;
 
-            if(currentLineData.length === headers.length || currentLineData.length >= headers.length - 1) {
-                 headers.forEach((header, index) => {
-                    let val = currentLineData[index] || '';
-                    // Limpiar comillas iniciales/finales si sobraron
-                    val = val.trim(); 
-                    obj[header] = val;
-                 });
-                 result.push(obj);
-            }
+            const obj = {};
+            headers.forEach((h, index) => {
+                obj[h] = rowData[index] || '';
+            });
+            result.push(obj);
         }
         return result;
     }
@@ -429,27 +437,25 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(dataUrl, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`Error de red: ${response.statusText}`);
-                return response.text(); // Leemos como texto porque es CSV
+                return response.text();
             })
             .then(csvText => {
                 const data = csvToJSON(csvText);
                 
                 allPoems = data.map((row, originalIndex) => {
                     if (!row) return null;
-                    const title = row.TITULO ? String(row.TITULO).trim() : '';
-                    const poemText = row.POEMA ? String(row.POEMA).trim() : '';
-                    const soundUrl = row.SONIDO_ID ? String(row.SONIDO_ID).trim() : '';
-                    const videoUrl = row.VIDEO_ID ? String(row.VIDEO_ID).trim() : '';
-                    const imageUrl = row.IMAGEN_POSTAL_ID ? String(row.IMAGEN_POSTAL_ID).trim() : '';
+                    const title = row.TITULO ? row.TITULO.trim() : '';
+                    const poemText = row.POEMA ? row.POEMA.trim() : '';
+                    const soundUrl = row.SONIDO_ID ? row.SONIDO_ID.trim() : '';
+                    const videoUrl = row.VIDEO_ID ? row.VIDEO_ID.trim() : '';
+                    const imageUrl = row.IMAGEN_POSTAL_ID ? row.IMAGEN_POSTAL_ID.trim() : '';
                     
-                    // Si no hay imagen, intentamos usar video como fallback visual (o descartamos)
-                    // Para ser estrictos con tu petición, descartamos si no hay lo básico.
-                    if (!title || !poemText || !imageUrl) return null;
+                    if (!title || !imageUrl) return null; // Mínimo título e imagen
                     
                     return { title, poemText, soundUrl, videoUrl, imageUrl, originalIndex };
                 }).filter(p => p !== null);
 
-                if (allPoems.length === 0) throw new Error("No se encontraron cartas válidas en la hoja.");
+                if (allPoems.length === 0) throw new Error("No se encontraron cartas válidas.");
                 
                 shuffleArray(allPoems);
                 totalTablas = Math.ceil(allPoems.length / cardsPerTabla);
