@@ -7,10 +7,8 @@
     
     <link rel="icon" type="image/png" href="./assets/img/logo00.png">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
@@ -21,8 +19,7 @@
             --text-color: #FFFFFF;
         }
         
-        /* 
-           1. CURSOR POR DEFECTO (BLANCO)
+        /* 1. CURSOR POR DEFECTO (BLANCO)
            Se usa stroke="white" para que resalte sobre el fondo oscuro.
         */
         html, body { 
@@ -38,8 +35,7 @@
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>'), auto;
         }
 
-        /* 
-           2. CURSOR AL SELECCIONAR (NARANJA LUMINOSO)
+        /* 2. CURSOR AL SELECCIONAR (NARANJA LUMINOSO)
            Se usa stroke="%23FF6600" (Naranja) para contrastar fuertemente 
            con el blanco del logo y textos.
         */
@@ -231,28 +227,23 @@
 </head>
 <body>
 
-    <!-- FONDOS LÍQUIDOS -->
     <div id="bg-layer-dark"></div>
     <div id="bg-layer-reveal">
         <div style="position: absolute; inset: 0; background: black; opacity: 0.4; pointer-events: none;"></div>
     </div>
     
-    <!-- Video de fondo específico -->
-    <video muted loop playsinline id="background-video"></video>
+    <video muted loop playsinline id="background-video" crossorigin="anonymous"></video>
     
-    <!-- Audio -->
-    <audio id="audio-player"></audio>
+    <audio id="audio-player" crossorigin="anonymous"></audio>
 
     <div class="page-wrapper">
         <div id="postal-selection-view" class="view-container">
             <header class="header flex flex-col items-center z-10">
                 
-                <!-- Logo con Link a argx.html -->
                 <a href="argx.html" class="inline-block" title="Volver al inicio">
                     <img src="./assets/img/logo00.png" alt="Lotería Tapatía Logo" class="logo">
                 </a>
 
-                <!-- Subtítulo -->
                 <p class="subtitle text-center">La Lotería Tapatía es un proyecto literario que explora y celebra la identidad de Guadalajara a través de viñetas breves y evocadoras...</p>
             </header>
             
@@ -389,7 +380,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadPoemsData() {
         postalContainer.innerHTML = `<div class="spinner"></div><p id="loading-message">Construyendo los universos...</p>`;
 
-        fetch(dataUrl)
+        // Se agrega cache: 'no-store' para asegurar que siempre lea la versión más reciente del JSON
+        fetch(dataUrl, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`Error de red: ${response.statusText}`);
                 return response.json();
@@ -399,6 +391,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!row) return null;
                     const title = row.TITULO ? String(row.TITULO).trim() : '';
                     const poemText = row.POEMA ? String(row.POEMA).trim() : '';
+                    
+                    // Modificado: Ahora se asegura de leer cualquier cadena completa como URL, sin importar la cuenta
                     const soundUrl = row.SONIDO_ID ? String(row.SONIDO_ID).trim() : '';
                     const videoUrl = row.VIDEO_ID ? String(row.VIDEO_ID).trim() : '';
                     const imageUrl = row.IMAGEN_POSTAL_ID ? String(row.IMAGEN_POSTAL_ID).trim() : '';
@@ -436,9 +430,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const postalImageUrl = poem.imageUrl; 
             card.style.setProperty('--card-bg-image', `url('${postalImageUrl}')`);
+            // Se agregó crossorigin="anonymous" para permitir imágenes externas sin restricciones
             card.innerHTML = `
                 <div class="card-inner">
-                    <div class="card-face card-front"><img src="${postalImageUrl}" alt="${poem.title}" loading="lazy"></div>
+                    <div class="card-face card-front"><img src="${postalImageUrl}" alt="${poem.title}" loading="lazy" crossorigin="anonymous"></div>
                     <div class="card-face card-back"><p>${poem.title}</p></div>
                 </div>`;
             postalContainer.appendChild(card);
