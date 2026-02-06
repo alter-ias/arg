@@ -3,123 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Prompt Architect</title>
+    <title>Prompt Architect Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #0a0a0c; color: #e2e8f0; font-family: 'Inter', sans-serif; }
-        .card { background: #16161a; border: 1px solid #2d2d35; transition: all 0.3s ease; }
-        .card:hover { border-color: #3b82f6; }
-        .input-field { background: #1f1f23; border: 1px solid #333; color: white; }
-        .input-field:focus { border-color: #3b82f6; outline: none; }
-        .loader { border: 3px solid #333; border-top: 3px solid #3b82f6; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        body { background-color: #050505; color: #e5e7eb; font-family: 'JetBrains Mono', monospace; }
+        .glass-card { background: #0f0f12; border: 1px solid #1f1f23; border-radius: 12px; }
+        .input-accent:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); outline: none; }
+        .prompt-box { background: #000000; border-left: 3px solid #3b82f6; }
+        @keyframes pulse-custom { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .loading-state { animation: pulse-custom 1.5s infinite; }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-10">
+<body class="min-h-screen p-4 md:p-8">
     <div class="max-w-6xl mx-auto">
-        <header class="mb-12">
-            <h1 class="text-3xl font-black tracking-tighter text-white">PROMPT <span class="text-blue-500">ARCHITECT</span></h1>
-            <p class="text-slate-400">Generador multimodelo basado en Pollinations AI</p>
+        <header class="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tighter text-white">PROMPT_ARCHITECT <span class="text-blue-500">v2.0</span></h1>
+                <p class="text-xs text-slate-500">Engineered for Pollinations AI OpenAI Model</p>
+            </div>
+            <div id="status" class="text-[10px] px-3 py-1 rounded-full border border-green-900 text-green-500 bg-green-950/30">READY</div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-4 space-y-6">
-                <div class="card p-6 rounded-xl">
-                    <h2 class="text-sm font-bold text-blue-400 uppercase mb-4">Configuración Base</h2>
-                    <div class="space-y-4">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <aside class="lg:col-span-4 space-y-6">
+                <div class="glass-card p-6">
+                    <div class="space-y-5">
                         <div>
-                            <label class="block text-xs mb-1 opacity-50">SUJETO</label>
-                            <input type="text" id="subject" placeholder="Ej: Guerrero Vikingo" class="input-field w-full p-3 rounded-lg">
+                            <label class="text-[10px] font-bold text-slate-500 block mb-2 uppercase">Sujeto</label>
+                            <input type="text" id="subject" value="Milla Jovovich model style" class="w-full p-3 glass-card input-accent text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs mb-1 opacity-50">ESCENARIO</label>
-                            <input type="text" id="scenario" placeholder="Ej: Estación espacial ruinosa" class="input-field w-full p-3 rounded-lg">
+                            <label class="text-[10px] font-bold text-slate-500 block mb-2 uppercase">Escenario</label>
+                            <input type="text" id="scenario" value="Opulent French chateau garden" class="w-full p-3 glass-card input-accent text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs mb-1 opacity-50">ACCIÓN ESPECÍFICA</label>
-                            <input type="text" id="action" placeholder="Ej: Forjando una espada de luz" class="input-field w-full p-3 rounded-lg">
+                            <label class="text-[10px] font-bold text-slate-500 block mb-2 uppercase">Acción</label>
+                            <input type="text" id="action" value="Fashion runway walk" class="w-full p-3 glass-card input-accent text-sm">
                         </div>
-                        <button onclick="generatePrompts()" id="genBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg flex justify-center items-center gap-3 transition-all">
-                            <span>GENERAR VARIACIONES</span>
-                            <div id="loader" class="loader"></div>
+                        <button onclick="generate()" id="btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-lg text-xs transition-all uppercase tracking-widest">
+                            Construir Prompts
                         </button>
                     </div>
                 </div>
-            </div>
+            </aside>
 
-            <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4" id="resultsGrid">
-                <div class="md:col-span-2 text-center py-20 opacity-20">
-                    <p class="text-xl">Ingresa los datos y genera la arquitectura de prompts</p>
+            <main class="lg:col-span-8 grid grid-cols-1 gap-4" id="output-container">
+                <div class="flex flex-col items-center justify-center h-64 border-2 border-dashed border-white/5 rounded-xl opacity-20">
+                    <p>Esperando inputs...</p>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
 
     <script>
-        async function generatePrompts() {
-            const subject = document.getElementById('subject').value;
-            const scenario = document.getElementById('scenario').value;
-            const action = document.getElementById('action').value;
-            const btn = document.getElementById('genBtn');
-            const loader = document.getElementById('loader');
-
-            if (!subject || !scenario || !action) return alert("Faltan datos");
+        async function generate() {
+            const btn = document.getElementById('btn');
+            const container = document.getElementById('output-container');
+            const sub = document.getElementById('subject').value;
+            const sce = document.getElementById('scenario').value;
+            const act = document.getElementById('action').value;
 
             btn.disabled = true;
-            loader.style.display = "block";
-            
-            const systemPrompt = `Eres un experto Ingeniero de Prompts. Tu objetivo es crear 4 tipos de prompts distintos basados en los inputs del usuario.
-            Debes devolver los resultados en un formato JSON estructurado con las siguientes llaves: 
-            'photorealistic', 'artistic', 'motion', 'logic'. 
-            Cada prompt debe ser detallado, en inglés (mejor para IAs) y altamente optimizado.`;
+            btn.innerText = "PROCESANDO...";
+            container.innerHTML = `<div class="loading-state p-10 text-center glass-card">Extrayendo variaciones del modelo...</div>`;
 
-            const userPrompt = `Crea 4 variaciones de prompts para: Sujeto: ${subject}, Escenario: ${scenario}, Acción: ${action}. Devuelve SOLO el JSON.`;
+            // System prompt ultra-específico para forzar JSON puro
+            const system = "You are a prompt engineering specialist. Output ONLY a valid JSON object. No intro text, no outro text. JSON keys: 'photorealistic', 'artistic', 'motion', 'logic'. All prompts in English.";
+            const prompt = `Create 4 high-level prompts for: Subject: ${sub}, Scenario: ${sce}, Action: ${act}. Detailed and professional.`;
+            
+            const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?system=${encodeURIComponent(system)}&model=openai&seed=${Math.floor(Math.random()*1000)}`;
 
             try {
-                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(userPrompt)}?system=${encodeURIComponent(systemPrompt)}&model=openai&json=true`);
-                const data = await response.json();
+                const response = await fetch(url);
+                const rawText = await response.text();
                 
-                renderResults(data);
-            } catch (e) {
-                console.error(e);
-                alert("Error en la conexión. Asegúrate de que los campos sean válidos.");
+                // Limpieza de JSON: Busca el primer '{' y el último '}'
+                const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error("Formato no válido");
+                
+                const data = JSON.parse(jsonMatch[0]);
+                render(data);
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<div class="p-6 border border-red-900 bg-red-950/20 text-red-400 rounded-lg text-sm">
+                    Error de parsing: El modelo no devolvió un JSON limpio. Inténtalo de nuevo.
+                </div>`;
             } finally {
                 btn.disabled = false;
-                loader.style.display = "none";
+                btn.innerText = "CONSTRUIR PROMPTS";
             }
         }
 
-        function renderResults(data) {
-            const grid = document.getElementById('resultsGrid');
-            grid.innerHTML = '';
-
-            const types = [
-                { title: '📸 Fotorealista', key: 'photorealistic', color: 'text-orange-400' },
-                { title: '🎨 Artístico / Concept', key: 'artistic', color: 'text-purple-400' },
-                { title: '🎬 Acción & Movimiento', key: 'motion', color: 'text-emerald-400' },
-                { title: '🧠 Lógica de Sistema', key: 'logic', color: 'text-blue-400' }
+        function render(data) {
+            const container = document.getElementById('output-container');
+            container.innerHTML = '';
+            
+            const config = [
+                { k: 'photorealistic', n: 'Photorealism & Optics', c: 'text-orange-500' },
+                { k: 'artistic', n: 'Conceptual & Artistic', c: 'text-purple-500' },
+                { k: 'motion', n: 'Cinematic & Motion', c: 'text-emerald-500' },
+                { k: 'logic', n: 'AI Logic System', c: 'text-blue-500' }
             ];
 
-            types.forEach(type => {
-                const content = data[type.key] || "No generado";
-                grid.innerHTML += `
-                    <div class="card p-5 rounded-xl flex flex-col justify-between">
-                        <div>
-                            <h3 class="text-xs font-bold ${type.color} mb-3 uppercase tracking-widest">${type.title}</h3>
-                            <p class="text-sm text-slate-300 leading-relaxed">${content}</p>
+            config.forEach(item => {
+                container.innerHTML += `
+                    <div class="glass-card p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-[10px] font-bold uppercase tracking-widest ${item.c}">${item.n}</h3>
+                            <button onclick="copy(this)" class="text-[9px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded">COPIAR</button>
                         </div>
-                        <button onclick="copyText(this)" class="mt-4 text-[10px] bg-white/5 hover:bg-white/10 p-2 rounded uppercase font-bold tracking-tighter transition-colors">Copiar Prompt</button>
+                        <p class="text-sm leading-relaxed text-slate-300">${data[item.k]}</p>
                     </div>
                 `;
             });
         }
 
-        function copyText(btn) {
-            const text = btn.parentElement.querySelector('p').innerText;
+        function copy(btn) {
+            const text = btn.parentElement.nextElementSibling.innerText;
             navigator.clipboard.writeText(text);
-            const original = btn.innerText;
-            btn.innerText = "¡COPIADO!";
-            setTimeout(() => btn.innerText = original, 2000);
+            const old = btn.innerText;
+            btn.innerText = "COPIADO";
+            setTimeout(() => btn.innerText = old, 1500);
         }
     </script>
 </body>
