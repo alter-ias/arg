@@ -3,114 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt Engine v3 - Debugged</title>
+    <title>Prompt Engine v4 - Mistral Stable</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0d0d0f; color: #a1a1aa; font-family: 'Fira Code', monospace; }
-        .terminal-card { background: #16161a; border: 1px solid #27272a; border-radius: 8px; }
-        .accent-border { border-left: 4px solid #3b82f6; }
-        input { background: #1c1c21; border: 1px solid #3f3f46; color: #f4f4f5; }
-        input:focus { border-color: #3b82f6; outline: none; transition: 0.3s; }
-        .loading-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+        body { background-color: #09090b; color: #fafafa; font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'Space Mono', monospace; }
+        .card { background: #18181b; border: 1px solid #27272a; border-radius: 12px; }
+        .input-box { background: #09090b; border: 1px solid #3f3f46; transition: all 0.2s; }
+        .input-box:focus { border-color: #3b82f6; ring: 2px solid #3b82f6; outline: none; }
+        .btn-primary { background: #3b82f6; transition: all 0.2s; }
+        .btn-primary:hover { background: #2563eb; transform: translateY(-1px); }
+        .btn-primary:disabled { background: #27272a; cursor: not-allowed; }
+        .tag { font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
     </style>
 </head>
-<body class="p-6">
-    <div class="max-w-5xl mx-auto">
-        <header class="mb-10 border-b border-zinc-800 pb-6">
-            <h1 class="text-xl font-bold text-white tracking-tight">PROMPT_ARCHITECT <span class="text-blue-500">v3.0</span></h1>
-            <p class="text-xs mt-2">Error-resistant parser for Pollinations AI</p>
+<body class="p-4 md:p-10">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-10">
+            <h1 class="text-3xl font-bold tracking-tighter mono">PROMPT_GEN <span class="text-blue-500">v4</span></h1>
+            <p class="text-zinc-500 text-sm">Powered by Mistral via Pollinations AI</p>
         </header>
 
-        <div class="grid lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-4 space-y-4">
-                <div class="terminal-card p-5">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Sujeto</label>
-                            <input type="text" id="subject" value="Milla Jovovich model" class="w-full p-2 rounded text-sm">
-                        </div>
-                        <div>
-                            <label class="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Escenario</label>
-                            <input type="text" id="scenario" value="Modernist glass house at night" class="w-full p-2 rounded text-sm">
-                        </div>
-                        <div>
-                            <label class="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Acción</label>
-                            <input type="text" id="action" value="Looking intensely at camera" class="w-full p-2 rounded text-sm">
-                        </div>
-                        <button onclick="build()" id="btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded text-xs uppercase transition-all">
-                            Ejecutar Construcción
-                        </button>
+        <div class="grid gap-8">
+            <section class="card p-6">
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Sujeto</label>
+                        <input type="text" id="subject" placeholder="Milla Jovovich" class="w-full p-3 rounded-lg input-box text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Escenario</label>
+                        <input type="text" id="scenario" placeholder="Jardín Chateau" class="w-full p-3 rounded-lg input-box text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Acción</label>
+                        <input type="text" id="action" placeholder="Caminata de modelo" class="w-full p-3 rounded-lg input-box text-sm">
                     </div>
                 </div>
-            </div>
+                <button onclick="generate()" id="mainBtn" class="w-full btn-primary text-white font-bold py-4 rounded-xl shadow-lg uppercase tracking-widest text-sm">
+                    Generar Arquitectura de Prompts
+                </button>
+            </section>
 
-            <div class="lg:col-span-8 space-y-4" id="output">
-                <div class="terminal-card p-10 text-center border-dashed border-2 border-zinc-800">
-                    <p class="text-sm italic">Listo para procesar...</p>
-                </div>
-            </div>
+            <section id="results" class="space-y-4">
+                </section>
         </div>
     </div>
 
     <script>
-        async function build() {
-            const btn = document.getElementById('btn');
-            const out = document.getElementById('output');
-            const [s, sc, a] = ['subject', 'scenario', 'action'].map(id => document.getElementById(id).value);
+        async function generate() {
+            const btn = document.getElementById('mainBtn');
+            const results = document.getElementById('results');
+            const s = document.getElementById('subject').value || "Milla Jovovich";
+            const sc = document.getElementById('scenario').value || "Luxury garden";
+            const a = document.getElementById('action').value || "Walking";
 
             btn.disabled = true;
-            btn.innerText = "PARSING...";
-            out.innerHTML = `<div class="terminal-card p-10 loading-pulse text-blue-400 text-center">Consultando red neuronal...</div>`;
+            btn.innerHTML = `<span class="animate-pulse">PROCESANDO...</span>`;
+            results.innerHTML = `<div class="text-center py-20 text-zinc-500 mono">Solicitando datos a Mistral...</div>`;
 
-            const system = "You are a specialized API. Your output must be a JSON object with keys: 'photo', 'art', 'video', 'logic'. Do not include any other text.";
-            const user = `Create 4 high-quality English prompts for: Subject: ${s}, Scenario: ${sc}, Action: ${a}.`;
+            // Instrucción sin JSON para evitar errores de sintaxis
+            const system = "Eres un experto en IA. Genera 4 prompts diferentes. Usa exactamente este formato para tu respuesta: [PHOTO]texto[/PHOTO] [ART]texto[/ART] [VIDEO]texto[/VIDEO] [LOGIC]texto[/LOGIC]. No escribas nada más.";
+            const user = `Genera prompts para: Sujeto: ${s}, Escenario: ${sc}, Acción: ${a}. En Inglés.`;
             
             try {
-                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=openai`);
-                const text = await res.text();
+                // Cambiamos a modelo Mistral para mayor estabilidad
+                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&seed=${Math.floor(Math.random()*9999)}`;
                 
-                // Limpieza de JSON mejorada
-                let jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-                
-                let data;
-                try {
-                    data = JSON.parse(jsonStr);
-                } catch (e) {
-                    // Fallback: Si falla el JSON, intentamos crear un objeto manual buscando líneas
-                    console.log("JSON Parse failed, using fallback regex");
-                    data = {
-                        photo: text.match(/photo["']?:\s*["']?([^"']+)["']?/i)?.[1] || "Error en formato",
-                        art: text.match(/art["']?:\s*["']?([^"']+)["']?/i)?.[1] || "Error en formato",
-                        video: text.match(/video["']?:\s*["']?([^"']+)["']?/i)?.[1] || "Error en formato",
-                        logic: text.match(/logic["']?:\s*["']?([^"']+)["']?/i)?.[1] || "Error en formato"
-                    };
-                }
+                const response = await fetch(url);
+                const text = await response.text();
+
+                // Parser manual mediante etiquetas
+                const extract = (tag) => {
+                    const regex = new RegExp(`\\[${tag}\\]([\\s\\S]*?)\\[\\/${tag}\\]`, 'i');
+                    const match = text.match(regex);
+                    return match ? match[1].trim() : "No se pudo generar esta sección. Reintenta.";
+                };
+
+                const data = {
+                    photo: { title: "Fotografía Realista", content: extract("PHOTO"), color: "bg-orange-500/10 text-orange-500" },
+                    art: { title: "Concept Art / Ilustración", content: extract("ART"), color: "bg-purple-500/10 text-purple-500" },
+                    video: { title: "Movimiento / Video", content: extract("VIDEO"), color: "bg-emerald-500/10 text-emerald-500" },
+                    logic: { title: "Lógica de Agente IA", content: extract("LOGIC"), color: "bg-blue-500/10 text-blue-500" }
+                };
 
                 render(data);
-            } catch (err) {
-                out.innerHTML = `<div class="p-4 bg-red-900/20 text-red-500 text-xs border border-red-800 rounded">Error crítico de red o API. Revisa la consola.</div>`;
+            } catch (error) {
+                results.innerHTML = `<div class="card p-6 border-red-500/50 text-red-400 text-sm mono">ERROR_API: El servicio de Pollinations no responde. Intenta de nuevo en unos segundos.</div>`;
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Ejecutar Construcción";
+                btn.innerText = "Generar Arquitectura de Prompts";
             }
         }
 
         function render(data) {
-            const labels = { photo: 'FOTOGRAFÍA', art: 'ARTE DIGITAL', video: 'MOVIMIENTO', logic: 'LÓGICA IA' };
-            const colors = { photo: 'text-orange-400', art: 'text-purple-400', video: 'text-emerald-400', logic: 'text-blue-400' };
-            
-            document.getElementById('output').innerHTML = Object.keys(data).map(key => `
-                <div class="terminal-card p-5 accent-border shadow-lg">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-[10px] font-bold ${colors[key]} tracking-widest">${labels[key]}</span>
-                        <button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText); alert('Copiado')" class="text-[9px] hover:text-white transition-colors uppercase">[Copiar]</button>
-                        <span class="hidden">${data[key]}</span>
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+
+            Object.values(data).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'card p-6 animate-in fade-in slide-in-from-bottom-2 duration-500';
+                div.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="tag ${item.color}">${item.title}</span>
+                        <button onclick="copy(this)" class="text-[10px] text-zinc-500 hover:text-white transition-colors mono">[COPIAR]</button>
                     </div>
-                    <p class="text-sm text-zinc-300 leading-relaxed">${data[key]}</p>
-                </div>
-            `).join('');
+                    <p class="text-zinc-300 text-sm leading-relaxed mono">${item.content}</p>
+                `;
+                results.appendChild(div);
+            });
+        }
+
+        function copy(btn) {
+            const text = btn.parentElement.nextElementSibling.innerText;
+            navigator.clipboard.writeText(text);
+            const original = btn.innerText;
+            btn.innerText = "[COPIADO!]";
+            setTimeout(() => btn.innerText = original, 1500);
         }
     </script>
 </body>
