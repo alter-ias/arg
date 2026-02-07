@@ -3,128 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt Architect Pro</title>
+    <title>Prompt Engine v3 - Debugged</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #050505; color: #e5e7eb; font-family: 'JetBrains Mono', monospace; }
-        .glass-card { background: #0f0f12; border: 1px solid #1f1f23; border-radius: 12px; }
-        .input-accent:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); outline: none; }
-        .prompt-box { background: #000000; border-left: 3px solid #3b82f6; }
-        @keyframes pulse-custom { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .loading-state { animation: pulse-custom 1.5s infinite; }
+        body { background-color: #0d0d0f; color: #a1a1aa; font-family: 'Fira Code', monospace; }
+        .terminal-card { background: #16161a; border: 1px solid #27272a; border-radius: 8px; }
+        .accent-border { border-left: 4px solid #3b82f6; }
+        input { background: #1c1c21; border: 1px solid #3f3f46; color: #f4f4f5; }
+        input:focus { border-color: #3b82f6; outline: none; transition: 0.3s; }
+        .loading-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
-    <div class="max-w-6xl mx-auto">
-        <header class="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
-            <div>
-                <h1 class="text-2xl font-bold tracking-tighter text-white">PROMPT_ARCHITECT <span class="text-blue-500">v2.0</span></h1>
-                <p class="text-xs text-slate-500">Engineered for Pollinations AI OpenAI Model</p>
-            </div>
-            <div id="status" class="text-[10px] px-3 py-1 rounded-full border border-green-900 text-green-500 bg-green-950/30">READY</div>
+<body class="p-6">
+    <div class="max-w-5xl mx-auto">
+        <header class="mb-10 border-b border-zinc-800 pb-6">
+            <h1 class="text-xl font-bold text-white tracking-tight">PROMPT_ARCHITECT <span class="text-blue-500">v3.0</span></h1>
+            <p class="text-xs mt-2">Error-resistant parser for Pollinations AI</p>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            <aside class="lg:col-span-4 space-y-6">
-                <div class="glass-card p-6">
-                    <div class="space-y-5">
+        <div class="grid lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-4 space-y-4">
+                <div class="terminal-card p-5">
+                    <div class="space-y-4">
                         <div>
-                            <label class="text-[10px] font-bold text-slate-500 block mb-2 uppercase">Sujeto</label>
-                            <input type="text" id="subject" value="Milla Jovovich model style" class="w-full p-3 glass-card input-accent text-sm">
+                            <label class="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Sujeto</label>
+                            <input type="text" id="subject" value="Milla Jovovich model" class="w-full p-2 rounded text-sm">
                         </div>
                         <div>
-                            <label class="text-[10px] font-bold text-slate-500 block mb-2 uppercase">Escenario</label>
-                            <input type="text" id="scenario" value="Opulent French chateau garden" class="w-full p-3 glass-card input-accent text-sm">
+                            <label class="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Escenario</label>
+                            <input type="text" id="scenario" value="Modernist glass house at night" class="w-full p-2 rounded text-sm">
                         </div>
                         <div>
-                            <label class="text-[10px] font-bold text-slate-500 block mb-2 uppercase">Acción</label>
-                            <input type="text" id="action" value="Fashion runway walk" class="w-full p-3 glass-card input-accent text-sm">
+                            <label class="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Acción</label>
+                            <input type="text" id="action" value="Looking intensely at camera" class="w-full p-2 rounded text-sm">
                         </div>
-                        <button onclick="generate()" id="btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-lg text-xs transition-all uppercase tracking-widest">
-                            Construir Prompts
+                        <button onclick="build()" id="btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded text-xs uppercase transition-all">
+                            Ejecutar Construcción
                         </button>
                     </div>
                 </div>
-            </aside>
+            </div>
 
-            <main class="lg:col-span-8 grid grid-cols-1 gap-4" id="output-container">
-                <div class="flex flex-col items-center justify-center h-64 border-2 border-dashed border-white/5 rounded-xl opacity-20">
-                    <p>Esperando inputs...</p>
+            <div class="lg:col-span-8 space-y-4" id="output">
+                <div class="terminal-card p-10 text-center border-dashed border-2 border-zinc-800">
+                    <p class="text-sm italic">Listo para procesar...</p>
                 </div>
-            </main>
+            </div>
         </div>
     </div>
 
     <script>
-        async function generate() {
+        async function build() {
             const btn = document.getElementById('btn');
-            const container = document.getElementById('output-container');
-            const sub = document.getElementById('subject').value;
-            const sce = document.getElementById('scenario').value;
-            const act = document.getElementById('action').value;
+            const out = document.getElementById('output');
+            const [s, sc, a] = ['subject', 'scenario', 'action'].map(id => document.getElementById(id).value);
 
             btn.disabled = true;
-            btn.innerText = "PROCESANDO...";
-            container.innerHTML = `<div class="loading-state p-10 text-center glass-card">Extrayendo variaciones del modelo...</div>`;
+            btn.innerText = "PARSING...";
+            out.innerHTML = `<div class="terminal-card p-10 loading-pulse text-blue-400 text-center">Consultando red neuronal...</div>`;
 
-            // System prompt ultra-específico para forzar JSON puro
-            const system = "You are a prompt engineering specialist. Output ONLY a valid JSON object. No intro text, no outro text. JSON keys: 'photorealistic', 'artistic', 'motion', 'logic'. All prompts in English.";
-            const prompt = `Create 4 high-level prompts for: Subject: ${sub}, Scenario: ${sce}, Action: ${act}. Detailed and professional.`;
+            const system = "You are a specialized API. Your output must be a JSON object with keys: 'photo', 'art', 'video', 'logic'. Do not include any other text.";
+            const user = `Create 4 high-quality English prompts for: Subject: ${s}, Scenario: ${sc}, Action: ${a}.`;
             
-            const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?system=${encodeURIComponent(system)}&model=openai&seed=${Math.floor(Math.random()*1000)}`;
-
             try {
-                const response = await fetch(url);
-                const rawText = await response.text();
+                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=openai`);
+                const text = await res.text();
                 
-                // Limpieza de JSON: Busca el primer '{' y el último '}'
-                const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-                if (!jsonMatch) throw new Error("Formato no válido");
+                // Limpieza de JSON mejorada
+                let jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
                 
-                const data = JSON.parse(jsonMatch[0]);
+                let data;
+                try {
+                    data = JSON.parse(jsonStr);
+                } catch (e) {
+                    // Fallback: Si falla el JSON, intentamos crear un objeto manual buscando líneas
+                    console.log("JSON Parse failed, using fallback regex");
+                    data = {
+                        photo: text.match(/photo["']?:\s*["']?([^"']+)["']?/i)?.[1] || "Error en formato",
+                        art: text.match(/art["']?:\s*["']?([^"']+)["']?/i)?.[1] || "Error en formato",
+                        video: text.match(/video["']?:\s*["']?([^"']+)["']?/i)?.[1] || "Error en formato",
+                        logic: text.match(/logic["']?:\s*["']?([^"']+)["']?/i)?.[1] || "Error en formato"
+                    };
+                }
+
                 render(data);
             } catch (err) {
-                console.error(err);
-                container.innerHTML = `<div class="p-6 border border-red-900 bg-red-950/20 text-red-400 rounded-lg text-sm">
-                    Error de parsing: El modelo no devolvió un JSON limpio. Inténtalo de nuevo.
-                </div>`;
+                out.innerHTML = `<div class="p-4 bg-red-900/20 text-red-500 text-xs border border-red-800 rounded">Error crítico de red o API. Revisa la consola.</div>`;
             } finally {
                 btn.disabled = false;
-                btn.innerText = "CONSTRUIR PROMPTS";
+                btn.innerText = "Ejecutar Construcción";
             }
         }
 
         function render(data) {
-            const container = document.getElementById('output-container');
-            container.innerHTML = '';
+            const labels = { photo: 'FOTOGRAFÍA', art: 'ARTE DIGITAL', video: 'MOVIMIENTO', logic: 'LÓGICA IA' };
+            const colors = { photo: 'text-orange-400', art: 'text-purple-400', video: 'text-emerald-400', logic: 'text-blue-400' };
             
-            const config = [
-                { k: 'photorealistic', n: 'Photorealism & Optics', c: 'text-orange-500' },
-                { k: 'artistic', n: 'Conceptual & Artistic', c: 'text-purple-500' },
-                { k: 'motion', n: 'Cinematic & Motion', c: 'text-emerald-500' },
-                { k: 'logic', n: 'AI Logic System', c: 'text-blue-500' }
-            ];
-
-            config.forEach(item => {
-                container.innerHTML += `
-                    <div class="glass-card p-6">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="text-[10px] font-bold uppercase tracking-widest ${item.c}">${item.n}</h3>
-                            <button onclick="copy(this)" class="text-[9px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded">COPIAR</button>
-                        </div>
-                        <p class="text-sm leading-relaxed text-slate-300">${data[item.k]}</p>
+            document.getElementById('output').innerHTML = Object.keys(data).map(key => `
+                <div class="terminal-card p-5 accent-border shadow-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] font-bold ${colors[key]} tracking-widest">${labels[key]}</span>
+                        <button onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText); alert('Copiado')" class="text-[9px] hover:text-white transition-colors uppercase">[Copiar]</button>
+                        <span class="hidden">${data[key]}</span>
                     </div>
-                `;
-            });
-        }
-
-        function copy(btn) {
-            const text = btn.parentElement.nextElementSibling.innerText;
-            navigator.clipboard.writeText(text);
-            const old = btn.innerText;
-            btn.innerText = "COPIADO";
-            setTimeout(() => btn.innerText = old, 1500);
+                    <p class="text-sm text-zinc-300 leading-relaxed">${data[key]}</p>
+                </div>
+            `).join('');
         }
     </script>
 </body>
