@@ -3,28 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt Vault v12 - Infinity Remix</title>
+    <title>Prompt Vault v13 - Tone & Mood</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
+        /* BASE THEME */
         body { background-color: #050505; color: #e4e4e7; font-family: 'JetBrains Mono', monospace; }
+        
+        /* UI COMPONENTS */
         .glass-panel { background: #0a0a0c; border: 1px solid #27272a; border-radius: 8px; transition: border-color 0.3s; }
         .glass-panel:hover { border-color: #3f3f46; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-        .input-dark { background: #000; border: 1px solid #333; color: #fff; padding: 0.6rem; border-radius: 4px; width: 100%; font-size: 0.8rem; transition: 0.2s; }
-        .input-dark:focus { border-color: #3b82f6; outline: none; }
+        
+        .input-dark { background: #000; border: 1px solid #333; color: #fff; padding: 0.6rem; border-radius: 4px; width: 100%; font-size: 0.75rem; transition: 0.2s; }
+        .input-dark:focus { border-color: #3b82f6; outline: none; background: #08080a; }
+        
         .nav-btn { padding: 8px 16px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid transparent; opacity: 0.6; transition: 0.3s; cursor: pointer; }
         .nav-btn.active { border-color: #3b82f6; color: #fff; opacity: 1; }
+        
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        
+        /* TAGS & ANIMATIONS */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         .cat-tag { font-size: 0.55rem; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; }
         .cat-photo { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2); }
         .cat-art { background: rgba(168, 85, 247, 0.1); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.2); }
         .cat-video { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
-        .cat-general { background: rgba(113, 113, 122, 0.1); color: #a1a1aa; border: 1px solid rgba(113, 113, 122, 0.2); }
+        .cat-general { background: rgba(249, 115, 22, 0.1); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.2); }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden p-4 md:p-6">
@@ -32,7 +41,7 @@
     <header class="flex-none flex justify-between items-end border-b border-zinc-800 pb-0 mb-4">
         <div class="pb-4">
             <h1 class="text-xl font-bold tracking-tighter text-white">PROMPT_<span class="text-blue-500">VAULT</span></h1>
-            <p class="text-[9px] text-zinc-500 uppercase tracking-widest">Infinity Remix v12.0</p>
+            <p class="text-[9px] text-zinc-500 uppercase tracking-widest">Tone & Mood Engine v13.0</p>
         </div>
         <div class="flex gap-4">
             <button onclick="switchTab('generator')" id="tab-btn-generator" class="nav-btn active">Generate</button>
@@ -43,50 +52,118 @@
     <main class="flex-1 min-h-0 relative">
         
         <div id="view-generator" class="h-full grid lg:grid-cols-12 gap-6">
-            <aside class="lg:col-span-4 overflow-y-auto pr-2 custom-scroll pb-10">
-                <button onclick="randomizeInputs()" class="w-full mb-4 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 py-2 rounded text-xs font-bold uppercase flex items-center justify-center gap-2 transition-all group">
-                    <i class="ph ph-dice-five text-lg group-hover:rotate-180 transition-transform duration-500"></i> Randomize Ideas
+            
+            <aside class="lg:col-span-4 overflow-y-auto pr-2 custom-scroll pb-20">
+                
+                <button onclick="randomizeInputs()" class="w-full mb-4 bg-gradient-to-r from-zinc-900 to-zinc-800 hover:from-zinc-800 hover:to-zinc-700 border border-zinc-700 text-zinc-300 py-3 rounded text-xs font-bold uppercase flex items-center justify-center gap-2 transition-all group shadow-lg">
+                    <i class="ph ph-dice-five text-lg group-hover:rotate-180 transition-transform duration-500 text-blue-500"></i>
+                    Randomize Everything
                 </button>
 
                 <div class="glass-panel p-4 mb-4 border-l-2 border-l-blue-600">
-                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Narrative</h3>
-                    <input type="text" id="subject" class="input-dark mb-2" placeholder="Sujeto">
-                    <input type="text" id="scenario" class="input-dark mb-2" placeholder="Escenario">
-                    <input type="text" id="action" class="input-dark" placeholder="Acción">
+                    <h3 class="text-[9px] font-bold text-zinc-500 uppercase mb-3 flex items-center gap-2">
+                        <i class="ph ph-book-open-text"></i> Narrative Core
+                    </h3>
+                    <div class="space-y-2">
+                        <input type="text" id="subject" class="input-dark" placeholder="Sujeto (Quién)">
+                        <input type="text" id="scenario" class="input-dark" placeholder="Escenario (Dónde)">
+                        <input type="text" id="action" class="input-dark" placeholder="Acción (Qué hace)">
+                    </div>
                 </div>
 
                 <div class="glass-panel p-4 mb-4 border-l-2 border-l-purple-600">
-                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Character</h3>
-                    <input list="hair-list" id="hair" class="input-dark mb-2" placeholder="Peinado...">
-                    <datalist id="hair-list"><option value="Abundante y elegante"><option value="Rapado militar"><option value="Rastas cyberpunk"></datalist>
-                    <input list="outfit-list" id="outfit" class="input-dark" placeholder="Vestimenta...">
-                    <datalist id="outfit-list"><option value="Armadura Táctica"><option value="Alta Costura"><option value="Ropa callejera"></datalist>
+                    <h3 class="text-[9px] font-bold text-zinc-500 uppercase mb-3 flex items-center gap-2">
+                        <i class="ph ph-user"></i> Character Specs
+                    </h3>
+                    <div class="space-y-2">
+                        <input list="hair-list" id="hair" class="input-dark" placeholder="Peinado...">
+                        <datalist id="hair-list">
+                            <option value="Abundante, largo, elegante y hermoso">
+                            <option value="Rapado militar con cicatriz">
+                            <option value="Rastas cyberpunk de neón">
+                            <option value="Bob francés clásico">
+                            <option value="Calvo y brillante">
+                        </datalist>
+                        
+                        <input list="outfit-list" id="outfit" class="input-dark" placeholder="Vestimenta...">
+                        <datalist id="outfit-list">
+                            <option value="Armadura Táctica Sci-Fi">
+                            <option value="Alta Costura Avant-garde">
+                            <option value="Ropa callejera sucia (Grunge)">
+                            <option value="Traje Victoriano de Terciopelo">
+                            <option value="Minimalista Japonés">
+                        </datalist>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 mb-4 border-l-2 border-l-pink-500">
+                    <h3 class="text-[9px] font-bold text-zinc-500 uppercase mb-3 flex items-center gap-2">
+                        <i class="ph ph-mask-happy"></i> Mood & Tone
+                    </h3>
+                    <input list="tone-list" id="tone" class="input-dark" placeholder="Selecciona el Tono del Prompt...">
+                    <datalist id="tone-list">
+                        <option value="Siniestro / Oscuro / Terror">
+                        <option value="Alegre / Vibrante / Colorido">
+                        <option value="Marketing / Comercial / Limpio">
+                        <option value="Épico / Dramático / Cinematográfico">
+                        <option value="Etéreo / Onírico / Fantasía">
+                        <option value="Melancólico / Triste / Lluvioso">
+                        <option value="Industrial / Grunge / Sucio">
+                        <option value="Elegante / Lujoso / Minimalista">
+                    </datalist>
                 </div>
 
                 <div class="glass-panel p-4 mb-4 border-l-2 border-l-emerald-600">
-                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Specs</h3>
-                    <input list="style-list" id="style" class="input-dark mb-2" placeholder="Estilo...">
-                    <datalist id="style-list"><option value="Photorealistic"><option value="Anime Style"><option value="Oil Painting"></datalist>
-                    <input list="shot-list" id="shot" class="input-dark mb-4" placeholder="Cámara...">
-                    <datalist id="shot-list"><option value="Close-up"><option value="Wide Shot"><option value="Drone View"></datalist>
-                    <div class="flex justify-between text-[10px] text-zinc-400 mb-1"><span>Caos</span><span id="chaosVal">40%</span></div>
-                    <input type="range" id="chaos" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer" min="0" max="100" value="40">
+                    <h3 class="text-[9px] font-bold text-zinc-500 uppercase mb-3 flex items-center gap-2">
+                        <i class="ph ph-camera"></i> Tech Specs
+                    </h3>
+                    <div class="space-y-2">
+                        <input list="style-list" id="style" class="input-dark" placeholder="Estilo Visual...">
+                        <datalist id="style-list">
+                            <option value="Photorealistic 8k">
+                            <option value="Anime Studio Ghibli">
+                            <option value="Oil Painting Classic">
+                            <option value="Cyberpunk Digital Art">
+                            <option value="Vintage Polaroid 90s">
+                        </datalist>
+                        
+                        <input list="shot-list" id="shot" class="input-dark" placeholder="Cámara / Plano...">
+                        <datalist id="shot-list">
+                            <option value="Extreme Close-up (Macro)">
+                            <option value="Wide Shot (Landscape)">
+                            <option value="Drone View (Bird's Eye)">
+                            <option value="Low Angle (Heroic)">
+                        </datalist>
+
+                        <div class="pt-2">
+                            <div class="flex justify-between text-[9px] text-zinc-400 mb-1">
+                                <span>Nivel de Caos</span>
+                                <span id="chaosVal">40%</span>
+                            </div>
+                            <input type="range" id="chaos" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer" min="0" max="100" value="40">
+                        </div>
+                    </div>
                 </div>
 
-                <button onclick="generatePrompts()" id="btn-gen" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20">Generar Prompts</button>
+                <button onclick="generatePrompts()" id="btn-gen" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20 mb-10">
+                    Generar Prompts
+                </button>
             </aside>
 
-            <div class="lg:col-span-8 overflow-y-auto pb-10" id="gen-results">
+            <div class="lg:col-span-8 overflow-y-auto pb-10 custom-scroll" id="gen-results">
                 <div class="h-full flex flex-col items-center justify-center opacity-20 text-center select-none">
-                    <i class="ph ph-magic-wand text-6xl mb-4"></i>
-                    <p class="text-xs uppercase tracking-widest">Configura y Genera</p>
+                    <i class="ph ph-lightning text-6xl mb-4 text-zinc-500"></i>
+                    <p class="text-xs uppercase tracking-widest text-zinc-400">Configura el Tono<br>y Genera la Magia</p>
                 </div>
             </div>
         </div>
 
         <div id="view-library" class="h-full hidden flex flex-col">
             <div class="flex-none mb-4 flex gap-3">
-                <input type="text" id="lib-search" onkeyup="filterLibrary()" placeholder="Buscar..." class="input-dark !w-2/3">
+                <div class="relative w-2/3">
+                    <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-zinc-500 text-xs"></i>
+                    <input type="text" id="lib-search" onkeyup="filterLibrary()" placeholder="Buscar prompts..." class="input-dark pl-8">
+                </div>
                 <select id="lib-filter" onchange="filterLibrary()" class="input-dark !w-1/3">
                     <option value="all">Todo</option>
                     <option value="photography">Foto</option>
@@ -94,18 +171,26 @@
                     <option value="video">Video</option>
                     <option value="general">General</option>
                 </select>
-                <button onclick="openModal()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 rounded text-lg border border-zinc-700"><i class="ph ph-plus"></i></button>
+                <button onclick="openModal()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 rounded text-lg border border-zinc-700 transition-colors">
+                    <i class="ph ph-plus"></i>
+                </button>
             </div>
-            <div id="library-grid" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 pb-10 content-start"></div>
+            <div id="library-grid" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 pb-20 content-start custom-scroll">
+                </div>
         </div>
     </main>
 
     <div id="manual-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 backdrop-blur-sm">
         <div class="bg-[#0f0f11] border border-zinc-800 p-6 rounded-lg w-full max-w-lg shadow-2xl">
-            <h2 class="text-lg font-bold text-white mb-4">Guardar Nuevo Prompt</h2>
-            <textarea id="manual-content" rows="4" class="input-dark mb-4" placeholder="Contenido..."></textarea>
+            <h2 class="text-lg font-bold text-white mb-4">Guardar Manualmente</h2>
+            <textarea id="manual-content" rows="4" class="input-dark mb-4" placeholder="Pega tu prompt aquí..."></textarea>
             <div class="flex gap-4 mb-6">
-                <select id="manual-category" class="input-dark"><option value="general">General</option><option value="photography">Foto</option><option value="art">Arte</option><option value="video">Video</option></select>
+                <select id="manual-category" class="input-dark">
+                    <option value="general">General</option>
+                    <option value="photography">Fotografía</option>
+                    <option value="art">Arte</option>
+                    <option value="video">Video</option>
+                </select>
             </div>
             <div class="flex justify-end gap-3">
                 <button onclick="closeModal('manual-modal')" class="text-xs text-zinc-400 hover:text-white px-4 py-2">Cancelar</button>
@@ -117,101 +202,149 @@
     <div id="remix-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 backdrop-blur-sm">
         <div class="bg-[#0f0f11] border border-blue-900/50 p-6 rounded-lg w-full max-w-lg shadow-2xl relative">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
-            
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-bold text-white flex items-center gap-2"><i class="ph ph-arrows-shuffle text-blue-400"></i> Remix Lab</h2>
-                <span class="text-[9px] text-zinc-500 uppercase bg-zinc-900 px-2 py-1 rounded">AI Variation</span>
+                <div class="flex gap-2">
+                    <span class="text-[9px] text-zinc-500 uppercase bg-zinc-900 px-2 py-1 rounded border border-zinc-800">AI Variation</span>
+                </div>
             </div>
             
             <div id="remix-loading" class="hidden py-12 text-center">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-                <span class="text-blue-400 text-xs uppercase font-bold animate-pulse">Mutando prompt...</span>
+                <i class="ph ph-spinner animate-spin text-2xl text-blue-500 mb-2"></i>
+                <div class="text-blue-400 text-xs uppercase font-bold animate-pulse">Reimaginando concepto...</div>
             </div>
             
             <textarea id="remix-content" rows="6" class="input-dark mb-6 font-mono text-xs leading-relaxed" readonly></textarea>
             
             <div class="flex justify-between items-center border-t border-zinc-800 pt-4">
-                <button onclick="closeModal('remix-modal')" class="text-xs text-zinc-400 hover:text-red-400 px-4 py-2 uppercase font-bold">Descartar</button>
-                
-                <button onclick="executeRemix()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded uppercase font-bold flex items-center gap-2 border border-zinc-700">
-                    <i class="ph ph-dice-three"></i> Otra vez
-                </button>
-                
-                <button onclick="saveRemix()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-6 py-2 rounded flex items-center gap-2 shadow-lg shadow-emerald-900/20">
-                    <i class="ph ph-floppy-disk"></i> Guardar
-                </button>
+                <button onclick="closeModal('remix-modal')" class="text-xs text-zinc-400 hover:text-red-400 px-4 py-2 uppercase font-bold">Cerrar</button>
+                <div class="flex gap-2">
+                    <button onclick="executeRemix()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded uppercase font-bold flex items-center gap-2 border border-zinc-700 transition-colors">
+                        <i class="ph ph-dice-three text-lg"></i> Re-Roll
+                    </button>
+                    <button onclick="saveRemix()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-6 py-2 rounded flex items-center gap-2 shadow-lg shadow-emerald-900/20 transition-colors">
+                        <i class="ph ph-floppy-disk text-lg"></i> Guardar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-5 right-5 bg-zinc-800 text-white px-4 py-2 rounded border border-zinc-600 text-xs font-bold transform translate-y-20 transition-transform duration-300 z-50 flex items-center gap-2">
-        <i class="ph ph-check-circle text-emerald-400"></i> <span id="toast-msg">Action</span>
+    <div id="toast" class="fixed bottom-5 right-5 bg-zinc-900 text-white px-4 py-3 rounded border border-zinc-700 text-xs font-bold transform translate-y-32 transition-transform duration-300 z-50 flex items-center gap-3 shadow-xl">
+        <i class="ph ph-check-circle text-emerald-400 text-lg"></i> <span id="toast-msg">Action Successful</span>
     </div>
 
     <script>
-        // --- DATA ---
-        let currentRemixOriginalText = ""; // Variable global para recordar qué estamos remixando
-        const STORAGE_KEY = 'prompt_vault_v1';
-        
-        // --- RANDOMIZER ---
+        // --- DATA POOL MASSIVE (ALEATORIEDAD MEJORADA) ---
         const rndData = {
-            s: ["Samurai Cyberpunk", "Astronauta perdido", "Diosa de Neón", "Robot jardinero", "Gato gigante", "Detective Noir"],
-            sc: ["Tokyo lluvioso", "Marte terraformado", "Biblioteca infinita", "Jungla de cristal", "Bajo el océano"],
-            a: ["Meditando", "Luchando", "Tomando café", "Hackeando", "Flotando"],
-            st: ["Photorealistic", "Anime Ghibli", "Oil Painting", "Synthwave", "Dark Fantasy"],
-            o: ["Armadura dorada", "Ropa callejera", "Traje espacial", "Túnica de seda"],
-            sh: ["Wide Shot", "Close-up", "Drone View", "Low Angle"]
+            subjects: [
+                "Samurai Cyberpunk", "Astronauta perdido", "Diosa Griega de Neón", "Robot jardinero oxidado", 
+                "Gato gigante Kaiju", "Detectives Noir bajo lluvia", "Hechicero cuántico", "Arquitectura imposible",
+                "Guerrero Azteca futurista", "Bailarina de ballet holográfica", "Vikingo zombi", "Hada biomecánica"
+            ],
+            scenarios: [
+                "Tokyo lluvioso de noche", "Marte terraformado con vegetación", "Biblioteca infinita de espejos", 
+                "Jungla de cristal brillante", "Bajo el océano abisal", "Estación espacial abandonada", 
+                "Desierto de dunas rojas", "Ciudad flotante en las nubes", "Ruinas antiguas cubiertas de musgo"
+            ],
+            actions: [
+                "Meditando en silencio", "Luchando con espadas láser", "Tomando café en una terraza", 
+                "Hackeando un servidor central", "Flotando en gravedad cero", "Tocando un piano de luz", 
+                "Mirando un portal dimensional", "Corriendo de una explosión", "Leyendo un pergamino antiguo"
+            ],
+            styles: [
+                "Photorealistic 8k", "Anime Studio Ghibli", "Oil Painting Classic", "Synthwave 80s Retro", 
+                "Dark Fantasy Concept Art", "Minimalist Vector Art", "Claymation Stop-motion", "Unreal Engine 5 Render",
+                "Vintage Film Noir B&W", "Cyberpunk Digital Art"
+            ],
+            outfits: [
+                "Armadura dorada ceremonial", "Ropa callejera andrajosa", "Traje espacial retro voluminoso", 
+                "Túnica de seda flotante", "Traje de oficina futurista", "Capa de invisibilidad tecnológica",
+                "Vestido de gala hecho de luz", "Uniforme militar desgastado"
+            ],
+            shots: [
+                "Wide Shot (Landscape)", "Extreme Close-up (Macro)", "Drone View (Bird's Eye)", 
+                "Low Angle (Heroic)", "Fisheye Lens (Distorted)", "Over the Shoulder"
+            ],
+            hairs: [
+                "Abundante y elegante", "Rapado militar", "Rastas cyberpunk de neón", "Bob francés clásico", 
+                "Largo y flotando en agua", "Corte mohicano punk", "Calvo con tatuajes"
+            ],
+            // NUEVO: DATOS DE TONO
+            tones: [
+                "Siniestro / Oscuro / Terror", "Alegre / Vibrante / Colorido", "Marketing / Comercial / Limpio", 
+                "Épico / Dramático / Cinematográfico", "Etéreo / Onírico / Fantasía", "Melancólico / Triste / Lluvioso",
+                "Industrial / Grunge / Sucio", "Elegante / Lujoso / Minimalista"
+            ]
         };
 
+        // --- RANDOMIZER LOGIC ---
         function randomizeInputs() {
-            const p = (arr) => arr[Math.floor(Math.random() * arr.length)];
-            document.getElementById('subject').value = p(rndData.s);
-            document.getElementById('scenario').value = p(rndData.sc);
-            document.getElementById('action').value = p(rndData.a);
-            document.getElementById('style').value = p(rndData.st);
-            document.getElementById('outfit').value = p(rndData.o);
-            document.getElementById('shot').value = p(rndData.sh);
+            const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+            
+            document.getElementById('subject').value = pick(rndData.subjects);
+            document.getElementById('scenario').value = pick(rndData.scenarios);
+            document.getElementById('action').value = pick(rndData.actions);
+            
+            document.getElementById('hair').value = pick(rndData.hairs);
+            document.getElementById('outfit').value = pick(rndData.outfits);
+            
+            document.getElementById('tone').value = pick(rndData.tones); // Random Tone
+            document.getElementById('style').value = pick(rndData.styles);
+            document.getElementById('shot').value = pick(rndData.shots);
+            
             document.getElementById('chaos').value = Math.floor(Math.random() * 80) + 10;
             document.getElementById('chaosVal').innerText = document.getElementById('chaos').value + "%";
-            showToast("Inputs Aleatorios");
+            
+            showToast("¡Configuración Aleatoria Generada!");
         }
 
-        // --- TABS ---
-        function switchTab(tab) {
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tab-btn-${tab}`).classList.add('active');
-            document.getElementById('view-generator').classList.toggle('hidden', tab !== 'generator');
-            const libView = document.getElementById('view-library');
-            libView.classList.toggle('hidden', tab !== 'library');
-            if(tab === 'library') { libView.classList.add('flex'); renderLibrary(); }
-        }
-
-        // --- GENERATOR ---
+        // --- GENERATOR LOGIC ---
         async function generatePrompts() {
             const btn = document.getElementById('btn-gen');
             const container = document.getElementById('gen-results');
+            
+            // Collect Data
             const data = {
-                s: document.getElementById('subject').value, sc: document.getElementById('scenario').value,
-                a: document.getElementById('action').value, h: document.getElementById('hair').value,
-                o: document.getElementById('outfit').value, st: document.getElementById('style').value,
-                sh: document.getElementById('shot').value, c: document.getElementById('chaos').value
+                s: document.getElementById('subject').value, 
+                sc: document.getElementById('scenario').value,
+                a: document.getElementById('action').value, 
+                h: document.getElementById('hair').value,
+                o: document.getElementById('outfit').value, 
+                t: document.getElementById('tone').value, // Nuevo input
+                st: document.getElementById('style').value,
+                sh: document.getElementById('shot').value, 
+                c: document.getElementById('chaos').value
             };
-            btn.disabled = true; btn.innerText = "GENERANDO...";
-            container.innerHTML = `<div class="p-10 text-center animate-pulse text-xs text-blue-500">PROCESANDO...</div>`;
 
-            let creativity = data.c > 50 ? "Creative & Abstract" : "Precise";
-            const system = `Output JSON ONLY: {"photo": "val", "art": "val", "video": "val", "general": "val"}. Translate Spanish input to English. Style:${data.st}, Shot:${data.sh}. Creativity:${creativity}`;
-            const user = `Generate 4 prompts: Subject:${data.s}, Scenario:${data.sc}, Action:${data.a}, Hair:${data.h}, Outfit:${data.o}`;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin"></i> GENERANDO...`;
+            container.innerHTML = `<div class="p-10 text-center animate-pulse text-xs text-blue-500 font-bold">APLICANDO TONO: ${data.t || 'Neutro'}...</div>`;
+
+            let creativity = data.c > 50 ? "Sea muy creativo y abstracto." : "Sea preciso y descriptivo.";
+            
+            // SYSTEM PROMPT ACTUALIZADO CON TONO
+            const system = `Output JSON format ONLY: {"photo": "prompt", "art": "prompt", "video": "prompt", "general": "prompt"}. 
+            Translate spanish inputs to English prompts.
+            
+            CRITICAL INSTRUCTIONS:
+            - Mood/Tone: The description MUST convey a "${data.t}" atmosphere.
+            - Style: ${data.st}
+            - Shot: ${data.sh}
+            - Creativity: ${creativity}`;
+            
+            const user = `Generate 4 prompts for: Subject:${data.s}, Scenario:${data.sc}, Action:${data.a}, Hair:${data.h}, Outfit:${data.o}`;
 
             try {
-                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&json=true&seed=${Math.floor(Math.random()*99999)}`;
+                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&json=true&seed=${Math.random()}`;
                 const res = await fetch(url);
                 const json = await res.json();
                 renderGenResults(json);
             } catch (e) {
-                container.innerHTML = `<div class="text-red-500 text-xs p-4 border border-red-900 text-center">Error. Intenta de nuevo.</div>`;
+                container.innerHTML = `<div class="text-red-500 text-xs p-4 border border-red-900 text-center">Error de conexión con la IA. Intenta simplificar los inputs.</div>`;
             } finally {
-                btn.disabled = false; btn.innerText = "GENERAR PROMPTS";
+                btn.disabled = false;
+                btn.innerText = "GENERAR PROMPTS";
             }
         }
 
@@ -219,111 +352,138 @@
             const container = document.getElementById('gen-results');
             container.innerHTML = '';
             const types = [
-                { k: 'photo', l: 'PHOTO', c: 'cat-photo', b: 'border-blue-500 text-blue-400' },
-                { k: 'art', l: 'ART', c: 'cat-art', b: 'border-purple-500 text-purple-400' },
-                { k: 'video', l: 'VIDEO', c: 'cat-video', b: 'border-emerald-500 text-emerald-400' },
-                { k: 'general', l: 'STYLE', c: 'cat-general', b: 'border-orange-500 text-orange-400' }
+                { key: 'photo', label: 'PHOTOGRAPHY', cat: 'photography', color: 'border-blue-500 text-blue-400' },
+                { key: 'art', label: 'CONCEPT ART', cat: 'art', color: 'border-purple-500 text-purple-400' },
+                { key: 'video', label: 'CINEMATIC', cat: 'video', color: 'border-emerald-500 text-emerald-400' },
+                { key: 'general', label: 'STYLIZED', cat: 'general', color: 'border-orange-500 text-orange-400' }
             ];
+
             types.forEach(t => {
-                const txt = data[t.k] || "Error";
+                const promptText = data[t.key] || "Error generating text";
                 container.innerHTML += `
-                    <div class="glass-panel p-4 mb-4 border-l-4 ${t.b} fade-in relative group">
+                    <div class="glass-panel p-4 mb-4 border-l-4 ${t.color} fade-in relative group">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="text-[10px] font-bold tracking-widest">${t.l}</h4>
+                            <h4 class="text-[10px] font-bold tracking-widest">${t.label}</h4>
                             <div class="flex gap-2">
-                                <button onclick="saveToLibrary('${escapeHtml(txt)}', '${t.c.replace('cat-', '')}')" class="text-[10px] bg-zinc-800 hover:bg-white hover:text-black px-2 py-1 rounded uppercase transition-colors"><i class="ph ph-floppy-disk"></i></button>
-                                <button onclick="copyText('${escapeHtml(txt)}')" class="text-[10px] bg-zinc-800 hover:bg-white hover:text-black px-2 py-1 rounded"><i class="ph ph-copy"></i></button>
+                                <button onclick="saveToLibrary('${escapeHtml(promptText)}', '${t.cat}')" class="text-[10px] bg-zinc-800 hover:bg-white hover:text-black px-2 py-1 rounded transition-colors uppercase flex items-center gap-1" title="Guardar">
+                                    <i class="ph ph-floppy-disk"></i>
+                                </button>
+                                <button onclick="copyText('${escapeHtml(promptText)}')" class="text-[10px] bg-zinc-800 hover:bg-white hover:text-black px-2 py-1 rounded transition-colors" title="Copiar">
+                                    <i class="ph ph-copy"></i>
+                                </button>
                             </div>
                         </div>
-                        <p class="text-xs text-zinc-300 font-mono leading-relaxed">${txt}</p>
-                    </div>`;
+                        <p class="text-xs text-zinc-300 font-mono leading-relaxed selection:bg-blue-500 selection:text-white">${promptText}</p>
+                    </div>
+                `;
             });
         }
 
-        // --- LIBRARY ---
+        // --- LIBRARY LOGIC ---
+        const STORAGE_KEY = 'prompt_vault_v1';
+        let currentRemixOriginalText = "";
+
         function getLibrary() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+
         function saveToLibrary(text, category) {
             const lib = getLibrary();
-            lib.unshift({ id: Date.now(), text: text, category: category, date: new Date().toLocaleDateString() });
+            const newItem = { id: Date.now(), text: text, category: category, date: new Date().toLocaleDateString() };
+            lib.unshift(newItem);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(lib));
-            showToast("Guardado");
+            showToast("Guardado en Librería");
             if(!document.getElementById('view-library').classList.contains('hidden')) renderLibrary();
         }
+
         function renderLibrary() {
             const grid = document.getElementById('library-grid');
             const lib = getLibrary();
             const filterText = document.getElementById('lib-search').value.toLowerCase();
             const filterCat = document.getElementById('lib-filter').value;
-            grid.innerHTML = '';
-            
-            const filtered = lib.filter(i => i.text.toLowerCase().includes(filterText) && (filterCat === 'all' || i.category === filterCat));
-            
-            if(filtered.length === 0) { grid.innerHTML = `<div class="col-span-2 text-center py-20 opacity-30 text-xs">Vacío</div>`; return; }
 
-            filtered.forEach(i => {
+            grid.innerHTML = '';
+            const filtered = lib.filter(item => {
+                const matchesText = item.text.toLowerCase().includes(filterText);
+                const matchesCat = filterCat === 'all' || item.category === filterCat;
+                return matchesText && matchesCat;
+            });
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-2 text-center py-20 opacity-30 text-xs uppercase">Sin resultados.</div>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                let catClass = `cat-${item.category}`;
                 grid.innerHTML += `
-                    <div class="glass-panel p-4 flex flex-col justify-between h-full fade-in relative group hover:bg-zinc-900">
+                    <div class="glass-panel p-4 flex flex-col justify-between h-full fade-in relative group hover:bg-zinc-900 transition-colors">
                         <div>
-                            <div class="flex justify-between items-center mb-2"><span class="cat-tag cat-${i.category}">${i.category}</span><span class="text-[9px] text-zinc-600">${i.date}</span></div>
-                            <p class="text-xs text-zinc-300 font-mono leading-relaxed mb-4 line-clamp-4 hover:line-clamp-none cursor-help">${i.text}</p>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="cat-tag ${catClass}">${item.category}</span>
+                                <span class="text-[9px] text-zinc-600">${item.date}</span>
+                            </div>
+                            <p class="text-xs text-zinc-300 font-mono leading-relaxed mb-4 line-clamp-4 hover:line-clamp-none cursor-help">${item.text}</p>
                         </div>
                         <div class="flex justify-between border-t border-zinc-800 pt-2 mt-2">
-                            <button onclick="deletePrompt(${i.id})" class="text-zinc-600 hover:text-red-400 p-1"><i class="ph ph-trash"></i></button>
+                            <button onclick="deletePrompt(${item.id})" class="text-zinc-600 hover:text-red-400 p-1 transition-colors"><i class="ph ph-trash"></i></button>
                             <div class="flex gap-2">
-                                <button onclick="startRemix(${i.id})" class="text-blue-500 hover:text-white text-[10px] font-bold uppercase flex items-center gap-1 bg-blue-900/20 px-2 rounded border border-blue-900/50 hover:bg-blue-600 hover:border-blue-600"><i class="ph ph-arrows-shuffle"></i> Remix</button>
-                                <button onclick="copyText('${escapeHtml(i.text)}')" class="text-zinc-400 hover:text-white p-1 text-xs font-bold uppercase"><i class="ph ph-copy"></i></button>
+                                <button onclick="startRemix(${item.id})" class="text-blue-500 hover:text-white text-[10px] font-bold uppercase flex items-center gap-1 bg-blue-900/20 px-2 rounded border border-blue-900/50 hover:bg-blue-600 hover:border-blue-600 transition-all">
+                                    <i class="ph ph-arrows-shuffle"></i> Remix
+                                </button>
+                                <button onclick="copyText('${escapeHtml(item.text)}')" class="text-zinc-400 hover:text-white p-1 text-xs font-bold uppercase transition-colors"><i class="ph ph-copy"></i></button>
                             </div>
                         </div>
-                    </div>`;
+                    </div>
+                `;
             });
         }
+
         function deletePrompt(id) {
-            if(!confirm("¿Eliminar?")) return;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(getLibrary().filter(i => i.id !== id)));
-            renderLibrary(); showToast("Eliminado");
+            if(!confirm("¿Eliminar este prompt?")) return;
+            let lib = getLibrary();
+            lib = lib.filter(item => item.id !== id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(lib));
+            renderLibrary();
+            showToast("Prompt eliminado");
         }
+
         function filterLibrary() { renderLibrary(); }
 
-        // --- REMIX ENGINE (FIXED) ---
+        // --- REMIX LOGIC (VARIATIONS) ---
         function startRemix(id) {
             const item = getLibrary().find(i => i.id === id);
             if(!item) return;
-            currentRemixOriginalText = item.text; // Guardar referencia global
-            
+            currentRemixOriginalText = item.text;
             document.getElementById('remix-modal').classList.remove('hidden');
             document.getElementById('remix-modal').classList.add('flex');
-            
-            // Iniciar remix inmediatamente
-            executeRemix(); 
+            executeRemix();
         }
 
         async function executeRemix() {
             if(!currentRemixOriginalText) return;
-
-            // UI Changes
             const area = document.getElementById('remix-content');
             const load = document.getElementById('remix-loading');
             area.classList.add('hidden');
             load.classList.remove('hidden');
 
-            // INYECCIÓN DE CAOS (RANDOM FLAVOR)
+            // Inyección de caos al remix
             const flavors = [
-                "Make it darker and gloomier", "Make it vibrant and neon", "Change to minimalist style", 
-                "Make it horror style", "Make it dreamy and pastel", "Convert to 1980s VHS style", 
-                "Make it extremely futuristic", "Change camera to macro extreme close-up"
+                "Make it darker and gloomier (Horror tone)", 
+                "Make it vibrant, neon and cyberpunk", 
+                "Change to minimalist, clean apple-style marketing", 
+                "Make it dreamy, pastel and ethereal", 
+                "Convert to 1980s VHS retro style", 
+                "Make it extremely futuristic and shiny", 
+                "Change camera to macro extreme close-up"
             ];
             const randomFlavor = flavors[Math.floor(Math.random() * flavors.length)];
             
-            // SYSTEM PROMPT DINÁMICO
             const system = `You are a Remix Engine. Rewrite the prompt keeping the subject but APPLY THIS CHANGE: '${randomFlavor}'. Output ONLY English text.`;
             const user = `Remix this prompt: "${currentRemixOriginalText}"`;
 
             try {
-                // Seed aleatoria real para romper caché
-                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&seed=${Math.floor(Math.random() * 9999999)}`;
+                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&seed=${Math.random()}`;
                 const res = await fetch(url);
                 const text = await res.text();
-                
                 area.value = text;
                 area.classList.remove('hidden');
                 load.classList.add('hidden');
@@ -342,21 +502,38 @@
         }
 
         // --- UTILS ---
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-btn-${tab}`).classList.add('active');
+            document.getElementById('view-generator').classList.toggle('hidden', tab !== 'generator');
+            const libView = document.getElementById('view-library');
+            libView.classList.toggle('hidden', tab !== 'library');
+            if(tab === 'library') { libView.classList.add('flex'); renderLibrary(); }
+        }
+
         function openModal() { document.getElementById('manual-modal').classList.remove('hidden'); document.getElementById('manual-modal').classList.add('flex'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
+        
         function saveManualPrompt() {
-            const c = document.getElementById('manual-content').value;
-            if(!c) return;
-            saveToLibrary(c, document.getElementById('manual-category').value);
-            closeModal('manual-modal'); switchTab('library');
+            const content = document.getElementById('manual-content').value;
+            const cat = document.getElementById('manual-category').value;
+            if(!content) return;
+            saveToLibrary(content, cat);
+            document.getElementById('manual-content').value = "";
+            closeModal('manual-modal');
+            switchTab('library');
         }
-        function copyText(t) { navigator.clipboard.writeText(t); showToast("Copiado"); }
-        function showToast(m) {
-            const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m;
-            t.classList.remove('translate-y-20'); setTimeout(() => t.classList.add('translate-y-20'), 2000);
+
+        function copyText(text) { navigator.clipboard.writeText(text); showToast("Copiado al portapapeles"); }
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            t.classList.remove('translate-y-32');
+            setTimeout(() => t.classList.add('translate-y-32'), 2000);
         }
-        function escapeHtml(t) { return t.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+        function escapeHtml(text) { return text.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
         document.getElementById('chaos').addEventListener('input', (e) => document.getElementById('chaosVal').innerText = e.target.value + "%");
+
     </script>
 </body>
 </html>
