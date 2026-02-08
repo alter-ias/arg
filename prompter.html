@@ -3,270 +3,358 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt Architect v8 - Freedom</title>
+    <title>Prompt Vault & Architect</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
+        /* THEME BASE */
         body { background-color: #050505; color: #e4e4e7; font-family: 'JetBrains Mono', monospace; }
-        .panel { background: #0f0f11; border: 1px solid #27272a; border-radius: 6px; margin-bottom: 1rem; }
-        .panel-header { background: #18181b; padding: 0.5rem 1rem; border-bottom: 1px solid #27272a; font-size: 0.7rem; font-weight: bold; letter-spacing: 0.1em; color: #71717a; text-transform: uppercase; }
-        .input-group { padding: 1rem; }
-        /* Inputs ahora tienen indicador de que son editables */
-        .input-ui { background: #000; border: 1px solid #333; color: #fff; font-size: 0.75rem; width: 100%; padding: 0.6rem; border-radius: 4px; transition: border 0.2s, box-shadow 0.2s; }
-        .input-ui:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
-        .input-ui::placeholder { color: #444; font-style: italic; }
-        .label-ui { font-size: 0.65rem; color: #52525b; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 4px; }
-        .btn-gen { background: linear-gradient(to right, #2563eb, #1d4ed8); color: white; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em; transition: all 0.2s; }
-        .btn-gen:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); }
-        .tag-result { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; background: #27272a; color: #a1a1aa; }
         
-        /* Personalización del scrollbar */
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #0f0f11; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #444; }
+        /* UTILS */
+        .glass-panel { background: #0a0a0c; border: 1px solid #27272a; border-radius: 8px; }
+        .glass-panel:hover { border-color: #3f3f46; }
+        
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        
+        /* INPUTS */
+        .input-dark { background: #000; border: 1px solid #333; color: #fff; padding: 0.6rem; border-radius: 4px; width: 100%; font-size: 0.8rem; transition: 0.2s; }
+        .input-dark:focus { border-color: #3b82f6; outline: none; }
+        
+        /* TABS */
+        .nav-btn { padding: 8px 16px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid transparent; opacity: 0.6; transition: 0.3s; cursor: pointer; }
+        .nav-btn.active { border-color: #3b82f6; color: #fff; opacity: 1; }
+        
+        /* ANIMATIONS */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        
+        /* CATEGORY TAGS */
+        .cat-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; }
+        .cat-photo { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2); }
+        .cat-art { background: rgba(168, 85, 247, 0.1); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.2); }
+        .cat-code { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .cat-general { background: rgba(113, 113, 122, 0.1); color: #a1a1aa; border: 1px solid rgba(113, 113, 122, 0.2); }
     </style>
 </head>
-<body class="p-4 md:p-8 min-h-screen">
-    <div class="max-w-7xl mx-auto">
-        <header class="mb-6 flex justify-between items-end border-b border-zinc-800 pb-4">
-            <div>
-                <h1 class="text-2xl font-bold tracking-tighter text-white">PROMPT_ENGINE <span class="text-blue-500">v8.0</span></h1>
-                <p class="text-[10px] text-zinc-500 mt-1 uppercase">Fully Editable Fields • Hybrid Input System</p>
-            </div>
-            <div class="text-[9px] text-blue-500 bg-blue-950/30 px-3 py-1 border border-blue-900 rounded-full animate-pulse">Ready</div>
-        </header>
+<body class="h-screen flex flex-col overflow-hidden p-4 md:p-6">
 
-        <div class="grid lg:grid-cols-12 gap-6">
+    <header class="flex-none flex justify-between items-end border-b border-zinc-800 pb-0 mb-4">
+        <div class="pb-4">
+            <h1 class="text-xl font-bold tracking-tighter text-white">PROMPT_<span class="text-blue-500">VAULT</span></h1>
+            <p class="text-[9px] text-zinc-500 uppercase tracking-widest">Local Storage Library v1.0</p>
+        </div>
+        <div class="flex gap-4">
+            <button onclick="switchTab('generator')" id="tab-btn-generator" class="nav-btn active">Generate</button>
+            <button onclick="switchTab('library')" id="tab-btn-library" class="nav-btn">My Library</button>
+        </div>
+    </header>
+
+    <main class="flex-1 min-h-0 relative">
+        
+        <div id="view-generator" class="h-full grid lg:grid-cols-12 gap-6">
             
-            <aside class="lg:col-span-4 h-[85vh] overflow-y-auto pr-2 custom-scroll">
-                
-                <div class="panel border-l-2 border-l-zinc-600">
-                    <div class="panel-header">01 // NARRATIVE BASE</div>
-                    <div class="input-group space-y-4">
-                        <div>
-                            <label class="label-ui">Sujeto (Escribe lo que quieras)</label>
-                            <input type="text" id="subject" placeholder="Ej: Un astronauta samurái" value="A cyberpunk hacker" class="input-ui">
-                        </div>
-                        <div>
-                            <label class="label-ui">Escenario</label>
-                            <input type="text" id="scenario" placeholder="Ej: Ciudad flotante" value="Neon-lit rainy alleyway in Tokyo" class="input-ui">
-                        </div>
-                        <div>
-                            <label class="label-ui">Acción</label>
-                            <input type="text" id="action" placeholder="Ej: Saltando entre edificios" value="Typing on a holographic keyboard" class="input-ui">
-                        </div>
-                    </div>
+            <aside class="lg:col-span-4 overflow-y-auto pr-2 custom-scroll pb-10">
+                <div class="glass-panel p-4 mb-4 border-l-2 border-l-blue-600">
+                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Narrative Core</h3>
+                    <input type="text" id="subject" class="input-dark mb-2" placeholder="Sujeto (Ej: Samurai Cyberpunk)" value="Astronauta vintage">
+                    <input type="text" id="scenario" class="input-dark mb-2" placeholder="Escenario (Ej: Neon Tokyo)" value="Campo de flores en Marte">
+                    <input type="text" id="action" class="input-dark" placeholder="Acción" value="Mirando al horizonte">
                 </div>
 
-                <div class="panel border-l-2 border-l-purple-600">
-                    <div class="panel-header flex justify-between">
-                        <span>02 // CHARACTER VISUALS</span>
-                        <span class="text-[8px] opacity-50 lowercase self-center">escribe o selecciona</span>
-                    </div>
-                    <div class="input-group space-y-4">
-                        
-                        <div>
-                            <label class="label-ui">Estilo de Peinado</label>
-                            <input list="hair-options" id="hair" class="input-ui" placeholder="Escribe tu propio estilo o selecciona...">
-                            <datalist id="hair-options">
-                                <option value="Voluminous, long, elegant and beautiful hair">Abundante, largo, elegante y hermoso</option>
-                                <option value="Short messy pixie cut">Corto y desordenado (Pixie)</option>
-                                <option value="Buzz cut military style">Militar rapado</option>
-                                <option value="Cyberpunk neon dreadlocks">Rastas de neón</option>
-                                <option value="Slicked back elegant">Elegante hacia atrás</option>
-                                <option value="Viking braids complex">Trenzas vikingas</option>
-                                <option value="Bald shiny head">Calvo/Rapado</option>
-                            </datalist>
-                        </div>
-
-                        <div>
-                            <label class="label-ui">Vestimenta (Outfit)</label>
-                            <input list="outfit-options" id="outfit" class="input-ui" placeholder="Describe la ropa...">
-                            <datalist id="outfit-options">
-                                <option value="High-tech tactical armor">Armadura Táctica</option>
-                                <option value="Vintage Victorian suit">Traje Victoriano</option>
-                                <option value="Elegant evening gown silk">Vestido de Seda</option>
-                                <option value="Worn-out leather jacket">Chaqueta de cuero gastada</option>
-                                <option value="Minimalist japanese linen">Lino minimalista japonés</option>
-                                <option value="Futuristic space suit">Traje espacial</option>
-                                <option value="Haute Couture avant-garde">Alta Costura Avant-garde</option>
-                            </datalist>
-                        </div>
-                    </div>
+                <div class="glass-panel p-4 mb-4 border-l-2 border-l-purple-600">
+                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Character Specs</h3>
+                    <input list="hair-list" id="hair" class="input-dark mb-2" placeholder="Peinado..." value="Casco roto">
+                    <datalist id="hair-list"><option value="Abundante y elegante"><option value="Rapado militar"><option value="Rastas cyberpunk"></datalist>
+                    
+                    <input list="outfit-list" id="outfit" class="input-dark" placeholder="Vestimenta..." value="Traje espacial retro">
+                    <datalist id="outfit-list"><option value="Armadura Táctica"><option value="Alta Costura"><option value="Ropa callejera"></datalist>
                 </div>
 
-                <div class="panel border-l-2 border-l-emerald-600">
-                    <div class="panel-header">03 // TECHNICAL SPECS</div>
-                    <div class="input-group space-y-4">
-                        
-                        <div>
-                            <label class="label-ui">Tipo de Toma (Shot)</label>
-                            <input list="shot-options" id="shot" class="input-ui" placeholder="Tipo de cámara..." value="Medium Shot (Waist up)">
-                            <datalist id="shot-options">
-                                <option value="Extreme Close-up (Macro)">Macro / Ojo / Detalle</option>
-                                <option value="Medium Shot (Waist up)">Plano Medio</option>
-                                <option value="Full Body Shot">Cuerpo Completo</option>
-                                <option value="Wide Angle Cinematic">Gran Angular</option>
-                                <option value="Low Angle Heroic">Contrapicado (Heroico)</option>
-                                <option value="Bird's Eye View">Vista de Pájaro</option>
-                                <option value="Selfie style fisheye">Selfie Ojo de Pez</option>
-                            </datalist>
-                        </div>
+                <div class="glass-panel p-4 mb-4 border-l-2 border-l-emerald-600">
+                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Tech Specs</h3>
+                    <input list="style-list" id="style" class="input-dark mb-2" placeholder="Estilo..." value="Cinematic 8k">
+                    <datalist id="style-list"><option value="Photorealistic"><option value="Anime Style"><option value="Oil Painting"></datalist>
+                    
+                    <input list="shot-list" id="shot" class="input-dark mb-4" placeholder="Cámara..." value="Wide Shot">
+                    <datalist id="shot-list"><option value="Close-up"><option value="Wide Shot"><option value="Drone View"></datalist>
 
-                        <div>
-                            <label class="label-ui">Estilo Visual</label>
-                            <input list="style-options" id="style" class="input-ui" placeholder="Estilo artístico..." value="Hyper-realistic Photography">
-                            <datalist id="style-options">
-                                <option value="Hyper-realistic Photography">Fotorealismo</option>
-                                <option value="Cinematic Movie Still">Cine</option>
-                                <option value="Anime Studio Ghibli">Anime Ghibli</option>
-                                <option value="Dark Fantasy Concept Art">Fantasía Oscura</option>
-                                <option value="Vintage 1980s Polaroid">Polaroid 80s</option>
-                                <option value="Oil Painting Classic">Pintura al Óleo</option>
-                                <option value="3D Render Unreal Engine 5">Render 3D</option>
-                                <option value="Black and White Film Noir">Cine Negro (B&W)</option>
-                            </datalist>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <label class="label-ui">Nivel de Caos / Creatividad</label>
-                                <span class="text-[9px] text-blue-400 font-mono" id="chaosVal">40%</span>
-                            </div>
-                            <input type="range" id="chaos" min="0" max="100" value="40" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer">
-                        </div>
-                    </div>
+                    <div class="flex justify-between text-[10px] text-zinc-400 mb-1"><span>Creatividad</span><span id="chaosVal">40%</span></div>
+                    <input type="range" id="chaos" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer" min="0" max="100" value="40">
                 </div>
 
-                <button onclick="generate()" id="btn" class="w-full py-4 rounded btn-gen mb-10 shadow-lg shadow-blue-900/20">
-                    GENERAR ARQUITECTURA
-                </button>
+                <button onclick="generatePrompts()" id="btn-gen" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded text-xs uppercase tracking-widest transition-all">Generar Prompts</button>
             </aside>
 
-            <main class="lg:col-span-8 space-y-4" id="output">
-                <div class="border border-dashed border-zinc-800 rounded-lg h-full flex flex-col items-center justify-center text-zinc-600 p-10 opacity-40">
-                    <svg class="w-12 h-12 mb-4 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                    <p class="text-xs uppercase tracking-widest font-mono">Esperando datos de entrada...</p>
+            <div class="lg:col-span-8 overflow-y-auto pb-10" id="gen-results">
+                <div class="h-full flex flex-col items-center justify-center opacity-30 text-center">
+                    <i class="ph ph-magic-wand text-4xl mb-2"></i>
+                    <p class="text-xs uppercase tracking-widest">Configura y Genera</p>
                 </div>
-            </main>
+            </div>
+        </div>
+
+
+        <div id="view-library" class="h-full hidden flex flex-col">
+            
+            <div class="flex-none mb-4 flex gap-3">
+                <input type="text" id="lib-search" onkeyup="filterLibrary()" placeholder="Buscar en mis prompts..." class="input-dark !w-2/3">
+                <select id="lib-filter" onchange="filterLibrary()" class="input-dark !w-1/3">
+                    <option value="all">Todas las Categorías</option>
+                    <option value="photography">Fotografía</option>
+                    <option value="art">Arte Digital</option>
+                    <option value="video">Video/Cine</option>
+                    <option value="general">General</option>
+                </select>
+                <button onclick="openModal()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-4 rounded text-xs border border-zinc-700 whitespace-nowrap">
+                    + Nuevo Manual
+                </button>
+            </div>
+
+            <div id="library-grid" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 pb-10 content-start">
+                </div>
+        </div>
+
+    </main>
+
+    <div id="manual-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-[#0f0f11] border border-zinc-800 p-6 rounded-lg w-full max-w-lg shadow-2xl">
+            <h2 class="text-lg font-bold text-white mb-4">Guardar Nuevo Prompt</h2>
+            <textarea id="manual-content" rows="4" class="input-dark mb-4" placeholder="Escribe o pega tu prompt aquí..."></textarea>
+            <div class="flex gap-4 mb-6">
+                <select id="manual-category" class="input-dark">
+                    <option value="general">General</option>
+                    <option value="photography">Fotografía</option>
+                    <option value="art">Arte</option>
+                    <option value="video">Video</option>
+                </select>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal()" class="text-xs text-zinc-400 hover:text-white px-4 py-2">Cancelar</button>
+                <button onclick="saveManualPrompt()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-6 py-2 rounded">Guardar</button>
+            </div>
         </div>
     </div>
 
+    <div id="toast" class="fixed bottom-5 right-5 bg-emerald-900/90 text-emerald-100 px-4 py-2 rounded border border-emerald-700 text-xs font-bold transform translate-y-20 transition-transform duration-300 z-50">
+        Action Successful
+    </div>
+
     <script>
-        async function generate() {
-            const btn = document.getElementById('btn');
-            const out = document.getElementById('output');
+        // --- LOGIC: TABS ---
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-btn-${tab}`).classList.add('active');
             
-            // Recolección (Ahora acepta valores escritos a mano)
-            const data = {
-                subject: document.getElementById('subject').value || "A person",
-                scenario: document.getElementById('scenario').value || "Void",
-                action: document.getElementById('action').value || "Standing",
-                hair: document.getElementById('hair').value || "Natural hair", // Toma lo escrito o lo seleccionado
-                outfit: document.getElementById('outfit').value || "Casual clothes",
-                shot: document.getElementById('shot').value || "Portrait",
-                style: document.getElementById('style').value || "Realistic",
-                chaos: document.getElementById('chaos').value
-            };
-
-            // Loading state
-            btn.disabled = true;
-            btn.innerHTML = `<span class="animate-pulse">CONSTRUYENDO PROMPTS...</span>`;
-            out.innerHTML = `<div class="p-12 text-center text-blue-500 font-bold text-xs uppercase animate-pulse tracking-widest border border-blue-900/30 bg-blue-900/10 rounded-lg">Inyectando variables en Mistral AI...</div>`;
-
-            // Lógica de Caos dinámica
-            let creativeInstruction = "Ensure high coherence and strict adherence to the description.";
-            if(data.chaos > 50) creativeInstruction = "Add creative flair, atmospheric lighting details and interesting textures.";
-            if(data.chaos > 85) creativeInstruction = "Be extremely artistic, abstract, and surprise the user with unique interpretations.";
-
-            // Prompt de Sistema mejorado
-            const system = `You are an expert AI Prompt Engineer. Create 4 distinct, high-quality prompts in ENGLISH.
-            FORMAT: [P1]text[/P1] [P2]text[/P2] [P3]text[/P3] [P4]text[/P4].
-            
-            MANDATORY VARIABLES TO INCLUDE:
-            - Shot Type: ${data.shot}
-            - Art Style: ${data.style}
-            - Creativity Level: ${creativeInstruction}
-            
-            Note: If the user inputs Spanish, TRANSLATE the final prompt content to English for better compatibility with image generators.`;
-
-            // Prompt de Usuario
-            const userPrompt = `Generate 4 variations for:
-            Subject: ${data.subject}
-            Hair: ${data.hair}
-            Outfit: ${data.outfit}
-            Action: ${data.action}
-            Location: ${data.scenario}
-            
-            Variations required:
-            1. Photorealistic (8k, detailed)
-            2. Artistic/Illustration (Creative)
-            3. Cinematic/Motion (Action-oriented)
-            4. Niji/Anime or Stylized`;
-
-            try {
-                const url = `https://text.pollinations.ai/${encodeURIComponent(userPrompt)}?system=${encodeURIComponent(system)}&model=mistral&seed=${Math.floor(Math.random() * 999999)}`;
-                const response = await fetch(url);
-                const text = await response.text();
-
-                // Extracción resiliente
-                const extract = (n) => {
-                    const match = text.match(new RegExp(`\\[P${n}\\]([\\s\\S]*?)\\[\\/P${n}\\]`, 'i'));
-                    return match ? match[1].trim() : "Error: El modelo no generó esta variante. Intenta de nuevo.";
-                };
-
-                // Configuración de visualización
-                const variants = [
-                    { title: "PHOTOREALISTIC", border: "border-blue-500", text: "text-blue-400" },
-                    { title: "ARTISTIC / CONCEPT", border: "border-purple-500", text: "text-purple-400" },
-                    { title: "CINEMATIC MOTION", border: "border-emerald-500", text: "text-emerald-400" },
-                    { title: "STYLIZED / NIJI", border: "border-orange-500", text: "text-orange-400" }
-                ];
-
-                out.innerHTML = '';
-                variants.forEach((v, i) => {
-                    out.innerHTML += `
-                        <div class="panel p-6 border-l-4 ${v.border} bg-[#0a0a0c] hover:bg-[#111113] transition-colors relative group">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <h3 class="text-[10px] font-bold ${v.text} tracking-widest mb-1">${v.title}</h3>
-                                    <div class="flex gap-2 text-[8px] text-zinc-500 uppercase">
-                                        <span>${data.style.substring(0, 15)}...</span>
-                                        <span>•</span>
-                                        <span>${data.shot}</span>
-                                    </div>
-                                </div>
-                                <button onclick="copyToClip(this)" class="text-[9px] border border-zinc-700 hover:border-white px-3 py-1 rounded text-zinc-400 hover:text-white uppercase transition-all">Copiar</button>
-                            </div>
-                            <p class="text-sm text-zinc-300 leading-relaxed font-mono selection:bg-blue-900 selection:text-white">${extract(i+1)}</p>
-                        </div>
-                    `;
-                });
-
-            } catch (err) {
-                out.innerHTML = `<div class="p-6 border border-red-800 bg-red-900/10 text-red-400 text-sm font-mono text-center">
-                    ERROR DE CONEXIÓN: La API de Pollinations está saturada o no responde. <br>Por favor espera 5 segundos e intenta de nuevo.
-                </div>`;
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "GENERAR ARQUITECTURA";
+            if(tab === 'generator') {
+                document.getElementById('view-generator').classList.remove('hidden');
+                document.getElementById('view-library').classList.add('hidden');
+            } else {
+                document.getElementById('view-generator').classList.add('hidden');
+                document.getElementById('view-library').classList.remove('hidden');
+                document.getElementById('view-library').classList.add('flex');
+                renderLibrary(); // Refresh library when opening
             }
         }
 
-        function copyToClip(btn) {
-            const text = btn.parentElement.nextElementSibling.innerText;
-            navigator.clipboard.writeText(text);
-            const original = btn.innerText;
-            btn.innerText = "COPIADO";
-            btn.classList.add("bg-white", "text-black", "border-white");
-            setTimeout(() => {
-                btn.innerText = original;
-                btn.classList.remove("bg-white", "text-black", "border-white");
-            }, 1000);
+        // --- LOGIC: GENERATOR ---
+        async function generatePrompts() {
+            const btn = document.getElementById('btn-gen');
+            const container = document.getElementById('gen-results');
+            
+            // Recoger datos
+            const data = {
+                s: document.getElementById('subject').value,
+                sc: document.getElementById('scenario').value,
+                a: document.getElementById('action').value,
+                h: document.getElementById('hair').value,
+                o: document.getElementById('outfit').value,
+                st: document.getElementById('style').value,
+                sh: document.getElementById('shot').value,
+                c: document.getElementById('chaos').value
+            };
+
+            btn.disabled = true;
+            btn.innerText = "GENERANDO...";
+            container.innerHTML = `<div class="p-10 text-center animate-pulse text-xs text-blue-500">CONSTRUYENDO ARQUITECTURA...</div>`;
+
+            let creativity = data.c > 50 ? "Sea creativo y abstracto." : "Sea preciso y coherente.";
+            
+            const system = `Output JSON format ONLY: {"photo": "prompt", "art": "prompt", "video": "prompt", "general": "prompt"}. 
+            Translate spanish inputs to English prompts. Include these specs: Style: ${data.st}, Shot: ${data.sh}. Creativity: ${creativity}`;
+            
+            const user = `Generate 4 prompts for: Subject:${data.s}, Scenario:${data.sc}, Action:${data.a}, Hair:${data.h}, Outfit:${data.o}`;
+
+            try {
+                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&json=true&seed=${Math.random()}`;
+                const res = await fetch(url);
+                const json = await res.json();
+
+                renderGenResults(json);
+            } catch (e) {
+                // Fallback si falla el JSON (Mistral a veces falla el JSON mode)
+                container.innerHTML = `<div class="text-red-500 text-xs p-4 border border-red-900">Error de conexión. Intente simplificar los inputs.</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "GENERAR PROMPTS";
+            }
         }
 
-        // Listener Slider
+        function renderGenResults(data) {
+            const container = document.getElementById('gen-results');
+            container.innerHTML = '';
+
+            const types = [
+                { key: 'photo', label: 'PHOTOGRAPHY', cat: 'photography', color: 'border-blue-500 text-blue-400' },
+                { key: 'art', label: 'CONCEPT ART', cat: 'art', color: 'border-purple-500 text-purple-400' },
+                { key: 'video', label: 'CINEMATIC', cat: 'video', color: 'border-emerald-500 text-emerald-400' },
+                { key: 'general', label: 'STYLIZED', cat: 'general', color: 'border-orange-500 text-orange-400' }
+            ];
+
+            types.forEach(t => {
+                const promptText = data[t.key] || "Error generating text";
+                container.innerHTML += `
+                    <div class="glass-panel p-4 mb-4 border-l-4 ${t.color} fade-in relative group">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-[10px] font-bold tracking-widest">${t.label}</h4>
+                            <div class="flex gap-2">
+                                <button onclick="saveToLibrary('${escapeHtml(promptText)}', '${t.cat}')" class="text-[10px] bg-zinc-800 hover:bg-white hover:text-black px-2 py-1 rounded transition-colors uppercase">
+                                    <i class="ph ph-floppy-disk"></i> Guardar
+                                </button>
+                                <button onclick="copyText('${escapeHtml(promptText)}')" class="text-[10px] bg-zinc-800 hover:bg-white hover:text-black px-2 py-1 rounded transition-colors uppercase">
+                                    <i class="ph ph-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="text-xs text-zinc-300 font-mono leading-relaxed">${promptText}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // --- LOGIC: LIBRARY (STORAGE) ---
+        const STORAGE_KEY = 'prompt_vault_v1';
+
+        function getLibrary() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        }
+
+        function saveToLibrary(text, category) {
+            const lib = getLibrary();
+            const newItem = {
+                id: Date.now(),
+                text: text,
+                category: category,
+                date: new Date().toLocaleDateString()
+            };
+            lib.unshift(newItem); // Add to top
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(lib));
+            showToast("Guardado en la Librería");
+            // If library is open, refresh it
+            if(!document.getElementById('view-library').classList.contains('hidden')) {
+                renderLibrary();
+            }
+        }
+
+        function renderLibrary() {
+            const grid = document.getElementById('library-grid');
+            const lib = getLibrary();
+            const filterText = document.getElementById('lib-search').value.toLowerCase();
+            const filterCat = document.getElementById('lib-filter').value;
+
+            grid.innerHTML = '';
+
+            if(lib.length === 0) {
+                grid.innerHTML = `<div class="col-span-2 text-center py-20 opacity-30 text-xs uppercase">La librería está vacía.<br>Guarda prompts generados o crea uno manual.</div>`;
+                return;
+            }
+
+            const filtered = lib.filter(item => {
+                const matchesText = item.text.toLowerCase().includes(filterText);
+                const matchesCat = filterCat === 'all' || item.category === filterCat;
+                return matchesText && matchesCat;
+            });
+
+            filtered.forEach(item => {
+                let catClass = `cat-${item.category}`; // css mapping
+                grid.innerHTML += `
+                    <div class="glass-panel p-4 flex flex-col justify-between h-full fade-in relative group hover:bg-zinc-900 transition-colors">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="cat-tag ${catClass}">${item.category}</span>
+                                <span class="text-[9px] text-zinc-600">${item.date}</span>
+                            </div>
+                            <p class="text-xs text-zinc-300 font-mono leading-relaxed mb-4 line-clamp-4 hover:line-clamp-none cursor-help" title="Click para ver todo">${item.text}</p>
+                        </div>
+                        <div class="flex justify-end gap-2 border-t border-zinc-800 pt-2 mt-2">
+                            <button onclick="deletePrompt(${item.id})" class="text-zinc-600 hover:text-red-400 transition-colors p-1"><i class="ph ph-trash"></i></button>
+                            <button onclick="copyText('${escapeHtml(item.text)}')" class="text-zinc-400 hover:text-white transition-colors p-1 text-xs font-bold uppercase">Copiar</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function deletePrompt(id) {
+            if(!confirm("¿Eliminar este prompt?")) return;
+            let lib = getLibrary();
+            lib = lib.filter(item => item.id !== id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(lib));
+            renderLibrary();
+            showToast("Prompt eliminado");
+        }
+
+        function filterLibrary() {
+            renderLibrary();
+        }
+
+        // --- MANUAL ENTRY MODAL ---
+        function openModal() {
+            document.getElementById('manual-modal').classList.remove('hidden');
+            document.getElementById('manual-modal').classList.add('flex');
+        }
+        function closeModal() {
+            document.getElementById('manual-modal').classList.add('hidden');
+            document.getElementById('manual-modal').classList.remove('flex');
+        }
+        function saveManualPrompt() {
+            const content = document.getElementById('manual-content').value;
+            const cat = document.getElementById('manual-category').value;
+            if(!content) return alert("Escribe algo...");
+            
+            saveToLibrary(content, cat);
+            document.getElementById('manual-content').value = "";
+            closeModal();
+            switchTab('library'); // Go to library to see it
+        }
+
+        // --- UTILS ---
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            showToast("Copiado al portapapeles");
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.remove('translate-y-20');
+            setTimeout(() => t.classList.add('translate-y-20'), 2000);
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace(/(\r\n|\n|\r)/gm, " "); // remove line breaks for js args
+        }
+
+        // Init slider listener
         document.getElementById('chaos').addEventListener('input', (e) => {
             document.getElementById('chaosVal').innerText = e.target.value + "%";
         });
