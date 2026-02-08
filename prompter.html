@@ -3,36 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt Vault v11 - Remix Edition</title>
+    <title>Prompt Vault v12 - Infinity Remix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        /* THEME BASE */
         body { background-color: #050505; color: #e4e4e7; font-family: 'JetBrains Mono', monospace; }
-        
-        /* UTILS */
         .glass-panel { background: #0a0a0c; border: 1px solid #27272a; border-radius: 8px; transition: border-color 0.3s; }
         .glass-panel:hover { border-color: #3f3f46; }
-        
-        /* SCROLLBAR */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-        
-        /* INPUTS */
         .input-dark { background: #000; border: 1px solid #333; color: #fff; padding: 0.6rem; border-radius: 4px; width: 100%; font-size: 0.8rem; transition: 0.2s; }
         .input-dark:focus { border-color: #3b82f6; outline: none; }
-        
-        /* TABS */
         .nav-btn { padding: 8px 16px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid transparent; opacity: 0.6; transition: 0.3s; cursor: pointer; }
         .nav-btn.active { border-color: #3b82f6; color: #fff; opacity: 1; }
-        
-        /* ANIMATIONS */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        
-        /* CATEGORY TAGS */
         .cat-tag { font-size: 0.55rem; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; }
         .cat-photo { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2); }
         .cat-art { background: rgba(168, 85, 247, 0.1); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.2); }
@@ -45,7 +32,7 @@
     <header class="flex-none flex justify-between items-end border-b border-zinc-800 pb-0 mb-4">
         <div class="pb-4">
             <h1 class="text-xl font-bold tracking-tighter text-white">PROMPT_<span class="text-blue-500">VAULT</span></h1>
-            <p class="text-[9px] text-zinc-500 uppercase tracking-widest">Remix Engine v11.0</p>
+            <p class="text-[9px] text-zinc-500 uppercase tracking-widest">Infinity Remix v12.0</p>
         </div>
         <div class="flex gap-4">
             <button onclick="switchTab('generator')" id="tab-btn-generator" class="nav-btn active">Generate</button>
@@ -56,58 +43,48 @@
     <main class="flex-1 min-h-0 relative">
         
         <div id="view-generator" class="h-full grid lg:grid-cols-12 gap-6">
-            
             <aside class="lg:col-span-4 overflow-y-auto pr-2 custom-scroll pb-10">
-                
                 <button onclick="randomizeInputs()" class="w-full mb-4 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 py-2 rounded text-xs font-bold uppercase flex items-center justify-center gap-2 transition-all group">
-                    <i class="ph ph-dice-five text-lg group-hover:rotate-180 transition-transform duration-500"></i>
-                    Randomize Ideas
+                    <i class="ph ph-dice-five text-lg group-hover:rotate-180 transition-transform duration-500"></i> Randomize Ideas
                 </button>
 
                 <div class="glass-panel p-4 mb-4 border-l-2 border-l-blue-600">
-                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Narrative Core</h3>
+                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Narrative</h3>
                     <input type="text" id="subject" class="input-dark mb-2" placeholder="Sujeto">
                     <input type="text" id="scenario" class="input-dark mb-2" placeholder="Escenario">
                     <input type="text" id="action" class="input-dark" placeholder="Acción">
                 </div>
 
                 <div class="glass-panel p-4 mb-4 border-l-2 border-l-purple-600">
-                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Character Specs</h3>
+                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Character</h3>
                     <input list="hair-list" id="hair" class="input-dark mb-2" placeholder="Peinado...">
                     <datalist id="hair-list"><option value="Abundante y elegante"><option value="Rapado militar"><option value="Rastas cyberpunk"></datalist>
-                    
                     <input list="outfit-list" id="outfit" class="input-dark" placeholder="Vestimenta...">
                     <datalist id="outfit-list"><option value="Armadura Táctica"><option value="Alta Costura"><option value="Ropa callejera"></datalist>
                 </div>
 
                 <div class="glass-panel p-4 mb-4 border-l-2 border-l-emerald-600">
-                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Tech Specs</h3>
+                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Specs</h3>
                     <input list="style-list" id="style" class="input-dark mb-2" placeholder="Estilo...">
                     <datalist id="style-list"><option value="Photorealistic"><option value="Anime Style"><option value="Oil Painting"></datalist>
-                    
                     <input list="shot-list" id="shot" class="input-dark mb-4" placeholder="Cámara...">
                     <datalist id="shot-list"><option value="Close-up"><option value="Wide Shot"><option value="Drone View"></datalist>
-
-                    <div class="flex justify-between text-[10px] text-zinc-400 mb-1"><span>Creatividad</span><span id="chaosVal">40%</span></div>
+                    <div class="flex justify-between text-[10px] text-zinc-400 mb-1"><span>Caos</span><span id="chaosVal">40%</span></div>
                     <input type="range" id="chaos" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer" min="0" max="100" value="40">
                 </div>
 
-                <button onclick="generatePrompts()" id="btn-gen" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20">
-                    Generar Prompts
-                </button>
+                <button onclick="generatePrompts()" id="btn-gen" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20">Generar Prompts</button>
             </aside>
 
             <div class="lg:col-span-8 overflow-y-auto pb-10" id="gen-results">
                 <div class="h-full flex flex-col items-center justify-center opacity-20 text-center select-none">
                     <i class="ph ph-magic-wand text-6xl mb-4"></i>
-                    <p class="text-xs uppercase tracking-widest">Configura los inputs<br>o usa el dado mágico</p>
+                    <p class="text-xs uppercase tracking-widest">Configura y Genera</p>
                 </div>
             </div>
         </div>
 
-
         <div id="view-library" class="h-full hidden flex flex-col">
-            
             <div class="flex-none mb-4 flex gap-3">
                 <input type="text" id="lib-search" onkeyup="filterLibrary()" placeholder="Buscar..." class="input-dark !w-2/3">
                 <select id="lib-filter" onchange="filterLibrary()" class="input-dark !w-1/3">
@@ -117,28 +94,18 @@
                     <option value="video">Video</option>
                     <option value="general">General</option>
                 </select>
-                <button onclick="openModal()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 rounded text-lg border border-zinc-700">
-                    <i class="ph ph-plus"></i>
-                </button>
+                <button onclick="openModal()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 rounded text-lg border border-zinc-700"><i class="ph ph-plus"></i></button>
             </div>
-
-            <div id="library-grid" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 pb-10 content-start">
-                </div>
+            <div id="library-grid" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 pb-10 content-start"></div>
         </div>
-
     </main>
 
     <div id="manual-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 backdrop-blur-sm">
         <div class="bg-[#0f0f11] border border-zinc-800 p-6 rounded-lg w-full max-w-lg shadow-2xl">
             <h2 class="text-lg font-bold text-white mb-4">Guardar Nuevo Prompt</h2>
-            <textarea id="manual-content" rows="4" class="input-dark mb-4" placeholder="Escribe o pega tu prompt aquí..."></textarea>
+            <textarea id="manual-content" rows="4" class="input-dark mb-4" placeholder="Contenido..."></textarea>
             <div class="flex gap-4 mb-6">
-                <select id="manual-category" class="input-dark">
-                    <option value="general">General</option>
-                    <option value="photography">Fotografía</option>
-                    <option value="art">Arte</option>
-                    <option value="video">Video</option>
-                </select>
+                <select id="manual-category" class="input-dark"><option value="general">General</option><option value="photography">Foto</option><option value="art">Arte</option><option value="video">Video</option></select>
             </div>
             <div class="flex justify-end gap-3">
                 <button onclick="closeModal('manual-modal')" class="text-xs text-zinc-400 hover:text-white px-4 py-2">Cancelar</button>
@@ -150,21 +117,28 @@
     <div id="remix-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 backdrop-blur-sm">
         <div class="bg-[#0f0f11] border border-blue-900/50 p-6 rounded-lg w-full max-w-lg shadow-2xl relative">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
-            <h2 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                <i class="ph ph-arrows-shuffle text-blue-400"></i> Remix Result
-            </h2>
-            <p class="text-[10px] text-zinc-500 mb-4 uppercase">IA Generated Variation</p>
             
-            <div id="remix-loading" class="hidden py-8 text-center text-blue-400 animate-pulse text-xs uppercase font-bold">
-                Consultando Red Neuronal...
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-white flex items-center gap-2"><i class="ph ph-arrows-shuffle text-blue-400"></i> Remix Lab</h2>
+                <span class="text-[9px] text-zinc-500 uppercase bg-zinc-900 px-2 py-1 rounded">AI Variation</span>
             </div>
             
-            <textarea id="remix-content" rows="6" class="input-dark mb-4 font-mono text-xs leading-relaxed" readonly></textarea>
+            <div id="remix-loading" class="hidden py-12 text-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                <span class="text-blue-400 text-xs uppercase font-bold animate-pulse">Mutando prompt...</span>
+            </div>
             
-            <div class="flex justify-end gap-3">
-                <button onclick="closeModal('remix-modal')" class="text-xs text-zinc-400 hover:text-white px-4 py-2">Descartar</button>
-                <button onclick="saveRemix()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-6 py-2 rounded flex items-center gap-2">
-                    <i class="ph ph-floppy-disk"></i> Guardar Remix
+            <textarea id="remix-content" rows="6" class="input-dark mb-6 font-mono text-xs leading-relaxed" readonly></textarea>
+            
+            <div class="flex justify-between items-center border-t border-zinc-800 pt-4">
+                <button onclick="closeModal('remix-modal')" class="text-xs text-zinc-400 hover:text-red-400 px-4 py-2 uppercase font-bold">Descartar</button>
+                
+                <button onclick="executeRemix()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded uppercase font-bold flex items-center gap-2 border border-zinc-700">
+                    <i class="ph ph-dice-three"></i> Otra vez
+                </button>
+                
+                <button onclick="saveRemix()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-6 py-2 rounded flex items-center gap-2 shadow-lg shadow-emerald-900/20">
+                    <i class="ph ph-floppy-disk"></i> Guardar
                 </button>
             </div>
         </div>
@@ -175,85 +149,69 @@
     </div>
 
     <script>
-        // --- RANDOM DATA FOR "MAGIC DICE" ---
+        // --- DATA ---
+        let currentRemixOriginalText = ""; // Variable global para recordar qué estamos remixando
+        const STORAGE_KEY = 'prompt_vault_v1';
+        
+        // --- RANDOMIZER ---
         const rndData = {
-            subjects: ["Samurai Cyberpunk", "Astronauta perdido", "Diosa Griega de Neón", "Robot jardinero", "Gato gigante kaiju", "Detectives Noir", "Hechicero cuantico", "Arquitectura imposible"],
-            scenarios: ["Tokyo lluvioso", "Marte terraformado", "Biblioteca infinita", "Jungla de cristal", "Bajo el océano", "Estación espacial abandonada", "Desierto de espejos"],
-            actions: ["Meditando", "Luchando con espadas láser", "Tomando café", "Hackeando un servidor", "Flotando en gravedad cero", "Tocando el piano", "Mirando un portal"],
-            styles: ["Photorealistic 8k", "Anime Studio Ghibli", "Oil Painting", "Synthwave 80s", "Dark Fantasy", "Minimalist Vector", "Claymation"],
-            outfits: ["Armadura dorada", "Ropa callejera andrajosa", "Traje espacial retro", "Túnica de seda", "Traje de oficina futurista"],
-            shots: ["Wide Shot", "Extreme Close-up", "Drone View", "Low Angle", "Fisheye Lens"]
+            s: ["Samurai Cyberpunk", "Astronauta perdido", "Diosa de Neón", "Robot jardinero", "Gato gigante", "Detective Noir"],
+            sc: ["Tokyo lluvioso", "Marte terraformado", "Biblioteca infinita", "Jungla de cristal", "Bajo el océano"],
+            a: ["Meditando", "Luchando", "Tomando café", "Hackeando", "Flotando"],
+            st: ["Photorealistic", "Anime Ghibli", "Oil Painting", "Synthwave", "Dark Fantasy"],
+            o: ["Armadura dorada", "Ropa callejera", "Traje espacial", "Túnica de seda"],
+            sh: ["Wide Shot", "Close-up", "Drone View", "Low Angle"]
         };
 
         function randomizeInputs() {
-            const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-            
-            document.getElementById('subject').value = pick(rndData.subjects);
-            document.getElementById('scenario').value = pick(rndData.scenarios);
-            document.getElementById('action').value = pick(rndData.actions);
-            document.getElementById('style').value = pick(rndData.styles);
-            document.getElementById('outfit').value = pick(rndData.outfits);
-            document.getElementById('shot').value = pick(rndData.shots);
+            const p = (arr) => arr[Math.floor(Math.random() * arr.length)];
+            document.getElementById('subject').value = p(rndData.s);
+            document.getElementById('scenario').value = p(rndData.sc);
+            document.getElementById('action').value = p(rndData.a);
+            document.getElementById('style').value = p(rndData.st);
+            document.getElementById('outfit').value = p(rndData.o);
+            document.getElementById('shot').value = p(rndData.sh);
             document.getElementById('chaos').value = Math.floor(Math.random() * 80) + 10;
             document.getElementById('chaosVal').innerText = document.getElementById('chaos').value + "%";
-            
-            showToast("¡Inputs Aleatorios Generados!");
+            showToast("Inputs Aleatorios");
         }
 
-        // --- TABS LOGIC ---
+        // --- TABS ---
         function switchTab(tab) {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`tab-btn-${tab}`).classList.add('active');
-            
-            if(tab === 'generator') {
-                document.getElementById('view-generator').classList.remove('hidden');
-                document.getElementById('view-library').classList.add('hidden');
-            } else {
-                document.getElementById('view-generator').classList.add('hidden');
-                document.getElementById('view-library').classList.remove('hidden');
-                document.getElementById('view-library').classList.add('flex');
-                renderLibrary();
-            }
+            document.getElementById('view-generator').classList.toggle('hidden', tab !== 'generator');
+            const libView = document.getElementById('view-library');
+            libView.classList.toggle('hidden', tab !== 'library');
+            if(tab === 'library') { libView.classList.add('flex'); renderLibrary(); }
         }
 
-        // --- GENERATOR LOGIC ---
+        // --- GENERATOR ---
         async function generatePrompts() {
             const btn = document.getElementById('btn-gen');
             const container = document.getElementById('gen-results');
-            
             const data = {
-                s: document.getElementById('subject').value,
-                sc: document.getElementById('scenario').value,
-                a: document.getElementById('action').value,
-                h: document.getElementById('hair').value,
-                o: document.getElementById('outfit').value,
-                st: document.getElementById('style').value,
-                sh: document.getElementById('shot').value,
-                c: document.getElementById('chaos').value
+                s: document.getElementById('subject').value, sc: document.getElementById('scenario').value,
+                a: document.getElementById('action').value, h: document.getElementById('hair').value,
+                o: document.getElementById('outfit').value, st: document.getElementById('style').value,
+                sh: document.getElementById('shot').value, c: document.getElementById('chaos').value
             };
+            btn.disabled = true; btn.innerText = "GENERANDO...";
+            container.innerHTML = `<div class="p-10 text-center animate-pulse text-xs text-blue-500">PROCESANDO...</div>`;
 
-            btn.disabled = true;
-            btn.innerText = "GENERANDO...";
-            container.innerHTML = `<div class="p-10 text-center animate-pulse text-xs text-blue-500">TRADUCIENDO Y GENERANDO...</div>`;
-
-            let creativity = data.c > 50 ? "Sea muy creativo." : "Sea preciso.";
-            
-            // Forzamos JSON
-            const system = `Output JSON format ONLY: {"photo": "prompt", "art": "prompt", "video": "prompt", "general": "prompt"}. 
-            Translate spanish inputs to English prompts. Include these specs: Style: ${data.st}, Shot: ${data.sh}. Creativity: ${creativity}`;
-            
-            const user = `Generate 4 prompts for: Subject:${data.s}, Scenario:${data.sc}, Action:${data.a}, Hair:${data.h}, Outfit:${data.o}`;
+            let creativity = data.c > 50 ? "Creative & Abstract" : "Precise";
+            const system = `Output JSON ONLY: {"photo": "val", "art": "val", "video": "val", "general": "val"}. Translate Spanish input to English. Style:${data.st}, Shot:${data.sh}. Creativity:${creativity}`;
+            const user = `Generate 4 prompts: Subject:${data.s}, Scenario:${data.sc}, Action:${data.a}, Hair:${data.h}, Outfit:${data.o}`;
 
             try {
-                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&json=true&seed=${Math.random()}`;
+                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&json=true&seed=${Math.floor(Math.random()*99999)}`;
                 const res = await fetch(url);
                 const json = await res.json();
                 renderGenResults(json);
             } catch (e) {
-                container.innerHTML = `<div class="text-red-500 text-xs p-4 border border-red-900 text-center">Error de conexión con la IA. Intenta de nuevo.</div>`;
+                container.innerHTML = `<div class="text-red-500 text-xs p-4 border border-red-900 text-center">Error. Intenta de nuevo.</div>`;
             } finally {
-                btn.disabled = false;
-                btn.innerText = "GENERAR PROMPTS";
+                btn.disabled = false; btn.innerText = "GENERAR PROMPTS";
             }
         }
 
@@ -261,189 +219,144 @@
             const container = document.getElementById('gen-results');
             container.innerHTML = '';
             const types = [
-                { key: 'photo', label: 'PHOTOGRAPHY', cat: 'photography', color: 'border-blue-500 text-blue-400' },
-                { key: 'art', label: 'CONCEPT ART', cat: 'art', color: 'border-purple-500 text-purple-400' },
-                { key: 'video', label: 'CINEMATIC', cat: 'video', color: 'border-emerald-500 text-emerald-400' },
-                { key: 'general', label: 'STYLIZED', cat: 'general', color: 'border-orange-500 text-orange-400' }
+                { k: 'photo', l: 'PHOTO', c: 'cat-photo', b: 'border-blue-500 text-blue-400' },
+                { k: 'art', l: 'ART', c: 'cat-art', b: 'border-purple-500 text-purple-400' },
+                { k: 'video', l: 'VIDEO', c: 'cat-video', b: 'border-emerald-500 text-emerald-400' },
+                { k: 'general', l: 'STYLE', c: 'cat-general', b: 'border-orange-500 text-orange-400' }
             ];
-
             types.forEach(t => {
-                const promptText = data[t.key] || "Error generating text";
+                const txt = data[t.k] || "Error";
                 container.innerHTML += `
-                    <div class="glass-panel p-4 mb-4 border-l-4 ${t.color} fade-in relative group">
+                    <div class="glass-panel p-4 mb-4 border-l-4 ${t.b} fade-in relative group">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="text-[10px] font-bold tracking-widest">${t.label}</h4>
+                            <h4 class="text-[10px] font-bold tracking-widest">${t.l}</h4>
                             <div class="flex gap-2">
-                                <button onclick="saveToLibrary('${escapeHtml(promptText)}', '${t.cat}')" class="text-[10px] bg-zinc-800 hover:bg-white hover:text-black px-2 py-1 rounded transition-colors uppercase flex items-center gap-1">
-                                    <i class="ph ph-floppy-disk"></i> Guardar
-                                </button>
-                                <button onclick="copyText('${escapeHtml(promptText)}')" class="text-[10px] bg-zinc-800 hover:bg-white hover:text-black px-2 py-1 rounded transition-colors">
-                                    <i class="ph ph-copy"></i>
-                                </button>
+                                <button onclick="saveToLibrary('${escapeHtml(txt)}', '${t.c.replace('cat-', '')}')" class="text-[10px] bg-zinc-800 hover:bg-white hover:text-black px-2 py-1 rounded uppercase transition-colors"><i class="ph ph-floppy-disk"></i></button>
+                                <button onclick="copyText('${escapeHtml(txt)}')" class="text-[10px] bg-zinc-800 hover:bg-white hover:text-black px-2 py-1 rounded"><i class="ph ph-copy"></i></button>
                             </div>
                         </div>
-                        <p class="text-xs text-zinc-300 font-mono leading-relaxed">${promptText}</p>
-                    </div>
-                `;
+                        <p class="text-xs text-zinc-300 font-mono leading-relaxed">${txt}</p>
+                    </div>`;
             });
         }
 
-        // --- LIBRARY LOGIC ---
-        const STORAGE_KEY = 'prompt_vault_v1';
-
+        // --- LIBRARY ---
         function getLibrary() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
-
         function saveToLibrary(text, category) {
             const lib = getLibrary();
-            const newItem = { id: Date.now(), text: text, category: category, date: new Date().toLocaleDateString() };
-            lib.unshift(newItem);
+            lib.unshift({ id: Date.now(), text: text, category: category, date: new Date().toLocaleDateString() });
             localStorage.setItem(STORAGE_KEY, JSON.stringify(lib));
-            showToast("Guardado en Librería");
-            // Auto refresh if looking at library
+            showToast("Guardado");
             if(!document.getElementById('view-library').classList.contains('hidden')) renderLibrary();
         }
-
         function renderLibrary() {
             const grid = document.getElementById('library-grid');
             const lib = getLibrary();
             const filterText = document.getElementById('lib-search').value.toLowerCase();
             const filterCat = document.getElementById('lib-filter').value;
-
             grid.innerHTML = '';
+            
+            const filtered = lib.filter(i => i.text.toLowerCase().includes(filterText) && (filterCat === 'all' || i.category === filterCat));
+            
+            if(filtered.length === 0) { grid.innerHTML = `<div class="col-span-2 text-center py-20 opacity-30 text-xs">Vacío</div>`; return; }
 
-            if(lib.length === 0) {
-                grid.innerHTML = `<div class="col-span-2 text-center py-20 opacity-30 text-xs uppercase">Librería vacía.<br>Guarda algo para empezar.</div>`;
-                return;
-            }
-
-            const filtered = lib.filter(item => {
-                const matchesText = item.text.toLowerCase().includes(filterText);
-                const matchesCat = filterCat === 'all' || item.category === filterCat;
-                return matchesText && matchesCat;
-            });
-
-            filtered.forEach(item => {
-                let catClass = `cat-${item.category}`;
-                // Botón de Remix agregado aquí:
+            filtered.forEach(i => {
                 grid.innerHTML += `
-                    <div class="glass-panel p-4 flex flex-col justify-between h-full fade-in relative group hover:bg-zinc-900 transition-colors">
+                    <div class="glass-panel p-4 flex flex-col justify-between h-full fade-in relative group hover:bg-zinc-900">
                         <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="cat-tag ${catClass}">${item.category}</span>
-                                <span class="text-[9px] text-zinc-600">${item.date}</span>
-                            </div>
-                            <p class="text-xs text-zinc-300 font-mono leading-relaxed mb-4 line-clamp-4 hover:line-clamp-none cursor-help">${item.text}</p>
+                            <div class="flex justify-between items-center mb-2"><span class="cat-tag cat-${i.category}">${i.category}</span><span class="text-[9px] text-zinc-600">${i.date}</span></div>
+                            <p class="text-xs text-zinc-300 font-mono leading-relaxed mb-4 line-clamp-4 hover:line-clamp-none cursor-help">${i.text}</p>
                         </div>
                         <div class="flex justify-between border-t border-zinc-800 pt-2 mt-2">
-                            <button onclick="deletePrompt(${item.id})" class="text-zinc-600 hover:text-red-400 transition-colors p-1"><i class="ph ph-trash"></i></button>
-                            
+                            <button onclick="deletePrompt(${i.id})" class="text-zinc-600 hover:text-red-400 p-1"><i class="ph ph-trash"></i></button>
                             <div class="flex gap-2">
-                                <button onclick="remixPrompt(${item.id})" class="text-blue-500 hover:text-white transition-colors text-[10px] font-bold uppercase flex items-center gap-1 bg-blue-900/20 px-2 rounded border border-blue-900/50 hover:bg-blue-600 hover:border-blue-600">
-                                    <i class="ph ph-arrows-shuffle"></i> Remix
-                                </button>
-                                <button onclick="copyText('${escapeHtml(item.text)}')" class="text-zinc-400 hover:text-white transition-colors p-1 text-xs font-bold uppercase"><i class="ph ph-copy"></i></button>
+                                <button onclick="startRemix(${i.id})" class="text-blue-500 hover:text-white text-[10px] font-bold uppercase flex items-center gap-1 bg-blue-900/20 px-2 rounded border border-blue-900/50 hover:bg-blue-600 hover:border-blue-600"><i class="ph ph-arrows-shuffle"></i> Remix</button>
+                                <button onclick="copyText('${escapeHtml(i.text)}')" class="text-zinc-400 hover:text-white p-1 text-xs font-bold uppercase"><i class="ph ph-copy"></i></button>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
         }
-
         function deletePrompt(id) {
             if(!confirm("¿Eliminar?")) return;
-            let lib = getLibrary();
-            lib = lib.filter(item => item.id !== id);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(lib));
-            renderLibrary();
-            showToast("Eliminado");
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(getLibrary().filter(i => i.id !== id)));
+            renderLibrary(); showToast("Eliminado");
         }
-
         function filterLibrary() { renderLibrary(); }
 
-        // --- REMIX LOGIC (VARIATIONS) ---
-        let currentRemixText = ""; // Temp storage
-
-        async function remixPrompt(id) {
-            const lib = getLibrary();
-            const original = lib.find(item => item.id === id);
-            if(!original) return;
-
-            // Open Modal
+        // --- REMIX ENGINE (FIXED) ---
+        function startRemix(id) {
+            const item = getLibrary().find(i => i.id === id);
+            if(!item) return;
+            currentRemixOriginalText = item.text; // Guardar referencia global
+            
             document.getElementById('remix-modal').classList.remove('hidden');
             document.getElementById('remix-modal').classList.add('flex');
             
-            // UI Loading
-            const contentArea = document.getElementById('remix-content');
-            const loader = document.getElementById('remix-loading');
-            contentArea.classList.add('hidden');
-            loader.classList.remove('hidden');
+            // Iniciar remix inmediatamente
+            executeRemix(); 
+        }
 
-            const system = "You are a Remix Engine. Rewrite the user's prompt keeping the core subject but changing the artistic style, camera angle, and lighting slightly. Output ONLY the new prompt text in English.";
-            const user = `Create a creative variation of this prompt: "${original.text}"`;
+        async function executeRemix() {
+            if(!currentRemixOriginalText) return;
+
+            // UI Changes
+            const area = document.getElementById('remix-content');
+            const load = document.getElementById('remix-loading');
+            area.classList.add('hidden');
+            load.classList.remove('hidden');
+
+            // INYECCIÓN DE CAOS (RANDOM FLAVOR)
+            const flavors = [
+                "Make it darker and gloomier", "Make it vibrant and neon", "Change to minimalist style", 
+                "Make it horror style", "Make it dreamy and pastel", "Convert to 1980s VHS style", 
+                "Make it extremely futuristic", "Change camera to macro extreme close-up"
+            ];
+            const randomFlavor = flavors[Math.floor(Math.random() * flavors.length)];
+            
+            // SYSTEM PROMPT DINÁMICO
+            const system = `You are a Remix Engine. Rewrite the prompt keeping the subject but APPLY THIS CHANGE: '${randomFlavor}'. Output ONLY English text.`;
+            const user = `Remix this prompt: "${currentRemixOriginalText}"`;
 
             try {
-                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&seed=${Math.random()}`;
+                // Seed aleatoria real para romper caché
+                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&seed=${Math.floor(Math.random() * 9999999)}`;
                 const res = await fetch(url);
                 const text = await res.text();
                 
-                currentRemixText = text; // Guardar para usar en botón "Guardar"
-                contentArea.value = text;
-                
-                loader.classList.add('hidden');
-                contentArea.classList.remove('hidden');
+                area.value = text;
+                area.classList.remove('hidden');
+                load.classList.add('hidden');
             } catch(e) {
-                contentArea.value = "Error generando variación. Intenta de nuevo.";
-                loader.classList.add('hidden');
-                contentArea.classList.remove('hidden');
+                area.value = "Error en Remix. Intenta otra vez.";
+                area.classList.remove('hidden');
+                load.classList.add('hidden');
             }
         }
 
         function saveRemix() {
-            if(!currentRemixText) return;
-            saveToLibrary(currentRemixText, 'general'); // Se guarda como General por defecto
+            const text = document.getElementById('remix-content').value;
+            if(!text) return;
+            saveToLibrary(text, 'general');
             closeModal('remix-modal');
         }
 
-        // --- MODAL UTILS ---
-        function openModal() {
-            document.getElementById('manual-modal').classList.remove('hidden');
-            document.getElementById('manual-modal').classList.add('flex');
-        }
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-            document.getElementById(id).classList.remove('flex');
-        }
+        // --- UTILS ---
+        function openModal() { document.getElementById('manual-modal').classList.remove('hidden'); document.getElementById('manual-modal').classList.add('flex'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
         function saveManualPrompt() {
-            const content = document.getElementById('manual-content').value;
-            const cat = document.getElementById('manual-category').value;
-            if(!content) return alert("Escribe algo...");
-            saveToLibrary(content, cat);
-            document.getElementById('manual-content').value = "";
-            closeModal('manual-modal');
-            switchTab('library');
+            const c = document.getElementById('manual-content').value;
+            if(!c) return;
+            saveToLibrary(c, document.getElementById('manual-category').value);
+            closeModal('manual-modal'); switchTab('library');
         }
-
-        // --- HELPERS ---
-        function copyText(text) {
-            navigator.clipboard.writeText(text);
-            showToast("Copiado");
+        function copyText(t) { navigator.clipboard.writeText(t); showToast("Copiado"); }
+        function showToast(m) {
+            const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m;
+            t.classList.remove('translate-y-20'); setTimeout(() => t.classList.add('translate-y-20'), 2000);
         }
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = msg;
-            t.classList.remove('translate-y-20');
-            setTimeout(() => t.classList.add('translate-y-20'), 2000);
-        }
-        function escapeHtml(text) {
-            return text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        }
-        // Slider init
-        document.getElementById('chaos').addEventListener('input', (e) => {
-            document.getElementById('chaosVal').innerText = e.target.value + "%";
-        });
-        
-        // Cargar librería al inicio por si acaso
-        // renderLibrary(); 
+        function escapeHtml(t) { return t.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+        document.getElementById('chaos').addEventListener('input', (e) => document.getElementById('chaosVal').innerText = e.target.value + "%");
     </script>
 </body>
 </html>
