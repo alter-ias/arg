@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt Architect v7 - Character Detail</title>
+    <title>Prompt Architect v8 - Freedom</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
     <style>
@@ -11,123 +11,143 @@
         .panel { background: #0f0f11; border: 1px solid #27272a; border-radius: 6px; margin-bottom: 1rem; }
         .panel-header { background: #18181b; padding: 0.5rem 1rem; border-bottom: 1px solid #27272a; font-size: 0.7rem; font-weight: bold; letter-spacing: 0.1em; color: #71717a; text-transform: uppercase; }
         .input-group { padding: 1rem; }
-        .input-ui { background: #000; border: 1px solid #333; color: #fff; font-size: 0.75rem; width: 100%; padding: 0.5rem; border-radius: 4px; transition: border 0.2s; }
-        .input-ui:focus { border-color: #3b82f6; outline: none; }
+        /* Inputs ahora tienen indicador de que son editables */
+        .input-ui { background: #000; border: 1px solid #333; color: #fff; font-size: 0.75rem; width: 100%; padding: 0.6rem; border-radius: 4px; transition: border 0.2s, box-shadow 0.2s; }
+        .input-ui:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .input-ui::placeholder { color: #444; font-style: italic; }
         .label-ui { font-size: 0.65rem; color: #52525b; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 4px; }
-        .btn-gen { background: #2563eb; color: white; font-weight: bold; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.1em; transition: all 0.2s; }
-        .btn-gen:hover { background: #1d4ed8; box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); }
+        .btn-gen { background: linear-gradient(to right, #2563eb, #1d4ed8); color: white; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em; transition: all 0.2s; }
+        .btn-gen:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); }
         .tag-result { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; background: #27272a; color: #a1a1aa; }
+        
+        /* Personalización del scrollbar */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #0f0f11; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #444; }
     </style>
 </head>
 <body class="p-4 md:p-8 min-h-screen">
     <div class="max-w-7xl mx-auto">
-        <header class="mb-8 flex justify-between items-end border-b border-zinc-800 pb-4">
+        <header class="mb-6 flex justify-between items-end border-b border-zinc-800 pb-4">
             <div>
-                <h1 class="text-2xl font-bold tracking-tighter text-white">PROMPT_ENGINE <span class="text-blue-500">v7.0</span></h1>
-                <p class="text-[10px] text-zinc-500 mt-1">CHARACTER & TECHNICAL CONTROL SYSTEM</p>
+                <h1 class="text-2xl font-bold tracking-tighter text-white">PROMPT_ENGINE <span class="text-blue-500">v8.0</span></h1>
+                <p class="text-[10px] text-zinc-500 mt-1 uppercase">Fully Editable Fields • Hybrid Input System</p>
             </div>
-            <div class="text-[9px] text-emerald-500 bg-emerald-950/30 px-2 py-1 border border-emerald-900 rounded">SYSTEM_READY</div>
+            <div class="text-[9px] text-blue-500 bg-blue-950/30 px-3 py-1 border border-blue-900 rounded-full animate-pulse">Ready</div>
         </header>
 
         <div class="grid lg:grid-cols-12 gap-6">
             
-            <aside class="lg:col-span-4 h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
+            <aside class="lg:col-span-4 h-[85vh] overflow-y-auto pr-2 custom-scroll">
                 
-                <div class="panel border-l-2 border-l-blue-600">
+                <div class="panel border-l-2 border-l-zinc-600">
                     <div class="panel-header">01 // NARRATIVE BASE</div>
-                    <div class="input-group space-y-3">
+                    <div class="input-group space-y-4">
                         <div>
-                            <label class="label-ui">Sujeto Principal</label>
-                            <input type="text" id="subject" value="A cyberpunk hacker" class="input-ui">
+                            <label class="label-ui">Sujeto (Escribe lo que quieras)</label>
+                            <input type="text" id="subject" placeholder="Ej: Un astronauta samurái" value="A cyberpunk hacker" class="input-ui">
                         </div>
                         <div>
                             <label class="label-ui">Escenario</label>
-                            <input type="text" id="scenario" value="Neon-lit rainy alleyway in Tokyo" class="input-ui">
+                            <input type="text" id="scenario" placeholder="Ej: Ciudad flotante" value="Neon-lit rainy alleyway in Tokyo" class="input-ui">
                         </div>
                         <div>
                             <label class="label-ui">Acción</label>
-                            <input type="text" id="action" value="Typing on a holographic keyboard" class="input-ui">
+                            <input type="text" id="action" placeholder="Ej: Saltando entre edificios" value="Typing on a holographic keyboard" class="input-ui">
                         </div>
                     </div>
                 </div>
 
                 <div class="panel border-l-2 border-l-purple-600">
-                    <div class="panel-header">02 // CHARACTER VISUALS</div>
-                    <div class="input-group space-y-3">
+                    <div class="panel-header flex justify-between">
+                        <span>02 // CHARACTER VISUALS</span>
+                        <span class="text-[8px] opacity-50 lowercase self-center">escribe o selecciona</span>
+                    </div>
+                    <div class="input-group space-y-4">
+                        
                         <div>
                             <label class="label-ui">Estilo de Peinado</label>
-                            <select id="hair" class="input-ui">
-                                <option value="Short messy pixie cut">Short Messy Pixie</option>
-                                <option value="Long flowing wavy hair">Long Flowing Wavy</option>
-                                <option value="Buzz cut military style">Buzz Cut (Military)</option>
-                                <option value="Cyberpunk neon dreadlocks">Neon Dreadlocks</option>
-                                <option value="Slicked back elegant">Slicked Back</option>
-                                <option value="Afro natural style">Natural Afro</option>
-                                <option value="Bald shiny head">Bald / Shaved</option>
-                                <option value="Viking braids complex">Viking Braids</option>
-                                <option value="Bob cut with bangs">Bob with Bangs</option>
-                            </select>
+                            <input list="hair-options" id="hair" class="input-ui" placeholder="Escribe tu propio estilo o selecciona...">
+                            <datalist id="hair-options">
+                                <option value="Voluminous, long, elegant and beautiful hair">Abundante, largo, elegante y hermoso</option>
+                                <option value="Short messy pixie cut">Corto y desordenado (Pixie)</option>
+                                <option value="Buzz cut military style">Militar rapado</option>
+                                <option value="Cyberpunk neon dreadlocks">Rastas de neón</option>
+                                <option value="Slicked back elegant">Elegante hacia atrás</option>
+                                <option value="Viking braids complex">Trenzas vikingas</option>
+                                <option value="Bald shiny head">Calvo/Rapado</option>
+                            </datalist>
                         </div>
+
                         <div>
                             <label class="label-ui">Vestimenta (Outfit)</label>
-                            <select id="outfit" class="input-ui">
-                                <option value="High-tech tactical armor">Tactical Tech Armor</option>
-                                <option value="Vintage Victorian suit">Vintage Victorian Suit</option>
-                                <option value="Oversized streetwear hoodie">Streetwear Hoodie</option>
-                                <option value="Elegant evening gown silk">Elegant Silk Gown</option>
-                                <option value="Worn-out leather jacket">Worn Leather Jacket</option>
-                                <option value="Futuristic space suit">Space Suit</option>
-                                <option value="Minimalist japanese linen">Minimalist Linen</option>
-                                <option value="Steampunk mechanic gear">Steampunk Gear</option>
-                                <option value="Haute Couture avant-garde">Haute Couture</option>
-                            </select>
+                            <input list="outfit-options" id="outfit" class="input-ui" placeholder="Describe la ropa...">
+                            <datalist id="outfit-options">
+                                <option value="High-tech tactical armor">Armadura Táctica</option>
+                                <option value="Vintage Victorian suit">Traje Victoriano</option>
+                                <option value="Elegant evening gown silk">Vestido de Seda</option>
+                                <option value="Worn-out leather jacket">Chaqueta de cuero gastada</option>
+                                <option value="Minimalist japanese linen">Lino minimalista japonés</option>
+                                <option value="Futuristic space suit">Traje espacial</option>
+                                <option value="Haute Couture avant-garde">Alta Costura Avant-garde</option>
+                            </datalist>
                         </div>
                     </div>
                 </div>
 
                 <div class="panel border-l-2 border-l-emerald-600">
                     <div class="panel-header">03 // TECHNICAL SPECS</div>
-                    <div class="input-group space-y-3">
+                    <div class="input-group space-y-4">
+                        
                         <div>
                             <label class="label-ui">Tipo de Toma (Shot)</label>
-                            <select id="shot" class="input-ui">
-                                <option value="Medium Shot (Waist up)">Medium Shot</option>
-                                <option value="Extreme Close-up (Macro)">Extreme Close-up</option>
-                                <option value="Full Body Shot">Full Body Shot</option>
-                                <option value="Wide Angle Cinematic">Wide Angle</option>
-                                <option value="Low Angle Heroic">Low Angle (Hero)</option>
-                                <option value="Over-the-shoulder">Over the Shoulder</option>
-                            </select>
+                            <input list="shot-options" id="shot" class="input-ui" placeholder="Tipo de cámara..." value="Medium Shot (Waist up)">
+                            <datalist id="shot-options">
+                                <option value="Extreme Close-up (Macro)">Macro / Ojo / Detalle</option>
+                                <option value="Medium Shot (Waist up)">Plano Medio</option>
+                                <option value="Full Body Shot">Cuerpo Completo</option>
+                                <option value="Wide Angle Cinematic">Gran Angular</option>
+                                <option value="Low Angle Heroic">Contrapicado (Heroico)</option>
+                                <option value="Bird's Eye View">Vista de Pájaro</option>
+                                <option value="Selfie style fisheye">Selfie Ojo de Pez</option>
+                            </datalist>
                         </div>
+
                         <div>
                             <label class="label-ui">Estilo Visual</label>
-                            <select id="style" class="input-ui">
-                                <option value="Hyper-realistic Photography">Hyper-Realism</option>
-                                <option value="Cinematic Movie Still">Cinematic Movie</option>
-                                <option value="3D Render Unreal Engine 5">3D Render (UE5)</option>
-                                <option value="Oil Painting Classic">Oil Painting</option>
-                                <option value="Anime Studio Ghibli">Anime Style</option>
-                                <option value="Dark Fantasy Concept Art">Dark Fantasy</option>
-                                <option value="Vintage 1980s Polaroid">Vintage Polaroid</option>
-                            </select>
+                            <input list="style-options" id="style" class="input-ui" placeholder="Estilo artístico..." value="Hyper-realistic Photography">
+                            <datalist id="style-options">
+                                <option value="Hyper-realistic Photography">Fotorealismo</option>
+                                <option value="Cinematic Movie Still">Cine</option>
+                                <option value="Anime Studio Ghibli">Anime Ghibli</option>
+                                <option value="Dark Fantasy Concept Art">Fantasía Oscura</option>
+                                <option value="Vintage 1980s Polaroid">Polaroid 80s</option>
+                                <option value="Oil Painting Classic">Pintura al Óleo</option>
+                                <option value="3D Render Unreal Engine 5">Render 3D</option>
+                                <option value="Black and White Film Noir">Cine Negro (B&W)</option>
+                            </datalist>
                         </div>
+
                         <div>
-                            <label class="label-ui">Nivel de Caos</label>
-                            <input type="range" id="chaos" min="0" max="100" value="40" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer mt-2">
-                            <div class="text-right text-[9px] text-zinc-500 mt-1" id="chaosVal">40%</div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="label-ui">Nivel de Caos / Creatividad</label>
+                                <span class="text-[9px] text-blue-400 font-mono" id="chaosVal">40%</span>
+                            </div>
+                            <input type="range" id="chaos" min="0" max="100" value="40" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer">
                         </div>
                     </div>
                 </div>
 
-                <button onclick="generate()" id="btn" class="w-full py-4 rounded btn-gen mb-10">
-                    INICIAR GENERACIÓN
+                <button onclick="generate()" id="btn" class="w-full py-4 rounded btn-gen mb-10 shadow-lg shadow-blue-900/20">
+                    GENERAR ARQUITECTURA
                 </button>
             </aside>
 
             <main class="lg:col-span-8 space-y-4" id="output">
-                <div class="border border-dashed border-zinc-800 rounded-lg h-full flex flex-col items-center justify-center text-zinc-600 p-10 opacity-50">
-                    <svg class="w-10 h-10 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                    <p class="text-xs uppercase tracking-widest">Esperando configuración de parámetros...</p>
+                <div class="border border-dashed border-zinc-800 rounded-lg h-full flex flex-col items-center justify-center text-zinc-600 p-10 opacity-40">
+                    <svg class="w-12 h-12 mb-4 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    <p class="text-xs uppercase tracking-widest font-mono">Esperando datos de entrada...</p>
                 </div>
             </main>
         </div>
@@ -138,87 +158,99 @@
             const btn = document.getElementById('btn');
             const out = document.getElementById('output');
             
-            // Recolección de datos
+            // Recolección (Ahora acepta valores escritos a mano)
             const data = {
-                subject: document.getElementById('subject').value,
-                scenario: document.getElementById('scenario').value,
-                action: document.getElementById('action').value,
-                hair: document.getElementById('hair').value,
-                outfit: document.getElementById('outfit').value,
-                shot: document.getElementById('shot').value,
-                style: document.getElementById('style').value,
+                subject: document.getElementById('subject').value || "A person",
+                scenario: document.getElementById('scenario').value || "Void",
+                action: document.getElementById('action').value || "Standing",
+                hair: document.getElementById('hair').value || "Natural hair", // Toma lo escrito o lo seleccionado
+                outfit: document.getElementById('outfit').value || "Casual clothes",
+                shot: document.getElementById('shot').value || "Portrait",
+                style: document.getElementById('style').value || "Realistic",
                 chaos: document.getElementById('chaos').value
             };
 
-            // UI Loading
+            // Loading state
             btn.disabled = true;
-            btn.innerText = "PROCESANDO ENTORNO...";
-            out.innerHTML = `<div class="p-10 text-center text-blue-500 font-bold text-xs uppercase animate-pulse">Consultando red neuronal Mistral...</div>`;
+            btn.innerHTML = `<span class="animate-pulse">CONSTRUYENDO PROMPTS...</span>`;
+            out.innerHTML = `<div class="p-12 text-center text-blue-500 font-bold text-xs uppercase animate-pulse tracking-widest border border-blue-900/30 bg-blue-900/10 rounded-lg">Inyectando variables en Mistral AI...</div>`;
 
-            // Lógica de Caos
-            let chaosPrompt = "Mantén la descripción coherente y precisa.";
-            if(data.chaos > 50) chaosPrompt = "Añade detalles creativos inesperados y una atmósfera única.";
-            if(data.chaos > 80) chaosPrompt = "Sé experimental, abstracto y rompe las reglas de composición estándar.";
+            // Lógica de Caos dinámica
+            let creativeInstruction = "Ensure high coherence and strict adherence to the description.";
+            if(data.chaos > 50) creativeInstruction = "Add creative flair, atmospheric lighting details and interesting textures.";
+            if(data.chaos > 85) creativeInstruction = "Be extremely artistic, abstract, and surprise the user with unique interpretations.";
 
-            // Construcción del Prompt Maestro
-            const system = `Eres un Prompt Engineer de élite. Genera 4 prompts en INGLÉS detallados.
-            Usa ESTRICTAMENTE este formato: [P1]prompt[/P1] [P2]prompt[/P2] [P3]prompt[/P3] [P4]prompt[/P4].
-            Parámetros obligatorios:
-            - Shot: ${data.shot}
-            - Style: ${data.style}
-            - Creativity: ${chaosPrompt}`;
-
-            const userPrompt = `Crea variaciones para un personaje:
-            Sujeto: ${data.subject}.
-            Peinado: ${data.hair}.
-            Vestimenta: ${data.outfit}.
-            Acción: ${data.action}.
-            Escenario: ${data.scenario}.
+            // Prompt de Sistema mejorado
+            const system = `You are an expert AI Prompt Engineer. Create 4 distinct, high-quality prompts in ENGLISH.
+            FORMAT: [P1]text[/P1] [P2]text[/P2] [P3]text[/P3] [P4]text[/P4].
             
-            Output 4 Variations:
-            1. Photorealistic (High detail)
-            2. Artistic/Stylized
-            3. Cinematic/Action (For video)
-            4. Niji/Anime or Abstract`;
+            MANDATORY VARIABLES TO INCLUDE:
+            - Shot Type: ${data.shot}
+            - Art Style: ${data.style}
+            - Creativity Level: ${creativeInstruction}
+            
+            Note: If the user inputs Spanish, TRANSLATE the final prompt content to English for better compatibility with image generators.`;
+
+            // Prompt de Usuario
+            const userPrompt = `Generate 4 variations for:
+            Subject: ${data.subject}
+            Hair: ${data.hair}
+            Outfit: ${data.outfit}
+            Action: ${data.action}
+            Location: ${data.scenario}
+            
+            Variations required:
+            1. Photorealistic (8k, detailed)
+            2. Artistic/Illustration (Creative)
+            3. Cinematic/Motion (Action-oriented)
+            4. Niji/Anime or Stylized`;
 
             try {
-                // Llamada a Mistral
-                const url = `https://text.pollinations.ai/${encodeURIComponent(userPrompt)}?system=${encodeURIComponent(system)}&model=mistral&seed=${Math.floor(Math.random() * 99999)}`;
-                const req = await fetch(url);
-                const text = await req.text();
+                const url = `https://text.pollinations.ai/${encodeURIComponent(userPrompt)}?system=${encodeURIComponent(system)}&model=mistral&seed=${Math.floor(Math.random() * 999999)}`;
+                const response = await fetch(url);
+                const text = await response.text();
 
-                // Extracción con Regex
+                // Extracción resiliente
                 const extract = (n) => {
                     const match = text.match(new RegExp(`\\[P${n}\\]([\\s\\S]*?)\\[\\/P${n}\\]`, 'i'));
-                    return match ? match[1].trim() : "Generación fallida. Intente de nuevo.";
+                    return match ? match[1].trim() : "Error: El modelo no generó esta variante. Intenta de nuevo.";
                 };
 
-                // Renderizado
-                const labels = ["PHOTOGRAPHY PROMPT", "ARTISTIC PROMPT", "VIDEO/MOTION PROMPT", "STYLIZED/NIJI PROMPT"];
-                const borders = ["border-blue-500/30", "border-purple-500/30", "border-emerald-500/30", "border-orange-500/30"];
-                const textCols = ["text-blue-400", "text-purple-400", "text-emerald-400", "text-orange-400"];
+                // Configuración de visualización
+                const variants = [
+                    { title: "PHOTOREALISTIC", border: "border-blue-500", text: "text-blue-400" },
+                    { title: "ARTISTIC / CONCEPT", border: "border-purple-500", text: "text-purple-400" },
+                    { title: "CINEMATIC MOTION", border: "border-emerald-500", text: "text-emerald-400" },
+                    { title: "STYLIZED / NIJI", border: "border-orange-500", text: "text-orange-400" }
+                ];
 
                 out.innerHTML = '';
-                labels.forEach((label, i) => {
+                variants.forEach((v, i) => {
                     out.innerHTML += `
-                        <div class="panel p-5 border ${borders[i]} hover:bg-zinc-900 transition-colors group relative">
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-[10px] font-bold ${textCols[i]} tracking-widest">${label}</span>
-                                <button onclick="copyToClip(this)" class="text-[9px] bg-zinc-800 px-2 py-1 rounded text-zinc-400 hover:text-white hover:bg-zinc-700 uppercase transition-all">Copiar</button>
+                        <div class="panel p-6 border-l-4 ${v.border} bg-[#0a0a0c] hover:bg-[#111113] transition-colors relative group">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-[10px] font-bold ${v.text} tracking-widest mb-1">${v.title}</h3>
+                                    <div class="flex gap-2 text-[8px] text-zinc-500 uppercase">
+                                        <span>${data.style.substring(0, 15)}...</span>
+                                        <span>•</span>
+                                        <span>${data.shot}</span>
+                                    </div>
+                                </div>
+                                <button onclick="copyToClip(this)" class="text-[9px] border border-zinc-700 hover:border-white px-3 py-1 rounded text-zinc-400 hover:text-white uppercase transition-all">Copiar</button>
                             </div>
-                            <p class="text-xs text-zinc-300 leading-relaxed font-mono selection:bg-blue-500 selection:text-white">${extract(i+1)}</p>
-                            <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <span class="tag-result">${data.style}</span>
-                            </div>
+                            <p class="text-sm text-zinc-300 leading-relaxed font-mono selection:bg-blue-900 selection:text-white">${extract(i+1)}</p>
                         </div>
                     `;
                 });
 
             } catch (err) {
-                out.innerHTML = `<div class="p-4 bg-red-900/20 border border-red-800 text-red-400 text-xs">Error de conexión con la IA. Verifica tu internet o recarga la página.</div>`;
+                out.innerHTML = `<div class="p-6 border border-red-800 bg-red-900/10 text-red-400 text-sm font-mono text-center">
+                    ERROR DE CONEXIÓN: La API de Pollinations está saturada o no responde. <br>Por favor espera 5 segundos e intenta de nuevo.
+                </div>`;
             } finally {
                 btn.disabled = false;
-                btn.innerText = "INICIAR GENERACIÓN";
+                btn.innerText = "GENERAR ARQUITECTURA";
             }
         }
 
@@ -226,12 +258,16 @@
             const text = btn.parentElement.nextElementSibling.innerText;
             navigator.clipboard.writeText(text);
             const original = btn.innerText;
-            btn.innerText = "¡COPIADO!";
-            setTimeout(() => btn.innerText = original, 1500);
+            btn.innerText = "COPIADO";
+            btn.classList.add("bg-white", "text-black", "border-white");
+            setTimeout(() => {
+                btn.innerText = original;
+                btn.classList.remove("bg-white", "text-black", "border-white");
+            }, 1000);
         }
 
-        // Listener para el slider de Caos
-        document.getElementById('chaos').addEventListener('input', function(e) {
+        // Listener Slider
+        document.getElementById('chaos').addEventListener('input', (e) => {
             document.getElementById('chaosVal').innerText = e.target.value + "%";
         });
     </script>
