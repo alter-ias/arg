@@ -3,51 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt Engine v4 - Mistral Stable</title>
+    <title>Prompt Architect Pro - Chaos Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Space+Mono&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #09090b; color: #fafafa; font-family: 'Inter', sans-serif; }
+        body { background-color: #050505; color: #e2e8f0; font-family: 'Space Grotesk', sans-serif; }
         .mono { font-family: 'Space Mono', monospace; }
-        .card { background: #18181b; border: 1px solid #27272a; border-radius: 12px; }
-        .input-box { background: #09090b; border: 1px solid #3f3f46; transition: all 0.2s; }
-        .input-box:focus { border-color: #3b82f6; ring: 2px solid #3b82f6; outline: none; }
-        .btn-primary { background: #3b82f6; transition: all 0.2s; }
-        .btn-primary:hover { background: #2563eb; transform: translateY(-1px); }
-        .btn-primary:disabled { background: #27272a; cursor: not-allowed; }
-        .tag { font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
+        .card { background: #0f0f12; border: 1px solid #1f1f23; border-radius: 16px; }
+        .input-box { background: #16161a; border: 1px solid #27272a; transition: all 0.2s; }
+        .input-box:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 15px rgba(59, 130, 246, 0.1); }
+        .chaos-slider { -webkit-appearance: none; width: 100%; height: 4px; background: #27272a; border-radius: 5px; outline: none; }
+        .chaos-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: #3b82f6; border-radius: 50%; cursor: pointer; transition: 0.2s; }
+        .chaos-slider::-webkit-slider-thumb:hover { transform: scale(1.2); box-shadow: 0 0 10px #3b82f6; }
     </style>
 </head>
-<body class="p-4 md:p-10">
-    <div class="max-w-4xl mx-auto">
-        <header class="mb-10">
-            <h1 class="text-3xl font-bold tracking-tighter mono">PROMPT_GEN <span class="text-blue-500">v4</span></h1>
-            <p class="text-zinc-500 text-sm">Powered by Mistral via Pollinations AI</p>
+<body class="p-4 md:p-10 min-h-screen">
+    <div class="max-w-5xl mx-auto">
+        <header class="mb-12 flex justify-between items-end">
+            <div>
+                <h1 class="text-4xl font-bold tracking-tighter text-white">PROMPT_ENGINE <span class="text-blue-500 italic">v5</span></h1>
+                <p class="text-zinc-500 mono text-xs uppercase tracking-widest mt-2 italic">Chaos & Style Control Enabled</p>
+            </div>
         </header>
 
-        <div class="grid gap-8">
-            <section class="card p-6">
-                <div class="grid md:grid-cols-3 gap-4 mb-6">
-                    <div>
-                        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Sujeto</label>
-                        <input type="text" id="subject" placeholder="Milla Jovovich" class="w-full p-3 rounded-lg input-box text-sm">
+        <div class="grid lg:grid-cols-12 gap-8">
+            <aside class="lg:col-span-5 space-y-6">
+                <section class="card p-6 space-y-5">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-zinc-500 mb-2 uppercase mono">Sujeto Principal</label>
+                            <input type="text" id="subject" placeholder="Ej: Milla Jovovich" class="w-full p-3 rounded-lg input-box text-sm text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-zinc-500 mb-2 uppercase mono">Escenario</label>
+                            <input type="text" id="scenario" placeholder="Ej: Chateau Francés" class="w-full p-3 rounded-lg input-box text-sm text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-zinc-500 mb-2 uppercase mono">Acción</label>
+                            <input type="text" id="action" placeholder="Ej: Caminata" class="w-full p-3 rounded-lg input-box text-sm text-white">
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Escenario</label>
-                        <input type="text" id="scenario" placeholder="Jardín Chateau" class="w-full p-3 rounded-lg input-box text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Acción</label>
-                        <input type="text" id="action" placeholder="Caminata de modelo" class="w-full p-3 rounded-lg input-box text-sm">
-                    </div>
-                </div>
-                <button onclick="generate()" id="mainBtn" class="w-full btn-primary text-white font-bold py-4 rounded-xl shadow-lg uppercase tracking-widest text-sm">
-                    Generar Arquitectura de Prompts
-                </button>
-            </section>
 
-            <section id="results" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-500 mb-2 uppercase mono">Estilo Visual</label>
+                        <select id="style" class="w-full p-3 rounded-lg input-box text-sm text-white appearance-none">
+                            <option value="Hyper-realistic Cinematic">Realismo Cinematográfico</option>
+                            <option value="Cyberpunk Neon Dystopia">Cyberpunk / Futurista</option>
+                            <option value="Studio Ghibli Anime Style">Anime (Ghibli Style)</option>
+                            <option value="Dark Fantasy Oil Painting">Fantasía Oscura (Óleo)</option>
+                            <option value="Minimalist Bauhaus Design">Minimalismo / Bauhaus</option>
+                            <option value="Surrealist Dreamscape">Surrealismo</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="text-[10px] font-bold text-zinc-500 uppercase mono">Nivel de Caos (Aleatoriedad)</label>
+                            <span id="chaosVal" class="text-[10px] font-bold text-blue-500 mono">50%</span>
+                        </div>
+                        <input type="range" id="chaos" min="0" max="100" value="50" class="chaos-slider" oninput="document.getElementById('chaosVal').innerText = this.value + '%'">
+                    </div>
+
+                    <button onclick="generate()" id="mainBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg uppercase tracking-widest text-xs transition-all">
+                        Construir Variaciones
+                    </button>
                 </section>
+            </aside>
+
+            <main class="lg:col-span-7 space-y-4" id="results">
+                <div class="card p-20 text-center border-dashed border-2 border-zinc-800 opacity-30">
+                    <p class="mono text-sm uppercase tracking-widest">A la espera de parámetros...</p>
+                </div>
+            </main>
         </div>
     </div>
 
@@ -55,72 +82,71 @@
         async function generate() {
             const btn = document.getElementById('mainBtn');
             const results = document.getElementById('results');
+            
+            // Recopilación de datos
             const s = document.getElementById('subject').value || "Milla Jovovich";
-            const sc = document.getElementById('scenario').value || "Luxury garden";
-            const a = document.getElementById('action').value || "Walking";
+            const sc = document.getElementById('scenario').value || "French Chateau";
+            const act = document.getElementById('action').value || "Fashion walk";
+            const sty = document.getElementById('style').value;
+            const chaos = document.getElementById('chaos').value;
 
             btn.disabled = true;
-            btn.innerHTML = `<span class="animate-pulse">PROCESANDO...</span>`;
-            results.innerHTML = `<div class="text-center py-20 text-zinc-500 mono">Solicitando datos a Mistral...</div>`;
+            btn.innerHTML = `<span class="animate-pulse">SINTETIZANDO...</span>`;
+            results.innerHTML = `<div class="p-20 text-center text-blue-500 mono animate-pulse">INYECTANDO CAOS AL MODELO...</div>`;
 
-            // Instrucción sin JSON para evitar errores de sintaxis
-            const system = "Eres un experto en IA. Genera 4 prompts diferentes. Usa exactamente este formato para tu respuesta: [PHOTO]texto[/PHOTO] [ART]texto[/ART] [VIDEO]texto[/VIDEO] [LOGIC]texto[/LOGIC]. No escribas nada más.";
-            const user = `Genera prompts para: Sujeto: ${s}, Escenario: ${sc}, Acción: ${a}. En Inglés.`;
+            // Lógica de "Caos": Si es alto, pedimos a la IA que añada elementos inesperados
+            let chaosInstruction = "Be predictable and standard.";
+            if (chaos > 30) chaosInstruction = "Add creative and detailed elements.";
+            if (chaos > 70) chaosInstruction = "Be extremely wild, surreal, and add unexpected plot twists or visual metaphors.";
+
+            const system = `Eres un experto Ingeniero de Prompts. Genera 4 prompts en Inglés.
+            USA ESTE FORMATO: [P1]texto[/P1] [P2]texto[/P2] [P3]texto[/P3] [P4]texto[/P4].
+            Instrucciones: Estilo: ${sty}. Nivel de creatividad: ${chaosInstruction}.`;
+            
+            const user = `Prompt Base: ${s} en ${sc} realizando ${act}. Crea 4 variaciones únicas (Fotográfica, Artística, Dinámica y Técnica).`;
             
             try {
-                // Cambiamos a modelo Mistral para mayor estabilidad
-                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&seed=${Math.floor(Math.random()*9999)}`;
+                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&seed=${Math.floor(Math.random()*10000)}`;
                 
                 const response = await fetch(url);
                 const text = await response.text();
 
-                // Parser manual mediante etiquetas
-                const extract = (tag) => {
-                    const regex = new RegExp(`\\[${tag}\\]([\\s\\S]*?)\\[\\/${tag}\\]`, 'i');
+                const extract = (num) => {
+                    const regex = new RegExp(`\\[P${num}\\]([\\s\\S]*?)\\[\\/P${num}\\]`, 'i');
                     const match = text.match(regex);
-                    return match ? match[1].trim() : "No se pudo generar esta sección. Reintenta.";
+                    return match ? match[1].trim() : "Error en generación. Intenta de nuevo.";
                 };
 
-                const data = {
-                    photo: { title: "Fotografía Realista", content: extract("PHOTO"), color: "bg-orange-500/10 text-orange-500" },
-                    art: { title: "Concept Art / Ilustración", content: extract("ART"), color: "bg-purple-500/10 text-purple-500" },
-                    video: { title: "Movimiento / Video", content: extract("VIDEO"), color: "bg-emerald-500/10 text-emerald-500" },
-                    logic: { title: "Lógica de Agente IA", content: extract("LOGIC"), color: "bg-blue-500/10 text-blue-500" }
-                };
+                const titles = ["V1: VISUAL CINEMATIC", "V2: CONCEPT ART", "V3: MOTION & ACTION", "V4: LOGIC / SYSTEM"];
+                const colors = ["text-orange-400", "text-purple-400", "text-emerald-400", "text-blue-400"];
 
-                render(data);
+                results.innerHTML = '';
+                for(let i=1; i<=4; i++) {
+                    const content = extract(i);
+                    results.innerHTML += `
+                        <div class="card p-6 animate-in fade-in slide-in-from-right duration-500">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[10px] font-bold ${colors[i-1]} tracking-widest uppercase mono">${titles[i-1]}</span>
+                                <button onclick="copy(this)" class="text-[10px] text-zinc-600 hover:text-white mono uppercase">[Copiar]</button>
+                            </div>
+                            <p class="text-sm text-zinc-300 leading-relaxed mono">${content}</p>
+                        </div>
+                    `;
+                }
+
             } catch (error) {
-                results.innerHTML = `<div class="card p-6 border-red-500/50 text-red-400 text-sm mono">ERROR_API: El servicio de Pollinations no responde. Intenta de nuevo en unos segundos.</div>`;
+                results.innerHTML = `<div class="card p-6 border-red-500 text-red-500 mono">ERR_CONNECTION: Fallo en el enlace con Mistral.</div>`;
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Generar Arquitectura de Prompts";
+                btn.innerText = "Construir Variaciones";
             }
-        }
-
-        function render(data) {
-            const results = document.getElementById('results');
-            results.innerHTML = '';
-
-            Object.values(data).forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'card p-6 animate-in fade-in slide-in-from-bottom-2 duration-500';
-                div.innerHTML = `
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="tag ${item.color}">${item.title}</span>
-                        <button onclick="copy(this)" class="text-[10px] text-zinc-500 hover:text-white transition-colors mono">[COPIAR]</button>
-                    </div>
-                    <p class="text-zinc-300 text-sm leading-relaxed mono">${item.content}</p>
-                `;
-                results.appendChild(div);
-            });
         }
 
         function copy(btn) {
             const text = btn.parentElement.nextElementSibling.innerText;
             navigator.clipboard.writeText(text);
-            const original = btn.innerText;
-            btn.innerText = "[COPIADO!]";
-            setTimeout(() => btn.innerText = original, 1500);
+            btn.innerText = "[COPIADO]";
+            setTimeout(() => btn.innerText = "[COPIAR]", 1500);
         }
     </script>
 </body>
