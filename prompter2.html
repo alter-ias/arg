@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt Architect v15.1 - Stable</title>
+    <title>Prompt Architect v17 - Multi-Model</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -24,7 +24,6 @@
         .layout-grid { display: grid; grid-template-columns: 320px 1fr 320px; height: calc(100vh - 60px); gap: 1rem; }
         @media (max-width: 1024px) { .layout-grid { grid-template-columns: 1fr; height: auto; overflow-y: auto; display: flex; flex-direction: column; } }
 
-        /* Animation for adding items */
         @keyframes flash { 0% { background-color: rgba(59, 130, 246, 0.5); } 100% { background-color: transparent; } }
         .flash-effect { animation: flash 0.5s ease-out; }
     </style>
@@ -34,11 +33,18 @@
     <header class="h-[50px] flex justify-between items-center border-b border-zinc-800 mb-4 px-2">
         <div class="flex items-center gap-2">
             <i class="ph ph-cube-transparent text-blue-500 text-xl"></i>
-            <h1 class="font-bold tracking-tight text-white">MODULAR_<span class="text-blue-500">ARCHITECT</span> v15.1</h1>
+            <h1 class="font-bold tracking-tight text-white">MODULAR_<span class="text-blue-500">ARCHITECT</span> v17</h1>
         </div>
         <div class="flex gap-2">
-            <button onclick="clearBuilder()" class="text-xs text-zinc-400 hover:text-white flex items-center gap-1 bg-zinc-900 px-3 py-1 rounded border border-zinc-800"><i class="ph ph-trash"></i> Limpiar</button>
-            <button onclick="openSnippetModal()" class="text-xs bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1 rounded flex items-center gap-1"><i class="ph ph-plus"></i> Nuevo Bloque</button>
+            <button onclick="openDataModal()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1 rounded border border-zinc-700 flex items-center gap-2" title="Configuración y Datos">
+                <i class="ph ph-gear"></i> DATA
+            </button>
+            <button onclick="clearBuilder()" class="text-xs text-zinc-400 hover:text-white flex items-center gap-1 bg-zinc-900 px-3 py-1 rounded border border-zinc-800">
+                <i class="ph ph-trash"></i> Limpiar
+            </button>
+            <button onclick="openSnippetModal()" class="text-xs bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1 rounded flex items-center gap-1 shadow-lg shadow-blue-900/20">
+                <i class="ph ph-plus"></i> Nuevo Bloque
+            </button>
         </div>
     </header>
 
@@ -46,7 +52,7 @@
         
         <section class="flex flex-col h-full border-r border-zinc-800 pr-4 overflow-hidden min-h-[300px]">
             <div class="flex justify-between items-center mb-3 px-1">
-                <h2 class="text-xs font-bold text-zinc-500 uppercase tracking-widest"><i class="ph ph-books"></i> Mis Bloques</h2>
+                <h2 class="text-xs font-bold text-zinc-500 uppercase tracking-widest"><i class="ph ph-books"></i> Librería</h2>
                 <span class="text-[9px] text-zinc-600" id="lib-count">0</span>
             </div>
             <div class="mb-3">
@@ -67,7 +73,7 @@
                     <i class="ph ph-squares-four text-4xl mb-2"></i>
                     <p class="text-xs">Haz clic en los bloques de la izquierda</p>
                 </div>
-                </div>
+            </div>
 
             <div class="p-3 border-t border-zinc-800 bg-[#0f0f12]">
                 <div class="flex gap-2 mb-3">
@@ -75,14 +81,26 @@
                     <button onclick="addManualBlock()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 rounded text-xs font-bold">+</button>
                 </div>
                 
-                <div class="flex justify-between items-center mb-2">
-                    <label class="text-[9px] text-zinc-400 uppercase font-bold">Modo Fusión</label>
-                    <select id="fusion-mode" class="bg-black text-white text-[9px] border border-zinc-700 rounded p-1">
-                        <option value="coherent">Coherente (Unir)</option>
-                        <option value="remix">Creativo (Remix)</option>
-                        <option value="abstract">Abstracto (Raro)</option>
-                    </select>
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <div>
+                        <label class="text-[9px] text-zinc-400 uppercase font-bold block mb-1">Modelo IA</label>
+                        <select id="ai-model" class="input-dark !py-1 !text-[10px] bg-zinc-900 border-zinc-700">
+                            <option value="llama">Llama 3 (Meta) - Recomendado</option>
+                            <option value="qwen">Qwen 2.5 (Alibaba)</option>
+                            <option value="openai">OpenAI (GPT-4o)</option>
+                            <option value="mistral">Mistral (Nemo)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[9px] text-zinc-400 uppercase font-bold block mb-1">Modo Fusión</label>
+                        <select id="fusion-mode" class="input-dark !py-1 !text-[10px] bg-zinc-900 border-zinc-700">
+                            <option value="coherent">Coherente (Unir)</option>
+                            <option value="remix">Creativo (Remix)</option>
+                            <option value="abstract">Abstracto (Raro)</option>
+                        </select>
+                    </div>
                 </div>
+
                 <button onclick="fuseAndGenerate()" id="btn-fuse" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded text-xs uppercase tracking-widest shadow-lg shadow-blue-900/20 transition-all flex justify-center items-center gap-2">
                     <i class="ph ph-lightning"></i> FUSIONAR & GENERAR
                 </button>
@@ -103,48 +121,66 @@
             <textarea id="snip-content" rows="3" class="input-dark mb-4" placeholder="Ej: 'Iluminación dramática estilo Cyberpunk'"></textarea>
             <input type="text" id="snip-tags" class="input-dark mb-6" placeholder="Etiquetas: luz, estilo, etc...">
             <div class="flex justify-end gap-2">
-                <button onclick="closeModal()" class="text-xs text-zinc-400 hover:text-white px-4">Cancelar</button>
+                <button onclick="closeModal('snippet-modal')" class="text-xs text-zinc-400 hover:text-white px-4">Cancelar</button>
                 <button onclick="saveSnippet()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded">Guardar</button>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-5 right-5 bg-zinc-800 text-white px-4 py-2 rounded border border-zinc-700 text-xs font-bold transform translate-y-20 transition-transform duration-300 z-50 flex items-center gap-2">
+    <div id="data-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-[60] backdrop-blur-md">
+        <div class="bg-[#0f0f11] border border-zinc-700 p-8 rounded-xl w-full max-w-lg shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2"><i class="ph ph-database"></i> Gestión de Datos</h2>
+                <button onclick="closeModal('data-modal')" class="text-zinc-500 hover:text-white"><i class="ph ph-x text-lg"></i></button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800">
+                    <h3 class="text-xs font-bold text-white mb-2"><i class="ph ph-download-simple"></i> Exportar</h3>
+                    <button onclick="exportData()" class="w-full bg-zinc-800 hover:bg-zinc-700 text-white text-[10px] font-bold py-2 rounded border border-zinc-700">DESCARGAR</button>
+                </div>
+                <div class="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800">
+                    <h3 class="text-xs font-bold text-white mb-2"><i class="ph ph-upload-simple"></i> Importar</h3>
+                    <input type="file" id="import-file" class="hidden" onchange="importData(this)">
+                    <button onclick="document.getElementById('import-file').click()" class="w-full bg-zinc-800 hover:bg-zinc-700 text-white text-[10px] font-bold py-2 rounded border border-zinc-700">CARGAR</button>
+                </div>
+            </div>
+            
+             <div class="border-t border-zinc-800 pt-4 mt-4">
+                <p class="text-[9px] text-zinc-500 mb-2">¿Vienes de una versión antigua?</p>
+                <button onclick="migrateLegacyData()" class="text-xs text-blue-400 hover:text-blue-300 underline">Buscar y migrar datos antiguos</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 bg-zinc-800 text-white px-4 py-2 rounded border border-zinc-700 text-xs font-bold transform translate-y-20 transition-transform duration-300 z-[70] flex items-center gap-2 shadow-xl">
         <i class="ph ph-check-circle text-emerald-400"></i> <span id="toast-msg">OK</span>
     </div>
 
     <script>
-        // --- ESTADO ---
-        const STORAGE_KEY = 'modular_vault_v15_1';
-        let builderStack = []; // Los bloques que están en la mesa
-        
-        // Datos iniciales si está vacío
-        const seeds = [
-            { id: 1, text: "Retrato cinemático 8k", tags: ["base", "foto"] },
-            { id: 2, text: "Cyberpunk neon city", tags: ["escenario", "scifi"] },
-            { id: 3, text: "Iluminación volumétrica dramática", tags: ["luz"] },
-            { id: 4, text: "Lente 35mm f/1.8", tags: ["técnico"] },
-            { id: 5, text: "Estilo Anime Studio Ghibli", tags: ["estilo"] }
-        ];
+        // --- CONSTANTES ---
+        const CURRENT_KEY = 'modular_vault_v16'; 
+        const LEGACY_KEY = 'prompt_vault_v1';
+        let builderStack = []; 
 
-        // --- LIBRERÍA ---
+        // --- LIBRERÍA CORE ---
         function getLibrary() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            return data ? JSON.parse(data) : seeds;
+            const data = localStorage.getItem(CURRENT_KEY);
+            return data ? JSON.parse(data) : [];
         }
 
         function saveToLibrary(item) {
             const lib = getLibrary();
             lib.unshift(item);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(lib));
+            localStorage.setItem(CURRENT_KEY, JSON.stringify(lib));
             renderLibrary();
         }
 
         function deleteFromLibrary(id, event) {
-            if(event) event.stopPropagation(); // Evita que se añada al constructor al borrar
-            if(!confirm("¿Borrar?")) return;
+            if(event) event.stopPropagation();
+            if(!confirm("¿Borrar permanentemente?")) return;
             const lib = getLibrary().filter(i => i.id !== id);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(lib));
+            localStorage.setItem(CURRENT_KEY, JSON.stringify(lib));
             renderLibrary();
         }
 
@@ -157,16 +193,20 @@
             
             const filtered = lib.filter(item => {
                 const textMatch = item.text.toLowerCase().includes(search);
-                const tagMatch = item.tags.some(t => t.toLowerCase().includes(search));
+                const tagMatch = item.tags && item.tags.some(t => t.toLowerCase().includes(search));
                 return textMatch || tagMatch;
             });
 
             document.getElementById('lib-count').innerText = filtered.length;
 
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 opacity-30 text-xs">Sin bloques.<br>Crea uno nuevo.</div>`;
+                return;
+            }
+
             filtered.forEach(item => {
-                const tagsHtml = item.tags.map(t => `<span class="tag-pill">#${t}</span>`).join('');
+                const tagsHtml = item.tags ? item.tags.map(t => `<span class="tag-pill">#${t}</span>`).join('') : '';
                 
-                // Usamos onclick explícito pasando el ID
                 const div = document.createElement('div');
                 div.className = 'glass-panel p-3 group relative cursor-pointer hover:border-blue-500';
                 div.onclick = () => addToBuilder(item.id); 
@@ -176,7 +216,7 @@
                         <div class="flex flex-wrap gap-1 mb-1">${tagsHtml}</div>
                         <button onclick="deleteFromLibrary(${item.id}, event)" class="text-zinc-600 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"><i class="ph ph-trash"></i></button>
                     </div>
-                    <p class="text-xs text-zinc-300 font-mono leading-tight">${item.text}</p>
+                    <p class="text-xs text-zinc-300 font-mono leading-tight line-clamp-3">${item.text}</p>
                     <div class="absolute right-2 bottom-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <i class="ph ph-plus-circle text-blue-500 text-lg"></i>
                     </div>
@@ -185,15 +225,12 @@
             });
         }
 
-        // --- CONSTRUCTOR (BUILDER) ---
+        // --- CONSTRUCTOR ---
         function addToBuilder(id) {
-            // Buscamos el item original
             const lib = getLibrary();
             const item = lib.find(i => i.id === id);
             if(!item) return;
-
-            // Añadimos a la pila con un UID único (para poder borrar si hay repetidos)
-            builderStack.push({ ...item, uid: Date.now() + Math.random() });
+            builderStack.push({ ...item, uid: Date.now() + Math.random() }); 
             renderBuilder();
             showToast("Bloque añadido");
         }
@@ -213,32 +250,26 @@
         }
 
         function clearBuilder() {
+            if(builderStack.length > 0 && !confirm("¿Limpiar mesa de trabajo?")) return;
             builderStack = [];
             renderBuilder();
         }
 
         function renderBuilder() {
             const container = document.getElementById('builder-stack');
-            const emptyState = document.getElementById('empty-state');
-            
-            // Limpiamos los bloques existentes (pero mantenemos el emptyState en el DOM si es necesario re-mostrarlo)
-            // Estrategia más segura: Regenerar todo el HTML
-            
-            let html = '';
             
             if(builderStack.length === 0) {
-                // Si está vacío, mostramos el mensaje
                 container.innerHTML = `
                 <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center opacity-20 pointer-events-none">
                     <i class="ph ph-squares-four text-4xl mb-2"></i>
                     <p class="text-xs">Haz clic en los bloques de la izquierda</p>
                 </div>`;
             } else {
-                // Si hay bloques, generamos la lista
+                let html = '';
                 builderStack.forEach((block, index) => {
                     html += `
                     <div class="bg-[#1f1f22] border-l-2 border-blue-500 p-2 rounded mb-2 flex justify-between items-center flash-effect">
-                        <div class="overflow-hidden">
+                        <div class="overflow-hidden pr-2">
                             <div class="text-[9px] text-blue-400 font-bold uppercase mb-0.5">BLOQUE ${index + 1}</div>
                             <div class="text-zinc-200 font-mono text-xs truncate">${block.text}</div>
                         </div>
@@ -247,43 +278,44 @@
                 });
                 container.innerHTML = html;
             }
-            
             document.getElementById('stack-count').innerText = `${builderStack.length} bloques`;
         }
 
-        // --- FUSIÓN IA ---
+        // --- FUSIÓN IA (UPDATED WITH MODEL SELECTOR) ---
         async function fuseAndGenerate() {
-            if(builderStack.length === 0) return showToast("Mesa vacía. Añade bloques.");
+            if(builderStack.length === 0) return showToast("Mesa vacía.");
             
             const btn = document.getElementById('btn-fuse');
             const results = document.getElementById('results-area');
             const mode = document.getElementById('fusion-mode').value;
+            const model = document.getElementById('ai-model').value; // NUEVO SELECTOR
             
             const combinedText = builderStack.map(b => b.text).join(", ");
             
             btn.disabled = true;
-            btn.innerHTML = `<i class="ph ph-spinner animate-spin"></i> PROCESANDO...`;
-            results.innerHTML = `<div class="p-6 text-center text-xs text-blue-400 animate-pulse border border-blue-900/30 rounded bg-blue-900/10">Analizando ${builderStack.length} bloques...</div>`;
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin"></i> (${model.toUpperCase()})...`;
+            results.innerHTML = `<div class="p-6 text-center text-xs text-blue-400 animate-pulse border border-blue-900/30 rounded bg-blue-900/10">Consultando a ${model}...</div>`;
 
             let instruction = "Combine carefully.";
             if(mode === 'remix') instruction = "Creative Remix: Change style but keep elements.";
-            if(mode === 'abstract') instruction = "Abstract Interpretation: Make it surreal and weird.";
+            if(mode === 'abstract') instruction = "Abstract Interpretation: Make it surreal.";
 
             const system = `You are a Prompt Architect. 
-            INPUT BLOCKS: "${combinedText}".
+            INPUT: "${combinedText}".
             TASK: ${instruction}
-            OUTPUT JSON: {"v1": "Main Version", "v2": "Alternative Lighting/Angle", "v3": "Creative Variation"}.
+            OUTPUT JSON ONLY: {"v1": "Main Version", "v2": "Alternative Lighting", "v3": "Creative Variation"}.
             Translate to English 8k prompt format.`;
 
             const user = `Fuse: ${combinedText}`;
 
             try {
-                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=mistral&json=true&seed=${Math.random()}`;
+                // INYECTAMOS EL MODELO EN LA URL
+                const url = `https://text.pollinations.ai/${encodeURIComponent(user)}?system=${encodeURIComponent(system)}&model=${model}&json=true&seed=${Math.random()}`;
                 const res = await fetch(url);
                 const json = await res.json();
                 renderResults(json);
             } catch (e) {
-                results.innerHTML = `<div class="text-red-400 text-xs text-center border border-red-900 p-2 rounded">Error en conexión. Reintenta.</div>`;
+                results.innerHTML = `<div class="text-red-400 text-xs text-center border border-red-900 p-2 rounded">Error en conexión. Prueba otro modelo.</div>`;
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="ph ph-lightning"></i> FUSIONAR & GENERAR`;
@@ -296,7 +328,7 @@
             
             Object.entries(data).forEach(([key, val]) => {
                 container.innerHTML += `
-                    <div class="glass-panel p-3 border-l-2 border-emerald-500 group">
+                    <div class="glass-panel p-3 border-l-2 border-emerald-500 group fade-in">
                         <div class="flex justify-between items-start mb-2">
                             <span class="text-[9px] font-bold text-emerald-400 uppercase">VAR ${key}</span>
                             <div class="flex gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
@@ -310,9 +342,51 @@
             });
         }
 
+        // --- BACKUP & MIGRATION ---
+        function migrateLegacyData() {
+            const legacyData = localStorage.getItem(LEGACY_KEY);
+            if (!legacyData) { alert("No se encontraron datos antiguos."); return; }
+            try {
+                const old = JSON.parse(legacyData);
+                old.forEach(p => saveToLibrary({ id: Date.now() + Math.random(), text: p.text, tags: [p.category || 'legacy'] }));
+                alert(`¡Migrados ${old.length} bloques!`);
+                closeModal('data-modal');
+            } catch (e) { alert("Error migrando datos."); }
+        }
+
+        function exportData() {
+            const data = localStorage.getItem(CURRENT_KEY);
+            const blob = new Blob([data], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            showToast("Backup Descargado");
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    if (Array.isArray(json)) {
+                        localStorage.setItem(CURRENT_KEY, JSON.stringify(json));
+                        renderLibrary();
+                        showToast("Librería Importada");
+                        closeModal('data-modal');
+                    } else { alert("Formato incorrecto."); }
+                } catch (err) { alert("Error de archivo."); }
+            };
+            reader.readAsText(file);
+        }
+
         // --- UTILS ---
         function openSnippetModal() { document.getElementById('snippet-modal').classList.remove('hidden'); document.getElementById('snippet-modal').classList.add('flex'); }
-        function closeModal() { document.getElementById('snippet-modal').classList.add('hidden'); document.getElementById('snippet-modal').classList.remove('flex'); }
+        function openDataModal() { document.getElementById('data-modal').classList.remove('hidden'); document.getElementById('data-modal').classList.add('flex'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
         
         function saveSnippet() {
             const text = document.getElementById('snip-content').value;
@@ -323,22 +397,15 @@
             saveToLibrary({ id: Date.now(), text: text, tags: tags });
             document.getElementById('snip-content').value = '';
             document.getElementById('snip-tags').value = '';
-            closeModal();
+            closeModal('snippet-modal');
             showToast("Guardado");
         }
-
-        function saveResultAsSnippet(text) {
-            saveToLibrary({ id: Date.now(), text: text, tags: ['generado'] });
-            showToast("Guardado como bloque");
-        }
-
+        function saveResultAsSnippet(text) { saveToLibrary({ id: Date.now(), text: text, tags: ['generado'] }); showToast("Guardado"); }
         function copyText(t) { navigator.clipboard.writeText(t); showToast("Copiado"); }
         function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m; t.classList.remove('translate-y-20'); setTimeout(() => t.classList.add('translate-y-20'), 2000); }
         function escapeHtml(t) { return t.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
 
-        // Inicializar
         renderLibrary();
-        renderBuilder(); // Asegura estado inicial correcto
     </script>
 </body>
 </html>
