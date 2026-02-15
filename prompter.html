@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt Architect v18 - Uncensored Core</title>
+    <title>Prompt Architect v18.1 - Stable Layout</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        body { background-color: #050505; color: #e4e4e7; font-family: 'JetBrains Mono', monospace; overflow: hidden; }
+        /* BASE & RESET */
+        body { background-color: #050505; color: #e4e4e7; font-family: 'JetBrains Mono', monospace; height: 100vh; overflow: hidden; margin: 0; }
+        
+        /* SCROLLBARS */
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: #09090b; }
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 2px; }
         
+        /* UI COMPONENTS */
         .glass-panel { background: #121214; border: 1px solid #27272a; border-radius: 6px; transition: all 0.2s; }
         .glass-panel:hover { border-color: #52525b; background: #1c1c1f; }
         
@@ -21,23 +25,33 @@
         
         .tag-pill { font-size: 0.6rem; padding: 2px 6px; background: #27272a; color: #a1a1aa; border-radius: 4px; margin-right: 4px; }
         
-        .layout-grid { display: grid; grid-template-columns: 300px 1fr 350px; height: calc(100vh - 50px); gap: 0.5rem; }
-        @media (max-width: 1024px) { .layout-grid { grid-template-columns: 1fr; height: auto; overflow-y: auto; display: flex; flex-direction: column; } }
+        /* LAYOUT GRID - FIXED HEIGHT */
+        .layout-grid { 
+            display: grid; 
+            grid-template-columns: 300px 1fr 350px; 
+            height: calc(100vh - 50px); /* Resta el header */
+            gap: 0.5rem; 
+            padding: 0 0.5rem 0.5rem 0.5rem;
+        }
+        
+        @media (max-width: 1024px) { 
+            .layout-grid { grid-template-columns: 1fr; height: auto; overflow-y: auto; display: flex; flex-direction: column; } 
+            body { overflow: auto; }
+        }
 
         @keyframes flash { 0% { background-color: rgba(239, 68, 68, 0.3); } 100% { background-color: transparent; } }
         .flash-effect { animation: flash 0.3s ease-out; }
         
-        /* Switch Toggle */
         .toggle-checkbox:checked { right: 0; border-color: #ef4444; }
         .toggle-checkbox:checked + .toggle-label { background-color: #ef4444; }
     </style>
 </head>
-<body class="p-2 text-xs">
+<body class="text-xs flex flex-col">
 
-    <header class="h-[40px] flex justify-between items-center border-b border-zinc-900 mb-2 px-2 bg-[#0a0a0a]">
+    <header class="h-[40px] flex-shrink-0 flex justify-between items-center border-b border-zinc-900 mb-2 px-3 bg-[#0a0a0a]">
         <div class="flex items-center gap-2">
             <i class="ph ph-terminal-window text-red-500 text-lg"></i>
-            <h1 class="font-bold tracking-tight text-white">ARCHITECT_<span class="text-red-500">v18</span> <span class="text-[9px] text-zinc-600 px-2 border border-zinc-800 rounded ml-2">UNCENSORED_CORE</span></h1>
+            <h1 class="font-bold tracking-tight text-white">ARCHITECT_<span class="text-red-500">v18.1</span></h1>
         </div>
         <div class="flex gap-2">
             <button onclick="openDataModal()" class="bg-zinc-900 hover:bg-zinc-800 text-zinc-400 px-3 py-1 rounded border border-zinc-800 flex items-center gap-2">
@@ -54,34 +68,34 @@
 
     <div class="layout-grid">
         
-        <section class="flex flex-col h-full border border-zinc-900 bg-[#0c0c0e] rounded">
-            <div class="p-2 border-b border-zinc-900 flex justify-between items-center bg-[#101012]">
+        <section class="flex flex-col h-full min-h-0 border border-zinc-900 bg-[#0c0c0e] rounded overflow-hidden">
+            <div class="p-2 border-b border-zinc-900 flex justify-between items-center bg-[#101012] flex-shrink-0">
                 <h2 class="font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1"><i class="ph ph-books"></i> Library</h2>
                 <span class="text-[9px] text-zinc-600" id="lib-count">0</span>
             </div>
-            <div class="p-2">
+            <div class="p-2 flex-shrink-0">
                 <input type="text" id="search-input" onkeyup="renderLibrary()" placeholder="Filter blocks..." class="input-dark bg-zinc-950">
             </div>
-            <div id="library-list" class="flex-1 overflow-y-auto custom-scroll space-y-1 p-2"></div>
+            <div id="library-list" class="flex-1 overflow-y-auto custom-scroll space-y-1 p-2 min-h-0"></div>
         </section>
 
-        <section class="flex flex-col h-full bg-[#050505] rounded border border-zinc-900 relative">
-            <div class="p-2 border-b border-zinc-900 bg-[#101012] flex justify-between items-center">
+        <section class="flex flex-col h-full min-h-0 bg-[#050505] rounded border border-zinc-900 relative overflow-hidden">
+            <div class="p-2 border-b border-zinc-900 bg-[#101012] flex justify-between items-center flex-shrink-0">
                 <h2 class="font-bold text-red-500 uppercase tracking-widest flex items-center gap-1"><i class="ph ph-faders"></i> Workbench</h2>
                 <span class="text-[9px] text-zinc-600" id="stack-count">0</span>
             </div>
 
-            <div id="builder-stack" class="flex-1 overflow-y-auto p-2 space-y-1 relative bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDkwOTBiIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiMxODE4MWIiLz4KPC9zdmc+')]">
+            <div id="builder-stack" class="flex-1 overflow-y-auto p-2 space-y-1 relative min-h-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDkwOTBiIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiMxODE4MWIiLz4KPC9zdmc+')]">
                 <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center opacity-20 pointer-events-none">
                     <i class="ph ph-stack text-4xl mb-2"></i>
                     <p class="text-[10px]">DRAG & DROP LOGIC READY</p>
                 </div>
             </div>
 
-            <div class="p-3 border-t border-zinc-900 bg-[#0c0c0e]">
+            <div class="p-3 border-t border-zinc-900 bg-[#0c0c0e] flex-shrink-0 z-10">
                 <div class="flex gap-2 mb-2">
-                    <input type="text" id="manual-block" class="input-dark" placeholder="Quick manual instruction...">
-                    <button onclick="addManualBlock()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 rounded font-bold">+</button>
+                    <textarea id="manual-block" rows="1" class="input-dark resize-none" placeholder="Paste huge prompts here..."></textarea>
+                    <button onclick="addManualBlock()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 rounded font-bold h-full flex items-center justify-center">+</button>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-2 mb-3">
@@ -92,13 +106,11 @@
                             <option value="qwen-coder">Qwen 2.5 Coder (Uncensored-ish)</option>
                             <option value="llama">Llama 3.3 70B (Meta)</option>
                             <option value="mistral">Mistral Large</option>
-                            <option value="searchgpt">SearchGPT (Web Aware)</option>
                         </select>
                     </div>
                     <div>
                         <label class="text-[9px] text-zinc-500 uppercase font-bold block mb-1 flex justify-between">
                             Unrestricted Mode
-                            <i class="ph ph-warning text-yellow-600" title="Bypasses Safety Filters"></i>
                         </label>
                         <div class="flex items-center gap-2">
                             <label class="relative inline-flex items-center cursor-pointer w-full">
@@ -117,9 +129,9 @@
             </div>
         </section>
 
-        <section class="flex flex-col h-full border border-zinc-900 bg-[#0c0c0e] rounded">
-            <h2 class="text-emerald-500 font-bold uppercase tracking-widest p-2 border-b border-zinc-900 bg-[#101012] flex items-center gap-1"><i class="ph ph-code"></i> Output Stream</h2>
-            <div id="results-area" class="flex-1 overflow-y-auto custom-scroll space-y-2 p-2 pb-10 font-mono">
+        <section class="flex flex-col h-full min-h-0 border border-zinc-900 bg-[#0c0c0e] rounded overflow-hidden">
+            <h2 class="text-emerald-500 font-bold uppercase tracking-widest p-2 border-b border-zinc-900 bg-[#101012] flex-shrink-0 flex items-center gap-1"><i class="ph ph-code"></i> Output Stream</h2>
+            <div id="results-area" class="flex-1 overflow-y-auto custom-scroll space-y-2 p-2 pb-10 font-mono min-h-0">
                 <div class="text-center py-20 opacity-20 text-[10px]">Awaiting Signal...</div>
             </div>
         </section>
@@ -165,7 +177,7 @@
         checkbox.addEventListener('change', function() {
             const label = document.getElementById('mode-text');
             if(this.checked) {
-                label.innerText = "NO_FILTERS (ACTIVE)";
+                label.innerText = "NO_FILTERS";
                 label.classList.remove('text-zinc-500');
                 label.classList.add('text-red-400');
             } else {
@@ -242,20 +254,22 @@
                 let html = '';
                 builderStack.forEach((block, index) => {
                     html += `
-                    <div class="bg-[#18181b] border-l-2 border-red-600 p-2 rounded flex justify-between items-center flash-effect group">
+                    <div class="bg-[#18181b] border-l-2 border-red-600 p-2 rounded flex justify-between items-center flash-effect group shrink-0">
                         <div class="overflow-hidden pr-2">
                             <div class="text-[8px] text-red-500 font-bold uppercase">BLOCK ${index + 1}</div>
                             <div class="text-zinc-300 font-mono text-[10px] truncate">${block.text}</div>
                         </div>
-                        <button onclick="removeFromBuilder(${block.uid})" class="text-zinc-600 hover:text-red-400"><i class="ph ph-x"></i></button>
+                        <button onclick="removeFromBuilder(${block.uid})" class="text-zinc-600 hover:text-red-400 shrink-0"><i class="ph ph-x"></i></button>
                     </div>`;
                 });
                 container.innerHTML = html;
             }
             document.getElementById('stack-count').innerText = builderStack.length;
+            // Auto-scroll al fondo al añadir
+            container.scrollTop = container.scrollHeight;
         }
 
-        // --- AI FUSION CORE (UPDATED TO POST) ---
+        // --- AI FUSION CORE ---
         async function fuseAndGenerate() {
             if(builderStack.length === 0) return showToast("STACK EMPTY");
             
@@ -266,7 +280,6 @@
             
             const combinedText = builderStack.map(b => b.text).join("\n");
             
-            // SYSTEM PROMPT ENGINEERING (THE BYPASS)
             let systemPrompt = `You are a Prompt Architect. Input: "${combinedText}". Return ONLY a JSON object: {"v1": "string", "v2": "string", "v3": "string"}. Improve phrasing for Image/Video Generation.`;
             
             if (isJailbreak) {
@@ -282,11 +295,10 @@
             ];
 
             btn.disabled = true;
-            btn.innerHTML = `<i class="ph ph-spinner animate-spin"></i> TRANSMITTING TO ${model.toUpperCase()}...`;
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin"></i> UPLINKING...`;
             results.innerHTML = `<div class="p-4 text-center text-[10px] text-red-400 animate-pulse border border-red-900/30 rounded bg-red-900/10">Establishing Secure Uplink...</div>`;
 
             try {
-                // FIXED: USANDO POST FETCH HACIA POLLINATIONS
                 const response = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -294,30 +306,22 @@
                         messages: messages,
                         model: model,
                         seed: Math.floor(Math.random() * 100000),
-                        json: true // Solicitar JSON mode nativo si disponible
+                        json: true
                     })
                 });
 
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) throw new Error('Network error');
 
                 const rawText = await response.text();
-                
-                // INTENTO DE LIMPIEZA JSON (Por si el modelo devuelve texto extra)
                 let cleanJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
                 let data;
-                
-                try {
-                    data = JSON.parse(cleanJson);
-                } catch (e) {
-                    // Fallback si no es JSON válido
-                    data = { "raw_output": cleanJson };
-                }
+                try { data = JSON.parse(cleanJson); } catch (e) { data = { "raw_output": cleanJson }; }
 
                 renderResults(data);
 
             } catch (e) {
                 console.error(e);
-                results.innerHTML = `<div class="text-red-500 text-[10px]">CONNECTION FAILED: ${e.message}</div>`;
+                results.innerHTML = `<div class="text-red-500 text-[10px] p-2 border border-red-900 bg-red-900/10">CONNECTION FAILED: ${e.message}</div>`;
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="ph ph-lightning-fill"></i> GENERATE PAYLOAD`;
@@ -327,11 +331,8 @@
         function renderResults(data) {
             const container = document.getElementById('results-area');
             container.innerHTML = '';
-            
             Object.entries(data).forEach(([key, val]) => {
-                // Si el valor es objeto (error de parseo), convertir a string
                 const textVal = typeof val === 'string' ? val : JSON.stringify(val);
-                
                 container.innerHTML += `
                     <div class="glass-panel p-3 border-l-2 border-emerald-500 group mb-2">
                         <div class="flex justify-between items-start mb-1">
